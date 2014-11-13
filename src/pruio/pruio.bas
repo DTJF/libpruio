@@ -5,6 +5,7 @@ This is the main source code of the library. You may compile it by `fbc
 -dylib pruio.bas` to get a small library file (small, because the C
 wrapper functions are not included as in the original version).
 
+\since 0.0
 '/
 
 
@@ -26,6 +27,7 @@ the subsystems
 - GPIO: General Purpose Input / Output,
 - PWMSS: Pulse-Width Modulation Subsystem,
 - TSC_ADC_SS: Touch Screen Controler and Analog-to-Digital Convertor SubSystem (or just ADC).
+- TIMER: Timers 4 to 7
 
 The driver supports three run modi
 
@@ -114,6 +116,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #INCLUDE ONCE "pruio_gpio.bas"
 ' source code of PWMSS part, containing modules QEP, CAP and PWM
 #INCLUDE ONCE "pruio_pwmss.bas"
+' source code of TIMER part
+#INCLUDE ONCE "pruio_timer.bas"
 ' Header file with Pru_Init instructions.
 #INCLUDE ONCE "pasm_init.bi"
 ' Header file with Pru_Run instructions.
@@ -137,8 +141,9 @@ The constructor tries to
 - load the pasm_init.p instructions to the PRU and executes them, and
 - call the initialize functions of the subsystem UDTs.
 
-It reports a failure by setting the member variable PruIo::Errr to
-an appropriate text (the structure should be freed in that case).
+It reports a failure by setting the member variable PruIo::Errr to an
+appropriate text (the destructor PruIo::~PruIo should be called in that
+case).
 
 Otherwise (PruIo::Errr = 0) the constructor tries to enable the
 subsystems and read their configurations. This gets done for the active
@@ -160,6 +165,15 @@ PRU number to run the software:
 For convenience, use enumerators PruIo::ActivateDevice. By default
 all subsystems are activated. (A subsystem has to be active before it
 can get disabled.)
+
+The first bit desides which PRU to use. By default PRU-1 is used, so
+that PRU-0 is free for other software.
+
+\note libpruio always uses ARM_PRU1_INTERRUPT on channel PRU_EVTOUT_1
+      to trigger a measurement in RB or MM mode, even if it's running
+      on PRU-0. So when you execute further software on PRU-1, you
+      should use ARM_PRU0_INTERRUPT on channel PRU_EVTOUT_0 to notify
+      this code, and test for R31.t30.
 
 The other parameters *Av*, *OpD* and *SaD* are used to create a default
 step configuration for analog input. They get passed to function
@@ -186,6 +200,7 @@ See \ArmRef{12} for details on step configuration.
 These step configurations can get customized or extended later on by
 calling function AdcUdt::setStep().
 
+\since 0.0
 '/
 CONSTRUCTOR PruIo( _
     BYVAL Act AS UInt16 = PRUIO_DEF_ACTIVE _
@@ -205,14 +220,10 @@ CONSTRUCTOR PruIo( _
   IF Act AND PRUIO_ACT_PRU1 THEN
     PruIRam = PRUSS0_PRU1_IRAM
     PruDRam = PRUSS0_PRU1_DATARAM
-    PruEvtOut = PRU_EVTOUT_1
-    ArmPruInt = ARM_PRU1_INTERRUPT
     PruNo = 1
   ELSE
     PruIRam = PRUSS0_PRU0_IRAM
     PruDRam = PRUSS0_PRU0_DATARAM
-    PruEvtOut = PRU_EVTOUT_0
-    ArmPruInt = ARM_PRU0_INTERRUPT
     PruNo = 0
   END IF
   prussdrv_init()
@@ -238,7 +249,8 @@ CONSTRUCTOR PruIo( _
   ParOffs += 1 : DRam[ParOffs] = &h44E10800 '           pinmux registers
 
   PwmSS = NEW PwmssUdt(@THIS)
-  '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt();
+  TimSS = NEW TimerUdt(@THIS)
+  '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt();
 
   ASSERT(ParOffs < DRam[1] SHR 4)
   prussdrv_pru_disable(PruNo) '          disable PRU (if running before)
@@ -275,7 +287,8 @@ CONSTRUCTOR PruIo( _
   IF Adc->initialize(Av, OpD, SaD) THEN                 EXIT CONSTRUCTOR
   IF Gpio->initialize() THEN                            EXIT CONSTRUCTOR
   IF PwmSS->initialize() THEN                           EXIT CONSTRUCTOR
-  '& AdcUdt::initialize(); GpioUdt::initialize(); PwmssUdt::initialize();
+  IF TimSS->initialize() THEN                           EXIT CONSTRUCTOR
+  '& AdcUdt::initialize(); GpioUdt::initialize(); PwmssUdt::initialize(); TimerUdt::initialize();
 END CONSTRUCTOR
 
 
@@ -291,6 +304,7 @@ The destructor cannot report error messages in member variable
 PruIo::Errr. Messages (if any) get sent directly to the ERROUT pipe of
 the operating system instead.
 
+\since 0.0
 '/
 DESTRUCTOR PruIo()
   VAR mux = ""
@@ -446,6 +460,7 @@ samples from other ADC devices (like 16 bit audio data). Examples
 | 3     | 15 bit  |
 | >= 4  | 16 bit  |
 
+\since 0.0
 '/
 FUNCTION PruIo.config CDECL( _
     BYVAL Samp AS UInt32 = PRUIO_DEF_SAMPLS _
@@ -475,7 +490,7 @@ FUNCTION PruIo.config CDECL( _
   IF Samp < 2 THEN RETURN 0
 
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT)
-  prussdrv_pru_send_event(ArmPruInt) '             prepare fast MM start
+  prussdrv_pru_send_event(ARM_PRU1_INTERRUPT) '    prepare fast MM start
   RETURN 0
 END FUNCTION
 
@@ -500,6 +515,7 @@ mode). Otherwise only the mode number gets shown.
       descriptions at a time. The string may contain an error message
       if the ball number is too big.
 
+\since 0.2
 '/
 FUNCTION PruIo.Pin CDECL( _
   BYVAL Ball AS UInt8, _
@@ -544,13 +560,14 @@ FUNCTION PruIo.Pin CDECL( _
 END FUNCTION
 
 
-/'* \brief Set a new pin configuration.
+/'* \brief Set a new pin configuration (internal).
 \param Ball The CPU ball number (use macros from pruio_pins.bi).
 \param Mo The new modus to set.
 \returns Zero on success (otherwise a string with an error message).
 
-This function tries to set a new header pin configuration. Each digital
-header pin is connected to a CPU ball. The CPU ball can get muxxed to
+This is an internal function. It tries to set a new header pin
+configuration. Each digital header pin is connected to a CPU ball. The
+CPU ball can get muxed to
 
 - several internal targets (like GPIO, CAP, PWM, ...),
 - internal pullup or pulldown resistors, as well as
@@ -564,7 +581,13 @@ The function will fail if
   section SecPinmux for details), or
 - the required mode isn't available in the overlay.
 
-The function returns an error message in case of a failure.
+The function returns an error message in case of a failure. You can use
+it to set pins in modes that are not supported by libpruio (ie. like
+SPI or UART).
+
+\note Don't use this function to set a pin for a libpruio feature.
+      Instead, call the features config function (ie. like
+      GpioUdt::config() or CapMod::config() ).
 
 \since 0.2
 '/
@@ -695,6 +718,7 @@ read the samples.
 RB mode runs endless. Stop it by up-loading a new configuration (by
 calling function PruIo::config() ).
 
+\since 0.2
 '/
 FUNCTION PruIo.rb_start CDECL() AS ZSTRING PTR
   IF DRam[0] <> PRUIO_MSG_MM_WAIT THEN _
@@ -705,7 +729,7 @@ FUNCTION PruIo.rb_start CDECL() AS ZSTRING PTR
   DRam[3] = 0
   DRam[4] = 1 SHL 4
 
-  prussdrv_pru_clear_event(PruEvtOut, ArmPruInt) '             off we go
+  prussdrv_pru_clear_event(PRU_EVTOUT_1, ARM_PRU1_INTERRUPT) ' off we go
   RETURN 0
 END FUNCTION
 
@@ -738,6 +762,7 @@ Function are available to create trigger specifications:
 MM mode runs endless. Stop it by up-loading a new configuration (by
 calling function PruIo::config() ).
 
+\since 0.2
 '/
 FUNCTION PruIo.mm_start CDECL( _
     BYVAL Trg1 AS UInt32 = 0 _
@@ -804,10 +829,10 @@ FUNCTION PruIo.mm_start CDECL( _
   DRam[6] = Trg3
   DRam[7] = Trg4
 
-  prussdrv_pru_clear_event(PruEvtOut, ArmPruInt) '             off we go
+  prussdrv_pru_clear_event(PRU_EVTOUT_1, ARM_PRU1_INTERRUPT) ' off we go
 
   prussdrv_pru_wait_event(PRUIO_EVNT) '      wait for end of measurement
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT) '     clear interrupt
-  prussdrv_pru_send_event(ArmPruInt) '                prepare next start
+  prussdrv_pru_send_event(ARM_PRU1_INTERRUPT) '       prepare next start
   RETURN 0
 END FUNCTION

@@ -5,6 +5,7 @@ Source code file containing the function bodies of the PWMSS component.
 The code for the subsystem PWMSS and its modules (eQEP, eCAP and ePWM)
 is in here.
 
+\since 0.2
 '/
 
 '* The clock frequency
@@ -54,11 +55,11 @@ context, if the subsystem woke up and is enabled.
 FUNCTION PwmssUdt.initialize cdecl() AS zstring ptr
   WITH *Top
     var p_mem = .MOffs + .DRam[InitParA] _
-      , p_val = cast(any ptr, .DRam) + PRUIO_DAT_PWM
+      , p_raw = cast(any ptr, .DRam) + PRUIO_DAT_PWM
     FOR i AS LONG = 0 TO PRUIO_AZ_PWMSS
-      Raw(i) = p_val
+      Raw(i) = p_raw
       Raw(i)->CMax = 0
-      p_val += SIZEOF(PwmssArr)
+      p_raw += SIZEOF(PwmssArr)
 
       Init(i) = p_mem
       Conf(i) = p_mem + .DSize
@@ -127,6 +128,10 @@ FUNCTION PwmMod.Value CDECL( _
     VAR m = .BallInit[Ball] AND &b111
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
+    CASE P8_07 : e = IIF(m = 2, .TimSS->pwm_get(0, Hz, Du), E1)
+    CASE P8_09 : e = IIF(m = 2, .TimSS->pwm_get(1, Hz, Du), E1)
+    CASE P8_10 : e = IIF(m = 2, .TimSS->pwm_get(2, Hz, Du), E1)
+    CASE P8_08 : e = IIF(m = 2, .TimSS->pwm_get(3, Hz, Du), E1)
     CASE P8_13 : e = IIF(m = 4, pwm_get(2, Hz, Du, 1), E1)
     CASE P8_19 : e = IIF(m = 4, pwm_get(2, Hz, Du, 0), E1)
     CASE P8_34 : e = IIF(m = 2, pwm_get(1, Hz, Du, 1), E1)
@@ -183,6 +188,7 @@ limitations (ie. 17 bit resolution in case of eHRPWM modules). Use
 function PwmMod::Value() to compute the active settings and
 calculate differences.
 
+\since 0.2
 '/
 FUNCTION PwmMod.setValue CDECL( _
   BYVAL Ball AS UInt8, _
@@ -195,6 +201,14 @@ FUNCTION PwmMod.setValue CDECL( _
     VAR m = .BallInit[Ball] AND &b111
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
+    CASE P8_07 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      RETURN .TimSS->pwm_set(0, Hz, Du)
+    CASE P8_09 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      RETURN .TimSS->pwm_set(1, Hz, Du)
+    CASE P8_10 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      RETURN .TimSS->pwm_set(2, Hz, Du)
+    CASE P8_08 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      RETURN .TimSS->pwm_set(3, Hz, Du)
     CASE P8_13 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
       RETURN pwm_set(2, Hz, -1., Du)
     CASE P8_19 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
@@ -234,7 +248,8 @@ END FUNCTION
 \param Duty A pointer to output the duty value (or 0 for no output).
 \returns Zero on success, an error string otherwise.
 
-This functions computes the real PWM configuration of an eCAP module.
+This private functions computes the real PWM configuration of an eCAP
+module. It's designed to get called from function PwmMod::Value().
 
 \note This is a private function designed for internal use. It doesn't
       check the validity of the *Nr* parameter. Values greater than
@@ -281,10 +296,10 @@ FUNCTION PwmMod.cap_set CDECL( _
   STATIC AS CONST Float_t _
     f_min = PWMSS_CLK / &hFFFFFFFFuL '' minimal frequency
   STATIC AS Float_t _
-   freq(...) = {0., 0., 0.} '' module frequencies
+   freq(...) = {0., 0., 0.} '' initial module frequencies
   STATIC AS UInt32 _
-    cnt(...) = {0, 0, 0} _  '' module periods
-  , cmp(...) = {0, 0, 0}    '' module compares
+    cnt(...) = {0, 0, 0} _  '' initial module periods
+  , cmp(...) = {0, 0, 0}    '' initial module compares
 
   WITH *Top
     VAR r = 0
@@ -314,7 +329,7 @@ FUNCTION PwmMod.cap_set CDECL( _
     .DRam[4] = cmp(Nr)
     .DRam[3] = cnt(Nr)
     .DRam[2] = .PwmSS->Conf(Nr)->DeAd + &h100
-    .DRam[1] = r OR (PRUIO_COM_PWM_CAP SHL 24)
+    .DRam[1] = r OR (PRUIO_COM_CAP_PWM SHL 24)
   END WITH :                                                    RETURN 0
 END FUNCTION
 
@@ -326,7 +341,8 @@ END FUNCTION
 \param Mo The output channel (0 = A, otherwise B).
 \returns Zero on success, an error string otherwise.
 
-This functions computes the real configuration of an eHRPWM module.
+This private functions computes the real configuration of an eHRPWM
+module. It's designed to get called from function PwmMod::Value().
 
 \note This is a private function designed for internal use. It doesn't
       check the validity of the *Nr* parameter. Values greater than
@@ -594,7 +610,7 @@ FUNCTION CapMod.config CDECL( _
     END SELECT
   END WITH
   WITH *Top->PwmSS
-    IF 2 <> .Conf(m)->ClVa THEN        Top->Errr = E2 : RETURN E2 ' CAP not enabled
+    IF 2 <> .Conf(m)->ClVa THEN            Top->Errr = E2 : RETURN E2 ' CAP not enabled
     VAR cnt = &hFFFFFFFFul
     IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
       cnt = CUINT(PWMSS_CLK / FLow)
@@ -649,6 +665,10 @@ FUNCTION CapMod.Value CDECL( _
     m = .BallInit[Ball] AND &b111
     dim AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
+    'CASE P9_08 : IF m <> 2 THEN e = E1 ELSE m = 0
+    'CASE P9_10 : IF m <> 2 THEN e = E1 ELSE m = 1
+    'CASE P9_11 : IF m <> 2 THEN e = E1 ELSE m = 2
+    'CASE P9_09 : IF m <> 2 THEN e = E1 ELSE m = 3
     CASE P9_28 : IF m <> 4 THEN e = E1 ELSE m = 2
     CASE P9_42 : IF m <> 0 THEN e = E1
     'CASE 88 : IF m <> 2 THEN e = E1 ELSE m = 1
@@ -707,6 +727,7 @@ END FUNCTION
 'PruIo.
 
 
+'\since 0.2
 ''/
 'FUNCTION QepMod.config CDECL( _
     'BYVAL BallA AS UInt8 _

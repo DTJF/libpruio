@@ -120,8 +120,8 @@ WITH *io
       VAR k = ASC(INKEY()) '*< The key code.
       IF k THEN
         SELECT CASE AS CONST k '                react on user keystrokes
-        CASE ASC("A"), ASC("a") : m = BITRESET(&hFF, 0): n = 256 'PWMSS 1, output PWM-A (P9_14)
-        CASE ASC("B"), ASC("b") : m = BITRESET(&hFF, 1): n = 257 'PWMSS 1, output PWM-B (P9_16)
+        CASE ASC("A"), ASC("a") : m = BITRESET(&hFF, 0): n = 256 : ch(0).Freq = ch(1).Freq 'PWMSS 1, output PWM-A (P9_14)
+        CASE ASC("B"), ASC("b") : m = BITRESET(&hFF, 1): n = 257 : ch(1).Freq = ch(0).Freq 'PWMSS 1, output PWM-B (P9_16)
         CASE ASC("C"), ASC("c") : m = BITRESET(&hFF, 2): n = 258 'PWMSS 0, output eCAP  (P9_42)
         CASE ASC("0") : m = BITRESET(&hFF, n) : ch(n).Duty = 0.0
         CASE ASC("1") : m = BITRESET(&hFF, n) : ch(n).Duty = 0.1

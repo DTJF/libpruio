@@ -18,7 +18,7 @@ AdcFull:
   ADD  Targ, Targ, 4*3      // increase pointer
 
   LDI  U2, 0b10             // load clock demand value
-  SBBO U2, ClAd, 0, 1       // set clock register
+  SBBO U2, ClAd, 0, 1       // write clock register
   LDI  U5, 0                // clear timeout counter
 AdcWait:
   LBBO UR, DeAd,  0, 4      // load ADC REVISION
@@ -62,8 +62,9 @@ AdcDone:
   QBEQ AdcJump, ClVa, 2   // if subsystem enabled -> don't zero
   LDI  U2, 0              // clear subsystem address
 AdcJump:
-  ZERO &U3, 2*17          // clear registers (for Value array)
-  SBCO U2, DRam, PRUIO_DAT_ADC, 4+2*17 // prepare ADC array data
+  ZERO &U3, 2*17            // clear registers (for Value array)
+  LDI  UR, PRUIO_DAT_ADC    // load source pointer (DRam)
+  SBCO U2, DRam, UR, 4+2*17 // prepare ADC array data
 
 // check enabled / dissabled + data block length
   LDI  FiFo, 0              // reset FiFo-0 address
@@ -115,7 +116,8 @@ AdcDone:
 //
 // initialise subsystem before IO mode
 //
-  LBCO DeAd, DRam, PRUIO_DAT_ADC, 4 // get subsystem address
+  LDI  UR, PRUIO_DAT_ADC   // load source pointer (DRam)
+  LBCO DeAd, DRam, UR, 4   // get subsystem address
   LDI  StpM, 0             // clear step mask
   QBEQ AdcIEnd, DeAd, 0    // if subsystem disabled -> skip
   LBCO StpM, DRam, 4*3, 4  // get real step mask
@@ -130,24 +132,26 @@ AdcIEnd:
 //
 // get subsystem data in IO mode
 //
-  LBCO DeAd, DRam, PRUIO_DAT_ADC, 4 // get devise address
+  LDI  U1, PRUIO_DAT_ADC   // load source pointer (DRam)
+  LBCO DeAd, DRam, U1, 4   // get devise address
   QBEQ AdcDEnd, DeAd, 0    // if subsystem disabled -> skip
   LBBO UR, DeAd, 0x44, 4   // get ADC status
   QBBS AdcGet, UR, 5       // if ADC busy -> skip restart
   SBBO StpM, DeAd, 0x54, 3 // restart ADC
 
 AdcGet:
-  LBBO U4, DeAd, 0xE4, 4   // get FiFo-0 counter
-  QBEQ AdcDEnd, U4, 0      // if no value -> skip
+  LBBO U5, DeAd, 0xE4, 4   // get FiFo-0 counter
+  QBEQ AdcDEnd, U5, 0      // if no value -> skip
 
-  LBBO U2, FiFo, 0, 4      // get ADC value
-  LSL  U3, U2.b2, 1        // extract step ID, calc position
-  ADD  U4, U2.b2, 1        // calc step number
-  LSL  U2, U2.w0, LslM     // shift to 13, 14, 15 or 16 bit
-  QBBS AdcSave, StpM, U4   // if step active -> skip zeroing value
-  LDI  U2, 0               // zero inactive steps
+  LBBO U3, FiFo, 0, 4      // get ADC value
+  LSL  U4, U3.b2, 1        // extract step ID, calc position
+  ADD  U5, U3.b2, 1        // calc step number
+  LSL  U3, U3.w0, LslM     // shift to 13, 14, 15 or 16 bit
+  QBBS AdcSave, StpM, U5   // if step active -> skip zeroing value
+  LDI  U3, 0               // zero inactive steps
 AdcSave:
-  SBBO U2, U3, PRUIO_DAT_ADC +2+4, 2 // store ADC value to DRam
+  ADD  U4, U4, 4+2         // skip DeAd & charge step
+  SBBO U3, U4, U1, 2       // store ADC value to DRam
 
 AdcDEnd:
 .endm
@@ -159,12 +163,13 @@ AdcDEnd:
 //
   QBNE AdcCEnd, Comm.b3, PRUIO_COM_ADC // if no ADC command -> skip
   MOV  UR, 0x1FFFF         // load bit mask
-  AND  StpM, Comm, UR      // set new step mask
+  AND  StpM, Comm, UR      // write new step mask
   LDI  UR, 16              // number of steps
+  LDI  U2, PRUIO_DAT_ADC+4 // load source pointer (DRam)
 ClrSteps:
   QBBS SkipStp, StpM, UR   // if step active -> skip
-  LSL  U2, UR, 1           // calc step position offset
-  SBBO UR.w2, U2, PRUIO_DAT_ADC +4, 2 // clear ADC value in DRam
+  LSL  U3, UR, 1           // calc step position offset
+  SBBO UR.w2, U2, U3, 2    // clear ADC value in DRam
 SkipStp:
   SUB  UR, UR, 1           // decrease counter
   QBNE ClrSteps, UR, 0     // not last step -> again
@@ -177,10 +182,11 @@ AdcCEnd:
 //
 // initialize MM
 //
-  LBCO DeAd, DRam, PRUIO_DAT_ADC, 4 // get subsystem address
+  LDI  UR, PRUIO_DAT_ADC   // load source pointer (DRam)
+  LBCO DeAd, DRam, UR, 4   // get subsystem address
   QBNE InitGo, DeAd, 0     // if active -> go
   MOV  UR, PRUIO_MSG_ADC_ERRR // load error message
-  SBCO UR, DRam, 0, 4      // set status information
+  SBCO UR, DRam, 0, 4      // write status information
   MOV  r31.b0, IRPT        // send notification to host
   HALT
 
@@ -191,11 +197,12 @@ InitGo:
   OR   UR, UR, 0b111       // CMP0_RST_CNT_EN (count reset) and CMP_EN[0+1]
   LDI  U1, 0b11            // clear CMP_HIT[0+1]
   MOV  U2, Comm            // CMP0 (loop period = TimerVal)
-  LSR  U3, Comm, 10        // max. timer for digital IO
-  SBCO UR, C26, 0x40, 4*4  // set CMP_CFG, CMP_STATUS, CMP0, CMP1 (config, status, period, pre-period)
+  LDI  U3, 500             // timer reserve for digital IO
+  SUB  U3, Comm, U3        // max. timer for digital IO
+  SBCO UR, C26, 0x40, 4*4  // write CMP_CFG, CMP_STATUS, CMP0, CMP1 (config, status, period, pre-period)
 
   LDI  UR, 0x0551          // enable counter, 5 increments
-  SBCO UR, C26, 0, 2       // set IEP GLOBAL_CFG register
+  SBCO UR, C26, 0, 2       // write IEP GLOBAL_CFG register
 .endm
 
 
@@ -235,7 +242,7 @@ DeltaLt:
   SUB  Tr_v, SmpR.w0, Tr_v   // new neg. trigger value, based on current sample
   QBLE DelDone, Tr_v, 0x10   // if big enough -> continue
 DelFix:
-  LDI  Tr_v, 0xF             // set minimal trigger value
+  LDI  Tr_v, 0xF             // write minimal trigger value
 
 DelDone:
 .endm
@@ -260,7 +267,7 @@ TrgSamp:
 
 // configure all steps trigger
 TrgAll:
-  MOV  CmpR, StpM            // set trigger step mask
+  MOV  CmpR, StpM            // write trigger step mask
   CLR  TrgR.t6               // clear delta bit (not allowed here)
   QBNE TrgTest, Tr_i, 0      // if not first trigger -> skip sampling
 
@@ -434,7 +441,8 @@ DataDone:
 
 // copy lower part to upper end
   SUB  Cntr, Tr_u, Tr_p      // calc byte size to copy
-  ADD  S___, Tr_p, PRUIO_DAT_ADC // calc source pointer
+  LDI  S___, PRUIO_DAT_ADC   // load source pointer (DRam)
+  ADD  S___, Tr_p, S___      // calc source pointer
   CALL Copy                  // and copy block
 
   QBEQ SortDone, Tr_p, 0     // if trigger at buffer start -> skip

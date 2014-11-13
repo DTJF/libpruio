@@ -6,6 +6,7 @@ subsystems handled by libpruio. The destructors runs the pruio__init.p
 code, which collects the register context of each subsystem. These
 convenience macros can print out all that register context.
 
+\since 0.2
 '/
 
 '* Output the context of a single register.
@@ -27,7 +28,7 @@ convenience macros can print out all that register context.
 '* Output the configuration of all GPIO subsystems.
 #MACRO GPIO_OUT(OUT_TYPE)
   FOR n AS INTEGER = 0 TO UBOUND(.Gpio->OUT_TYPE)
-    WITH *.Gpio->OUT_TYPE (n)
+    WITH *.Gpio->OUT_TYPE(n)
       ?DEV("GPIO-" & n)
       ?REG(REVISION)
       IF 0 = .ClAd THEN ?" --> subsystem not handled " & *IIF(.REVISION, @"(is up)", @"(is down)") : CONTINUE FOR
@@ -62,10 +63,39 @@ convenience macros can print out all that register context.
   NEXT
 #ENDMACRO
 
+'* Output the configuration of all TIMER subsystems.
+#MACRO TIMER_OUT(OUT_TYPE)
+  FOR n AS INTEGER = 0 TO UBOUND(.TimSS->OUT_TYPE)
+    WITH *.TimSS->OUT_TYPE(n)
+      ?DEV("TIMER-" & 4 + n)
+      ?REG(TIDR)
+      IF 0 = .ClAd THEN ?" --> subsystem not handled " & *IIF(.TIDR, @"(is up)", @"(is down)") : CONTINUE FOR
+      IF 0 = .TIDR THEN        ?" --> wake up failed" : CONTINUE FOR
+
+      ?REG(TIOCP_CFG)
+      ?REG(IRQ_EOI)
+      ?REG(IRQSTATUS_RAW)
+      ?REG(IRQSTATUS)
+      ?REG(IRQENABLE_SET)
+      ?REG(IRQENABLE_CLR)
+      ?REG(IRQWAKEEN)
+      ?REG(TCLR)
+      ?REG(TCRR)
+      ?REG(TLDR)
+      ?REG(TTGR)
+      ?REG(TWPS)
+      ?REG(TMAR)
+      ?REG(TCAR1)
+      ?REG(TSICR)
+      ?REG(TCAR2)
+    END WITH
+  NEXT
+#ENDMACRO
+
 '* Output the configuration of all PWMSS subsystems.
 #MACRO PWMSS_OUT(OUT_TYPE)
   FOR n AS INTEGER = 0 TO UBOUND(.PwmSS->OUT_TYPE)
-    WITH *.PwmSS->OUT_TYPE (n)
+    WITH *.PwmSS->OUT_TYPE(n)
       ?DEV("PWMSS-" & n)
       ?REG(IDVER)
       IF 0 = .ClAd THEN ?" --> subsystem not handled " & *IIF(.IDVER, @"(is up)", @"(is down)") : CONTINUE FOR

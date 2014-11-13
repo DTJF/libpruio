@@ -4,7 +4,7 @@
 // Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 //  compile for .bi output
-//    pasm -V3 -y -CPru_Run pruio__run.p
+//    pasm -V3 -y -CPru_Run pasm_run.p
 
 #include "pruio.hp"
 #define IRPT PRUIO_IRPT + 16
@@ -24,9 +24,10 @@
 #define StpM r2    // the step mask for ADC steps
 
 #define RegC r3    // counter register (used byte-wise, must follow StpM)
-#define LslM r3.b0 // the LSL mode (12 to 16 bit samples, IO & MM)      (in RegC)
-#define GpoC r3.b1 // counter for current Gpio (IO)                     (in RegC)
-#define PwmC r3.b2 // counter for current PWMSS (IO)                    (in RegC)
+#define LslM r3.b0 // the LSL mode (12 to 16 bit samples                (in RegC)
+#define GpoC r3.b1 // counter for current Gpio                          (in RegC)
+#define PwmC r3.b2 // counter for current PWMSS                         (in RegC)
+#define TimC r3.b3 // counter for current TIMER                         (in RegC)
 
 #define Comm r4    // the command, sent by host (IO) or timer value (MM) (must follow RegC)
 
@@ -72,6 +73,7 @@
 #include "pruio_gpio.p"
 #include "pruio_ball.p"
 #include "pruio_pwmss.p"
+#include "pruio_timer.p"
 
 
 .origin 0
@@ -86,7 +88,7 @@
 
   ZERO &r0, 4           // clear register R0
   MOV  UR, CTBIR        // load address
-  SBBO r0, UR, 0, 4     // make C24 point to 0x0 (PRU-0 DRAM) and C25 point to 0x2000 (PRU-1 DRAM).
+  SBBO r0, UR, 0, 4     // make C24 point to 0x0 (this PRU DRAM) and C25 point to 0x2000 (the other PRU DRAM)
 
   LBCO Para, DRam, 4, 4*2 // get Para & Samp (start of transfer block & # of Samples)
 
@@ -95,6 +97,7 @@
   GPIO_Config
   BALL_Config
   PWMSS_Config
+  TIMER_Config
 
 // start mode: IO | [RB, MM]
   QBLT MmStart, Samp, 1   // if MM or RB required -> start
@@ -104,7 +107,7 @@
 // NO mode, report to host and halt
 //
   MOV  UR, PRUIO_MSG_CONF_OK
-  SBCO UR, DRam, 0, 4     // set status information
+  SBCO UR, DRam, 0, 4     // write status information
   MOV  r31.b0, IRPT       // send notification to host
   HALT
 
@@ -117,7 +120,7 @@ IoStart:
 
   MOV  UR, PRUIO_MSG_IO_OK
   LDI  U1, 0              // value to reset command
-  SBCO UR, DRam, 0, 4*2   // set status information & command
+  SBCO UR, DRam, 0, 4*2   // write status information & command
   MOV  r31.b0, IRPT       // send notification to host and start
 
 IoLoop:
@@ -131,6 +134,7 @@ IoLoop:
 IoData:
   GPIO_IO_Data
   PWMSS_IO_Data
+  //TIMER_IO_Data
 
 // re-configuration commands
   LBCO Comm, DRam, 4, 4   // get command
@@ -138,9 +142,9 @@ IoData:
   RET
 
 IoComm:
-  //BALL_IO_Command         // (must start before GPIO_IO_Command)
   GPIO_IO_Command
   PWMSS_IO_Command
+  //TIMER_IO_Command
   QBLT IoCEnd, Samp, 1    // if not IO mode -> skip ADC mask setting
   ADC_IO_Command
 
@@ -161,7 +165,7 @@ MmLoop:
 
 // send message to host and wait
   MOV  UR, PRUIO_MSG_MM_WAIT
-  SBCO UR, DRam, 0, 4      // set status information
+  SBCO UR, DRam, 0, 4      // write status information
   MOV  r31.b0, IRPT        // send notification to host
   LDI  CmpR, 0             // reset compare register (for ADC single step triggers)
   LDI  TrgC, 0             // reset trigger control register
@@ -176,7 +180,7 @@ TrgLoop:
 
   MOV  UR, PRUIO_MSG_MM_TRG1 // load trigger message
   SUB  UR, UR, Tr_i        // adapt message
-  SBCO UR, DRam, 0, 4      // set status information
+  SBCO UR, DRam, 0, 4      // write status information
 
   LSR  Tr_c, TrgR.w2, 6    // get number of Pre-/post values
 
@@ -235,5 +239,5 @@ CopyCopy:
   RET
 
 CopyNext:
-  SUB  I___, I___, Ch__     // set index for next chunk
+  SUB  I___, I___, Ch__     // write index for next chunk
   JMP  CopySize             // go again

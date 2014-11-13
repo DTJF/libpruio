@@ -4,7 +4,7 @@
 // Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 //  compile for .bi output
-//    pasm -V3 -y -CPru_Init pruio__init.p
+//    pasm -V3 -y -CPru_Init pasm_init.p
 
 #include "pruio.hp"
 #define IRPT PRUIO_IRPT + 16
@@ -30,12 +30,9 @@
 #include "pruio_gpio.p"
 #include "pruio_ball.p"
 #include "pruio_pwmss.p"
+#include "pruio_timer.p"
 
 .origin 0
-  // send message that we're starting
-  MOV  UR, PRUIO_MSG_INIT_RUN // load msg
-  SBCO UR, DRam, 0, 4   // store msg
-
 // Enable OCP master port (clear SYSCFG[STANDBY_INIT])
   LBCO r0, CONST_PRUCFG, 4, 4
   CLR  r0, r0, 4
@@ -43,20 +40,25 @@
 
   ZERO &r0, 4           // clear register R0
   MOV  UR, CTBIR        // load address
-  SBBO r0, UR, 0, 4     // make C24 point to 0x0 (PRU-0 DRAM) and C25 point to 0x2000 (PRU-1 DRAM).
+  SBBO r0, UR, 0, 4     // make C24 point to 0x0 (this PRU DRAM) and C25 point to 0x2000 (the other PRU DRAM)
+
+  // send message that we're starting
+  MOV  UR, PRUIO_MSG_INIT_RUN // load msg
+  SBCO UR, DRam, 0, 4   // store msg
 
 
   LBCO Targ, DRam, 4, 4 // get start of transfer block
-  LDI  Para, 8          // set Para to start of parameters
+  LDI  Para, 8          // write Para to start of parameters
 
 // order must match the order in constructor PruiIo::PruIo() and pruio_run.p xxx_Config macro calls
   ADC_Init
   GPIO_Init
   BALL_Init
   PWMSS_Init
+  TIMER_Init
 
 // report to host and halt
   MOV  UR, PRUIO_MSG_INIT_OK
-  SBCO UR, DRam, 0, 4    // set status information
+  SBCO UR, DRam, 0, 4    // write status information
   MOV  r31.b0, IRPT      // send notification to host
   HALT

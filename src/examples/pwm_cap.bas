@@ -15,6 +15,7 @@ Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `fbc -w all pwm_cap.bas`
 
+\since 0.2
 '/
 
 ' include libpruio

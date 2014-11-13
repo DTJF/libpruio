@@ -4,12 +4,13 @@
 Header file for including in to libpruio. It contains the declarations
 for the GPIO component of the library.
 
+\since 0.2
 '/
 
 
 /'* \brief Structure for GPIO subsystem registers.
 
-This UDT contains a set of all GPIO subsystem registers. Is used to
+This UDT contains a set of all GPIO subsystem registers. It's used to
 store the initial configuration of the four subsystems in the AM33xx
 CPU, and to hold their current configurations for the next call to
 function PruIo::config().
@@ -56,13 +57,14 @@ END TYPE
 This UDT is used to fetch the current register data from the GPIO
 modules in IO and RB mode.
 
+\since 0.2
 '/
 TYPE GpioArr
   AS UInt32 _
     DeAd       '*< Base address of GPIO subsystem + 0x100.
   AS UInt32 _
-    DATAIN _   '*< Current Value of DATAIN register (IO).
-  , DATAOUT _  '*< Current Value of DATAOUT register (IO).
+    DATAIN _   '*< Current value of DATAIN register (IO, RB).
+  , DATAOUT _  '*< Current value of DATAOUT register (IO, RB).
   , Mix        '*< Current state of pins (IN&OUT mixed).
 END TYPE
 

@@ -4,6 +4,7 @@
 Header file for including in to libpruio. It contains the declarations
 for the ADC part of the library.
 
+\since 0.2
 '/
 
 
@@ -33,6 +34,7 @@ can get configured for a measurement (index 1 to 16). A further step
 
 Find further details in \ArmRef{12.5.1.17 ff.}.
 
+\since 0.0
 '/
 TYPE AdcSteps
   AS UInt32 _

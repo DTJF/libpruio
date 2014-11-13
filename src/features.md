@@ -29,7 +29,7 @@ PRUSS {#SecPruss}
 libpruio contains software running on the host system (ARM) and
 software running on a Programable Realtime Unit SubSystem (PRUSS). The
 AM33xx CPU on Beaglebone hardware contains two PRU subsystems. libpruio
-can use either PRU-0 or PRU-1 (the later is the default). To use PRU-0,
+can either use PRU-0 or PRU-1 (the later is the default). To use PRU-0,
 just clear bit 0 in parameter *Act* when calling the constructor
 PruIo::PruIo().
 

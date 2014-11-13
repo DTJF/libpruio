@@ -1,7 +1,7 @@
 /'* \file P8.bi
 \brief Pin settings for P8 header pins.
 
-This files gets included by pruio_config.bas. It declares the pin
+This files gets included by dts_universal.bas. It declares the pin
 settings for all CPU balls connected to the header P8 connectors on
 Beaglebone hardware.
 

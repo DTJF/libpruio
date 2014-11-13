@@ -24,7 +24,7 @@ BallCopy:
 
 
 //
-// set BALL configuration
+// write BALL configuration
 //
 .macro BALL_Config
 // just skip parameters

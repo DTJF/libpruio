@@ -1,5 +1,6 @@
 Memory Organisation  {#ChaMemory}
 ===================
+\tableofcontents
 
 libpruio uses three blocks of memory to organize its data
 
@@ -278,11 +279,11 @@ to the running PRU software
   | DRam[4] | Value for PwmssSet::AQCTLA & PwmssSet::AQCTLB registers |
   | DRam[5] | Value for PwmssSet::TBCNT & PwmssSet::TBPRD registers   |
 
-- PRU command \ref PRUIO_COM_PWM_CAP (switch PWMSS-CAP module in PWM mode
+- PRU command \ref PRUIO_COM_CAP_PWM (switch PWMSS-CAP module in PWM mode
   and set frequency and duty cycle)
   |  Value  | Description                                                  |
   | ------: | : ---------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_PWM_CAP `shl 24` + PwmssSet::ECCTL2 register value |
+  | DRam[1] | PRUIO_COM_CAP_PWM `shl 24` + PwmssSet::ECCTL2 register value |
   | DRam[2] | PWMSS subsystem adress (+ &h100)                             |
   | DRam[3] | Value for PwmssSet::CAP3 register (counter shadow)           |
   | DRam[4] | Value for PwmssSet::CAP4 register (period shadow)            |

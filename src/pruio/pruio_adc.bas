@@ -3,6 +3,7 @@
 
 Source code file containing the function bodies of the ADC component.
 
+\since 0.2
 '/
 
 
@@ -39,6 +40,7 @@ constructor PruIo::PruIo(). It sets the pointers to the Init and
 Conf structures in the data blocks. And it initializes some register
 context, if the subsystem woke up and is enabled.
 
+\since 0.2
 '/
 FUNCTION AdcUdt.initialize CDECL( _
     BYVAL  Av AS UInt8  = PRUIO_DEF_AVRAGE _
@@ -82,6 +84,7 @@ This is a private function, designed to be called from PruIo::config().
 It checks if the ADC subsystem is enabled and prepares parameters in
 PruIo::DRam. Don't call it directly.
 
+\since 0.2
 '/
 FUNCTION AdcUdt.configure CDECL( _
     BYVAL Samp AS UInt32 = PRUIO_DEF_SAMPLS _
@@ -104,7 +107,7 @@ FUNCTION AdcUdt.configure CDECL( _
     ChAz = 0
     VAR c = UBOUND(Conf->St_p) _
       , r = 0 _ ' first active step
-      , d = 0   ' duration of all steps
+      , d = 0uL ' duration of all steps
     FOR i AS LONG = c - 1 TO 0 STEP -1
       IF 0 = BIT(Mask, i) THEN CONTINUE FOR
       r = i '                                        find right-most bit
@@ -125,11 +128,11 @@ FUNCTION AdcUdt.configure CDECL( _
       Samples = Samp * ChAz
       IF (Samples SHL 1) > .ESize THEN _
                                  .Errr = @"out of memory" : RETURN .Errr
-      d *= (Conf->ADC_CLKDIV + 1) * 417 '417 ≈ 1000000 / 2400 (= 1 GHz / 2.4 MHz)
-      d += 30 '                             PRU cycles for restart [GHz]
-      IF Tmr <= d THEN     .Errr = @"sample rate too big" : RETURN .Errr
-      TimerVal = Tmr
+      d = (d * (Conf->ADC_CLKDIV + 1) * 1000) \ 24
+      IF Tmr <= d ORELSE Tmr < 5000 THEN _
+                           .Errr = @"sample rate too big" : RETURN .Errr
       Value = .ERam
+      TimerVal = Tmr
     END IF
     WITH *Conf
       IF BIT(Mask, 31) THEN _ '                   adapt idle step config
@@ -140,10 +143,10 @@ FUNCTION AdcUdt.configure CDECL( _
     END WITH
     LslMode = IIF(Mds < 4, Mds, CAST(UInt16, 4))
 
-    .DRam[2] = Samples
-    .DRam[3] = Mask
-    .DRam[4] = LslMode
     .DRam[5] = TimerVal
+    .DRam[4] = LslMode
+    .DRam[3] = Mask
+    .DRam[2] = Samples
   END WITH : RETURN 0
 END FUNCTION
 
@@ -179,6 +182,7 @@ member variables AdcSet::St_p `(i).Confg` and
 AdcSet::St_p `(i).Delay`. See \ArmRef{12} for details on ADC
 configurations.
 
+\since 0.2
 '/
 FUNCTION AdcUdt.setStep CDECL( _
     BYVAL Stp AS UInt8 _
@@ -225,6 +229,7 @@ mode while the GPIO gets checked.
        the trigger specification, the trigger has no effect (it gets
        skipped).
 
+\since 0.2
 '/
 FUNCTION AdcUdt.mm_trg_pin CDECL( _
     BYVAL Ball AS UInt8 _
@@ -310,6 +315,7 @@ trigger step since there is no channel muxing.)
       be on the save side, re-create your trigger specifications after
       each call to function PruIo::config().
 
+\since 0.2
 '/
 FUNCTION AdcUdt.mm_trg_ain CDECL( _
     BYVAL Stp AS UInt8 _
@@ -394,6 +400,7 @@ activated steps while waiting for the trigger event.
       call to function PruIo::mm_start() (all further
       specifications get ignored).
 
+\since 0.2
 '/
 FUNCTION AdcUdt.mm_trg_pre CDECL( _
     BYVAL Stp AS UInt8 _

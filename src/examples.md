@@ -325,6 +325,55 @@ pwm_cap {#SubSecExaPwmCap}
   src/c_examples/pwm_cap.c
 
 
+rb_file {#SubSecExaRbFile}
+-------
+
+\Item{Description}
+
+  This file contains an example on how to use the ring buffer mode of
+  libpruio. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
+  for maximum speed, sampled in to the ring buffer and from there saved
+  as raw data to some files.
+
+\Item{Preparation}
+
+  No preparation is required. Optionaly you can customize the number of
+  samples, the sampling rate or the number of samples in the source
+  code and recompile your version.
+
+\Item{Operation}
+
+  Start the program by `./rb_file` and you'll see console output like
+~~~{.txt}
+Creating file output.0
+  writing samples 0-65534
+  writing samples 65535-131069
+  writing samples 131070-196604
+  writing samples 196605-262139
+  writing samples 262140-327674
+  writing samples 327675-370202
+Finished file output.0
+Creating file output.1
+  writing samples 0-65534
+  writing samples 65535-131069
+  writing samples 131070-196604
+  writing samples 196605-262139
+  writing samples 262140-327674
+  writing samples 327675-370202
+Finished file output.1
+~~~
+
+  The program created two new files in the current folder, named
+  output.0 and output.1. The files contain the raw data from the three
+  ADC channels AIN-0 to AIN-2.
+
+\Item{Source Code}
+
+  src/examples/rb_file.bas
+
+  src/c_examples/rb_file.c
+
+
 sos {#SubSecExaSos}
 ---
 

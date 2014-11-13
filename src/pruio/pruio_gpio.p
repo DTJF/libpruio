@@ -20,7 +20,7 @@ GpioFull:
   ADD  Targ, Targ, 4*3      // increase pointer
   LDI  U5, 0                // clear timeout counter
   LDI  U2, 2                // load clock demand value
-  SBBO U2, ClAd, 0, 4       // set GPIO CLK register
+  SBBO U2, ClAd, 0, 4       // write GPIO CLK register
 GpioWake:
   LBBO UR, DeAd, 0x00, 4    // load GPIO REVISION register
   QBNE GpioCopy, UR, 0      // if GPIO is up -> copy conf
@@ -75,7 +75,7 @@ GpioJump:
 //
   QBEQ GpioDone, ClAd, 0    // if subsystem disabled -> don't touch
   QBEQ GpioCopy, ClVa, 2    // if normal operation -> copy
-  SBBO ClVa, ClAd, 0, 1     // set clock register
+  SBBO ClVa, ClAd, 0, 1     // write clock register
   QBEQ GpioDone, UR, 0      // if empty set -> skip
   ADD  Para, Para, 4*26-4   // increase pointer
   JMP  GpioDone
@@ -85,17 +85,17 @@ GpioCopy:
 
   SET  DeAd, 8                // switch to high bank
   //LBBO UR, Para, 4*18, 4*6    // load LEVELDETECT0 to DEBOUNCINGTIME block
-  //SBBO UR, DeAd, 0x40, 4*6-3  // set registers (skip DATAOUT, DEBOUNCINGTIME 1 byte)
+  //SBBO UR, DeAd, 0x40, 4*6-3  // write registers (skip DATAOUT, DEBOUNCINGTIME 1 byte)
   LBBO UR, Para, 4*14, 4*2    // load CTRL & OE
-  SBBO UR, DeAd, 0x30, 4*2    // set registers
+  SBBO UR, DeAd, 0x30, 4*2    // write registers
   LBBO UR, Para, 4*24, 4*2    // load CLEARDATAOUT & SETDATAOUT
-  SBBO UR, DeAd, 0x90, 4*2    // set registers
+  SBBO UR, DeAd, 0x90, 4*2    // write registers
 
   CLR  DeAd, 8                  // switch to low bank
   //LBBO UR, Para, 4*2 , 4*11   // load EOI to IRQWAKEN_1 block
-  //SBBO UR, DeAd, 0x20, 4*11   // set block
+  //SBBO UR, DeAd, 0x20, 4*11   // write block
   //LBBO UR, Para, 4   , 1      // load SYSCONFIG
-  //SBBO UR, DeAd, 0x10, 1      // set register
+  //SBBO UR, DeAd, 0x10, 1      // write register
 
 
   ADD  Para, Para, 4*26       // increase pointer
@@ -129,16 +129,18 @@ GpioDEnd:
 //
 // handle subsystem command in IO mode
 //
-  QBNE GpioCOut, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip
-  LBCO U2, DRam, 4*2, 4*4  // get parameters
-  SBBO U5, U2, 0x34, 4     // set OE
-  JMP  GpioCData           // set data in case of output
-
-GpioCOut:
-  QBNE GpioCEnd, Comm.b3, PRUIO_COM_GPIO_OUT // if no GPIO_OUT command -> skip
+  QBLT GpioCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip
+  QBNE GpioCCon, Comm.b3, PRUIO_COM_GPIO_OUT // if no GPIO_OUT command -> skip
   LBCO U2, DRam, 4*2, 4*3  // get parameters
+  JMP  GpioCData           // write data in case of output
+
+GpioCCon:
+  QBLT IoCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip, invalid
+  LBCO U2, DRam, 4*2, 4*4  // get parameters
+  SBBO U5, U2, 0x34, 4     // write OE
+
 GpioCData:
-  SBBO U3, U2, 0x90, 4*2   // set CLEARDATAOUT & SETDATAOUT
+  SBBO U3, U2, 0x90, 4*2   // write CLEARDATAOUT & SETDATAOUT
   JMP  IoCEnd              // finish command
 
 GpioCEnd:

@@ -3,6 +3,7 @@
 
 Source code file containing the function bodies of the GPIO component.
 
+\since 0.2
 '/
 
 
@@ -50,11 +51,11 @@ context, if the subsystem woke up and is enabled.
 FUNCTION GpioUdt.initialize CDECL() AS ZSTRING PTR
   WITH *Top
     VAR p_mem = .MOffs + .DRam[InitParA] _
-      , p_val = CAST(ANY PTR, .DRam) + PRUIO_DAT_GPIO' + offsetof(GpioArr, Mix)
+      , p_raw = CAST(ANY PTR, .DRam) + PRUIO_DAT_GPIO
 
     FOR i AS LONG = 0 TO PRUIO_AZ_GPIO
-      Raw(i) = p_val
-      p_val += SIZEOF(GpioArr)
+      Raw(i) = p_raw
+      p_raw += SIZEOF(GpioArr)
 
       Init(i) = p_mem
       Conf(i) = p_mem + .DSize
@@ -106,6 +107,7 @@ as enumerators PruIo::PinMuxing :
 | PRUIO_GPIO_OUT0  | output pin set to low (no resistor)      |
 | PRUIO_GPIO_OUT1  | output pin set to high (no resistor)     |
 
+\since 0.2
 '/
 FUNCTION GpioUdt.config CDECL( _
     BYVAL Ball AS UInt8 _
@@ -161,8 +163,10 @@ This function is used to set the state of an output GPIO. Set parameter
 *Ball* to the required header pin (=CPU ball) by using the convenience
 macros defined in pruio_pins.bi (ie. P8_03 selects pin 3 on header P8).
 
-Parameter *Mo* specifies either the state to set (0 or 1). Or it specifies the pinmux mode and the state.
+Parameter *Mo* specifies either the state to set (0 or 1). Or it
+specifies the pinmux mode to test and the state in the MSB.
 
+\since 0.2
 '/
 FUNCTION GpioUdt.setValue CDECL( _
     BYVAL Ball AS UInt8 _
@@ -176,9 +180,16 @@ FUNCTION GpioUdt.setValue CDECL( _
       , x = IIF(Mo > 1, Mo AND &b1111111, PRUIO_GPIO_OUT0) '*< the pinmux mode
 
     IF 2 <> Conf(i)->ClVa THEN                 .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
-    IF x AND &b111 <> 7 THEN                   .Errr = E1 : RETURN .Errr ' no GPIO mode
-    IF .BallConf[Ball] <> x THEN _
-      IF .setPin(Ball, x) THEN                              RETURN .Errr ' pinmux failed
+    IF .BallConf[Ball] <> x THEN
+      'IF x AND &b111 <> 7 THEN                 .Errr = E1 : RETURN .Errr ' no GPIO mode
+      'IF .setPin(Ball, x) THEN                              RETURN .Errr ' pinmux failed
+      'if Mo = 1 then x += 128
+      SELECT CASE AS CONST Mo
+      CASE 0: x = PRUIO_GPIO_OUT0
+      CASE 1: x = PRUIO_GPIO_OUT1
+      CASE ELSE : x = Mo
+      END SELECT :                                          return config(Ball, x)
+    end if
 
     IF Mo = 1 ORELSE BIT(Mo, 7) THEN
       Conf(i)->CLEARDATAOUT AND= NOT m
@@ -221,6 +232,7 @@ are
 | 0     | GPIO is in low state          |
 | -1    | error (undefined ball number) |
 
+\since 0.2
 '/
 FUNCTION GpioUdt.Value CDECL(BYVAL Ball AS UInt8) AS Int32
   WITH *Top

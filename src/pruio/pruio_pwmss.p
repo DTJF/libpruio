@@ -20,7 +20,7 @@ PwmFull:
   ADD  Targ, Targ, 4*3      // increase pointer
   LDI  U5, 0                // clear timeout counter
   LDI  U2, 2                // load clock demand value
-  SBBO U2, ClAd, 0, 4       // set PWMSS CLK register
+  SBBO U2, ClAd, 0, 4       // write PWMSS CLK register
 PwmWait:
   LBBO UR, DeAd, 0x00, 4    // load PWMSS IDVER register
   QBNE PwmCopy, UR, 0       // if PWM is up -> copy conf
@@ -196,17 +196,17 @@ PwmCap34:
   QBBC PwmQep, U3, 1       // no CEVT1 -> skip
   LBBO U4, U1, 0x10, 4*2   // get CAP3/CAP4 registers
   ADD  U5, U5, 1           // adjust counter
-  JMP  PwmDSet             // set variables
+  JMP  PwmDSet             // write variables
 
 PwmDClear:
   ZERO &U4, 8              // clear registers
 PwmDSet:
-  SBBO U4, UR, 4*2, 4*2    // set variables C1 & C2
+  SBBO U4, UR, 4*2, 4*2    // write variables C1 & C2
 
 PwmQep:
   //ADD  U1, U1, 0x80        // switch to eQEP (0x180)
   //LBBO U3, U1, 0x00, 4     // get QPOSCNT register
-  //SBBO U3, UR, 4*4, 4*4    // set variables
+  //SBBO U3, UR, 4*4, 4*4    // write variables
 
 PwmCnt:
   ADD  PwmC, PwmC, 1       // increase counter
@@ -220,33 +220,34 @@ PwmDEnd:
 //
 // handle subsystem command in IO mode
 //
-  QBNE PwmCapComm, Comm.b3, PRUIO_COM_PWM // if no PWM command -> skip
-  LBCO U2, DRam, 4*2, 4*3   // get parameters (subsystem address, CMPA & CMPB, AQCTLA & AQCTLB)
-  SBBO U3, U2, 0x12, 2*4    // set new AQCTLA & AQCTLB & CMPA & CMPB values
-  QBEQ IoCEnd, Comm.w0, 0   // if no frequency change -> skip
-  LBCO U4, DRam, 4*5, 4     // get parameters (TBCNT & TBPRD)
-  SBBO U4, U2, 0x08, 2*2    // set new TBCNT & TBPRD values
-  SBBO Comm.w0, U2, 0, 2    // set new TBCTL values
-  JMP  IoCEnd               // finish command
-
-PwmCapComm:
-  QBNE CapComm, Comm.b3, PRUIO_COM_PWM_CAP // if no PWM_CAP command -> skip
+  QBLT PwmCEnd, Comm.b3, PRUIO_COM_PWM // if no PWM command -> skip
+  QBNE CapComm, Comm.b3, PRUIO_COM_CAP_PWM // if no PWM command for CAP module -> skip
   LBCO U2, DRam, 4*2, 4*3   // get parameters (subsystem address, period, duty)
   QBEQ PwmCapNI, Comm.w0, 0 // if no re-config -> skip
-  SBBO Comm.w0, U2, 0x2A, 2 // set ECCTL2 register
+  SBBO Comm.w0, U2, 0x2A, 2 // write ECCTL2 register
 PwmCapNI:
-  SBBO U3, U2, 0x10, 4*2    // set new period & duty values
+  SBBO U3, U2, 0x10, 4*2    // write new period & duty values
   JMP  IoCEnd               // finish command
 
 CapComm:
-  QBNE PwmCEnd, Comm.b3, PRUIO_COM_CAP // if no CAP command -> skip
+  QBNE PwmCCon, Comm.b3, PRUIO_COM_CAP // if no CAP command -> skip
   LBCO U2, DRam, 4*2, 4     // get parameter (subsystem address)
-  SBBO Comm.w0, U2, 0x2A, 2 // set ECCTL2 register
+  SBBO Comm.w0, U2, 0x2A, 2 // write ECCTL2 register
   ZERO &U3, 4*4             // clear registers
   SBBO U3, U2, 0x08, 4*4    // reset capture (CAP1-4)
   LDI  U3, 0b11111111       // mask to clear flags
   SBBO U3, U2, 0x30, 1      // clear flags
   SBBO U4, U2, 0x00, 4      // reset counter (TSCTR)
+  JMP  IoCEnd               // finish command
+
+PwmCCon:
+  QBNE IoCEnd, Comm.b3, PRUIO_COM_PWM // if no CAP command -> skip, invalid
+  LBCO U2, DRam, 4*2, 4*3   // get parameters (subsystem address, CMPA & CMPB, AQCTLA & AQCTLB)
+  SBBO U3, U2, 0x12, 2*4    // write new AQCTLA & AQCTLB & CMPA & CMPB values
+  QBEQ IoCEnd, Comm.w0, 0   // if no frequency change -> skip
+  LBCO U5, DRam, 4*5, 4     // get parameters (TBCNT & TBPRD)
+  SBBO U5, U2, 0x08, 2*2    // write new TBCNT & TBPRD values
+  SBBO Comm.w0, U2, 0, 2    // write new TBCTL values
   JMP  IoCEnd               // finish command
 
 PwmCEnd:

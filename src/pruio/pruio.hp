@@ -25,30 +25,38 @@ pruio.bi in case of any change here.
 \brief The number of GPIO subsystems (minus one).
 \def PRUIO_AZ_PWMSS
 \brief The number of PWM subsystems (minus one).
+\def PRUIO_AZ_TIMER
+\brief The number of TIMER subsystems (minus one).
 
 \def PRUIO_COM_GPIO_CONF
-\brief The command number to reconfigure a GPIO.
+\brief The command number to re-configure a GPIO.
 \def PRUIO_COM_GPIO_OUT
-\brief The command number to set a GPIO output state.
+\brief The command number to re-configure a GPIO output state.
 \def PRUIO_COM_PWM
-\brief Command number to set frequency and duty cycle for a PWM module (IO, RB)
-\def PRUIO_COM_PWM_CAP
-\brief Command number to set frequency and duty cycle for a CAP module in PWM output mode (IO, RB)
+\brief Command number to re-configure frequency and duty cycle for a PWM module.
+\def PRUIO_COM_CAP_PWM
+\brief Command number to re-configure frequency and duty cycle for a CAP module in PWM output mode.
 \def PRUIO_COM_CAP
-\brief Command number to set a CAP module in input mode (IO, RB)
+\brief Command number to re-configure a CAP module.
 \def PRUIO_COM_QEP
-\brief The command number to set a QEP parameter change for a QEP module in IO mode.
+\brief The command number to re-configure a QEP parameter change for a QEP module.
+\def PRUIO_COM_TIM_PWM
+\brief The command number to re-configure a TIMER in PWM mode.
+\def PRUIO_COM_TIM_CAP
+\brief The command number to re-configure a TIMER in CAP mode.
 \def PRUIO_COM_ADC
-\brief The command number to set a ADC-mask reconfiguration in IO mode.
+\brief The command number to re-configure a ADC-mask in IO run mode.
 
 \def PRUIO_DAT_GPIO
-\brief The offset to store GPIO data in PruIo::DRam (IO & MM, `4*4*4` bytes).
+\brief The offset to store GPIO data in PruIo::DRam (`4*4*4` bytes).
 \def PRUIO_DAT_PWM
-\brief The offset to store PWM data in PruIo::DRam (IO, `3*8*4` bytes).
+\brief The offset to store PWM data in PruIo::DRam (`3*8*4` bytes).
+\def PRUIO_DAT_TIMER
+\brief The offset to store TIMER data in PruIo::DRam (`4*4*4` bytes).
 \def PRUIO_DAT_ADC
-\brief The offset to store ADC data in PruIo::DRam (IO, `4+2*17` bytes).
+\brief The offset to store ADC data in PruIo::DRam (always last, `4+2*17` bytes).
 \def PRUIO_DAT_ALL
-\brief The offset to store the data block in PruIo::DRam (AdcSet + 4*GpioSet + BallSet + 3*PwmssSet).
+\brief The offset to store the data block in PruIo::DRam (AdcSet + 4*GpioSet + BallSet + 3*PwmssSet + 4*TimerSet).
 
 \def PRUIO_MSG_INIT_RUN
 \brief Message send by PruIo::PruIo().
@@ -81,19 +89,23 @@ pruio.bi in case of any change here.
 #define PRUIO_AZ_BALL  109
 #define PRUIO_AZ_GPIO  3
 #define PRUIO_AZ_PWMSS 2
+#define PRUIO_AZ_TIMER 3
 
-#define PRUIO_COM_GPIO_CONF 10
-#define PRUIO_COM_GPIO_OUT  11
-#define PRUIO_COM_PWM  30
-#define PRUIO_COM_PWM_CAP  31
-#define PRUIO_COM_CAP  32
-#define PRUIO_COM_QEP  33
-#define PRUIO_COM_ADC  50
+#define PRUIO_COM_GPIO_CONF 20
+#define PRUIO_COM_GPIO_OUT  19
+#define PRUIO_COM_PWM       30
+#define PRUIO_COM_CAP_PWM   29
+#define PRUIO_COM_CAP       28
+#define PRUIO_COM_QEP       27
+#define PRUIO_COM_TIM_PWM   40
+#define PRUIO_COM_TIM_CAP   38
+#define PRUIO_COM_ADC       50
 
-#define PRUIO_DAT_GPIO 64
-#define PRUIO_DAT_PWM  128
-#define PRUIO_DAT_ADC  224
-#define PRUIO_DAT_ALL  512
+#define PRUIO_DAT_GPIO  64
+#define PRUIO_DAT_PWM   128
+#define PRUIO_DAT_TIMER 224
+#define PRUIO_DAT_ADC   288
+#define PRUIO_DAT_ALL   512
 
 #define PRUIO_MSG_INIT_RUN  4294967295
 #define PRUIO_MSG_CONF_RUN  4294967294

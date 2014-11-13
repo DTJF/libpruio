@@ -4,14 +4,15 @@
 Header file for including libpruio to FreeBASIC programs. It binds the
 different components together and provides all declarations.
 
+\since 0.0
 '/
 
 #IFNDEF __PRUIO_COMPILING__
 #INCLIB "pruio"
 #ENDIF
 
-'* version string
-#DEFINE PRUIO_VERSION "0.2"
+'* Version string.
+#DEFINE PRUIO_VERSION "0.4"
 
 TYPE AS   BYTE Int8    '*< 8 bit signed integer data type
 TYPE AS  SHORT Int16   '*< 16 bit signed integer data type
@@ -21,52 +22,54 @@ TYPE AS USHORT UInt16  '*< 16 bit unsigned integer data type
 TYPE AS  ULONG UInt32  '*< 32 bit unsigned integer data type
 TYPE AS SINGLE Float_t '*< float data type
 
-'* forward declaration
+'* Forward declaration.
 TYPE AS PruIo Pruio_
 
-'* tell pruss_intc_mapping.bi that we use ARM33xx
+'* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
 
-' the PRUSS driver library
+' The PRUSS driver library.
 #INCLUDE ONCE "BBB/prussdrv.bi"
-' PRUSS driver interrupt settings
+' PRUSS driver interrupt settings.
 #INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
 
-'* constants for pinmuxing: pullup/-down resistors and GPIO states
+'* Constants for pinmuxing: pullup/-down resistors and GPIO states.
 ENUM PinMuxing
-  PRUIO_NO_PULL   = &b001000 '*< no resistor connected
-  PRUIO_PULL_UP   = &b010000 '*< pullup resistor connected
-  PRUIO_PULL_DOWN = &b000000 '*< pulldown resistor connected
-  PRUIO_RX_ACTIV  = &b100000 '*< input receiver enabled
-  PRUIO_GPIO_OUT0 = 7 + PRUIO_NO_PULL                    '*< GPIO output low (no resistor)
-  PRUIO_GPIO_OUT1 = 7 + PRUIO_NO_PULL + 128              '*< GPIO output high (no resistor)
-  PRUIO_GPIO_IN   = 7 + PRUIO_NO_PULL + PRUIO_RX_ACTIV   '*< GPIO input (no resistor)
-  PRUIO_GPIO_IN_0 = 7 + PRUIO_PULL_DOWN + PRUIO_RX_ACTIV '*< GPIO input (pulldown resistor)
-  PRUIO_GPIO_IN_1 = 7 + PRUIO_PULL_UP + PRUIO_RX_ACTIV   '*< GPIO input (pullup resistor)
+  PRUIO_PULL_DOWN = &b000000 '*< Pulldown resistor connected.
+  PRUIO_NO_PULL   = &b001000 '*< No resistor connected.
+  PRUIO_PULL_UP   = &b010000 '*< Pullup resistor connected.
+  PRUIO_RX_ACTIV  = &b100000 '*< Input receiver enabled.
+  PRUIO_GPIO_OUT0 = 7 + PRUIO_NO_PULL                    '*< GPIO output low (no resistor).
+  PRUIO_GPIO_OUT1 = 7 + PRUIO_NO_PULL + 128              '*< GPIO output high (no resistor).
+  PRUIO_GPIO_IN   = 7 + PRUIO_NO_PULL + PRUIO_RX_ACTIV   '*< GPIO input (no resistor).
+  PRUIO_GPIO_IN_0 = 7 + PRUIO_PULL_DOWN + PRUIO_RX_ACTIV '*< GPIO input (pulldown resistor).
+  PRUIO_GPIO_IN_1 = 7 + PRUIO_PULL_UP + PRUIO_RX_ACTIV   '*< GPIO input (pullup resistor).
   PRUIO_PIN_RESET = &hFF
 END ENUM
 
-' common macros, shared with PRU pasm compiler
+' Common macros, shared with PRU pasm compiler.
 #INCLUDE ONCE "pruio.hp"
-' header for ADC part
+' Header for ADC part.
 #INCLUDE ONCE "pruio_adc.bi"
-' header for GPIO part
+' Header for GPIO part.
 #INCLUDE ONCE "pruio_gpio.bi"
-' header for PWMSS part, containing modules QEP, CAP and PWM
+' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #INCLUDE ONCE "pruio_pwmss.bi"
+' Header for TIMER part.
+#INCLUDE ONCE "pruio_timer.bi"
 
-'* the channel for PRU messages (must match PRUIO_IRPT)
+'* The channel for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_CHAN CHANNEL5
-'* the mask to enable PRU interrupts (must match PRUIO_IRPT)
+'* The mask to enable PRU interrupts (must match PRUIO_IRPT).
 #DEFINE PRUIO_MASK PRU_EVTOUT5_HOSTEN_MASK
-'* the event for PRU messages (mapping, must match PRUIO_IRPT)
+'* The event for PRU messages (mapping, must match PRUIO_IRPT).
 #DEFINE PRUIO_EMAP PRU_EVTOUT5
-'* the event for PRU messages (must match PRUIO_IRPT)
+'* The event for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_EVNT PRU_EVTOUT_5
 
 '* Macro to calculate the total size of an array in bytes.
 #DEFINE ArrayBytes(_A_) (UBOUND(_A_) + 1) * SIZEOF(_A_)
-'* macro to check a CPU ball number (0 to 109 is valid range)
+'* Macro to check a CPU ball number (0 to 109 is valid range).
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
 
@@ -79,20 +82,31 @@ it. It just reads the version information to see if the subsystem is in
 operation.
 
 An enabled subsystem will get activated in the constructor
-PruIo::PruIo() and libpruio will set its configuration.
+PruIo::PruIo() and libpruio will set its configuration. When done, the
+destructor PruIo::~PruIo either disables it (when previously disabled)
+or resets the initial configuration.
 
+The first enumerator PRUIO_ACT_PRU1 is used to specify the PRU
+subsystem to execute libpruio. By default the bit is set and libpruio
+runs on PRU-1. See PruIo::PruIo() for further information.
+
+\since 0.2
 '/
 ENUM ActivateDevice
-  PRUIO_ACT_PRU1   = &b000000000001 '*< activate PRU-1 (= default, instead of PRU-0)
-  PRUIO_ACT_ADC    = &b000000000010 '*< activate ADC
-  PRUIO_ACT_GPIO0  = &b000000000100 '*< activate GPIO-0
-  PRUIO_ACT_GPIO1  = &b000000001000 '*< activate GPIO-1
-  PRUIO_ACT_GPIO2  = &b000000010000 '*< activate GPIO-2
-  PRUIO_ACT_GPIO3  = &b000000100000 '*< activate GPIO-3
-  PRUIO_ACT_PWM0   = &b000001000000 '*< activate PWMSS-0 (including eCAP, eQEP, ePWM)
-  PRUIO_ACT_PWM1   = &b000010000000 '*< activate PWMSS-1 (including eCAP, eQEP, ePWM)
-  PRUIO_ACT_PWM2   = &b000100000000 '*< activate PWMSS-2 (including eCAP, eQEP, ePWM)
-  PRUIO_DEF_ACTIVE = &b111111111111 '*< activate all subsystems
+  PRUIO_ACT_PRU1   = &b0000000000001 '*< activate PRU-1 (= default, instead of PRU-0)
+  PRUIO_ACT_ADC    = &b0000000000010 '*< activate ADC
+  PRUIO_ACT_GPIO0  = &b0000000000100 '*< activate GPIO-0
+  PRUIO_ACT_GPIO1  = &b0000000001000 '*< activate GPIO-1
+  PRUIO_ACT_GPIO2  = &b0000000010000 '*< activate GPIO-2
+  PRUIO_ACT_GPIO3  = &b0000000100000 '*< activate GPIO-3
+  PRUIO_ACT_PWM0   = &b0000001000000 '*< activate PWMSS-0 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_PWM1   = &b0000010000000 '*< activate PWMSS-1 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_PWM2   = &b0000100000000 '*< activate PWMSS-2 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_TIM4   = &b0001000000000 '*< activate TIMER-4
+  PRUIO_ACT_TIM5   = &b0010000000000 '*< activate TIMER-5
+  PRUIO_ACT_TIM6   = &b0100000000000 '*< activate TIMER-6
+  PRUIO_ACT_TIM7   = &b1000000000000 '*< activate TIMER-7
+  PRUIO_DEF_ACTIVE = &b1111111111111 '*< activate all subsystems
 END ENUM
 
 
@@ -102,6 +116,7 @@ This UDT contains a set of all pad control registers. This is the
 muxing between CPU balls and the internal subsystem targets, the pullup
 or pulldown configuration and the receiver activation.
 
+\since 0.2
 '/
 TYPE BallSet
   AS UInt32 DeAd                 '*< Base address of Control Module subsystem.
@@ -114,11 +129,13 @@ This UDT glues all together. It downloads and start software on the
 PRUSS, controls the initialisation and configuration processes and
 reads or writes the pinmux configurations.
 
+\since 0.0
 '/
 TYPE PruIo
   AS AdcUdt PTR Adc     '*< Pointer to ADC subsystem structure.
   AS GpioUdt PTR Gpio   '*< Pointer to GPIO subsystems structure.
   AS PwmssUdt PTR PwmSS '*< Pointer to PWMSS subsystems structure.
+  AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
   AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
   'AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
@@ -142,12 +159,10 @@ TYPE PruIo
   , ESize     _ '*< The size of the external memory (PRUSS-DDR).
   , DSize     _ '*< The size of a data block (DInit or DConf).
   , PruNo     _ '*< The PRU number to use (defaults to 1).
-  , PruEvtOut _ '*< The interrupt channel to send commands to PRU.
   , PruIRam   _ '*< The PRU instruction ram to load.
   , PruDRam     '*< The PRU data ram.
   AS INT16 _
-    ArmPruInt _ '*< The interrupt to send.
-  , ParOffs _   '*< The offset for the parameters of a module.
+    ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.
   AS STRING _
     MuxAcc      '*< Path for pinmuxing.

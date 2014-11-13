@@ -13,10 +13,37 @@ Further Development {#SecFurtherVev}
 Feel free to send further ideas to the author (\Email).
 
 
+libpruio-0.2.0.2 {#SecV-0-2-0-2}
+================
+
+Released in 2014, December.
+
+New:
+----
+
+- Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
+- Documentation page Pins added.
+
+Changes:
+--------
+
+- Function Gpio->setValue calls Gpio->config() now, in case of improper pinmuxing.
+- New numbers for PRU commands, checking tree now (faster).
+
+Bugfixes:
+---------
+
+- RB and MM modes are working now, when libpruio is configured to use PRU-0.
+- C-Wrapper contains enumerators pinMuxing now.
+- C-Wrapper function pruio_gpio_config() implemented now.
+- Example pwm_adc: frequency interferences fixed for A + B channel.
+- Clock value for ADC subsystem corrected (greater sampling rates up to 200 kHz).
+
+
 libpruio-0.2 {#SecV-0-2}
 ============
 
-Released in 2014, October.
+Released in 2014 October, 26.
 
 New:
 ----
@@ -50,7 +77,7 @@ Bugfixes:
 libpruio-0.0.2 {#SecV-0-0-2}
 ==============
 
-Released on 2014, June 6.
+Released on 2014 June, 6.
 
 - New: example *button*
 - Bugfix: gpio_get returns correct values now
@@ -60,7 +87,7 @@ Released on 2014, June 6.
 libpruio-0.0 {#SecV-0-0}
 ============
 
-Released on 2014, May 9.
+Released on 2014 May, 9.
 
 
 

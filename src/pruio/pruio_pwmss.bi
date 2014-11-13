@@ -11,6 +11,7 @@ the API easier to understand for the user. He wants a PWM output at pin
 X or a CAP input at pin Y. And he should not care about the PWMSS
 subsystems and its modules when doing simple tasks.
 
+\since 0.2
 '/
 
 
@@ -151,13 +152,12 @@ TYPE PwmssArr
 END TYPE
 
 
-/'* \brief Structure for PWMSS subsystem features, containing all
-variables to handle the subsystems.
+/'* \brief Structure for PWMSS subsystem features, containing all variables to handle the subsystems.
 
 This UDT contains (only) the configuration of the three PWMSS
 subsystems in the CPU. The functions to drive the hardware are in
 separate UDTs, to make the API more easy to understand. See UDTs
-PwmMod, CapMod and ŗef QepMod for details.
+PwmMod, CapMod and QepMod for details.
 
 \since 0.2
 '/
@@ -192,6 +192,7 @@ To use a header pins as PWM output, the pin must be in *pwm* mode
 before starting your code. Then just set the desired period (frequency)
 and duty cycle (load) by a call to function PwmMod::setValue().
 
+\since 0.2
 '/
 TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
@@ -239,6 +240,7 @@ modul in the PWMSS subsystems in input mode.
 
 See \ArmRef{15.3} for hardware details.
 
+\since 0.2
 '/
 TYPE CapMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance

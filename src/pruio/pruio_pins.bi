@@ -11,6 +11,7 @@ beaglebone black hardware. The arrays include all CPU ball numbers that
 belong to a subsystem like the EMMC2 or HDMI and can be used to adress
 all related pins as one group.
 
+\since 0.0
 '/
 
 '* CPU ball number for pin 3 on header 8 (emmc2)
