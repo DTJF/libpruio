@@ -1,0 +1,108 @@
+#ifdef FOR_DOXYGEN_ONLY
+/*!
+\file pruio.hp
+\brief This file synchronizes parameters between FreeBASIC, C and PASM source code.
+
+This file is used in FreeBASIC, C and PASM source code to synchonize
+the positions and the size of parameter blocks, exchanged in DRam. It
+also contains the PRU message code numbers.
+
+Since all the syntaxes have different markers for comments, we cannot
+use 'normal' comments here. We've to enclose the comment text in
+preprocessor blocks that never get parsed.
+
+\note We cannot use hexadecimal numbers here since syntaxes are different.
+
+\def PRUIO_IRPT
+\brief The interrupt number to use (25 => /dev/uio5, adapt constructor PruIo::PruIo() in case of changes).
+
+Note that the interrupt channel and mask has to be adapted in file
+pruio.bi in case of any change here.
+
+\def PRUIO_AZ_BALL
+\brief The number of CPU balls to handle (minus one).
+\def PRUIO_AZ_GPIO
+\brief The number of GPIO subsystems (minus one).
+\def PRUIO_AZ_PWMSS
+\brief The number of PWM subsystems (minus one).
+
+\def PRUIO_COM_GPIO_CONF
+\brief The command number to reconfigure a GPIO.
+\def PRUIO_COM_GPIO_OUT
+\brief The command number to set a GPIO output state.
+\def PRUIO_COM_PWM
+\brief Command number to set frequency and duty cycle for a PWM module (IO, RB)
+\def PRUIO_COM_PWM_CAP
+\brief Command number to set frequency and duty cycle for a CAP module in PWM output mode (IO, RB)
+\def PRUIO_COM_CAP
+\brief Command number to set a CAP module in input mode (IO, RB)
+\def PRUIO_COM_QEP
+\brief The command number to set a QEP parameter change for a QEP module in IO mode.
+\def PRUIO_COM_ADC
+\brief The command number to set a ADC-mask reconfiguration in IO mode.
+
+\def PRUIO_DAT_GPIO
+\brief The offset to store GPIO data in PruIo::DRam (IO & MM, `4*4*4` bytes).
+\def PRUIO_DAT_PWM
+\brief The offset to store PWM data in PruIo::DRam (IO, `3*8*4` bytes).
+\def PRUIO_DAT_ADC
+\brief The offset to store ADC data in PruIo::DRam (IO, `4+2*17` bytes).
+\def PRUIO_DAT_ALL
+\brief The offset to store the data block in PruIo::DRam (AdcSet + 4*GpioSet + BallSet + 3*PwmssSet).
+
+\def PRUIO_MSG_INIT_RUN
+\brief Message send by PruIo::PruIo().
+\def PRUIO_MSG_CONF_RUN
+\brief Message send by PruIo::PruIo().
+\def PRUIO_MSG_INIT_OK
+\brief Message send after constructor PruIo::~PruIo.
+\def PRUIO_MSG_CONF_OK
+\brief Message send after PruIo::config() when no mode is set (`parameter Samp = 0`).
+\def PRUIO_MSG_ADC_ERRR
+\brief Message send in case of error in PruIo::config().
+\def PRUIO_MSG_MM_WAIT
+\brief Message send by PruIo::config() in RB and MM mode and after each call to PruIo::mm_start().
+\def PRUIO_MSG_MM_TRG1
+\brief Message send by PruIo::mm_start() while waiting for trigger 1 event.
+\def PRUIO_MSG_MM_TRG2
+\brief Message send by PruIo::mm_start() while waiting for trigger 2 event.
+\def PRUIO_MSG_MM_TRG3
+\brief Message send by PruIo::mm_start() while waiting for trigger 3 event.
+\def PRUIO_MSG_MM_TRG4
+\brief Message send by PruIo::mm_start() while waiting for trigger 4 event.
+\def PRUIO_MSG_IO_OK
+\brief Message send after PruIo::config() in IO mode.
+
+*/
+#endif
+
+#define PRUIO_IRPT 25
+
+#define PRUIO_AZ_BALL  109
+#define PRUIO_AZ_GPIO  3
+#define PRUIO_AZ_PWMSS 2
+
+#define PRUIO_COM_GPIO_CONF 10
+#define PRUIO_COM_GPIO_OUT  11
+#define PRUIO_COM_PWM  30
+#define PRUIO_COM_PWM_CAP  31
+#define PRUIO_COM_CAP  32
+#define PRUIO_COM_QEP  33
+#define PRUIO_COM_ADC  50
+
+#define PRUIO_DAT_GPIO 64
+#define PRUIO_DAT_PWM  128
+#define PRUIO_DAT_ADC  224
+#define PRUIO_DAT_ALL  512
+
+#define PRUIO_MSG_INIT_RUN  4294967295
+#define PRUIO_MSG_CONF_RUN  4294967294
+#define PRUIO_MSG_INIT_OK   4294967293
+#define PRUIO_MSG_CONF_OK   4294967292
+#define PRUIO_MSG_ADC_ERRR  4294967291
+#define PRUIO_MSG_MM_WAIT   4294967290
+#define PRUIO_MSG_MM_TRG1   4294967289
+#define PRUIO_MSG_MM_TRG2   4294967288
+#define PRUIO_MSG_MM_TRG3   4294967287
+#define PRUIO_MSG_MM_TRG4   4294967286
+#define PRUIO_MSG_IO_OK     4294967285

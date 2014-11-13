@@ -1,0 +1,7 @@
+#! /bin/bash
+# set pin P9_14
+echo x0E > /sys/devices/ocp.*/pruio-12.*/state
+# set pin P9_16
+echo x0E > /sys/devices/ocp.*/pruio-13.*/state
+# set pin P9_42
+echo x08 > /sys/devices/ocp.*/pruio-59.*/state
