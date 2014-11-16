@@ -1,0 +1,25 @@
+/* @group Code Colorization */
+
+span.keyword {
+	color: #0000ff
+}
+
+span.keywordtype {
+	color: #808000
+}
+
+span.keywordflow {
+	color: #e08000
+}
+
+span.comment {
+	color: #b0b080
+}
+
+span.preprocessor {
+	color: #20c020
+}
+
+span.stringliteral {
+	color: #ff9020
+}
