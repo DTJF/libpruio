@@ -12,51 +12,14 @@ different components together and provides all declarations.
 #ENDIF
 
 '* Version string.
-#DEFINE PRUIO_VERSION "0.4"
-
-TYPE AS   BYTE Int8    '*< 8 bit signed integer data type
-TYPE AS  SHORT Int16   '*< 16 bit signed integer data type
-TYPE AS   LONG Int32   '*< 32 bit signed integer data type
-TYPE AS  UBYTE UInt8   '*< 8 bit unsigned integer data type
-TYPE AS USHORT UInt16  '*< 16 bit unsigned integer data type
-TYPE AS  ULONG UInt32  '*< 32 bit unsigned integer data type
-TYPE AS SINGLE Float_t '*< float data type
-
-'* Forward declaration.
-TYPE AS PruIo Pruio_
+#DEFINE PRUIO_VERSION "0.2.2"
 
 '* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
-
 ' The PRUSS driver library.
-#INCLUDE ONCE "BBB/prussdrv.bi"
+#include ONCE "BBB/prussdrv.bi"
 ' PRUSS driver interrupt settings.
-#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
-
-'* Constants for pinmuxing: pullup/-down resistors and GPIO states.
-ENUM PinMuxing
-  PRUIO_PULL_DOWN = &b000000 '*< Pulldown resistor connected.
-  PRUIO_NO_PULL   = &b001000 '*< No resistor connected.
-  PRUIO_PULL_UP   = &b010000 '*< Pullup resistor connected.
-  PRUIO_RX_ACTIV  = &b100000 '*< Input receiver enabled.
-  PRUIO_GPIO_OUT0 = 7 + PRUIO_NO_PULL                    '*< GPIO output low (no resistor).
-  PRUIO_GPIO_OUT1 = 7 + PRUIO_NO_PULL + 128              '*< GPIO output high (no resistor).
-  PRUIO_GPIO_IN   = 7 + PRUIO_NO_PULL + PRUIO_RX_ACTIV   '*< GPIO input (no resistor).
-  PRUIO_GPIO_IN_0 = 7 + PRUIO_PULL_DOWN + PRUIO_RX_ACTIV '*< GPIO input (pulldown resistor).
-  PRUIO_GPIO_IN_1 = 7 + PRUIO_PULL_UP + PRUIO_RX_ACTIV   '*< GPIO input (pullup resistor).
-  PRUIO_PIN_RESET = &hFF
-END ENUM
-
-' Common macros, shared with PRU pasm compiler.
-#INCLUDE ONCE "pruio.hp"
-' Header for ADC part.
-#INCLUDE ONCE "pruio_adc.bi"
-' Header for GPIO part.
-#INCLUDE ONCE "pruio_gpio.bi"
-' Header for PWMSS part, containing modules QEP, CAP and PWM.
-#INCLUDE ONCE "pruio_pwmss.bi"
-' Header for TIMER part.
-#INCLUDE ONCE "pruio_timer.bi"
+#include ONCE "BBB/pruss_intc_mapping.bi"
 
 '* The channel for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_CHAN CHANNEL5

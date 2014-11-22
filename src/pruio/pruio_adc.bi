@@ -8,23 +8,6 @@ for the ADC part of the library.
 '/
 
 
-'* The default setting for avaraging.
-#DEFINE PRUIO_DEF_AVRAGE 4
-'* The default value for open delay in channel settings.
-#DEFINE PRUIO_DEF_ODELAY 183
-'* The default value for sample delay in channel settings.
-#DEFINE PRUIO_DEF_SDELAY 0
-'* The default number of samples to use (configures single mode).
-#DEFINE PRUIO_DEF_SAMPLS 1
-'* The default step mask (steps 1 to 8 for AIN-0 to AIN-7, no charge step).
-#DEFINE PRUIO_DEF_STPMSK &b111111110
-'* The default timer value (sampling rate).
-#DEFINE PRUIO_DEF_TIMERV 0
-'* The default bit mode (4 = 16 bit encoding).
-#DEFINE PRUIO_DEF_LSLMOD 4
-'* The default clock divisor (0 = full speed AFE = 2.4 MHz).
-#DEFINE PRUIO_DEF_CLKDIV 0
-
 /'* \brief Structure for a single ADC step configuration, containing
 config and delay registers context.
 
@@ -94,7 +77,7 @@ the related variables.
 
 \since 0.2
 '/
-TYPE AdcUdt
+TYPE AdcUdt_
   AS Pruio_ PTR Top  '*< Pointer to the calling PruIo instance.
   AS AdcSet PTR _
     Init _     '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.

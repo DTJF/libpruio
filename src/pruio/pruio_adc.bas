@@ -7,6 +7,16 @@ Source code file containing the function bodies of the ADC component.
 '/
 
 
+' PruIo global declarations.
+#include ONCE "pruio_globals.bi"
+
+' Header for ADC part.
+#include ONCE "pruio_adc.bi"
+' Header for GPIO part.
+#include ONCE "pruio_gpio.bi"
+' driver header file
+#include ONCE "pruio.bi"
+
 /'* \brief The constructor for the ADC features.
 \param T A pointer of the calling PruIo structure.
 

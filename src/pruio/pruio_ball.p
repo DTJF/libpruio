@@ -22,7 +22,6 @@ BallCopy:
   ADD  Para, Para, 4
 .endm
 
-
 //
 // write BALL configuration
 //

@@ -8,6 +8,17 @@ is in here.
 \since 0.2
 '/
 
+' PruIo global declarations.
+#include ONCE "pruio_globals.bi"
+' Header for PWMSS part, containing modules QEP, CAP and PWM.
+#include ONCE "pruio_pwmss.bi"
+' Header for TIMER part.
+#include ONCE "pruio_timer.bi"
+' driver header file
+#include ONCE "pruio.bi"
+' Header file with convenience macros.
+#include ONCE "pruio_pins.bi"
+
 '* The clock frequency
 #define PWMSS_CLK  100e6
 '* The half clock frequency

@@ -3,9 +3,18 @@
 
 Source code file containing the function bodies of the TIMER component.
 
-\since 0.4
+\since 0.2.2
 '/
 
+
+' PruIo global declarations.
+#include ONCE "pruio_globals.bi"
+' Header for PWMSS part, containing modules QEP, CAP and PWM.
+#include ONCE "pruio_pwmss.bi"
+' Header for TIMER part.
+#include ONCE "pruio_timer.bi"
+' driver header file
+#include ONCE "pruio.bi"
 
 '* The TIMER clock frequency.
 #define TMRSS_CLK  24e6

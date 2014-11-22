@@ -8,6 +8,7 @@ for the GPIO component of the library.
 '/
 
 
+
 /'* \brief Structure for GPIO subsystem registers.
 
 This UDT contains a set of all GPIO subsystem registers. It's used to
@@ -78,7 +79,7 @@ variables.
 
 \since 0.2
 '/
-TYPE GpioUdt
+TYPE GpioUdt_
   AS  Pruio_ PTR Top      '*< Pointer to the calling PruIo instance.
   AS GpioSet PTR _
     Init(PRUIO_AZ_GPIO) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.

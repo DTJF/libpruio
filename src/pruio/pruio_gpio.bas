@@ -7,6 +7,13 @@ Source code file containing the function bodies of the GPIO component.
 '/
 
 
+' PruIo global declarations.
+#include ONCE "pruio_globals.bi"
+' Header for GPIO part.
+#include ONCE "pruio_gpio.bi"
+' driver header file
+#include ONCE "pruio.bi"
+
 /'* \brief The constructor for the GPIO features.
 \param T A pointer of the calling PruIo structure.
 
