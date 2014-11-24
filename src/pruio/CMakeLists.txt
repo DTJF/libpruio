@@ -32,16 +32,6 @@ SET(FBC_BI_EXTRA
   )
 
 
-  #BAS_2_C(C_SRC
-    #SOURCES ${FBC_BAS}
-    #OUT_DIR "CMakeFiles/ccode.dir"
-    #)
-  #ADD_LIBRARY(fbcode OBJECT ${C_SRC})
-  #SET_TARGET_PROPERTIES(fbcode PROPERTIES
-    #COMPILE_FLAGS "-fPIC"
-    #)
-
-
 ADD_CUSTOM_COMMAND(OUTPUT pasm_init.bi
   COMMAND pasm ARGS -V3 -y -CPru_Init pasm_init.p
   COMMAND ${CMAKE_COMMAND} -E touch pruio.bas
@@ -57,6 +47,16 @@ ADD_CUSTOM_COMMAND(OUTPUT pasm_run.bi
 ADD_CUSTOM_TARGET(pasm
   DEPENDS pasm_init.bi pasm_run.bi
   )
+
+  #BAS_2_C(C_SRC
+    #SOURCES ${FBC_BAS}
+    #OUT_DIR "CMakeFiles/ccode.dir"
+    #)
+  #ADD_LIBRARY(fbcode OBJECT ${C_SRC})
+  #SET_TARGET_PROPERTIES(fbcode PROPERTIES
+    #COMPILE_FLAGS "-fPIC"
+    #)
+  #ADD_DEPENDENCIES(fbcode pasm)
 
 ADD_LIBRARY(fbcode OBJECT ${FBC_BAS})
 SET_TARGET_PROPERTIES(fbcode PROPERTIES
