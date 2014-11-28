@@ -1,0 +1,25 @@
+$ cat .gitignore
+
+# Can ignore specific files
+Makefile
+pruio.geany
+cmake_install.cmake
+install_manifest.txt
+
+# Use wildcards as well
+CMake*
+CPack*
+!CMakeLists.txt
+
+# Can also ignore all directories and files in a directory.
+doc/html/**/*
+doc/latex/**/*
+CMakeFiles/**/*
+
+
+libpruio.so
+src/pruio/CMakeFiles/**/*
+src/config/CMakeFiles/**/*
+src/examples/CMakeFiles/**/*
+src/c_examples/CMakeFiles/**/*
+src/c_include/CMakeFiles/**/*
