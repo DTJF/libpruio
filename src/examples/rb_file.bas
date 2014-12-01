@@ -25,7 +25,7 @@ CONST tSamp = 123401 _  '*< The number of samples in the files (per step).
    , NoFile = 2 _       '*< The number of files to write.
    , NamFil = "output." '*< The output file names.
 
-VAR io = NEW PruIo()   '*< Create a PruIo structure, wakeup subsystems.
+VAR io = NEW PruIo()    '*< Create a PruIo structure, wakeup subsystems.
 
 WITH *io
   DO
@@ -54,7 +54,8 @@ WITH *io
     VAR p0 = .Adc->Value _           '*< A pointer to the start of the ring buffer.
       , p1 = p0 + half               '*< A pointer to the middle of the ring buffer.
     FOR n AS INTEGER = 0 TO NoFile - 1
-      VAR fnam = NamFil & n, fnr = FREEFILE
+      VAR fnam = NamFil & n _        '*< The file name.
+         , fnr = FREEFILE            '*< The file number.
       IF OPEN(fnam FOR OUTPUT AS fnr) THEN
         ?"Cannot open " & fnam
       ELSE
@@ -63,8 +64,8 @@ WITH *io
         WHILE i < tInd
           i += half
           IF i > tInd THEN '          fetch the rest (no complete chunk)
-            VAR rest = tInd + half - i _
-              , iEnd = IIF(p1 >= p0, rest, rest + half)
+            VAR rest = tInd + half - i _ '*< The rest of the buffer (in bytes).
+              , iEnd = IIF(p1 >= p0, rest, rest + half) '*< The last byte of the rest.
             WHILE .DRam[0] < iEnd : SLEEP 1 : WEND
             ?"  writing samples " & (tInd - rest) & "-" & (tInd - 1)
             PUT #fnr, , *p0, rest
