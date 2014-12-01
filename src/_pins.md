@@ -155,7 +155,7 @@ resistor, which isn't supported by default. This either needs pinmuxing
 by a customized device tree overlay or it can be achieved by adding
 this new mode to the universal device tree overlay libpruio-0A00.dtbo.
 
-Find details on GPIO hardware in \ArmRef{25}.
+Find details on GPIO hardware in \ArmRef{25}. ???
 
 
 PWM {#SubSecPwm}

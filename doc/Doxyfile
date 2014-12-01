@@ -58,7 +58,7 @@ PROJECT_LOGO           = /home/tom/Projekte/fb/Beagle/libpruio/pruio/doc/img/pru
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = /home/tom/Projekte/fb/Beagle/libpruio
+OUTPUT_DIRECTORY       = .
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -799,8 +799,8 @@ RECURSIVE              = YES
 
 EXCLUDE                = ../src/pruio/pasm_init.bi \
                          ../src/pruio/pasm_run.bi \
-                         ../src/c_wrapper/pruio_pins.h \
-                         ../src/c_wrapper/pruio.hp
+                         ../src/c_include/pruio_pins.h \
+                         ../src/c_include/pruio.hp
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
