@@ -5,13 +5,13 @@
 / {
     compatible = "ti,beaglebone", "ti,beaglebone-black";
 
-    /* identification */
+    // identification
     board-name = "libpruio";
     manufacturer = "TJF";
     part-number = "PruIoBBB";
     version = "00A0";
 
-    /* state the resources this cape uses */
+    // state the resources this cape uses
     exclusive-use =
       "P8.19",
       "P8.13",

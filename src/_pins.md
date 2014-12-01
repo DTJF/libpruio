@@ -51,7 +51,8 @@ works for up to eight steps. The maximum frequency shrinks when
 
 - avaraging of the samples gets applied, or
 - more than eight steps are active, or
-- delays (open or sample) are required.
+- delays (open or sample) are required, or
+- a clock devider is active (see AdcUdt::ADC_CLKDIV).
 
 Find further details on analog lines and the ADC subsystem
 configurations in \ArmRef{12}.

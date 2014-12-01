@@ -107,30 +107,30 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 
 ' The PRUSS driver library.
-#include ONCE "BBB/prussdrv.bi"
+#INCLUDE ONCE "BBB/prussdrv.bi"
 ' PRUSS driver interrupt settings.
-#include ONCE "BBB/pruss_intc_mapping.bi"
+#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
 
 ' PruIo global declarations.
-#include ONCE "pruio_globals.bi"
+#INCLUDE ONCE "pruio_globals.bi"
 ' Header for ADC part.
-#include ONCE "pruio_adc.bi"
+#INCLUDE ONCE "pruio_adc.bi"
 ' Header for GPIO part.
-#include ONCE "pruio_gpio.bi"
+#INCLUDE ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
-#include ONCE "pruio_pwmss.bi"
+#INCLUDE ONCE "pruio_pwmss.bi"
 ' Header for TIMER part.
-#include ONCE "pruio_timer.bi"
+#INCLUDE ONCE "pruio_timer.bi"
 ' driver header file
-#include ONCE "pruio.bi"
+#INCLUDE ONCE "pruio.bi"
 ' Header file with convenience macros.
-#include ONCE "pruio_pins.bi"
+#INCLUDE ONCE "pruio_pins.bi"
 ' Header file with Pru_Init instructions.
-#include ONCE "pasm_init.bi"
+#INCLUDE ONCE "pasm_init.bi"
 ' Header file with Pru_Run instructions.
-#include ONCE "pasm_run.bi"
+#INCLUDE ONCE "pasm_run.bi"
 ' FB include
-#include ONCE "dir.bi"
+#INCLUDE ONCE "dir.bi"
 
 '* \brief Declaration for C runtime function memcpy().
 DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR

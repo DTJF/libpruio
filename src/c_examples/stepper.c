@@ -17,7 +17,6 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-
 Compile by: `gcc -Wall -o stepper stepper.c -lpruio`
 
 */
@@ -30,8 +29,8 @@ Compile by: `gcc -Wall -o stepper stepper.c -lpruio`
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "../c_wrapper/pruio.h"
-#include "../c_wrapper/pruio_pins.h"
+#include "../c_include/pruio.h"
+#include "../c_include/pruio_pins.h"
 
 //! The first pin of the stepper.
 #define P1 P8_08
@@ -114,14 +113,6 @@ int main(int argc, char **argv)
                printf("initialisation failed (%s)\n", Io->Errr); break;}
 
     PIN_OUT(1,0,0,1) //                            initialize pin config
-    //if (pruio_gpio_config(Io, P1, PRUIO_GPIO_OUT1)) {
-                   //printf("failed setting P1 (%s)\n", Io->Errr); break;}
-    //if (pruio_gpio_config(Io, P2, PRUIO_GPIO_OUT0)) {
-                   //printf("failed setting P2 (%s)\n", Io->Errr); break;}
-    //if (pruio_gpio_config(Io, P3, PRUIO_GPIO_OUT0)) {
-                   //printf("failed setting P3 (%s)\n", Io->Errr); break;}
-    //if (pruio_gpio_config(Io, P4, PRUIO_GPIO_OUT1)) {
-                   //printf("failed setting P4 (%s)\n", Io->Errr); break;}
 
     //' pin config OK, transfer local settings to PRU and start PRU driver
     if (pruio_config(Io, 1, 0x1FE, 0, 4)) {

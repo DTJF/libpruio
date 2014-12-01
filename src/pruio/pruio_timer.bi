@@ -69,7 +69,7 @@ variables.
 
 \since 0.4
 '/
-TYPE TimerUdt_
+TYPE TimerUdt
   AS  Pruio_ PTR Top      '*< Pointer to the calling PruIo instance.
   AS TimerSet PTR _
     Init(PRUIO_AZ_TIMER) _'*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.

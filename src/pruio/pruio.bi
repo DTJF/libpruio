@@ -9,6 +9,16 @@ different components together and provides all declarations.
 
 #IFNDEF __PRUIO_COMPILING__
 #INCLIB "pruio"
+' PruIo global declarations.
+#INCLUDE ONCE "pruio_globals.bi"
+' Header for ADC part.
+#INCLUDE ONCE "pruio_adc.bi"
+' Header for GPIO part.
+#INCLUDE ONCE "pruio_gpio.bi"
+' Header for PWMSS part, containing modules QEP, CAP and PWM.
+#INCLUDE ONCE "pruio_pwmss.bi"
+' Header for TIMER part.
+#INCLUDE ONCE "pruio_timer.bi"
 #ENDIF
 
 '* Version string.
@@ -17,9 +27,9 @@ different components together and provides all declarations.
 '* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
 ' The PRUSS driver library.
-#include ONCE "BBB/prussdrv.bi"
+#INCLUDE ONCE "BBB/prussdrv.bi"
 ' PRUSS driver interrupt settings.
-#include ONCE "BBB/pruss_intc_mapping.bi"
+#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
 
 '* The channel for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_CHAN CHANNEL5

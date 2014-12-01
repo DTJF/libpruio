@@ -21,14 +21,21 @@ Released in 2014, December.
 New:
 ----
 
+- Build management added (by CMake).
 - Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
 - Documentation page Pins added.
+- Timer subsystem???
+- QEP module???
+
 
 Changes:
 --------
 
 - Function Gpio->setValue calls Gpio->config() now, in case of improper pinmuxing.
 - New numbers for PRU commands, checking tree now (faster).
+- Pruio_c_wrapper in folder src/pruio now.
+- Folder c_wrapper renamed to c_include.
+- Tools dts_custom.bas and dts_universal.bas read command line argument path.
 
 Bugfixes:
 ---------

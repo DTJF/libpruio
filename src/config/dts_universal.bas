@@ -61,7 +61,7 @@ fbc -w all dts_universal.bas
 '* The version.
 #DEFINE VERS_NAME "00A0"
 '* The folder to place the compiled overlay binary.
-#DEFINE PATH_NAME "/lib/firmware"
+VAR PATH_NAME = "/lib/firmware"
 
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"
@@ -107,5 +107,6 @@ ELSE
   PRINT #fnr, ALL_END;
   CLOSE #fnr
 
+  IF LEN(COMMAND) THEN PATH_NAME = COMMAND
   SHELL("dtc -@ -I dts -O dtb -o " & PATH_NAME & "/" & fnam & ".dtbo " & fnam & ".dts")
 END IF

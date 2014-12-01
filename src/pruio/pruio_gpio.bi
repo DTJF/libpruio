@@ -79,7 +79,7 @@ variables.
 
 \since 0.2
 '/
-TYPE GpioUdt_
+TYPE GpioUdt
   AS  Pruio_ PTR Top      '*< Pointer to the calling PruIo instance.
   AS GpioSet PTR _
     Init(PRUIO_AZ_GPIO) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.

@@ -60,7 +60,7 @@ fbc -w all dts_custom.bas
 #DEFINE VERS_NAME "00A0"
 '* The folder to place the compiled overlay binary.
 '#DEFINE PATH_NAME "/lib/firmware"
-#DEFINE PATH_NAME "./"
+VAR PATH_NAME = "/lib/firmware"
 
 ' create settings for all required pins here
 M(P8_07) = CHR(7 + _I_)  ' example: pin 7 at header P8 in mode 7 as input with pulldown resistor
@@ -96,5 +96,6 @@ ELSE
   PRINT #fnr, ALL_END;
   CLOSE #fnr
 
+  IF LEN(COMMAND) THEN PATH_NAME = COMMAND
   SHELL("dtc -@ -I dts -O dtb -o " & PATH_NAME & "/" & fnam & ".dtbo " & fnam & ".dts")
 END IF

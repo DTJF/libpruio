@@ -6,6 +6,23 @@ pruio.geany
 cmake_install.cmake
 install_manifest.txt
 
+dts_universal
+
+1
+analyse
+button
+io_input
+oszi
+pwm_adc
+pwm_cap
+rb_file
+rb_oszi
+sos
+stepper
+triggers
+pasm_init.bi
+pasm_run.bi
+
 # Use wildcards as well
 CMake*
 CPack*

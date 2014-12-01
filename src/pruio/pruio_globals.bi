@@ -35,13 +35,13 @@ TYPE AS  ULONG UInt32  '*< 32 bit unsigned integer data type
 TYPE AS SINGLE Float_t '*< float data type
 
 '* Forward declaration.
-TYPE AS PruIo Pruio_
-TYPE AS   AdcUdt_ AdcUdt
-TYPE AS  GpioUdt_ GpioUdt
-TYPE AS PwmssUdt_ PwmssUdt
-TYPE AS   PwmMod_ PwmMod
-TYPE AS   CapMod_ CapMod
-TYPE AS TimerUdt_ TimerUdt
+TYPE AS    PruIo Pruio_
+TYPE AS   AdcUdt AdcUdt_
+TYPE AS  GpioUdt GpioUdt_
+TYPE AS PwmssUdt PwmssUdt_
+TYPE AS   PwmMod PwmMod_
+TYPE AS   CapMod CapMod_
+TYPE AS TimerUdt TimerUdt_
 
 '* Constants for pinmuxing: pullup/-down resistors and GPIO states.
 ENUM PinMuxing

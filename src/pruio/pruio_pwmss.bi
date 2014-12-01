@@ -15,7 +15,6 @@ subsystems and its modules when doing simple tasks.
 '/
 
 
-
 /'* \brief Structure for PWMSS subsystem registers.
 
 This UDT contains a set of all PWMSS subsystem registers. Is used to
@@ -162,7 +161,7 @@ PwmMod, CapMod and QepMod for details.
 
 \since 0.2
 '/
-TYPE PwmssUdt_
+TYPE PwmssUdt
   AS Pruio_ PTR Top        '*< Pointer to the calling PruIo instance.
   AS PwmssSet PTR _
     Init(PRUIO_AZ_PWMSS) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
@@ -195,7 +194,7 @@ and duty cycle (load) by a call to function PwmMod::setValue().
 
 \since 0.2
 '/
-TYPE PwmMod_
+TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS ZSTRING PTR _
     E0 = @"pin has no PWM capability" _   '*< common error message
@@ -243,7 +242,7 @@ See \ArmRef{15.3} for hardware details.
 
 \since 0.2
 '/
-TYPE CapMod_
+TYPE CapMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS ZSTRING PTR _
     E0 = @"pin has no CAP capability" _ '*< common error message

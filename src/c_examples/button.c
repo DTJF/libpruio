@@ -10,7 +10,6 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-
 Compile by: `gcc -Wall -o button button.c -lpruio`
 
 */
@@ -24,8 +23,8 @@ Compile by: `gcc -Wall -o button button.c -lpruio`
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "../c_wrapper/pruio.h"
-#include "../c_wrapper/pruio_pins.h"
+#include "../c_include/pruio.h"
+#include "../c_include/pruio_pins.h"
 
 //! The header pin to use.
 #define PIN P8_07

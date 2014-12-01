@@ -77,7 +77,7 @@ the related variables.
 
 \since 0.2
 '/
-TYPE AdcUdt_
+TYPE AdcUdt
   AS Pruio_ PTR Top  '*< Pointer to the calling PruIo instance.
   AS AdcSet PTR _
     Init _     '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
