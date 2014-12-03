@@ -99,7 +99,7 @@ FUNCTION PwmssUdt.initialize cdecl() AS zstring ptr
 END FUNCTION
 
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
-#DEFINE ModeCheck(_B_,_M_) .BallInit[_B_] and &b111 <> _M_
+#DEFINE ModeCheck(_B_,_M_) (.BallConf[_B_] and &b111) <> _M_
 
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
 #DEFINE ModeSet(_B_,_M_) IF .setPin(_B_, _M_) THEN RETURN .Errr
@@ -823,33 +823,63 @@ FUNCTION QepMod.config CDECL( _
   WITH *Top
     static as zstring ptr e
     SELECT CASE AS CONST Ball
-    CASE P8_12 : m = 2
-      if ModeCheck( Ball,4) THEN ModeSet( Ball,&h2C)
-      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,&h2C)
+    CASE P8_12 : m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
+      if ModeCheck( Ball,4) THEN ModeSet( Ball,m)
+      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,m)
       'if .BallInit[ Ball] and &b111 <> 4 then IF .setPin( Ball, &h2C) THEN RETURN .Errr
       'if .BallInit[P8_11] and &b111 <> 4 then IF .setPin(P8_11, &h2C) THEN RETURN .Errr
-    CASE P8_35 : m = 1
-      if ModeCheck( Ball,2) THEN ModeSet( Ball,&h2A)
-      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,&h2A)
+      m = 2
+    CASE P8_35 : m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
+      if ModeCheck( Ball,2) THEN ModeSet( Ball,m)
+      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,m)
       'if .BallInit[ Ball] and &b111 <> 2 then IF .setPin( Ball, &h2A) THEN RETURN .Errr
       'if .BallInit[P8_33] and &b111 <> 2 then IF .setPin(P8_33, &h2A) THEN RETURN .Errr
-    CASE P8_41 : m = 2
-      if ModeCheck( Ball,3) THEN ModeSet( Ball,&h2B)
-      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,&h2B)
+      m = 1
+    CASE P8_41 : m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
+      if ModeCheck( Ball,3) THEN ModeSet( Ball,m)
+      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,m)
       'if .BallInit[ Ball] and &b111 <> 3 then IF .setPin( Ball, &h2B) THEN RETURN .Errr
       'if .BallInit[P8_42] and &b111 <> 3 then IF .setPin(P8_42, &h2B) THEN RETURN .Errr
-    CASE P9_42, 104 : m = 0
-      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,&h29)
-      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,&h29)
+      m = 2
+    CASE P9_42, 104 : m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
+      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,m)
+      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,m)
       'if .BallInit[ 104 ] and &b111 <> 1 then IF .setPin( 104 , &h29) THEN RETURN .Errr
       'if .BallInit[P9_27] and &b111 <> 1 then IF .setPin(P9_27, &h29) THEN RETURN .Errr
+      m = 0
     CASE ELSE :              /' pin has no QEPA capability '/ .Errr = E0 : RETURN .Errr
     END SELECT
   END WITH
-  WITH *Top->PwmSS
-    if 2 <> .Conf(m)->ClVa then _
+  WITH *Top->PwmSS->Conf(m)
+    if 2 <> .ClVa then _
                         Top->Errr = E2 /' PWM not enabled '/ : RETURN E2
 
+  'AS UInt32 _ '' QEP registers (&h180)
+    .QPOSCNT = 0   '*< Position Counter Register (see \ArmRef{15.4.3.1} ).
+    .QPOSINIT = 0  '*< Position Counter Initialization Register (see \ArmRef{15.4.3.2} ).
+    .QPOSMAX = 200 '*< Maximum Position Count Register (see \ArmRef{15.4.3.3} ).
+    '.QPOSCMP = 0   '*< Position-Compare Register 2/1 (see \ArmRef{15.4.3.4} ).
+    '.QPOSILAT = 0  '*< Index Position Latch Register (see \ArmRef{15.4.3.5} ).
+    '.QPOSSLAT = 0  '*< Strobe Position Latch Register (see \ArmRef{15.4.3.6} ).
+    '.QPOSLAT = 0   '*< Position Counter Latch Register (see \ArmRef{15.4.3.7} ).
+    '.QUTMR = 0     '*< Unit Timer Register (see \ArmRef{15.4.3.8} ).
+    '.QUPRD = 0     '*< Unit Period Register (see \ArmRef{15.4.3.9} ).
+  'AS UInt16 = 0
+    '.QWDTMR = 0    '*< Watchdog Timer Register (see \ArmRef{15.4.3.10} ).
+    '.QWDPRD = 0    '*< Watchdog Period Register (see \ArmRef{15.4.3.11} ).
+    .QDECCTL = &b0000000000000000   '*< Decoder Control Register (see \ArmRef{15.4.3.12} ).
+    .QEPCTL  = &b0001000010001000   '*< Control Register (see \ArmRef{15.4.3.14} ).
+    .QCASCTL = &b1000000000000000   '*< Capture Control Register (see \ArmRef{15.4.3.15} ).
+    .QPOSCTL = &b0000000000000000   '*< Position-Compare Control Register (see \ArmRef{15.4.3.15} ).
+    '.QEINT = 0     '*< Interrupt Enable Register (see \ArmRef{15.4.3.16} ).
+    '.QFLG = 0      '*< Interrupt Flag Register (see \ArmRef{15.4.3.17} ).
+    '.QCLR = 0      '*< Interrupt Clear Register (see \ArmRef{15.4.3.18} ).
+    '.QFRC = 0      '*< Interrupt Force Register (see \ArmRef{15.4.3.19} ).
+    '.QEPSTS = 0    '*< Status Register (see \ArmRef{15.4.3.20} ).
+    '.QCTMR = 0     '*< Capture Timer Register (see \ArmRef{15.4.3.21} ).
+    '.QCPRD = 0     '*< Capture Period Register (see \ArmRef{15.4.3.22} ).
+    '.QCTMRLAT = 0  '*< Capture Timer Latch Register (see \ArmRef{15.4.3.23} ).
+    '.QCPRDLAT = 0  '*< Capture Period Latch Register (see \ArmRef{15.4.3.24} ).
   END WITH :                                                    return 0
 END FUNCTION
 
@@ -903,6 +933,7 @@ FUNCTION QepMod.Value CDECL( _
   END WITH
   WITH *Top->PwmSS->Raw(m)
    'if 0 = .CMax then Top->Errr = E2    /' QEP not enabled '/ : RETURN E2
+   if Posi then *Posi = .QPos
 
   END WITH :                                                    return 0
 END FUNCTION

@@ -137,14 +137,14 @@ PwmCopy:
   SUB  DeAd, DeAd, 0x80     // switch to eQEP registers (+0x180)
   //LBBO UR, Para, 2*61, 2    // load QCPRDLAT register
   //SBBO UR, DeAd, 0x40, 2    // write register
-  //LBBO UR, Para, 4*27, 2*4  // load QCLR to QCPRD registers
-  //SBBO UR, DeAd, 0x34, 2*4  // write registers
-  //LBBO UR, Para, 4*23, 2*7  // load QWDTMR to QEINT registers
-  //SBBO UR, DeAd, 0x24, 2*7  // write registers
-  //LBBO UR, Para, 4*21, 4*2  // load QUTMR to QUPRD registers
-  //SBBO UR, DeAd, 0x1C, 4*2  // write registers
-  //LBBO UR, Para, 4*14, 4*4  // load QPOSCNT to QPOSCMP registers
-  //SBBO UR, DeAd, 0x00, 4*4  // write registers
+  LBBO UR, Para, 4*29, 2*4  // load QEINT to QFRC registers
+  SBBO UR, DeAd, 0x30, 2*4  // write registers
+  LBBO UR, Para, 4*23, 2*6  // load QWDTMR to QPOSCTL registers
+  SBBO UR, DeAd, 0x24, 2*6  // write registers
+  LBBO UR, Para, 4*21, 4*2  // load QUTMR to QUPRD registers
+  SBBO UR, DeAd, 0x1C, 4*2  // write registers
+  LBBO UR, Para, 4*14, 4*4  // load QPOSCNT to QPOSCMP registers
+  SBBO UR, DeAd, 0x00, 4*4  // write registers
 
   SUB  DeAd, DeAd, 0x80     // switch to eCAP registers (+0x100)
   LBBO UR, Para, 4*12, 2*2  // load ECCLR & ECFRC registers
@@ -201,9 +201,9 @@ PwmDSet:
   SBBO U4, UR, 4*2, 4*2    // write variables C1 & C2
 
 PwmQep:
-  //ADD  U1, U1, 0x80        // switch to eQEP (0x180)
-  //LBBO U3, U1, 0x00, 4     // get QPOSCNT register
-  //SBBO U3, UR, 4*4, 4*4    // write variables
+  ADD  U1, U1, 0x80        // switch to eQEP (0x180)
+  LBBO U3, U1, 0x00, 4     // get QPOSCNT register
+  SBBO U3, UR, 4*4, 4      // write variables
 
 PwmCnt:
   ADD  PwmC, PwmC, 1       // increase counter

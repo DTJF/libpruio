@@ -145,7 +145,7 @@ TYPE PwmssArr
     CMax _ '*< Maximum counter value.
   , C1 _   '*< On time counter value.
   , C2 _   '*< Period time counter value.
-  , fe1 _  '*< future expansion
+  , QPos _ '*< Position counter (QEP).
   , fe2 _  '*< future expansion
   , fe3 _  '*< future expansion
   , fe4    '*< future expansion
