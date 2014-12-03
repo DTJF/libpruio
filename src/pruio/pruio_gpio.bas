@@ -129,7 +129,7 @@ FUNCTION GpioUdt.config CDECL( _
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
 
     VAR x = Mo AND &b1111111
-    IF x <> .BallConf[Ball] THEN IF .setPin(Ball, x) THEN         RETURN .Errr
+    IF x <> .BallConf[Ball] THEN IF .setPin(Ball, Mo) THEN        RETURN .Errr
     IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV       THEN         RETURN 0 ' input, we're done
 
     WITH *Conf(i)

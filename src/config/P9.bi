@@ -201,7 +201,7 @@ M(P9_26) = CHR( _
 ' ZCZ ball C13
 M(P9_27) = CHR( _
     0 + I_O _ ' mcasp0_fsr
-  , 1 + _I_ _ ' eQEP0B_in
+  , 1 + QEPi _' eQEP0B_in
   , 2 + I_O _ ' mcasp0_axr3
   , 3 + I_O _ ' mcasp1_fsx
   , 4 + I_O _ ' EMU2
@@ -299,7 +299,7 @@ M(106) = CHR( _
 ' pin 42, ZCZ ball B12
 M(104) = CHR( _
     0 + I_O _ ' mcasp0_aclkr
-  , 1 + _I_ _ ' eQEP0A_in
+  , 1 + QEPi _' eQEP0A_in
   , 2 + I_O _ ' mcasp0_axr2
   , 3 + I_O _ ' mcasp1_aclkx
   , 4 + _I_ _ ' mmc0_sdwp

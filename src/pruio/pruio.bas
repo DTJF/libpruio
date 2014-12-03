@@ -269,7 +269,7 @@ CONSTRUCTOR PruIo( _
 
   Pwm = NEW PwmMod(@THIS)
   Cap = NEW CapMod(@THIS)
-  'Qep = NEW QepMod(@THIS)
+  Qep = NEW QepMod(@THIS)
   '& PwmMod::PwmMod(); CapMod::CapMod(); QepMod::QepMod();
 
   prussdrv_pru_wait_event(PRUIO_EVNT)

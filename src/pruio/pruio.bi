@@ -111,7 +111,7 @@ TYPE PruIo
   AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
   AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
-  'AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
+  AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
 
   AS ZSTRING PTR _
     Errr = 0    '*< Pointer for error messages.

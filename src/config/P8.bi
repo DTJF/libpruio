@@ -71,7 +71,7 @@ M(P8_11) = CHR( _
   , 1 + _O_ _ ' lcd_data18
   , 2 + I_O _ ' mmc1_dat5
   , 3 + I_O _ ' mmc2_dat1
-  , 4 + _I_ _ ' eQEP2B_in
+  , 4 + QEPi _' eQEP2B_in
   , 5 + _O_ _ ' pr1_mii0_txd1
   , 6 + _O_ _ ' pr1_pru0_pru_r30_15
   ) & GPIO_DEF
@@ -82,7 +82,7 @@ M(P8_12) = CHR( _
   , 1 + _O_ _ ' lcd_data19
   , 2 + I_O _ ' mmc1_dat4
   , 3 + I_O _ ' mmc2_dat0
-  , 4 + _I_ _ ' eQEP2A_in
+  , 4 + QEPi _' eQEP2A_in
   , 5 + _O_ _ ' pr1_mii0_txd2
   , 6 + _O_ _ ' pr1_pru0_pru_r30_14
   ) & GPIO_DEF
@@ -286,7 +286,7 @@ M(P8_32) = CHR( _
 M(P8_33) = CHR( _
     0 + I_O _ ' lcd_data13
   , 1 + _O_ _ ' gpmc_a17
-  , 2 + _I_ _ ' eQEP1B_in
+  , 2 + QEPi _' eQEP1B_in
   , 3 + I_O _ ' mcasp0_fsr
   , 4 + I_O _ ' mcasp0_axr3
   , 5 + _I_ _ ' pr1_mii0_rxer
@@ -308,7 +308,7 @@ M(P8_34) = CHR( _
 M(P8_35) = CHR( _
     0 + I_O _ ' lcd_data12
   , 1 + _O_ _ ' gpmc_a16
-  , 2 + _I_ _ ' eQEP1A_in
+  , 2 + QEPi _' eQEP1A_in
   , 3 + I_O _ ' mcasp0_aclkr
   , 4 + I_O _ ' mcasp0_axr2
   , 5 + _I_ _ ' pr1_mii0_rxlink
@@ -376,7 +376,7 @@ M(P8_41) = CHR( _
     0 + I_O _ ' lcd_data4
   , 1 + _O_ _ ' gpmc_a4
   , 2 + _O_ _ ' pr1_mii0_txd1
-  , 3 + _I_ _ ' eQEP2A_in
+  , 3 + QEPi _' eQEP2A_in
   , 5 + _O_ _ ' pr1_pru1_pru_r30_4
   , 6 + _I_ _ ' pr1_pru1_pru_r31_4
   ) & GPIO_DEF
@@ -386,7 +386,7 @@ M(P8_42) = CHR( _
     0 + I_O _ ' lcd_data5
   , 1 + _O_ _ ' gpmc_a5
   , 2 + _O_ _ ' pr1_mii0_txd0
-  , 3 + _I_ _ ' eQEP2B_in
+  , 3 + QEPi _' eQEP2B_in
   , 5 + _O_ _ ' pr1_pru1_pru_r30_5
   , 6 + _I_ _ ' pr1_pru1_pru_r31_5
   ) & GPIO_DEF

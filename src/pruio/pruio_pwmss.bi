@@ -260,28 +260,26 @@ TYPE CapMod
 END TYPE
 
 
-'/'* \brief UDT for PWMSS-QEP modules, containing the functions to drive the hardware.
+/'* \brief UDT for PWMSS-QEP modules, containing the functions to drive the hardware.
 
-'This structure contains the functions to drive the hardware of the eQEP
-'modul in the PWMSS subsystems.
+This structure contains the functions to drive the hardware of the eQEP
+modul in the PWMSS subsystems.
 
-'See \ArmRef{15.4} for hardware details.
+See \ArmRef{15.4} for hardware details.
 
-''/
-'TYPE QepMod
-  'AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  'AS ZSTRING PTR _
-    'E0 = @"pin has no QEP capability" _ '*< common error message
-  ', E1 = @"pin not in QEP mode" _       '*< common error message
-  ', E2 = @"QEP not enabled"             '*< common error message
+'/
+TYPE QepMod
+  AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
+  AS ZSTRING PTR _
+    E0 = @"pin has no QEPA capability" _ '*< common error message
+  , E1 = @"pin not in QEP mode" _        '*< common error message
+  , E2 = @"QEP not enabled"              '*< common error message
 
-  'DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
-  'DECLARE FUNCTION config CDECL( _
-    'BYVAL AS UInt8 _
-  ', BYVAL AS UInt8 = 0 _
-  ', BYVAL AS UInt8 = 0 _
-  ', BYVAL AS UInt8 = 0) AS ZSTRING PTR
-  'DECLARE FUNCTION Value CDECL( _
-    'BYVAL AS UInt8 _
-  ', BYVAL AS Float_t PTR = 0) AS ZSTRING PTR
-'END TYPE
+  DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
+  DECLARE FUNCTION config CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
+  DECLARE FUNCTION Value CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS UInt32 PTR = 0) AS ZSTRING PTR
+END TYPE

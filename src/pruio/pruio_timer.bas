@@ -160,7 +160,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
 END FUNCTION
 
 
-  /'* \brief Compute PWM output configuration from a TIMER subsystem (private).
+/'* \brief Compute PWM output configuration from a TIMER subsystem (private).
 \param Nr The TIMER subsystem index.
 \param Freq A pointer to output the frequency value (or 0 for no output).
 \param Duty A pointer to output the duty value (or 0 for no output).

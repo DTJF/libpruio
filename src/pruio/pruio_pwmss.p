@@ -132,8 +132,6 @@ PwmCopy:
   LBBO UR, Para, 4*35, 2*4  // load CM registers
   SBBO UR, DeAd, 0x0E, 2*4  // write registers
   LBBO UR, Para, 4*32, 2*6  // load TB registers
-  //SBBO U1, DeAd, 0x04, 2*4  // write registers TBPHSHR to TBPRD
-  //SBBO UR, DeAd, 0x00, 2*2  // write register TBCTL
   SBBO UR, DeAd, 0x00, 2*6  // write register TBCTL to TBPRD
 
   SUB  DeAd, DeAd, 0x80     // switch to eQEP registers (+0x180)
@@ -154,7 +152,6 @@ PwmCopy:
 
   LBBO UR, Para, 4*10, 2*3  // load ECCTL1 to ECEINT registers
   SBBO UR, DeAd, 0x28, 2*3  // write registers
-  //SBBO UR, DeAd, 0x28, 2*2  // write registers ECCTL1 & ECCTL2
 
   LBBO UR, Para, 4*4, 4*6   // load TSCTR to CAP4 registers
   //SBBO UR, DeAd, 0x00, 4*6  // write registers

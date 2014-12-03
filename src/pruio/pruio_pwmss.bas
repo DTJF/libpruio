@@ -98,11 +98,17 @@ FUNCTION PwmssUdt.initialize cdecl() AS zstring ptr
   END WITH : RETURN 0
 END FUNCTION
 
+'* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
+#DEFINE ModeCheck(_B_,_M_) .BallInit[_B_] and &b111 <> _M_
+
+'* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
+#DEFINE ModeSet(_B_,_M_) IF .setPin(_B_, _M_) THEN RETURN .Errr
+
 
 /'* \brief The constructor for PWM features of the PWMSS.
 \param T A pointer of the calling PruIo structure.
 
-Each of the three Pulse Width Modulation SubSystem (PWMSS) in the CPU
+Each of the three Pulse Width Modulation SubSystems (PWMSS) in the CPU
 contains modules (PWM, CAP and QEP). In order to create a clear API
 from the user point of view, the functions to control the modules are
 separated to extra classes. This UDT contains functions to control the
@@ -135,29 +141,47 @@ FUNCTION PwmMod.Value CDECL( _
   , BYVAL Du AS Float_t PTR = 0) AS ZSTRING PTR
 
   WITH *Top
-    BallCheck(" PWM", .Errr)
+    'BallCheck(" PWM", .Errr)
 
-    VAR m = .BallInit[Ball] AND &b111
+    'VAR m = .BallInit[Ball] AND &b111
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    CASE P8_07 : e = IIF(m = 2, .TimSS->pwm_get(0, Hz, Du), E1)
-    CASE P8_09 : e = IIF(m = 2, .TimSS->pwm_get(1, Hz, Du), E1)
-    CASE P8_10 : e = IIF(m = 2, .TimSS->pwm_get(2, Hz, Du), E1)
-    CASE P8_08 : e = IIF(m = 2, .TimSS->pwm_get(3, Hz, Du), E1)
-    CASE P8_13 : e = IIF(m = 4, pwm_get(2, Hz, Du, 1), E1)
-    CASE P8_19 : e = IIF(m = 4, pwm_get(2, Hz, Du, 0), E1)
-    CASE P8_34 : e = IIF(m = 2, pwm_get(1, Hz, Du, 1), E1)
-    CASE P8_36 : e = IIF(m = 2, pwm_get(1, Hz, Du, 0), E1)
-    CASE P8_45 : e = IIF(m = 3, pwm_get(2, Hz, Du, 1), E1)
-    CASE P8_46 : e = IIF(m = 3, pwm_get(2, Hz, Du, 0), E1)
-    CASE P9_14 : e = IIF(m = 6, pwm_get(1, Hz, Du, 0), E1)
-    CASE P9_16 : e = IIF(m = 6, pwm_get(1, Hz, Du, 1), E1)
-    CASE P9_21 : e = IIF(m = 3, pwm_get(0, Hz, Du, 1), E1)
-    CASE P9_22 : e = IIF(m = 3, pwm_get(0, Hz, Du, 0), E1)
-    CASE P9_29 : e = IIF(m = 1, pwm_get(0, Hz, Du, 1), E1)
-    CASE P9_31 : e = IIF(m = 1, pwm_get(0, Hz, Du, 0), E1)
-    CASE P9_28 : e = IIF(m = 4, cap_get(2, Hz, Du), E1)
-    CASE P9_42 : e = IIF(m = 0, cap_get(0, Hz, Du), E1)
+    'CASE P8_07 : e = IIF(m = 2, .TimSS->pwm_get(0, Hz, Du), E1)
+    'CASE P8_09 : e = IIF(m = 2, .TimSS->pwm_get(1, Hz, Du), E1)
+    'CASE P8_10 : e = IIF(m = 2, .TimSS->pwm_get(2, Hz, Du), E1)
+    'CASE P8_08 : e = IIF(m = 2, .TimSS->pwm_get(3, Hz, Du), E1)
+    'CASE P8_13 : e = IIF(m = 4, pwm_get(2, Hz, Du, 1), E1)
+    'CASE P8_19 : e = IIF(m = 4, pwm_get(2, Hz, Du, 0), E1)
+    'CASE P8_34 : e = IIF(m = 2, pwm_get(1, Hz, Du, 1), E1)
+    'CASE P8_36 : e = IIF(m = 2, pwm_get(1, Hz, Du, 0), E1)
+    'CASE P8_45 : e = IIF(m = 3, pwm_get(2, Hz, Du, 1), E1)
+    'CASE P8_46 : e = IIF(m = 3, pwm_get(2, Hz, Du, 0), E1)
+    'CASE P9_14 : e = IIF(m = 6, pwm_get(1, Hz, Du, 0), E1)
+    'CASE P9_16 : e = IIF(m = 6, pwm_get(1, Hz, Du, 1), E1)
+    'CASE P9_21 : e = IIF(m = 3, pwm_get(0, Hz, Du, 1), E1)
+    'CASE P9_22 : e = IIF(m = 3, pwm_get(0, Hz, Du, 0), E1)
+    'CASE P9_29 : e = IIF(m = 1, pwm_get(0, Hz, Du, 1), E1)
+    'CASE P9_31 : e = IIF(m = 1, pwm_get(0, Hz, Du, 0), E1)
+    'CASE P9_28 : e = IIF(m = 4, cap_get(2, Hz, Du), E1)
+    'CASE P9_42 : e = IIF(m = 0, cap_get(0, Hz, Du), E1)
+    CASE P8_07 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(0, Hz, Du))
+    CASE P8_09 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(1, Hz, Du))
+    CASE P8_10 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(2, Hz, Du))
+    CASE P8_08 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(3, Hz, Du))
+    CASE P8_13 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 1))
+    CASE P8_19 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 0))
+    CASE P8_34 : e = IIF(ModeCheck(Ball,2), E1, pwm_get(1, Hz, Du, 1))
+    CASE P8_36 : e = IIF(ModeCheck(Ball,2), E1, pwm_get(1, Hz, Du, 0))
+    CASE P8_45 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(2, Hz, Du, 1))
+    CASE P8_46 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(2, Hz, Du, 0))
+    CASE P9_14 : e = IIF(ModeCheck(Ball,6), E1, pwm_get(1, Hz, Du, 0))
+    CASE P9_16 : e = IIF(ModeCheck(Ball,6), E1, pwm_get(1, Hz, Du, 1))
+    CASE P9_21 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(0, Hz, Du, 1))
+    CASE P9_22 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(0, Hz, Du, 0))
+    CASE P9_29 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 1))
+    CASE P9_31 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 0))
+    CASE P9_28 : e = IIF(ModeCheck(Ball,4), E1, cap_get(2, Hz, Du))
+    CASE P9_42 : e = IIF(ModeCheck(Ball,0), E1, cap_get(0, Hz, Du))
     CASE ELSE  : e = E0
     END SELECT : IF e THEN .Errr = e :                      RETURN .Errr
   END WITH : RETURN 0
@@ -208,46 +232,82 @@ FUNCTION PwmMod.setValue CDECL( _
   BYVAL Du AS Float_t) AS ZSTRING PTR
 
   WITH *Top
-    BallCheck(" PWM", .Errr)
+    'BallCheck(" PWM", .Errr)
 
-    VAR m = .BallInit[Ball] AND &b111
+    'VAR m = .BallInit[Ball] AND &b111
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    CASE P8_07 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    'CASE P8_07 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN .TimSS->pwm_set(0, Hz, Du)
+    'CASE P8_09 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN .TimSS->pwm_set(1, Hz, Du)
+    'CASE P8_10 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN .TimSS->pwm_set(2, Hz, Du)
+    'CASE P8_08 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN .TimSS->pwm_set(3, Hz, Du)
+    'CASE P8_13 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+      'RETURN pwm_set(2, Hz, -1., Du)
+    'CASE P8_19 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+      'RETURN pwm_set(2, Hz, Du, -1.)
+    'CASE P8_34 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN pwm_set(1, Hz, -1., Du)
+    'CASE P8_36 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+      'RETURN pwm_set(1, Hz, Du, -1.)
+    'CASE P8_45 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+      'RETURN pwm_set(2, Hz, -1., Du)
+    'CASE P8_46 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+      'RETURN pwm_set(2, Hz, Du, -1.)
+    'CASE P9_14 : IF m <> 6 THEN IF .setPin(Ball, &h0E) THEN RETURN .Errr
+      'RETURN pwm_set(1, Hz, Du, -1.)
+    'CASE P9_16 : IF m <> 6 THEN IF .setPin(Ball, &h0E) THEN RETURN .Errr
+      'RETURN pwm_set(1, Hz, -1., Du)
+    'CASE P9_21 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+      'RETURN pwm_set(0, Hz, -1., Du)
+    'CASE P9_22 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+      'RETURN pwm_set(0, Hz, Du, -1.)
+    'CASE P9_29 : IF m <> 1 THEN IF .setPin(Ball, &h09) THEN RETURN .Errr
+      'RETURN pwm_set(0, Hz, -1., Du)
+    'CASE P9_31 : IF m <> 1 THEN IF .setPin(Ball, &h09) THEN RETURN .Errr
+      'RETURN pwm_set(0, Hz, Du, -1.)
+    'CASE P9_28 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+      'RETURN cap_set(2, Hz, Du)
+    'CASE P9_42 : IF m <> 0 THEN IF .setPin(Ball, &h08) THEN RETURN .Errr
+      'RETURN cap_set(0, Hz, Du)
+    CASE P8_07 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(0, Hz, Du)
-    CASE P8_09 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    CASE P8_09 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(1, Hz, Du)
-    CASE P8_10 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    CASE P8_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(2, Hz, Du)
-    CASE P8_08 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(3, Hz, Du)
-    CASE P8_13 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+    CASE P8_13 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN pwm_set(2, Hz, -1., Du)
-    CASE P8_19 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+    CASE P8_19 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN pwm_set(2, Hz, Du, -1.)
-    CASE P8_34 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    CASE P8_34 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN pwm_set(1, Hz, -1., Du)
-    CASE P8_36 : IF m <> 2 THEN IF .setPin(Ball, &h0A) THEN RETURN .Errr
+    CASE P8_36 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN pwm_set(1, Hz, Du, -1.)
-    CASE P8_45 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+    CASE P8_45 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN pwm_set(2, Hz, -1., Du)
-    CASE P8_46 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+    CASE P8_46 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN pwm_set(2, Hz, Du, -1.)
-    CASE P9_14 : IF m <> 6 THEN IF .setPin(Ball, &h0E) THEN RETURN .Errr
+    CASE P9_14 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
       RETURN pwm_set(1, Hz, Du, -1.)
-    CASE P9_16 : IF m <> 6 THEN IF .setPin(Ball, &h0E) THEN RETURN .Errr
+    CASE P9_16 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
       RETURN pwm_set(1, Hz, -1., Du)
-    CASE P9_21 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+    CASE P9_21 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN pwm_set(0, Hz, -1., Du)
-    CASE P9_22 : IF m <> 3 THEN IF .setPin(Ball, &h0B) THEN RETURN .Errr
+    CASE P9_22 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN pwm_set(0, Hz, Du, -1.)
-    CASE P9_29 : IF m <> 1 THEN IF .setPin(Ball, &h09) THEN RETURN .Errr
+    CASE P9_29 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
       RETURN pwm_set(0, Hz, -1., Du)
-    CASE P9_31 : IF m <> 1 THEN IF .setPin(Ball, &h09) THEN RETURN .Errr
+    CASE P9_31 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
       RETURN pwm_set(0, Hz, Du, -1.)
-    CASE P9_28 : IF m <> 4 THEN IF .setPin(Ball, &h0C) THEN RETURN .Errr
+    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN cap_set(2, Hz, Du)
-    CASE P9_42 : IF m <> 0 THEN IF .setPin(Ball, &h08) THEN RETURN .Errr
+    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
       RETURN cap_set(0, Hz, Du)
     END SELECT :                               .Errr = E0 : RETURN .Errr
   END WITH
@@ -554,7 +614,7 @@ END FUNCTION
 /'* \brief The constructor for the CAP feature of the PWMSS.
 \param T A pointer of the calling PruIo structure.
 
-Each of the three Pulse Width Modulation SubSystem (PWMSS) in the CPU
+Each of the three Pulse Width Modulation SubSystems (PWMSS) in the CPU
 contains modules (PWM, CAP and QEP). In order to create a clear API
 from the user point of view, the functions to control the modules are
 separated to extra classes. This UDT contains functions to control the
@@ -598,25 +658,38 @@ FUNCTION CapMod.config CDECL( _
     BYVAL Ball AS UInt8 _
   , BYVAL FLow AS Float_t = 0.) AS ZSTRING PTR
 
-  static as UInt8 m
+  var m = 0
   WITH *Top
-    BallCheck(" CAP", .Errr)
+    'BallCheck(" CAP", .Errr)
 
-    m = .BallInit[Ball] AND &b111
+    'm = .BallInit[Ball] AND &b111
     dim AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    CASE P9_28 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+    'CASE P9_28 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+      'm = 2
+    'CASE P9_42 : IF m <> 0 THEN IF .setPin(Ball, &h20) THEN RETURN .Errr
+    ''CASE    88 : IF m <> 2 THEN IF .setPin(Ball, &h22) THEN RETURN .Errr
+      ''m = 1
+    ''CASE    92 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+      ''m = 2
+    ''CASE    93 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+      ''m = 1
+    ''CASE    98 : IF m <> 3 THEN IF .setPin(Ball, &h23) THEN RETURN .Errr
+      ''m = 2
+    ''CASE    99 : IF m <> 3 THEN IF .setPin(Ball, &h23) THEN RETURN .Errr
+      ''m = 1
+    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
-    CASE P9_42 : IF m <> 0 THEN IF .setPin(Ball, &h20) THEN RETURN .Errr
-    'CASE    88 : IF m <> 2 THEN IF .setPin(Ball, &h22) THEN RETURN .Errr
+    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
+    'CASE    88 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h22)
       'm = 1
-    'CASE    92 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+    'CASE    92 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       'm = 2
-    'CASE    93 : IF m <> 4 THEN IF .setPin(Ball, &h24) THEN RETURN .Errr
+    'CASE    93 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       'm = 1
-    'CASE    98 : IF m <> 3 THEN IF .setPin(Ball, &h23) THEN RETURN .Errr
+    'CASE    98 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h23)
       'm = 2
-    'CASE    99 : IF m <> 3 THEN IF .setPin(Ball, &h23) THEN RETURN .Errr
+    'CASE    99 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h23)
       'm = 1
     CASE ELSE                                : .Errr = E0 : RETURN .Errr
     END SELECT
@@ -672,22 +745,25 @@ FUNCTION CapMod.Value CDECL( _
 
   static as UInt8 m
   WITH *Top
-    BallCheck(" CAP", .Errr)
+    'BallCheck(" CAP", .Errr)
 
-    m = .BallInit[Ball] AND &b111
+    'm = .BallInit[Ball] AND &b111
     dim AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    'CASE P9_08 : IF m <> 2 THEN e = E1 ELSE m = 0
-    'CASE P9_10 : IF m <> 2 THEN e = E1 ELSE m = 1
-    'CASE P9_11 : IF m <> 2 THEN e = E1 ELSE m = 2
-    'CASE P9_09 : IF m <> 2 THEN e = E1 ELSE m = 3
-    CASE P9_28 : IF m <> 4 THEN e = E1 ELSE m = 2
-    CASE P9_42 : IF m <> 0 THEN e = E1
-    'CASE 88 : IF m <> 2 THEN e = E1 ELSE m = 1
-    'CASE 92 : IF m <> 4 THEN e = E1 ELSE m = 2
-    'CASE 93 : IF m <> 4 THEN e = E1 ELSE m = 1
-    'CASE 98 : IF m <> 3 THEN e = E1 ELSE m = 2
-    'CASE 99 : IF m <> 3 THEN e = E1 ELSE m = 1
+    'CASE P9_28 : IF m <> 4 THEN e = E1 ELSE m = 2
+    'CASE P9_42 : IF m <> 0 THEN e = E1
+    ''CASE 88 : IF m <> 2 THEN e = E1 ELSE m = 1
+    ''CASE 92 : IF m <> 4 THEN e = E1 ELSE m = 2
+    ''CASE 93 : IF m <> 4 THEN e = E1 ELSE m = 1
+    ''CASE 98 : IF m <> 3 THEN e = E1 ELSE m = 2
+    ''CASE 99 : IF m <> 3 THEN e = E1 ELSE m = 1
+    CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
+    CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
+    'CASE 88 : IF ModeCheck(Ball,2) THEN e = E1 ELSE m = 1
+    'CASE 92 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
+    'CASE 93 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1
+    'CASE 98 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 2
+    'CASE 99 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 1
     CASE ELSE  : e = E0
     END SELECT : IF e THEN .Errr = e                      : RETURN .Errr
 
@@ -711,115 +787,122 @@ END FUNCTION
 
 
 
-'/'* \brief The constructor for QEP features of the PWMSS.
-'\param T A pointer of the calling PruIo structure.
+/'* \brief The constructor for QEP features of the PWMSS.
+\param T A pointer of the calling PruIo structure.
 
-'FIXME
+Each of the three Pulse Width Modulation SubSystems (PWMSS) in the CPU
+contains modules (PWM, CAP and QEP). In order to create a clear API
+from the user point of view, the functions to control the modules are
+separated to extra classes. This UDT contains functions to control the
+QEP module, which is used to analyse the outputs of quadrature
+encoder pulse trains.
 
-'\since 0.2
-''/
-'CONSTRUCTOR QepMod(BYVAL T AS Pruio_ PTR)
-  'Top = T
-'END CONSTRUCTOR
+The constructor just copies a pointer to the calling main UDT PruIo.
+
+\since 0.2
+'/
+CONSTRUCTOR QepMod(BYVAL T AS Pruio_ PTR)
+  Top = T
+END CONSTRUCTOR
+
 
 '/'* \brief Configure a header pin as eCAP input.
-'\param BallA The CPU ball number for input A.
-'\param BallB The CPU ball number for input B.
-'\param BallI The CPU ball number for index input/output.
-'\param BallS The CPU ball number for strobe input/output.
-'\returns Zero on success (otherwise a string with an error message).
-
-'Each of the three The Pulse Width Modulation SubSystem (PWMSS) in the
-'CPU contains modules (PWM, CAP and QEP). In order to create a clear
-'API from the user point of view, the functions to control the modules
-'are separated to extra classes. This UDT contains functions to control
-'the QEP module.
-
-'The constructor just copies a pointer to the calling main UDT
-'PruIo.
-
-
-'\since 0.2
-''/
-'FUNCTION QepMod.config CDECL( _
-    'BYVAL BallA AS UInt8 _
-  ', BYVAL BallB AS UInt8 = 0 _
-  ', BYVAL BallI AS UInt8 = 0 _
-  ', BYVAL BallS AS UInt8 = 0) AS ZSTRING PTR
-
-  'WITH *Top
-    'var _
-    'Ball = BallA : BallCheck(" QEP", .Errr)
-    'Ball = BallB : BallCheck(" QEP", .Errr)
-    'Ball = BallI : BallCheck(" QEP", .Errr)
-    'Ball = BallS : BallCheck(" QEP", .Errr)
-
-    'var m = .BallInit[BallA] and &b111
-    'static as zstring ptr e
-    'SELECT CASE AS CONST Ball
-    'CASE P8_12 : if m <> 3 then e = E1 else m = 2
-      'e = iif(BallB, iif(.BallInit[BallB] and &b111 <> 3, E1, e), e)
-      'e = iif(BallI, iif(.BallInit[BallI] and &b111 <> 3, E1, e), e)
-      'e = iif(BallS, iif(.BallInit[BallS] and &b111 <> 3, E1, e), e)
-    'CASE P8_41 : if m <> 4 then e = E1 else m = 2
-      'e = iif(BallB, iif(.BallInit[BallB] and &b111 <> 4, E1, e), e)
-      'e = iif(BallI, iif(.BallInit[BallI] and &b111 <> 4, E1, e), e)
-      'e = iif(BallS, iif(.BallInit[BallS] and &b111 <> 4, E1, e), e)
-    'CASE P8_35 : if m <> 6 then e = E1 else m = 1
-      'e = iif(BallB, iif(.BallInit[BallB] and &b111 <> 6, E1, e), e)
-      'e = iif(BallI, iif(.BallInit[BallI] and &b111 <> 6, E1, e), e)
-      'e = iif(BallS, iif(.BallInit[BallS] and &b111 <> 6, E1, e), e)
-    'CASE P9_42 : if m <> 1 then e = E1 else m = 0
-      'e = iif(BallB, iif(.BallInit[BallB] and &b111 <> 1, E1, e), e)
-      'e = iif(BallI, iif(.BallInit[BallI] and &b111 <> 1, E1, e), e)
-      'e = iif(BallS, iif(.BallInit[BallS] and &b111 <> 1, E1, e), e)
-    'CASE ELSE  : e = E0
-    'END SELECT : if e then .Errr = e :                      RETURN .Errr
-
-  'END WITH
-  'WITH *Top->PwmSS
-    'if 2 <> .Conf(m)->ClVa then _
-                        'Top->Errr = E2 /' PWM not enabled '/ : RETURN E2
-
-  'END WITH :                                                    return 0
-'END FUNCTION
-
-
-
-'/'* \brief Analyse a digital pulse train, get frequency and duty cycle.
-'\param Ball The CPU ball number to test.
-'\param Posi A pointer to store the position value (or NULL).
+'\param Ball The CPU ball number for input A.
+'\param Mo The QEP modus.
 '\returns Zero on success (otherwise a string with an error message).
 
 'FIXME
 
 '\since 0.2
 ''/
-'FUNCTION QepMod.Value CDECL( _
-    'BYVAL Ball AS UInt8 _
-  ', BYVAL Posi AS Float_t PTR = 0) AS ZSTRING PTR
+FUNCTION QepMod.config CDECL( _
+    BYVAL Ball AS UInt8 _
+  , BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
 
-  'WITH *Top
-    'BallCheck(" QEP", .Errr)
+  var m = 0
+  WITH *Top
+    static as zstring ptr e
+    SELECT CASE AS CONST Ball
+    CASE P8_12 : m = 2
+      if ModeCheck( Ball,4) THEN ModeSet( Ball,&h2C)
+      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,&h2C)
+      'if .BallInit[ Ball] and &b111 <> 4 then IF .setPin( Ball, &h2C) THEN RETURN .Errr
+      'if .BallInit[P8_11] and &b111 <> 4 then IF .setPin(P8_11, &h2C) THEN RETURN .Errr
+    CASE P8_35 : m = 1
+      if ModeCheck( Ball,2) THEN ModeSet( Ball,&h2A)
+      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,&h2A)
+      'if .BallInit[ Ball] and &b111 <> 2 then IF .setPin( Ball, &h2A) THEN RETURN .Errr
+      'if .BallInit[P8_33] and &b111 <> 2 then IF .setPin(P8_33, &h2A) THEN RETURN .Errr
+    CASE P8_41 : m = 2
+      if ModeCheck( Ball,3) THEN ModeSet( Ball,&h2B)
+      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,&h2B)
+      'if .BallInit[ Ball] and &b111 <> 3 then IF .setPin( Ball, &h2B) THEN RETURN .Errr
+      'if .BallInit[P8_42] and &b111 <> 3 then IF .setPin(P8_42, &h2B) THEN RETURN .Errr
+    CASE P9_42, 104 : m = 0
+      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,&h29)
+      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,&h29)
+      'if .BallInit[ 104 ] and &b111 <> 1 then IF .setPin( 104 , &h29) THEN RETURN .Errr
+      'if .BallInit[P9_27] and &b111 <> 1 then IF .setPin(P9_27, &h29) THEN RETURN .Errr
+    CASE ELSE :              /' pin has no QEPA capability '/ .Errr = E0 : RETURN .Errr
+    END SELECT
+  END WITH
+  WITH *Top->PwmSS
+    if 2 <> .Conf(m)->ClVa then _
+                        Top->Errr = E2 /' PWM not enabled '/ : RETURN E2
 
-    'var m = .BallInit[Ball] and &b111
-    'static as zstring ptr e
-    'SELECT CASE AS CONST Ball
-    'CASE P8_12 : if m <> 3 then e = E1 else m = 2
-    'CASE P8_41 : if m <> 4 then e = E1 else m = 2
-    'CASE P8_35 : if m <> 6 then e = E1 else m = 1
-    'CASE P9_42 : if m <> 1 then e = E1 else m = 0
-    'CASE ELSE  : e = E0
-    'END SELECT : if e then .Errr = e :                      RETURN .Errr
+  END WITH :                                                    return 0
+END FUNCTION
 
-    'IF .DRam[0] > PRUIO_MSG_IO_OK THEN
-      'if Posi then *Posi = 0
-                           '.Errr = @"IO mode not running" : return .Errr
-    'end if
 
-  'END WITH
-  'WITH *Top->PwmSS->Raw(m)
-   ''if 0 = .CMax then Top->Errr = E2    /' QEP not enabled '/ : RETURN E2
 
-  'END WITH :                                                    return 0
-'END FUNCTION
+/'* \brief Analyse a digital pulse train, get frequency and duty cycle.
+\param Ball The CPU ball number to test.
+\param Posi A pointer to store the position value (or NULL).
+\returns Zero on success (otherwise a string with an error message).
+
+FIXME
+
+\since 0.2
+'/
+FUNCTION QepMod.Value CDECL( _
+    BYVAL Ball AS UInt8 _
+  , BYVAL Posi AS UInt32 PTR = 0) AS ZSTRING PTR
+
+  static as integer m = 0
+  WITH *Top
+    static as zstring ptr e
+    SELECT CASE AS CONST Ball
+    CASE P8_12
+      if ModeCheck( Ball,4) then e = E1 : exit select
+      if ModeCheck(P8_11,4) then e = E1 else m = 2
+      'if .BallInit[ Ball] and &b111 <> 4 then e = E1 : exit select
+      'if .BallInit[P8_11] and &b111 <> 4 then e = E1 else m = 2
+    CASE P8_35
+      if ModeCheck( Ball,2) then e = E1 : exit select
+      if ModeCheck(P8_33,2) then e = E1 else m = 1
+      'if .BallInit[ Ball] and &b111 <> 2 then e = E1 : exit select
+      'if .BallInit[P8_33] and &b111 <> 2 then e = E1 else m = 1
+    CASE P8_41
+      if ModeCheck( Ball,3) then e = E1 : exit select
+      if ModeCheck(P8_42,3) then e = E1 else m = 2
+      'if .BallInit[ Ball] and &b111 <> 3 then e = E1 : exit select
+      'if .BallInit[P8_42] and &b111 <> 3 then e = E1 else m = 2
+    CASE P9_42
+      if ModeCheck( 104 ,1) then e = E1 : exit select
+      if ModeCheck(P9_27,1) then e = E1 else m = 0
+      'if .BallInit[ 104 ] and &b111 <> 1 then e = E1 : exit select
+      'if .BallInit[P9_27] and &b111 <> 1 then e = E1 else m = 0
+    CASE ELSE  : e = E0
+    END SELECT : if e then .Errr = e :                      RETURN .Errr
+
+    IF .DRam[0] > PRUIO_MSG_IO_OK THEN
+      if Posi then *Posi = 0
+                           .Errr = @"IO mode not running" : return .Errr
+    end if
+
+  END WITH
+  WITH *Top->PwmSS->Raw(m)
+   'if 0 = .CMax then Top->Errr = E2    /' QEP not enabled '/ : RETURN E2
+
+  END WITH :                                                    return 0
+END FUNCTION

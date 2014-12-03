@@ -36,6 +36,7 @@ Changes:
 - Pruio_c_wrapper in folder src/pruio now.
 - Folder c_wrapper renamed to c_include.
 - Tools dts_custom.bas and dts_universal.bas read command line argument path.
+- Device tree overlay: QEP input pins have no restistor now.
 
 Bugfixes:
 ---------
@@ -46,6 +47,7 @@ Bugfixes:
 - Example pwm_adc: frequency interferences fixed for A + B channel.
 - Clock value for ADC subsystem corrected (greater sampling rates up to 200 kHz).
 - Device tree overlay file name fixed (now libpruio-00A0.dtbo).
+- Gpio::config() works with PRUIO_PIN_RESET now.
 
 
 libpruio-0.2 {#SecV-0-2}
@@ -74,6 +76,7 @@ Changes:
 - Version 0.0 examples adapted (*1*, *analyse*, *button*, *io_input*, *sos*, *stepper*, *oszi*, *triggers*).
 - Adaptions for new FreeBASIC compiler fbc-1.00.
 - Access to all subsystem registers supported.
+- Optimized error checking in PwmMod and CapMod functions.
 
 Bugfixes:
 ---------

@@ -420,7 +420,7 @@ typedef struct capMod capMod;
 
 /** \brief Wrapper structure for QepMod.
 
-\since 0.2
+\since 0.2.2
 */
 typedef struct qepMod qepMod;
 
@@ -490,7 +490,7 @@ typedef struct pruIo{
   timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
   pwmMod* Pwm;     //!< Pointer to the ePWM module structure (in PWMSS subsystems).
   capMod* Cap;     //!< Pointer to the eCAP module structure (in PWMSS subsystems).
-  //qepMod* Qep;//!< pointer to the eQEP module structure (in PWMSS subsystems)
+  qepMod* Qep;      //!< pointer to the eQEP module structure (in PWMSS subsystems)
 
   char* Errr;      //!< Pointer for error messages.
   uint32* DRam;    //!< Pointer to access PRU DRam.

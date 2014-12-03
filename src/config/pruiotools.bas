@@ -93,7 +93,7 @@ ENUM
   TMRo = _O_ '*< setting for a TIMER output pin.
   CAPi = _I_ '*< setting for a CAP input pin.
   CAPo = _O_ '*< setting for a CAP output pin.
-  QEPi = _I_ '*< setting for a QEP input pin.
+  QEPi = IOD '*< setting for a QEP input pin.
   QEPo = _O_ '*< setting for a QEP output pin (sync).
   PWMi = _I_ '*< setting for a PWM input pin (sync).
   PWMo = _O_ '*< setting for a PWM output pin.

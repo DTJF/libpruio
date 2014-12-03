@@ -91,7 +91,7 @@
         B0C_09: 0C_09 {pinctrl-single,pins = <0x030 0x09>;};
         B0C_2A: 0C_2A {pinctrl-single,pins = <0x030 0x2A>;};
         B0C_2B: 0C_2B {pinctrl-single,pins = <0x030 0x2B>;};
-        B0C_24: 0C_24 {pinctrl-single,pins = <0x030 0x24>;};
+        B0C_2C: 0C_2C {pinctrl-single,pins = <0x030 0x2C>;};
         B0C_0D: 0C_0D {pinctrl-single,pins = <0x030 0x0D>;};
         B0C_0E: 0C_0E {pinctrl-single,pins = <0x030 0x0E>;};
         B0C_2F: 0C_2F {pinctrl-single,pins = <0x030 0x2F>;};
@@ -102,7 +102,7 @@
         B0D_09: 0D_09 {pinctrl-single,pins = <0x034 0x09>;};
         B0D_2A: 0D_2A {pinctrl-single,pins = <0x034 0x2A>;};
         B0D_2B: 0D_2B {pinctrl-single,pins = <0x034 0x2B>;};
-        B0D_24: 0D_24 {pinctrl-single,pins = <0x034 0x24>;};
+        B0D_2C: 0D_2C {pinctrl-single,pins = <0x034 0x2C>;};
         B0D_0D: 0D_0D {pinctrl-single,pins = <0x034 0x0D>;};
         B0D_0E: 0D_0E {pinctrl-single,pins = <0x034 0x0E>;};
         B0D_2F: 0D_2F {pinctrl-single,pins = <0x034 0x2F>;};
@@ -113,7 +113,7 @@
         B0E_09: 0E_09 {pinctrl-single,pins = <0x038 0x09>;};
         B0E_2A: 0E_2A {pinctrl-single,pins = <0x038 0x2A>;};
         B0E_2B: 0E_2B {pinctrl-single,pins = <0x038 0x2B>;};
-        B0E_24: 0E_24 {pinctrl-single,pins = <0x038 0x24>;};
+        B0E_2C: 0E_2C {pinctrl-single,pins = <0x038 0x2C>;};
         B0E_0C: 0E_0C {pinctrl-single,pins = <0x038 0x0C>;};
         B0E_0D: 0E_0D {pinctrl-single,pins = <0x038 0x0D>;};
         B0E_26: 0E_26 {pinctrl-single,pins = <0x038 0x26>;};
@@ -125,7 +125,7 @@
         B0F_09: 0F_09 {pinctrl-single,pins = <0x03C 0x09>;};
         B0F_2A: 0F_2A {pinctrl-single,pins = <0x03C 0x2A>;};
         B0F_2B: 0F_2B {pinctrl-single,pins = <0x03C 0x2B>;};
-        B0F_24: 0F_24 {pinctrl-single,pins = <0x03C 0x24>;};
+        B0F_2C: 0F_2C {pinctrl-single,pins = <0x03C 0x2C>;};
         B0F_0C: 0F_0C {pinctrl-single,pins = <0x03C 0x0C>;};
         B0F_25: 0F_25 {pinctrl-single,pins = <0x03C 0x25>;};
         B0F_0D: 0F_0D {pinctrl-single,pins = <0x03C 0x0D>;};
@@ -321,7 +321,7 @@
         B66_27: 66_27 {pinctrl-single,pins = <0x198 0x27>;};
         B66_0F: 66_0F {pinctrl-single,pins = <0x198 0x0F>;};
         B68_28: 68_28 {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x28>;};
-        B68_21: 68_21 {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x21>;};
+        B68_29: 68_29 {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x29>;};
         B68_2A: 68_2A {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x2A>;};
         B68_2B: 68_2B {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x2B>;};
         B68_24: 68_24 {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x24>;};
@@ -332,7 +332,7 @@
         B68_27: 68_27 {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x27>;};
         B68_0F: 68_0F {pinctrl-single,pins = <0x164 0x2F  0x1A0 0x0F>;};
         B69_28: 69_28 {pinctrl-single,pins = <0x1A4 0x28>;};
-        B69_21: 69_21 {pinctrl-single,pins = <0x1A4 0x21>;};
+        B69_29: 69_29 {pinctrl-single,pins = <0x1A4 0x29>;};
         B69_2A: 69_2A {pinctrl-single,pins = <0x1A4 0x2A>;};
         B69_2B: 69_2B {pinctrl-single,pins = <0x1A4 0x2B>;};
         B69_2C: 69_2C {pinctrl-single,pins = <0x1A4 0x2C>;};
@@ -343,7 +343,7 @@
         B69_27: 69_27 {pinctrl-single,pins = <0x1A4 0x27>;};
         B69_0F: 69_0F {pinctrl-single,pins = <0x1A4 0x0F>;};
         B6A_28: 6A_28 {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x28>;};
-        B6A_21: 6A_21 {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x21>;};
+        B6A_29: 6A_29 {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x29>;};
         B6A_09: 6A_09 {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x09>;};
         B6A_2B: 6A_2B {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x2B>;};
         B6A_2C: 6A_2C {pinctrl-single,pins = <0x1B4 0x2F  0x1A8 0x2C>;};
@@ -432,12 +432,12 @@
         pruio-0C {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x09", "x2A", "x2B", "x24", "x0D", "x0E", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x09", "x2A", "x2B", "x2C", "x0D", "x0E", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B0C_28>;
           pinctrl-1 = <&B0C_09>;
           pinctrl-2 = <&B0C_2A>;
           pinctrl-3 = <&B0C_2B>;
-          pinctrl-4 = <&B0C_24>;
+          pinctrl-4 = <&B0C_2C>;
           pinctrl-5 = <&B0C_0D>;
           pinctrl-6 = <&B0C_0E>;
           pinctrl-7 = <&B0C_2F>;
@@ -448,12 +448,12 @@
         pruio-0D {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x09", "x2A", "x2B", "x24", "x0D", "x0E", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x09", "x2A", "x2B", "x2C", "x0D", "x0E", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B0D_28>;
           pinctrl-1 = <&B0D_09>;
           pinctrl-2 = <&B0D_2A>;
           pinctrl-3 = <&B0D_2B>;
-          pinctrl-4 = <&B0D_24>;
+          pinctrl-4 = <&B0D_2C>;
           pinctrl-5 = <&B0D_0D>;
           pinctrl-6 = <&B0D_0E>;
           pinctrl-7 = <&B0D_2F>;
@@ -464,12 +464,12 @@
         pruio-0E {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x09", "x2A", "x2B", "x24", "x0C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x09", "x2A", "x2B", "x2C", "x0C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B0E_28>;
           pinctrl-1 = <&B0E_09>;
           pinctrl-2 = <&B0E_2A>;
           pinctrl-3 = <&B0E_2B>;
-          pinctrl-4 = <&B0E_24>;
+          pinctrl-4 = <&B0E_2C>;
           pinctrl-5 = <&B0E_0C>;
           pinctrl-6 = <&B0E_0D>;
           pinctrl-7 = <&B0E_26>;
@@ -481,12 +481,12 @@
         pruio-0F {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x09", "x2A", "x2B", "x24", "x0C", "x25", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x09", "x2A", "x2B", "x2C", "x0C", "x25", "x0D", "x26", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B0F_28>;
           pinctrl-1 = <&B0F_09>;
           pinctrl-2 = <&B0F_2A>;
           pinctrl-3 = <&B0F_2B>;
-          pinctrl-4 = <&B0F_24>;
+          pinctrl-4 = <&B0F_2C>;
           pinctrl-5 = <&B0F_0C>;
           pinctrl-6 = <&B0F_25>;
           pinctrl-7 = <&B0F_0D>;
@@ -780,9 +780,9 @@
         pruio-68 {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x21", "x2A", "x2B", "x24", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x29", "x2A", "x2B", "x24", "x0D", "x26", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B68_28>;
-          pinctrl-1 = <&B68_21>;
+          pinctrl-1 = <&B68_29>;
           pinctrl-2 = <&B68_2A>;
           pinctrl-3 = <&B68_2B>;
           pinctrl-4 = <&B68_24>;
@@ -796,9 +796,9 @@
         pruio-69 {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x21", "x2A", "x2B", "x2C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x29", "x2A", "x2B", "x2C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B69_28>;
-          pinctrl-1 = <&B69_21>;
+          pinctrl-1 = <&B69_29>;
           pinctrl-2 = <&B69_2A>;
           pinctrl-3 = <&B69_2B>;
           pinctrl-4 = <&B69_2C>;
@@ -812,9 +812,9 @@
         pruio-6A {
           compatible = "bone-pinmux-helper";
           status = "okay";
-          pinctrl-names = "x28", "x21", "x09", "x2B", "x2C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-names = "x28", "x29", "x09", "x2B", "x2C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
           pinctrl-0 = <&B6A_28>;
-          pinctrl-1 = <&B6A_21>;
+          pinctrl-1 = <&B6A_29>;
           pinctrl-2 = <&B6A_09>;
           pinctrl-3 = <&B6A_2B>;
           pinctrl-4 = <&B6A_2C>;

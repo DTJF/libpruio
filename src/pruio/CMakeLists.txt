@@ -20,6 +20,7 @@ SET(FBC_BAS
 SET(FBC_BI
     "pruio.hp"
     "pruio.bi"
+    "pruio_globals.bi"
     "pruio_pins.bi"
     "pruio_adc.bi"
     "pruio_gpio.bi"

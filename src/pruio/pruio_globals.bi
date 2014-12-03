@@ -40,6 +40,7 @@ TYPE AS  GpioUdt GpioUdt_  '*< Forward declaration.
 TYPE AS PwmssUdt PwmssUdt_ '*< Forward declaration.
 TYPE AS   PwmMod PwmMod_   '*< Forward declaration.
 TYPE AS   CapMod CapMod_   '*< Forward declaration.
+TYPE AS   QepMod QepMod_   '*< Forward declaration.
 TYPE AS TimerUdt TimerUdt_ '*< Forward declaration.
 
 '* Constants for pinmuxing: pullup/-down resistors and GPIO states.
