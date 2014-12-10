@@ -84,15 +84,27 @@ ELSE
   NEXT
 
   PRINT #fnr, FRAG0_START;
-  PRINT #fnr, !"\n        " & FILE_NAME &": " & FILE_NAME & "_pins" _
-             & " {pinctrl-single,pins = <";
+  'PRINT #fnr, !"\n        " & FILE_NAME &": " & FILE_NAME & "_pins" _
+             '& " {pinctrl-single,pins = <";
+
+  'FOR i AS LONG = 0 TO UBOUND(M)
+    'IF LEN(M(i)) THEN PRINT #fnr, f0custom(i);
+  'NEXT
+
+  'PRINT #fnr, !"\n        >;};";
 
   FOR i AS LONG = 0 TO UBOUND(M)
-    IF LEN(M(i)) THEN PRINT #fnr, f0custom(i);
+    IF LEN(M(i)) THEN PRINT #fnr, f0entry(i);
   NEXT
 
-  PRINT #fnr, !"\n        >;};";
   PRINT #fnr, FRAG0_END;
+  PRINT #fnr, FRAG1_START;
+
+  FOR i AS LONG = 0 TO UBOUND(M)
+    IF LEN(M(i)) THEN PRINT #fnr, f1entry(i);
+  NEXT
+
+  PRINT #fnr, FRAG1_END;
   PRINT #fnr, ALL_END;
   CLOSE #fnr
 

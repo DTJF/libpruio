@@ -126,6 +126,6 @@ Thanks go to:
   config-pin tool.
 
 - The libpruio users for testing, reporting bugs and sending ideas
-  to improve it.
+  to improve it. (Special thanks to Emir Elkholy and Nils Kohrs.)
 
 - All others I forgot to mention.

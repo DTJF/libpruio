@@ -157,7 +157,6 @@ this new mode to the universal device tree overlay libpruio-0A00.dtbo.
 
 Find details on GPIO hardware in \ArmRef{25}. ???
 
-
 PWM {#SubSecPwm}
 ---
 
@@ -197,3 +196,10 @@ CPU
 | ----- | :------------: | :----------------- |
 | P8_07 | TIMER-4        | 0.??? to ?????? Hz |
 | P9_42 | PWMSS-0, CAP   | 0.??? to ?????? Hz |
+
+
+QEP {#SubSecQep}
+---
+
+QEP stands for Quadrature Encoder Pulse measurement. QEP is available on a
+

@@ -202,8 +202,53 @@ PwmDSet:
 
 PwmQep:
   ADD  U1, U1, 0x80        // switch to eQEP (0x180)
-  LBBO U3, U1, 0x00, 4     // get QPOSCNT register
-  SBBO U3, UR, 4*4, 4      // write variables
+  //LBBO U3, U1, 0x00, 4     // get QPOSCNT register
+  //SBBO U3, UR, 4*4, 4      // write variables
+  //LBBO U4, U1, 0x18, 4     // get QPOSCNT register
+  //LBBO U4.w2, U1, 0x32, 2     // get QFLG register
+  //LBBO U4.w0, U1, 0x38, 2     // get QEPSTS register
+  //LBBO U3, U1, 0x18, 4     // get QPOSCNT register
+  //SBBO U3, UR, 4*5, 4      // write variables
+  //LBBO U5, U1, 0x3A, 2*4   // get QCTMR to QCPRDLAT registers
+  //LBBO U3, U1, 0x3A, 2*4   // get QCTMR to QCPRDLAT registers
+  //SBBO U3, UR, 4*6 , 2*4   // write variables
+
+  LBBO U5, U1, 0x32, 2     // get QFLG register
+  QBBC QepWrite, U5.t11    // if no unit timer event -> skip
+
+  LBBO U4, UR,  4*5, 4     // load old QPOSLAT
+  LBBO U3, U1, 0x18, 4     // load new QPOSLAT
+
+  QBBC QepUnder, U5.t6     // if no overflow -> check underflow
+  LBBO U2, U1, 0x08, 4     // load QPOSMAX register
+  ADD  U2, U2, 1           // increase QPOSMAX
+  SUB  U4, U4, U2          // adapt old value
+  JMP  QepPrd
+QepUnder:
+  QBBC QepPrd, U5.t5       // if no underflow -> skip
+  LBBO U2, U1, 0x08, 4     // load QPOSMAX register
+  ADD  U2, U2, 1           // increase QPOSMAX
+  ADD  U4, U4, U2          // adapt old value
+
+QepPrd:
+  LBBO U2, U1, 0x38, 2     // get QEPSTS register
+  QBBC QepNoVal, U2.t7     // if no event -> no value
+  QBBS QepNoVal, U2.t3     // if CTMR overflow -> no value
+  QBBS QepNoVal, U2.t2     // if direction changed -> no value
+  LBBO U5.w2, U1, 0x40, 2  // load QCPRDLAT
+  JMP  QepSkip             // continue
+QepNoVal:
+  LDI  U5, 0x0             // load minimum value
+QepSkip:
+  LDI  U2, 0b10001100      // bit mask to reset QEPSTS
+  SBBO U2, U1, 0x38, 2     // reset sticky QEPSTS flags
+  LDI  U2, 0b100001101001  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
+  SBBO U2, U1, 0x34, 2     // clear QCLR
+  SBBO U3, UR, 4*5 , 4*3   // write variables
+
+QepWrite:
+  LBBO U3, U1, 0x00, 4       // get QPOSCNT register
+  SBBO U3, UR, 4*4 , 4       // write variables
 
 PwmCnt:
   ADD  PwmC, PwmC, 1       // increase counter

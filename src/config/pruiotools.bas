@@ -114,28 +114,6 @@ END ENUM
 DIM SHARED AS STRING M(109)
 
 
-
-/'* \brief Create lines for fragment0 for all settings of a pin.
-\param I The index (ball number) of the pin in global array M.
-\returns A string containing several lines with pin settings for fragment0.
-
-FIXME
-
-'/
-FUNCTION f0custom(BYVAL I AS UBYTE) AS STRING
-  VAR x = HEX(ASC(M(I)), 2) _
-   , b4 = HEX(I * 4, 3)
-
-  SELECT CASE AS CONST I
-  CASE  89 : b4 = "1A0 0x2F  0x" & b4
-  CASE 104 : b4 = "164 0x2F  0x" & b4
-  CASE 106 : b4 = "1B4 0x2F  0x" & b4
-  CASE 108 : b4 = "1A8 0x2F  0x" & b4
-  END SELECT
-  RETURN !"\n          0x" & b4 & " 0x" & x
-END FUNCTION
-
-
 /'* \brief Create lines for fragment0 for all settings of a pin.
 \param I The index (ball number) of the pin in global array M.
 \returns A string containing several lines with pin settings for fragment0.
@@ -170,8 +148,6 @@ END FUNCTION
 \returns A string containing an entry with pin settings for fragment1.
 
 FIXME
-
-\note The maximum number of configurations for a pin is 36.
 
 '/
 FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING

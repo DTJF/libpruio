@@ -74,7 +74,7 @@ TYPE PwmssSet
   , QWDPRD _    '*< Watchdog Period Register (see \ArmRef{15.4.3.11} ).
   , QDECCTL _   '*< Decoder Control Register (see \ArmRef{15.4.3.12} ).
   , QEPCTL _    '*< Control Register (see \ArmRef{15.4.3.14} ).
-  , QCASCTL _   '*< Capture Control Register (see \ArmRef{15.4.3.15} ).
+  , QCAPCTL _   '*< Capture Control Register (see \ArmRef{15.4.3.15} ).
   , QPOSCTL _   '*< Position-Compare Control Register (see \ArmRef{15.4.3.15} ).
   , QEINT _     '*< Interrupt Enable Register (see \ArmRef{15.4.3.16} ).
   , QFLG _      '*< Interrupt Flag Register (see \ArmRef{15.4.3.17} ).
@@ -146,9 +146,9 @@ TYPE PwmssArr
   , C1 _   '*< On time counter value.
   , C2 _   '*< Period time counter value.
   , QPos _ '*< Position counter (QEP).
-  , fe2 _  '*< future expansion
-  , fe3 _  '*< future expansion
-  , fe4    '*< future expansion
+  , NPos _ '*< New position latch.
+  , OPos _ '*< Old position latch.
+  , PLat   '*< New period timer latch.
 END TYPE
 
 
@@ -274,12 +274,21 @@ TYPE QepMod
     E0 = @"pin has no QEPA capability" _ '*< common error message
   , E1 = @"pin not in QEP mode" _        '*< common error message
   , E2 = @"QEP not enabled"              '*< common error message
+  AS Float_T _
+    FVh(PRUIO_AZ_PWMSS) _                '*< Factor for high velocity measurement.
+  , FVl(PRUIO_AZ_PWMSS)                  '*< Factor for low velocity measurement.
+  AS UInt32 _
+    Prd(PRUIO_AZ_PWMSS)                  '*< Period value to switch velocity measurement.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
+  , BYVAL AS UInt32 = 0 _
+  , BYVAL AS Float_t = 25. _
+  , BYVAL AS Float_t = 1. _
+  , BYVAL AS UInt32 = 0) AS ZSTRING PTR
   DECLARE FUNCTION Value CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS UInt32 PTR = 0) AS ZSTRING PTR
+  , BYVAL AS UInt32 PTR = 0 _
+  , BYVAL AS Float_t PTR = 0) AS ZSTRING PTR
 END TYPE

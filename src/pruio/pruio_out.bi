@@ -132,7 +132,7 @@ convenience macros can print out all that register context.
       ?REG(QWDPRD)
       ?REG(QDECCTL)
       ?REG(QEPCTL)
-      ?REG(QCASCTL)
+      ?REG(QCAPCTL)
       ?REG(QPOSCTL)
       ?REG(QEINT)
       ?REG(QFLG)

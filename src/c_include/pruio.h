@@ -315,7 +315,7 @@ typedef struct pwmssSet{
     QWDPRD,     //!< Watchdog Period Register (chap. 15.4.3.11).
     QDECCTL,    //!< Decoder Control Register (chap. 15.4.3.12).
     QEPCTL,     //!< Control Register (chap. 15.4.3.14).
-    QCASCTL,    //!< Capture Control Register (chap. 15.4.3.15).
+    QCAPCTL,    //!< Capture Control Register (chap. 15.4.3.15).
     QPOSCTL,    //!< Position-Compare Control Register (chap. 15.4.3.15).
     QEINT,      //!< Interrupt Enable Register (chap. 15.4.3.16).
     QFLG,       //!< Interrupt Flag Register (chap. 15.4.3.17).
