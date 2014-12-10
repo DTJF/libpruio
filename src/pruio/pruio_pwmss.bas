@@ -802,7 +802,7 @@ FUNCTION QepMod.config CDECL( _
       if Ball = P8_11 then m = 512 + 2 : exit select
       if ModeCheck(P8_16,4) THEN ModeSet(P8_16,m)
       m = 2
-    CASE P8_33, P8_35, P8_31
+    CASE P8_31, P8_33, P8_35
       m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
       if ModeCheck(P8_35,2) THEN ModeSet(P8_35,m)
       if Ball = P8_35 then m = 256 + 1 : exit select
@@ -810,7 +810,7 @@ FUNCTION QepMod.config CDECL( _
       if Ball = P8_33 then m = 512 + 1 : exit select
       if ModeCheck(P8_31,2) THEN ModeSet(P8_31,m)
       m = 1
-    CASE P8_41, P8_42, P8_39
+    CASE P8_39, P8_41, P8_42
       m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
       if ModeCheck(P8_41,3) THEN ModeSet(P8_41,m)
       if Ball = P8_42 then m = 256 + 2 : exit select
@@ -818,7 +818,7 @@ FUNCTION QepMod.config CDECL( _
       if Ball = P8_42 then m = 512 + 2 : exit select
       if ModeCheck(P8_39,3) THEN ModeSet(P8_39,m)
       m = 2
-    CASE P9_27, P9_42, 104, P9_41, 106
+    CASE P9_27, P9_41, P9_42, 104, 106
       m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
       if ModeCheck( 104 ,1) THEN ModeSet( 104 ,m)
       if Ball = P9_42 orelse Ball = 104 then m = 256 + 0 : exit select
