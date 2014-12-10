@@ -117,7 +117,7 @@ connected at boot-time.
 
 
 GPIO {#SubSecGpio}
----
+----
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -125,12 +125,12 @@ program can detect the state of any connected hardware. libpruio can
 configure and use any digital header pin in one of the following five
 GPIO modes. (Therefor the universal device tree overlay
 libpruio-0A00.dtbo has to be loaded and the program has to be executed
-with admin privileges.)
+with admin privileges.) Find details on GPIO hardware in \ArmRef{25}.
 
 | PinMuxing Enumerator | Function                         | GpioUdt::Value() |
 | -------------------: | :------------------------------: | :--------------- |
-| \ref PRUIO_GPIO_OUT0 | output pin (no resistor)         | 0                |
-| \ref PRUIO_GPIO_OUT1 | output pin (no resistor)         | 1                |
+| \ref PRUIO_GPIO_OUT0 | output pin low (no resistor)     | 0                |
+| \ref PRUIO_GPIO_OUT1 | output pin high (no resistor)    | 1                |
 | \ref PRUIO_GPIO_IN   | input pin with no resistor       | undefined        |
 | \ref PRUIO_GPIO_IN_0 | input pin with pulldown resistor | 0                |
 | \ref PRUIO_GPIO_IN_1 | input pin with pullup resistor   | 1                |
@@ -155,16 +155,17 @@ resistor, which isn't supported by default. This either needs pinmuxing
 by a customized device tree overlay or it can be achieved by adding
 this new mode to the universal device tree overlay libpruio-0A00.dtbo.
 
-Find details on GPIO hardware in \ArmRef{25}. ???
 
 PWM {#SubSecPwm}
 ---
 
-PWM stands for Pulse Width Modulated output. PWM is available on a
-subset of header pins. The pin is configured as output pin without
-resistor connection. A counter is running on a certain clock rate. When
-the counter reaches a certain value, the state of the output gets
-changed.
+PWM stands for Pulse Width Modulated output. So it's generating a
+digital signal with a given frequency and duty cycle.
+
+PWM is available on a subset of header pins. The pin is configured as
+output pin without resistor connection. A counter is running on a
+certain clock rate. When the counter reaches a certain value, the state
+of the output gets changed.
 
 | Pin   | Subsystem      | Frequency Range    |
 | ----- | :------------: | :----------------- |
@@ -176,14 +177,15 @@ changed.
 CAP {#SubSecCap}
 ---
 
-CAP stands for Capture and Analyse a digital Pulse train, so it's
-measuring the frequency and the duty cycle of signal. It's is available
-on a subset of header pins. The CAP pin is configured as input with
-pulldown resistor. A counter is running on a certain clock rate. Each
-transition of the input triggers the capture of the counter value. The
-frequency gets measured as the difference between two positive
-transitions (a period). The duty cycle gets measured as the ratio
-between a period and the on-time of the signal.
+CAP stands for Capture and Analyse a digital Pulse train. So it's
+measuring the frequency and the duty cycle of a digital signal input.
+
+CAP is available on a subset of header pins. The specified pin is
+configured as input with pulldown resistor. A counter is running on a
+certain clock rate. Each transition of the input triggers the capture
+of the counter value. The frequency gets measured as the difference
+between two positive transitions (a period). The duty cycle gets
+measured as the ratio between a period and the on-time of the signal.
 
 Counters with CAP capability are available on several subsystems in the
 CPU
@@ -201,5 +203,85 @@ CPU
 QEP {#SubSecQep}
 ---
 
-QEP stands for Quadrature Encoder Pulse measurement. QEP is available on a
+QEP stands for Quadrature Encoder Pulse measurement. So it's measuring
+the position and the speed of a quadrature encoder. Encoders for rotary
+(ie. for an electrical drive) and linear (ie. for a printer head)
+movement are supported.
 
+QEP is available on a subset of the header pins. Each of the three
+PWMSS subsystems contains a QEP module. (The QEP module of PWMSS-2 can
+get connected on two sets of to the header pins.)
+
+The module can operate in different modes, and depending on the mode it
+operates on a different set of input signals (header pins). Function
+QepMod::config() is used to specify the operational mode of the module.
+It configures one or more header pins, depending on the first parameter
+*Ball*. And depending on the mode (and the number of input pins),
+either
+
+- speed, or
+- speed, direction and position
+
+information is available when calling function QepMod::Value(). The
+accuracy of the position information can get improved by using an index
+signal that resets the position counter.
+
+| Ball  | Type    | PWMSS | Speed | Direction | Position | Index | Further Pins |
+| ----- | :-----: | :---: | :---: | :-------: | :------: | :---: | :----------- |
+| P8_12 | A input |   2   |   X   |     -     |     -    |   -   |              |
+| P8_11 | B input |   2   |   X   |     X     |     X    |   -   | P8_12        |
+| P8_16 | I input |   2   |   X   |     X     |     X    |   X   | P8_11, P8_12 |
+| P8_35 | A input |   1   |   X   |     -     |     -    |   -   |              |
+| P8_33 | B input |   1   |   X   |     X     |     X    |   -   | P8_35        |
+| P8_31 | I input |   1   |   X   |     X     |     X    |   X   | P8_35, P8_33 |
+| P8_41 | A input |   2   |   X   |     -     |     -    |   -   |              |
+| P8_42 | B input |   2   |   X   |     X     |     X    |   -   | P8_41        |
+| P8_39 | I input |   2   |   X   |     X     |     X    |   X   | P8_41, P8_42 |
+| P9_42 | A input |   0   |   X   |     -     |     -    |   -   |              |
+| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        |
+| P9_41 | I input |   0   |   X   |     X     |     X    |   X   | P9_42, P9_27 |
+
+Direction information is derived from two different signals that "look"
+at the sensor lines with a mechanical shift of 1 / 4 of the pitch. So
+to get direction information at least an A input (or an I input) needs
+to get specified as *Ball* parameter to the function QepMod::config().
+
+The speed is defined as the rate of change of position with respect to
+time v = &Delta;x / &Delta;T. The QEP modules Capture Unit works at a
+certain frequency, specified by parameter *VHz* in the call to function
+QepMod::config(). At this frequency the current position and the time
+between the last transition get stored in the array PwmSS::Raw.
+Function QepMod::Value() uses these data to compute the speed.
+
+Speed information is either generated by counting the input
+transitions. The more transitions (&Delta;x) are counted in a certain
+period of time (T), the higher is the speed (v = &Delta;x / T). This
+equation results in bad resolution for low speed values. So also the
+time between transitions (frequency) get measured and at low speed the
+equation v = 1 / &Delta;T is used instead. libpruio auto-switches
+between both equations and auto-computes the optimal speed value for
+switching (array QepMod::Prd).
+
+Transition time measurement requires high accuracy of the sensor
+mechanics. If each transition gets measuremd and either the duty cycle
+of a signal is not exactly 50 % or the phase shift between A and B
+signals is not exactly 1 / 4 (90 &deg;), the computed speed values will
+change erratic. Since most sensors don't fulfill those requirements,
+libpruio measures frequency on just one transition of a single signal.
+This means at least four position counts (in case of A and B input) are
+necessary to measure a non-zero speed value. Those position counts must
+be in the same direction.
+
+\note A direction change during the time period always results in
+      zero-speed computation.
+
+Position information is computed by counting the transitions of the
+input signals considering the direction information (A and B inputs are
+necessary). In case of just one input the position counter runs in
+upwart direction.
+
+An index signal can be used to reset the counter. By default the
+counter is set to zero on the positive transition of the index signal
+when counting in upward direction. And the counter is set to value
+*PMax* on the negative transition of the index signal when counting in
+downward direction.

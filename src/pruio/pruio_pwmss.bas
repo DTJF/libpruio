@@ -718,28 +718,29 @@ CONSTRUCTOR QepMod(BYVAL T AS Pruio_ PTR)
 END CONSTRUCTOR
 
 
-/'* \brief Configure header pins as eQEP input (and output).
-\param Ball The CPU ball number for input A.
+/'* \brief Configure header pins and a eQEP module.
+\param Ball The CPU ball number (either input A, B or I).
 \param PMax The maximum position counter value (defaults to &h7FFFFFFF).
 \param VHz The frequency to compute velocity values (defaults to 25 Hz).
 \param Scale The Scale factor for velocity values (defaults to 1.0).
-\param Mo The modus to use for pinmuxing (defaults to 0).
+\param Mo The modus to use for pinmuxing (0 or PRUIO_PIN_RESET).
 \returns Zero on success (otherwise a string with an error message).
 
 This function configures headers pins to be used for quadrature encoder
 sensors (analysed by the QEP subsystem). By default the module gets
 configured to work in Quadrature Count Mode, meaning that the
-Quadrature detector is used to analyse raw input. See \ref SubSecQep
-for further information and see \ArmRef{15.4.2.5} for details.
+Quadrature detector is used to analyse raw input. See subsection \ref
+SubSecQep for further information and see \ArmRef{15.4.2.5} for
+details.
 
 Up to three header pins may get configured, but only one of the pins get
 specified by parameter *Ball* directly. The other pins are configured
 internally, depending on the type of the specified pin. libpruio
 selects the matching pins for the subsystem connected to the specified
-pin.
+pin (parameter *Ball*).
 
 - When an A input pin is specified, the QEP system runs in frequency
-  count mode. No position is available (always returns zero) and the
+  count mode. No position is available (always counts upwards) and the
   velocity is always positive (no direction gets detected).
 
 - When an B input pin is specified, the QEP system runs in position /
@@ -749,22 +750,18 @@ pin.
   / velocity mode, and the reference index position is used to reset
   the position counter.
 
-(In case of subsystem 2 either P8 pins (P8_11, P8_12, P8_??) or P9 pins
-(P9_27, P9_42, P9_??) can be used. libpruio selects the matching pins
-on the same header in that case.)
-
 Parameter *PMax* is the maximum value for the position counter. On
 overflow (`Pos > PMax`) the counter starts at 0 (zero) again. In case
 of an underflow (`Pos < 0`) the counter continues at PMax. Note that
 each impulse is counted four times (positive and negative transition,
-sensor A and B). Ie. for a rotary encoder with 1024 impulses specify
+input A and B). Ie. for a rotary encoder with 1024 impulses specify
 the PMax parameter as `4095 = 1024 * 4 - 1`. The maximum value is
 &h7FFFFFFF (which is the default). The highest bit is reserved for
 velocity computation. Higher values can get specified, but will result
 in inaccurate velocity computation in case of an position counter over-
 or underflow.
 
-Parameter *FHz* is the frequency to update velocity computation. The
+Parameter *VHz* is the frequency to update velocity computation. The
 capture unit of the QEP module is used to generate velocity input and
 to latch the input values at the given frequency. The minimal frequency
 is less than 12 Hz and the maximum frquency is 50 GHz. The higher the
@@ -775,10 +772,10 @@ recommended to use the lowest possible frequency. The default value is
 Parameter *Scale* is a factor to be applied to the computed velocity
 value. By default this factor is 1.0 and the velocity gets computed as
 transitions per second. Ie. to compute the rotational speed in rpm of a
-sensor with 1024 impulses per revolution, set this factor as
+sensor with 1024 lines per revolution, set this factor as
 
 ~~~{.bas}
-Scale = 60 [s / min] / (1024 [imp / rev] * 4 [cnt / imp])
+Scale = 60 [s/min] / (1024 [imp/rev] * 4 [cnt/imp])
 ~~~
 
 \since 0.2.2
@@ -790,102 +787,81 @@ FUNCTION QepMod.config CDECL( _
   , BYVAL Scale AS Float_t = 1. _
   , BYVAL Mo AS UInt32 = 0) AS ZSTRING PTR
 
-  var m = 0
+  var m = 0, x = 0
   static as Float_t fmin = PWMSS_CLK / (&hFFFF SHL 7) ' minimal frequency
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_11, P8_12, P8_16
-      m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
-      if ModeCheck(P8_12,4) THEN ModeSet(P8_12,m)
-      if Ball = P8_12 then m = 256 + 2 : exit select
-      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,m)
-      if Ball = P8_11 then m = 512 + 2 : exit select
-      if ModeCheck(P8_16,4) THEN ModeSet(P8_16,m)
-      m = 2
-    CASE P8_33, P8_35, P8_31
-      m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
-      if ModeCheck(P8_35,2) THEN ModeSet(P8_35,m)
-      if Ball = P8_35 then m = 256 + 1 : exit select
-      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,m)
-      if Ball = P8_33 then m = 512 + 1 : exit select
-      if ModeCheck(P8_31,2) THEN ModeSet(P8_31,m)
-      m = 1
-    CASE P8_41, P8_42, P8_39
-      m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
-      if ModeCheck(P8_41,3) THEN ModeSet(P8_41,m)
-      if Ball = P8_42 then m = 256 + 2 : exit select
-      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,m)
-      if Ball = P8_42 then m = 512 + 2 : exit select
-      if ModeCheck(P8_39,3) THEN ModeSet(P8_39,m)
-      m = 2
-    CASE P9_27, P9_42, 104, P9_41, 106
-      m = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
-      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,m)
-      if Ball = P9_42 orelse Ball = 104 then m = 256 + 0 : exit select
-      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,m)
-      if Ball = P9_27 then m = 512 + 0 : exit select
-      if ModeCheck( 106 ,1) THEN ModeSet( 106 ,m)
-      m = 0
+    CASE P8_11, P8_12, P8_16 : m = 2
+      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
+      if ModeCheck(P8_12,4) THEN ModeSet(P8_12,v)
+      if Ball = P8_12 then x = 1 : exit select
+      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,v)
+      if Ball = P8_11 then x = 2 : exit select
+      if ModeCheck(P8_16,4) THEN ModeSet(P8_16,v)
+    CASE P8_33, P8_35, P8_31 : m = 1
+      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
+      if ModeCheck(P8_35,2) THEN ModeSet(P8_35,v)
+      if Ball = P8_35 then x = 1 : exit select
+      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,v)
+      if Ball = P8_33 then x = 2 : exit select
+      if ModeCheck(P8_31,2) THEN ModeSet(P8_31,v)
+    CASE P8_41, P8_42, P8_39 : m = 2
+      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
+      if ModeCheck(P8_41,3) THEN ModeSet(P8_41,v)
+      if Ball = P8_42 then x = 1 : exit select
+      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
+      if Ball = P8_42 then x = 2 : exit select
+      if ModeCheck(P8_39,3) THEN ModeSet(P8_39,v)
+    CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
+      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
+      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,v)
+      if Ball = P9_42 orelse Ball = 104 then x = 1 : exit select
+      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
+      if Ball = P9_27 then x = 2 : exit select
+      if ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
     CASE ELSE :  /' pin has no QEPA capability '/ .Errr = E0 : RETURN .Errr
     END SELECT
     if VHz < fmin orelse VHz > PWMSS_CLK_2 then _
                           .Errr = @"frequency not supported" : Return .Errr
   END WITH
-  m and= &b11
   WITH *Top->PwmSS->Conf(m)
-    if 2 <> .ClVa then _
-                        Top->Errr = E2 /' PWM not enabled '/ : RETURN E2
-
-  'AS UInt32 _ '' QEP registers (&h180)
-    .QPOSCNT = 0   '*< Position Counter Register (see \ArmRef{15.4.3.1} ).
-    .QPOSINIT = 0  '*< Position Counter Initialization Register (see \ArmRef{15.4.3.2} ).
-    .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL) '*< Maximum Position Count Register (see \ArmRef{15.4.3.3} ).
-    '.QPOSCMP = 0   '*< Position-Compare Register 2/1 (see \ArmRef{15.4.3.4} ).
-    '.QPOSILAT = 0  '*< Index Position Latch Register (see \ArmRef{15.4.3.5} ).
-    '.QPOSSLAT = 0  '*< Strobe Position Latch Register (see \ArmRef{15.4.3.6} ).
-    .QPOSLAT = 0   '*< Position Counter Latch Register (see \ArmRef{15.4.3.7} ).
-    .QUTMR = 0     '*< Unit Timer Register (see \ArmRef{15.4.3.8} ).
-    .QUPRD = cuint(PWMSS_CLK / VHz)      '*< Unit Period Register (see \ArmRef{15.4.3.9} ).
+    if 2 <> .ClVa then  Top->Errr = E2 /' QEP not enabled '/ : RETURN E2
+    .QPOSCNT = 0
+    .QPOSINIT = 0
+    .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
+    .QPOSLAT = 0
+    .QUTMR = 0
+    .QUPRD = cuint(PWMSS_CLK / VHz)
 
     var ccps = (.QUPRD \ &h10000)
     if ccps > 1 then ccps = 1 + int(log(ccps) / log(2))
-  'AS UInt16 = 0
-    '.QWDTMR = 0    '*< Watchdog Timer Register (see \ArmRef{15.4.3.10} ).
-    '.QWDPRD = 0    '*< Watchdog Period Register (see \ArmRef{15.4.3.11} ).
-    .QDECCTL = &b0000000000000000   '*< Decoder Control Register (see \ArmRef{15.4.3.12} ).
-    .QEPCTL  = &b0001000010001110   '*< Control Register (see \ArmRef{15.4.3.14} ).
-    .QCAPCTL = &b1000000000000010 or (ccps shl 4)   '*< Capture Control Register (see \ArmRef{15.4.3.15} ).
-    .QPOSCTL = &b0000000000000000   '*< Position-Compare Control Register (see \ArmRef{15.4.3.15} ).
-    '.QEINT = 0     '*< Interrupt Enable Register (see \ArmRef{15.4.3.16} ).
-    '.QFLG = 0      '*< Interrupt Flag Register (see \ArmRef{15.4.3.17} ).
-    '.QCLR = 0      '*< Interrupt Clear Register (see \ArmRef{15.4.3.18} ).
-    '.QFRC = 0      '*< Interrupt Force Register (see \ArmRef{15.4.3.19} ).
-    '.QEPSTS = 0    '*< Status Register (see \ArmRef{15.4.3.20} ).
-    .QCTMR = 0     '*< Capture Timer Register (see \ArmRef{15.4.3.21} ).
-    .QCPRD = 0     '*< Capture Period Register (see \ArmRef{15.4.3.22} ).
-    '.QCTMRLAT = 0  '*< Capture Timer Latch Register (see \ArmRef{15.4.3.23} ).
-    '.QCPRDLAT = 0  '*< Capture Period Latch Register (see \ArmRef{15.4.3.24} ).
+    .QDECCTL = &b0000000000000000
+    .QEPCTL  = &b0001000010001110
+    .QCAPCTL = &b1000000000000010 or (ccps shl 4)
+    .QPOSCTL = &b0000000000000000
+    .QCTMR = 0
+    .QCPRD = 0
 
     var fx = 1 SHL ((.QCAPCTL SHr 4) and &b111) _
-      , fp = 1 SHL (.QCAPCTL and &b1111)
+      , fp = 1 SHL (.QCAPCTL and &b1111) _
+      , t = .QUPRD \ fx _
+      , p2 = fp / 2
     FVh(m) = Scale * PWMSS_CLK / .QUPRD
     FVl(m) = Scale * PWMSS_CLK / fx * fp
-    var t = .QUPRD \ fx, p2 = fp / 2
     Prd(m) = cuint(fp * t / (-p2 + sqr(p2 * p2 + t / fp))) SHL 16
   END WITH :                                                    return 0
 END FUNCTION
 
 
-
-/'* \brief Analyse a digital pulse train, get frequency and duty cycle.
-\param Ball The CPU ball number to test.
+/'* \brief Analyse the QEP input pulse trains, get position and velocity.
+\param Ball The CPU ball number (as in QepMod::config() call).
 \param Posi A pointer to store the position value (or NULL).
 \param Velo A pointer to store the valocity value (or NULL).
 \returns Zero on success (otherwise a string with an error message).
 
 FIXME
 
-\since 0.2
+\since 0.2.2
 '/
 FUNCTION QepMod.Value CDECL( _
     BYVAL Ball AS UInt8 _
