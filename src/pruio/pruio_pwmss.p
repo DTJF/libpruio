@@ -202,33 +202,24 @@ PwmDSet:
 
 PwmQep:
   ADD  U1, U1, 0x80        // switch to eQEP (0x180)
-  //LBBO U3, U1, 0x00, 4     // get QPOSCNT register
-  //SBBO U3, UR, 4*4, 4      // write variables
-  //LBBO U4, U1, 0x18, 4     // get QPOSCNT register
-  //LBBO U4.w2, U1, 0x32, 2     // get QFLG register
-  //LBBO U4.w0, U1, 0x38, 2     // get QEPSTS register
-  //LBBO U3, U1, 0x18, 4     // get QPOSCNT register
-  //SBBO U3, UR, 4*5, 4      // write variables
-  //LBBO U5, U1, 0x3A, 2*4   // get QCTMR to QCPRDLAT registers
-  //LBBO U3, U1, 0x3A, 2*4   // get QCTMR to QCPRDLAT registers
-  //SBBO U3, UR, 4*6 , 2*4   // write variables
-
+  LBBO U3, U1, 0x00, 4     // get QPOSCNT register
+  SBBO U3, UR, 4*4 , 4     // write variable
   LBBO U5, U1, 0x32, 2     // get QFLG register
-  QBBC QepWrite, U5.t11    // if no unit timer event -> skip
+  QBBC PwmCnt, U5.t11      // if no unit timer event -> skip
 
   LBBO U4, UR,  4*5, 4     // load old QPOSLAT
   LBBO U3, U1, 0x18, 4     // load new QPOSLAT
 
   QBBC QepUnder, U5.t6     // if no overflow -> check underflow
   LBBO U2, U1, 0x08, 4     // load QPOSMAX register
-  ADD  U2, U2, 1           // increase QPOSMAX
-  SUB  U4, U4, U2          // adapt old value
+  //ADD  U2, U2, 1           // increase QPOSMAX
+  //SUB  U4, U4, U2          // adapt old value
+  SUC  U4, U4, U2          // adapt old value
   JMP  QepPrd
 QepUnder:
   QBBC QepPrd, U5.t5       // if no underflow -> skip
   LBBO U2, U1, 0x08, 4     // load QPOSMAX register
-  ADD  U2, U2, 1           // increase QPOSMAX
-  ADD  U4, U4, U2          // adapt old value
+  ADD  U4, U2, 1           // adapt old value
 
 QepPrd:
   LBBO U2, U1, 0x38, 2     // get QEPSTS register
@@ -238,7 +229,7 @@ QepPrd:
   LBBO U5.w2, U1, 0x40, 2  // load QCPRDLAT
   JMP  QepSkip             // continue
 QepNoVal:
-  LDI  U5, 0x0             // load minimum value
+  LDI  U5.w2, 0x0          // load minimum value
 QepSkip:
   LDI  U2, 0b10001100      // bit mask to reset QEPSTS
   SBBO U2, U1, 0x38, 2     // reset sticky QEPSTS flags
@@ -246,14 +237,10 @@ QepSkip:
   SBBO U2, U1, 0x34, 2     // clear QCLR
   SBBO U3, UR, 4*5 , 4*3   // write variables
 
-QepWrite:
-  LBBO U3, U1, 0x00, 4       // get QPOSCNT register
-  SBBO U3, UR, 4*4 , 4       // write variables
-
 PwmCnt:
-  ADD  PwmC, PwmC, 1       // increase counter
+  ADD  PwmC, PwmC, 1         // increase counter
   QBGE PwmDEnd, PwmC, PRUIO_AZ_PWMSS // if not last -> do next
-  LDI  PwmC, 0             // reset counter
+  LDI  PwmC, 0               // reset counter
 PwmDEnd:
 .endm
 
@@ -283,13 +270,21 @@ CapComm:
   JMP  IoCEnd               // finish command
 
 PwmCCon:
-  QBNE IoCEnd, Comm.b3, PRUIO_COM_PWM // if no CAP command -> skip, invalid
+  QBNE QepCom, Comm.b3, PRUIO_COM_PWM // if no CAP command -> skip
   LBCO U2, DRam, 4*2, 4*3   // get parameters (subsystem address, CMPA & CMPB, AQCTLA & AQCTLB)
   SBBO U3, U2, 0x12, 2*4    // write new AQCTLA & AQCTLB & CMPA & CMPB values
   QBEQ IoCEnd, Comm.w0, 0   // if no frequency change -> skip
   LBCO U5, DRam, 4*5, 4     // get parameters (TBCNT & TBPRD)
   SBBO U5, U2, 0x08, 2*2    // write new TBCNT & TBPRD values
-  SBBO Comm.w0, U2, 0, 2    // write new TBCTL values
+  SBBO Comm.w0, U2, 0, 2    // write new TBCTL value
+  JMP  IoCEnd               // finish command
+
+QepCom:
+  QBNE IoCEnd, Comm.b3, PRUIO_COM_QEP // if no QEP command -> skip, invalid
+  LBCO U2, DRam, 4*2, 4*4   // get parameters (subsystem address, QEPCTL & QCAPCTL, QUPRD, QPOSMAX)
+  SBBO U5, U2, 0x08, 4      // write new QPOSMAX value
+  SBBO U4, U2, 0x20, 4      // write new QUPRD value
+  SBBO U3, U2, 0x2A, 2*2    // write new QEPCTL & QCAPCTL values
   JMP  IoCEnd               // finish command
 
 PwmCEnd:

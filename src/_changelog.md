@@ -6,7 +6,7 @@ Changelog & Credits {#ChaChangelog}
 Further Development {#SecFurtherVev}
 ===================
 
-- Add QEP features of PWMSS.
+- Add QEP features of PWMSS. ???
 - Add TIMER subsystem support.
 - More digital triggers for MM mode (ie. CAP and QEP).
 
@@ -24,6 +24,7 @@ New:
 - Build management added (by CMake).
 - Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
 - Documentation page Pins added.
+- Configuration variables to influence A and B output of PWM modules.
 - Timer subsystem???
 - QEP module???
 
@@ -44,10 +45,11 @@ Bugfixes:
 - RB and MM modes are working now, when libpruio is configured to use PRU-0.
 - C-Wrapper contains enumerators pinMuxing now.
 - C-Wrapper function pruio_gpio_config() implemented now.
-- Example pwm_adc: frequency interferences fixed for A + B channel.
 - Clock value for ADC subsystem corrected (greater sampling rates up to 200 kHz).
 - Device tree overlay file name fixed (now libpruio-00A0.dtbo).
 - Gpio::config() works with PRUIO_PIN_RESET now.
+- PwmMod::pwm_set() no more interferences between channels A and B.
+- Example pwm_adc: frequency interferences fixed for A + B channel.
 
 
 libpruio-0.2 {#SecV-0-2}

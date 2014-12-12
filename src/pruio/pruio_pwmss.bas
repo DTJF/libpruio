@@ -465,7 +465,7 @@ FUNCTION PwmMod.pwm_set CDECL( _
   , c_a(...) = {0, 0, 0} _ ' module counters A
   , c_b(...) = {0, 0, 0}   ' module counters B
 
-  VAR ctl = 0, aqc = 0
+  VAR ctl = 0
   WITH *Top->PwmSS->Conf(Nr)
     IF 2 <> .ClVa THEN                        Top->Errr = E2 : RETURN E2 ' PWM not enabled
     IF 0 = cnt(Nr) THEN
@@ -479,7 +479,7 @@ FUNCTION PwmMod.pwm_set CDECL( _
       IF 2 > cycle THEN                       Top->Errr = E4 : RETURN E4 ' frequency not supported
 
       freq(Nr) = ABS(F)
-      IF cycle <= &h10000 THEN '                           count up mode
+      IF cycle <= &h10000 ANDALSO 0 = ForceUpDown THEN ' count up mode
         cnt(Nr) = cycle - 1
       ELSEIF cycle < &h20000 THEN '        no divisor count up-down mode
         cnt(Nr) = cycle SHR 1
@@ -513,39 +513,35 @@ FUNCTION PwmMod.pwm_set CDECL( _
 
     IF Da >= 0. THEN d_a(Nr) = IIF(Da > 1., 1., Da) : c_a(Nr) = 0
     IF 0 = c_a(Nr) THEN '                     calc new duty for A output
-      IF BIT(.TBCTL, 1) THEN '                              up-down mode
+      IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
         IF d_a(Nr) >= .5 _
-          THEN .AQCTLA = &b000001000010 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
-          ELSE .AQCTLA = &b000000010010 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
-      ELSE '                                                     up mode
-               .AQCTLA = &b000000010010 : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
+          THEN .AQCTLA = AQCTLA2 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
+          ELSE .AQCTLA = AQCTLA1 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
+      ELSE '                                                    up mode
+               .AQCTLA = AQCTLA0 : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
       END IF
       .CMPA = c_a(Nr)
     END IF
 
     IF Db >= 0. THEN d_b(Nr) = IIF(Db > 1., 1., Db) : c_b(Nr) = 0
     IF 0 = c_b(Nr) THEN '                     calc new duty for B output
-      IF BIT(.TBCTL, 1) THEN '                              up-down mode
+      IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
         IF d_b(Nr) >= .5 _
-          THEN .AQCTLB = &b010000000010 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
-          ELSE .AQCTLB = &b000100000010 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
-      ELSE '                                                     up mode
-               .AQCTLB = &b000100000010 : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
+          THEN .AQCTLB = AQCTLB2 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
+          ELSE .AQCTLB = AQCTLB1 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
+      ELSE '                                                    up mode
+               .AQCTLB = AQCTLB0 : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
       END IF
       .CMPB = c_b(Nr)
     END IF
-    aqc = .AQCTLA + .AQCTLB SHL 16
-  END WITH
+    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
 
-  WITH *Top
-    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
-
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
-    .DRam[5] = cnt(Nr) SHL 16
-    .DRam[4] = aqc
-    .DRam[3] = c_a(Nr) + c_b(Nr) SHL 16
-    .DRam[2] = .PwmSS->Conf(Nr)->DeAd + &h200
-    .DRam[1] = IIF(ctl, ctl, 0) + PRUIO_COM_PWM SHL 24
+    WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
+    Top->DRam[5] = .TBCNT + .TBPRD SHL 16
+    Top->DRam[4] = .AQCTLA + .AQCTLB SHL 16
+    Top->DRam[3] = .CMPA + .CMPB SHL 16
+    Top->DRam[2] = .DeAd + &h200
+    Top->DRam[1] = IIF(ctl, ctl, 0) + PRUIO_COM_PWM SHL 24
   END WITH :                                                    RETURN 0
 END FUNCTION
 
@@ -794,30 +790,30 @@ FUNCTION QepMod.config CDECL( _
     CASE P8_11, P8_12, P8_16 : m = 2
       var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
       if ModeCheck(P8_12,4) THEN ModeSet(P8_12,v)
-      if Ball = P8_12 then x = 1 : exit select
+      if Ball = P8_12 then x = 2 : exit select
       if ModeCheck(P8_11,4) THEN ModeSet(P8_11,v)
-      if Ball = P8_11 then x = 2 : exit select
+      if Ball = P8_11 then x = 1 : exit select
       if ModeCheck(P8_16,4) THEN ModeSet(P8_16,v)
     CASE P8_33, P8_35, P8_31 : m = 1
       var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
       if ModeCheck(P8_35,2) THEN ModeSet(P8_35,v)
-      if Ball = P8_35 then x = 1 : exit select
+      if Ball = P8_35 then x = 2 : exit select
       if ModeCheck(P8_33,2) THEN ModeSet(P8_33,v)
-      if Ball = P8_33 then x = 2 : exit select
+      if Ball = P8_33 then x = 1 : exit select
       if ModeCheck(P8_31,2) THEN ModeSet(P8_31,v)
     CASE P8_41, P8_42, P8_39 : m = 2
       var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
       if ModeCheck(P8_41,3) THEN ModeSet(P8_41,v)
-      if Ball = P8_42 then x = 1 : exit select
-      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
       if Ball = P8_42 then x = 2 : exit select
+      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
+      if Ball = P8_42 then x = 1 : exit select
       if ModeCheck(P8_39,3) THEN ModeSet(P8_39,v)
     CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
       var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
       if ModeCheck( 104 ,1) THEN ModeSet( 104 ,v)
-      if Ball = P9_42 orelse Ball = 104 then x = 1 : exit select
+      if Ball = P9_42 orelse Ball = 104 then x = 2 : exit select
       if ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
-      if Ball = P9_27 then x = 2 : exit select
+      if Ball = P9_27 then x = 1 : exit select
       if ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
     CASE ELSE :  /' pin has no QEPA capability '/ .Errr = E0 : RETURN .Errr
     END SELECT
@@ -828,16 +824,29 @@ FUNCTION QepMod.config CDECL( _
     if 2 <> .ClVa then  Top->Errr = E2 /' QEP not enabled '/ : RETURN E2
     .QPOSCNT = 0
     .QPOSINIT = 0
-    .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
+    '.QPOSMAX = iif(PMax andalso x <> 2, PMax, &h7FFFFFFFuL)
     .QPOSLAT = 0
     .QUTMR = 0
     .QUPRD = cuint(PWMSS_CLK / VHz)
 
     var ccps = (.QUPRD \ &h10000)
     if ccps > 1 then ccps = 1 + int(log(ccps) / log(2))
-    .QDECCTL = &b0000000000000000
-    .QEPCTL  = &b0001000010001110
-    .QCAPCTL = &b1000000000000010 or (ccps shl 4)
+    SELECT CASE AS CONST x
+    CASE 2 '                                               up count mode
+      .QPOSMAX = &h7FFFFFFFuL
+      .QDECCTL = &b1000000000000000
+      .QEPCTL  = &b0001000010001110
+      .QCAPCTL = &b1000000000000000 or (ccps shl 4)
+    CASE 1 '                                        direction count mode
+      .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
+      .QDECCTL = &b0000000000000000
+      .QEPCTL  = &b0001000010001110
+      .QCAPCTL = &b1000000000000010 or (ccps shl 4)
+    CASE ELSE '                          direction count mode with index
+      .QDECCTL = &b0000000000000000
+      .QEPCTL  = &b0001000010001110
+      .QCAPCTL = &b1000000000000010 or (ccps shl 4)
+    END SELECT
     .QPOSCTL = &b0000000000000000
     .QCTMR = 0
     .QCPRD = 0
@@ -849,7 +858,15 @@ FUNCTION QepMod.config CDECL( _
     FVh(m) = Scale * PWMSS_CLK / .QUPRD
     FVl(m) = Scale * PWMSS_CLK / fx * fp
     Prd(m) = cuint(fp * t / (-p2 + sqr(p2 * p2 + t / fp))) SHL 16
-  END WITH :                                                    return 0
+    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                     RETURN 0
+
+    WHILE Top->DRam[1] : WEND '                   wait, if PRU is busy
+    Top->DRam[5] = .QPOSMAX
+    Top->DRam[4] = .QUPRD
+    Top->DRam[3] = .QEPCTL SHL 16 OR .QCAPCTL
+    Top->DRam[2] = .DeAd + &h180
+    Top->DRam[1] = PRUIO_COM_QEP SHL 24
+  END WITH :                                                   return 0
 END FUNCTION
 
 
@@ -871,19 +888,26 @@ FUNCTION QepMod.Value CDECL( _
   var m = 0
   WITH *Top
     dim as zstring ptr e
+    'SELECT CASE AS CONST Ball
+    'CASE P8_11, P8_12, P8_16
+      'if ModeCheck(P8_12,4) then e = E1 : exit select
+      'if ModeCheck(P8_11,4) then e = E1 else m = 2
+    'CASE P8_33, P8_35, P8_31
+      'if ModeCheck(P8_35,2) then e = E1 : exit select
+      'if ModeCheck(P8_33,2) then e = E1 else m = 1
+    'CASE P8_41, P8_42, P8_39
+      'if ModeCheck(P8_41,3) then e = E1 : exit select
+      'if ModeCheck(P8_42,3) then e = E1 else m = 2
+    'CASE P9_27, P9_42, 104, P9_41, 106
+      'if ModeCheck( 104 ,1) then e = E1 : exit select
+      'if ModeCheck(P9_27,1) then e = E1 else m = 0
+    'CASE ELSE  : e = E0
+    'END SELECT : if e then .Errr = e :                      RETURN .Errr
     SELECT CASE AS CONST Ball
-    CASE P8_11, P8_12
-      if ModeCheck(P8_12,4) then e = E1 : exit select
-      if ModeCheck(P8_11,4) then e = E1 else m = 2
-    CASE P8_33, P8_35
-      if ModeCheck(P8_35,2) then e = E1 : exit select
-      if ModeCheck(P8_33,2) then e = E1 else m = 1
-    CASE P8_41, P8_42
-      if ModeCheck(P8_41,3) then e = E1 : exit select
-      if ModeCheck(P8_42,3) then e = E1 else m = 2
-    CASE P9_27, P9_42, 104
-      if ModeCheck( 104 ,1) then e = E1 : exit select
-      if ModeCheck(P9_27,1) then e = E1 else m = 0
+    CASE P8_11, P8_12, P8_16 : m = 2
+    CASE P8_33, P8_35, P8_31 : m = 1
+    CASE P8_41, P8_42, P8_39 : m = 2
+    CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
     CASE ELSE  : e = E0
     END SELECT : if e then .Errr = e :                      RETURN .Errr
 

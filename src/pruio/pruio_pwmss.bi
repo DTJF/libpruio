@@ -197,11 +197,19 @@ and duty cycle (load) by a call to function PwmMod::setValue().
 TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS ZSTRING PTR _
-    E0 = @"pin has no PWM capability" _   '*< common error message
-  , E1 = @"pin not in PWM mode" _         '*< common error message
-  , E2 = @"PWMSS not enabled" _           '*< common error message
-  , E3 = @"set frequency in first call" _ '*< common error message
-  , E4 = @"frequency not supported"       '*< common error message
+    E0 = @"pin has no PWM capability" _   '*< Common error message.
+  , E1 = @"pin not in PWM mode" _         '*< Common error message.
+  , E2 = @"PWMSS not enabled" _           '*< Common error message.
+  , E3 = @"set frequency in first call" _ '*< Common error message.
+  , E4 = @"frequency not supported"       '*< Common error message.
+  AS UInt16 _
+    ForceUpDown = 0 _ '*< Switch to force up-down counter for ePWM modules.
+  , AQCTLA0 = &b000000010010 _
+  , AQCTLA1 = &b000000010010 _
+  , AQCTLA2 = &b000001000010 _
+  , AQCTLB0 = &b000100000010 _
+  , AQCTLB1 = &b000100000010 _
+  , AQCTLB2 = &b010000000010
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION Value CDECL( _
