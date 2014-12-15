@@ -417,45 +417,6 @@ FUNCTION PwmMod.pwm_set CDECL( _
 
   STATIC AS CONST Float_t _
     f_min = PWMSS_CLK_2 / &h6FFF900   '' minimal frequency (128 * 14 * 65535)
-  STATIC AS UInt16 pars(..., 1) = { _ '' dividers to scale the clock
-      {   1, 0} _
-    , {   2, 1} _
-    , {   4, 2} _
-    , {   6, 3} _
-    , {   8, 4} _
-    , {  10, 5} _
-    , {  12, 6} _
-    , {  14, 7} _
-    , {  16, 2 + 2 SHL 3} _
-    , {  20, 5 + 1 SHL 3} _
-    , {  24, 6 + 1 SHL 3} _
-    , {  28, 7 + 1 SHL 3} _
-    , {  32, 2 + 3 SHL 3} _
-    , {  40, 5 + 2 SHL 3} _
-    , {  48, 3 + 3 SHL 3} _
-    , {  56, 7 + 2 SHL 3} _
-    , {  64, 4 + 3 SHL 3} _
-    , {  80, 5 + 3 SHL 3} _
-    , {  96, 6 + 3 SHL 3} _
-    , { 112, 7 + 3 SHL 3} _
-    , { 128, 0 + 7 SHL 3} _
-    , { 160, 5 + 4 SHL 3} _
-    , { 192, 6 + 4 SHL 3} _
-    , { 224, 7 + 4 SHL 3} _
-    , { 256, 1 + 7 SHL 3} _
-    , { 320, 5 + 5 SHL 3} _
-    , { 384, 3 + 6 SHL 3} _
-    , { 448, 7 + 5 SHL 3} _
-    , { 512, 2 + 7 SHL 3} _
-    , { 640, 5 + 6 SHL 3} _
-    , { 768, 3 + 7 SHL 3} _
-    , { 896, 7 + 6 SHL 3} _
-    , {1024, 4 + 7 SHL 3} _
-    , {1280, 5 + 7 SHL 3} _
-    , {1536, 6 + 7 SHL 3} _
-    , {1792, 7 + 7 SHL 3} _
-    }
-
   STATIC AS Float_t _
    freq(...) = {0., 0., 0.} _ ' module frequencies
   , d_a(...) = {0., 0., 0.} _ ' module duty A
@@ -485,25 +446,14 @@ FUNCTION PwmMod.pwm_set CDECL( _
         cnt(Nr) = cycle SHR 1
         ctl = 2
       ELSE '                                  divisor count up-down mode
-        VAR x = UBOUND(pars) SHR 2 _
-        , fac = cycle SHR 17 _
-        ,   i = x SHL 1
-
-        WHILE x '                          search matching clock divisor
-          i += IIF(fac >= pars(i, 0), x, -x)
-          x SHR= 1
-        WEND
-        WHILE fac >= pars(i, 0)
-          i += 1
-        WEND
-
-        cnt(Nr) = CUINT(.5 + PWMSS_CLK_2 / pars(i, 0) / F)
-        ctl = 2 _
-            + (pars(i, 1) SHL 7) ' clock divisor
+        VAR fac = cycle SHR 17 _
+           , x1 = 1 + CINT(INT(LOG(fac / 14) / LOG(2)))
+        IF x1 < 0 THEN x1 = 0
+        VAR x2 = (fac SHR x1) \ 2 + 1
+        cnt(Nr) = CUINT(.5 + PWMSS_CLK_2 / F / (IIF(x2, x2 SHL 1, 1) SHL x1))
+        ctl = 2 + x2 SHL 7 + x1 SHL 10 ' clock divisor
       END IF
-      ctl += (1 SHL 15) _ ' free run
-           + (1 SHL 13) _ ' count up after SYNCI
-           + (3 SHL 4)    ' dissable SYNCO
+      ctl OR= (3 SHL 14) + (Cntrl(Nr) AND &b0010000001111100)
       .TBCTL = ctl
       .TBPRD = cnt(Nr)
       .TBCNT = 0
@@ -515,10 +465,10 @@ FUNCTION PwmMod.pwm_set CDECL( _
     IF 0 = c_a(Nr) THEN '                     calc new duty for A output
       IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
         IF d_a(Nr) >= .5 _
-          THEN .AQCTLA = AQCTLA2 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
-          ELSE .AQCTLA = AQCTLA1 : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
+          THEN .AQCTLA = AqCtl(0, Nr, 2) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
+          ELSE .AQCTLA = AqCtl(0, Nr, 1) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
       ELSE '                                                    up mode
-               .AQCTLA = AQCTLA0 : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
+               .AQCTLA = AqCtl(0, Nr, 0) : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
       END IF
       .CMPA = c_a(Nr)
     END IF
@@ -527,10 +477,10 @@ FUNCTION PwmMod.pwm_set CDECL( _
     IF 0 = c_b(Nr) THEN '                     calc new duty for B output
       IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
         IF d_b(Nr) >= .5 _
-          THEN .AQCTLB = AQCTLB2 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
-          ELSE .AQCTLB = AQCTLB1 : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
+          THEN .AQCTLB = AqCtl(1, Nr, 2) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
+          ELSE .AQCTLB = AqCtl(1, Nr, 1) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
       ELSE '                                                    up mode
-               .AQCTLB = AQCTLB0 : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
+               .AQCTLB = AqCtl(1, Nr, 0) : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
       END IF
       .CMPB = c_b(Nr)
     END IF
@@ -781,11 +731,13 @@ FUNCTION QepMod.config CDECL( _
   , BYVAL PMax AS UInt32 = 0 _
   , BYVAL VHz AS Float_t = 25. _
   , BYVAL Scale AS Float_t = 1. _
-  , BYVAL Mo AS UInt32 = 0) AS ZSTRING PTR
+  , BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
 
   var m = 0, x = 0
   static as Float_t fmin = PWMSS_CLK / (&hFFFF SHL 7) ' minimal frequency
   WITH *Top
+    if VHz < fmin orelse VHz > PWMSS_CLK_2 then _
+                          .Errr = @"frequency not supported" : Return .Errr
     SELECT CASE AS CONST Ball
     CASE P8_11, P8_12, P8_16 : m = 2
       var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
@@ -815,10 +767,8 @@ FUNCTION QepMod.config CDECL( _
       if ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
       if Ball = P9_27 then x = 1 : exit select
       if ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
-    CASE ELSE :  /' pin has no QEPA capability '/ .Errr = E0 : RETURN .Errr
+    CASE ELSE :  /'  pin has no QEP capability '/ .Errr = E0 : RETURN .Errr
     END SELECT
-    if VHz < fmin orelse VHz > PWMSS_CLK_2 then _
-                          .Errr = @"frequency not supported" : Return .Errr
   END WITH
   WITH *Top->PwmSS->Conf(m)
     if 2 <> .ClVa then  Top->Errr = E2 /' QEP not enabled '/ : RETURN E2
@@ -843,8 +793,9 @@ FUNCTION QepMod.config CDECL( _
       .QEPCTL  = &b0001000010001110
       .QCAPCTL = &b1000000000000010 or (ccps shl 4)
     CASE ELSE '                          direction count mode with index
+      .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
       .QDECCTL = &b0000000000000000
-      .QEPCTL  = &b0001000010001110
+      .QEPCTL  = &b0000001010001110
       .QCAPCTL = &b1000000000000010 or (ccps shl 4)
     END SELECT
     .QPOSCTL = &b0000000000000000
@@ -860,10 +811,11 @@ FUNCTION QepMod.config CDECL( _
     Prd(m) = cuint(fp * t / (-p2 + sqr(p2 * p2 + t / fp))) SHL 16
     IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                     RETURN 0
 
-    WHILE Top->DRam[1] : WEND '                   wait, if PRU is busy
-    Top->DRam[5] = .QPOSMAX
+    WHILE Top->DRam[1] : WEND '                     wait, if PRU is busy
+    Top->DRam[6] = .QCAPCTL
+    Top->DRam[5] = .QDECCTL OR .QEPCTL SHL 16
     Top->DRam[4] = .QUPRD
-    Top->DRam[3] = .QEPCTL SHL 16 OR .QCAPCTL
+    Top->DRam[3] = .QPOSMAX
     Top->DRam[2] = .DeAd + &h180
     Top->DRam[1] = PRUIO_COM_QEP SHL 24
   END WITH :                                                   return 0
@@ -876,7 +828,24 @@ END FUNCTION
 \param Velo A pointer to store the valocity value (or NULL).
 \returns Zero on success (otherwise a string with an error message).
 
-FIXME
+Compute position and speed from the sensor pulse trains. Either a
+single sensor signal gets evaluated (when an A input was specified as
+parameter *Ball* for function QepMod::config() ) to compute speed
+information. Or two sensor signals gets evaluated to compute speed and
+position information.
+
+The position value is scaled in transitions (since the start or the
+last index impulse) and counts upwards in case of a single input (A pin
+passed as parameter *Ball* to QepMod::config()). Otherwise the position
+gets counted considering the direction. The *Velo* value is scaled as
+transitions per second by default and get get customized by parameter
+*Scale* in the previous call to function QepMod::config(). Either of
+the parameters *Posi* or *Velo* may be NULL to skip this computation.
+
+In order to speed up execution this function doesn't check the
+configuration of all input pins, meaning it computes (erratic) output
+even if some (or all) of the pins are not in the matching
+configuration.
 
 \since 0.2.2
 '/
@@ -887,29 +856,13 @@ FUNCTION QepMod.Value CDECL( _
 
   var m = 0
   WITH *Top
-    dim as zstring ptr e
-    'SELECT CASE AS CONST Ball
-    'CASE P8_11, P8_12, P8_16
-      'if ModeCheck(P8_12,4) then e = E1 : exit select
-      'if ModeCheck(P8_11,4) then e = E1 else m = 2
-    'CASE P8_33, P8_35, P8_31
-      'if ModeCheck(P8_35,2) then e = E1 : exit select
-      'if ModeCheck(P8_33,2) then e = E1 else m = 1
-    'CASE P8_41, P8_42, P8_39
-      'if ModeCheck(P8_41,3) then e = E1 : exit select
-      'if ModeCheck(P8_42,3) then e = E1 else m = 2
-    'CASE P9_27, P9_42, 104, P9_41, 106
-      'if ModeCheck( 104 ,1) then e = E1 : exit select
-      'if ModeCheck(P9_27,1) then e = E1 else m = 0
-    'CASE ELSE  : e = E0
-    'END SELECT : if e then .Errr = e :                      RETURN .Errr
     SELECT CASE AS CONST Ball
     CASE P8_11, P8_12, P8_16 : m = 2
     CASE P8_33, P8_35, P8_31 : m = 1
     CASE P8_41, P8_42, P8_39 : m = 2
     CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
-    CASE ELSE  : e = E0
-    END SELECT : if e then .Errr = e :                      RETURN .Errr
+    CASE ELSE  :                               .Errr = E0 : RETURN .Errr
+    END SELECT
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN
       if Posi then *Posi = 0
@@ -923,7 +876,7 @@ FUNCTION QepMod.Value CDECL( _
      if .PLat > Prd(m) then
         *Velo = dx * FVh(m)
       else
-        *Velo = iif(.PLat, sgn(dx) * FVl(m) / hiword(.PLat), 0.)
+        *Velo = iif(hiword(.PLat), sgn(dx) * FVl(m) / hiword(.PLat), 0.)
       end if
     end if
    if Posi then *Posi = .QPos

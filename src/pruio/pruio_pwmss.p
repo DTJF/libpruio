@@ -229,11 +229,18 @@ QepPrd:
   LBBO U5.w2, U1, 0x40, 2  // load QCPRDLAT
   JMP  QepSkip             // continue
 QepNoVal:
-  LDI  U5.w2, 0x0          // load minimum value
+  LDI  U5.w2, 0            // load minimum value
 QepSkip:
+
+LBBO U5.w0, U1, 0x38, 2  // load QCPRDLAT
+
   LDI  U2, 0b10001100      // bit mask to reset QEPSTS
+  //LDI  U2, 0b11111111      // bit mask to reset QEPSTS
+
   SBBO U2, U1, 0x38, 2     // reset sticky QEPSTS flags
   LDI  U2, 0b100001101001  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
+  //LDI  U2, 0b111111111111  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
+
   SBBO U2, U1, 0x34, 2     // clear QCLR
   SBBO U3, UR, 4*5 , 4*3   // write variables
 
@@ -281,10 +288,44 @@ PwmCCon:
 
 QepCom:
   QBNE IoCEnd, Comm.b3, PRUIO_COM_QEP // if no QEP command -> skip, invalid
-  LBCO U2, DRam, 4*2, 4*4   // get parameters (subsystem address, QEPCTL & QCAPCTL, QUPRD, QPOSMAX)
-  SBBO U5, U2, 0x08, 4      // write new QPOSMAX value
+  LBCO U2, DRam, 4*2, 4*5   // get parameters (subsystem address, QPOSMAX, QUPRD, QDECCTL, QEPCTL & QCAPCTL)
+  SBBO U3, U2, 0x08, 4      // write new QPOSMAX value
   SBBO U4, U2, 0x20, 4      // write new QUPRD value
-  SBBO U3, U2, 0x2A, 2*2    // write new QEPCTL & QCAPCTL values
+
+//Top->DRam[6] = .QCAPCTL
+//Top->DRam[5] = .QDECCTL OR .QEPCTL SHL 16
+//Top->DRam[4] = .QUPRD
+//Top->DRam[3] = .QPOSMAX
+//Top->DRam[2] = .DeAd + &h180
+
+//ldi  U4, 0b10000000
+ldi  U4, 0
+SBBO U4, U2, 0x2A, 2
+SBBO U4, U2, 0x2C, 2
+SBBO U4, U2, 0x3A, 2
+SBBO U4, U2, 0x3C, 2
+SBBO U4, U2, 0x3E, 2
+SBBO U4, U2, 0x40, 2
+SBBO U4, U2, 0x04, 4
+//SBBO U4, U2, 0x08, 4
+SBBO U4, U2, 0x0C, 4
+SBBO U4, U2, 0x10, 4
+SBBO U4, U2, 0x14, 4
+SBBO U4, U2, 0x18, 4
+SBBO U4, U2, 0x1C, 4      // write new QUTMR value
+
+  //SBBO U6.w2, U2, 0x2C, 2   // disable QCAPCTL
+  LDI  U4, 0b10001100       // bit mask to reset QEPSTS
+  SBBO U4, U2, 0x38, 2      // reset sticky QEPSTS flags
+  SBBO U5, U2, 0x28, 2*3    // write new QDECCTL & QEPCTL & QCAPCTL values
+  SBBO U6.w2, U2, 0x3A, 2   // reset QCTMR value
+
+  LDI  U4, 0b100001101001  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
+  SBBO U4, U2, 0x34, 2     // clear QCLR
+
+  LBBO U4, U2, 0x00, 4      // load QPOSCNT register
+  QBLT IoCEnd, U3, U4       // if counter in range -> skip
+  SBBO U3, U2, 0x00, 4      // write QPOSCNT register
   JMP  IoCEnd               // finish command
 
 PwmCEnd:

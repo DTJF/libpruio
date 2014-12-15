@@ -203,13 +203,16 @@ TYPE PwmMod
   , E3 = @"set frequency in first call" _ '*< Common error message.
   , E4 = @"frequency not supported"       '*< Common error message.
   AS UInt16 _
-    ForceUpDown = 0 _ '*< Switch to force up-down counter for ePWM modules.
-  , AQCTLA0 = &b000000010010 _
-  , AQCTLA1 = &b000000010010 _
-  , AQCTLA2 = &b000001000010 _
-  , AQCTLB0 = &b000100000010 _
-  , AQCTLB1 = &b000100000010 _
-  , AQCTLB2 = &b010000000010
+    ForceUpDown = 0 _                 '*< Switch to force up-down counter for ePWM modules.
+  , Cntrl(PRUIO_AZ_PWMSS) = _         '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
+    {&b1010000000010000, &b1010000000010000, &b1010000000010000} _
+  , AqCtl(1, PRUIO_AZ_PWMSS, 2) = { _ '*< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
+  { {&b000000010010, &b000000010010, &b000001000010} _
+  , {&b000000010010, &b000000010010, &b000001000010} _
+  , {&b000000010010, &b000000010010, &b000001000010} } _
+, { {&b000100000010, &b000100000010, &b010000000010} _
+  , {&b000100000010, &b000100000010, &b010000000010} _
+  , {&b000100000010, &b000100000010, &b010000000010} } }
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION Value CDECL( _
@@ -294,7 +297,7 @@ TYPE QepMod
   , BYVAL AS UInt32 = 0 _
   , BYVAL AS Float_t = 25. _
   , BYVAL AS Float_t = 1. _
-  , BYVAL AS UInt32 = 0) AS ZSTRING PTR
+  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
   DECLARE FUNCTION Value CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS UInt32 PTR = 0 _

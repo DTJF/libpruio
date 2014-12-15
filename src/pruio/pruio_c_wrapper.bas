@@ -177,6 +177,29 @@ FUNCTION pruio_cap_Value CDECL ALIAS "pruio_cap_Value"( _
 END FUNCTION
 
 
+'* \brief Wrapper function for QepMod::config().
+FUNCTION pruio_qep_config CDECL ALIAS "pruio_qep_config"( _
+    BYVAL Io AS PruIo PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL PMax AS UInt32 = 0 _
+  , BYVAL VHz AS Float_t = 25. _
+  , BYVAL Scale AS Float_t = 1. _
+  , BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR EXPORT
+
+  RETURN Io->Qep->config(Ball, PMax, VHz, Scale, Mo)
+END FUNCTION
+
+'* \brief Wrapper function for QepMod::Value().
+FUNCTION pruio_qep_Value CDECL ALIAS "pruio_qep_Value"( _
+    BYVAL Io AS PruIo PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Posi AS UInt32 PTR = 0 _
+  , BYVAL Velo AS Float_t PTR = 0) AS ZSTRING PTR EXPORT
+
+  RETURN Io->Qep->Value(Ball, Posi, Velo)
+END FUNCTION
+
+
 '* \brief Wrapper function for PwmMod::Value().
 FUNCTION pruio_pwm_Value CDECL ALIAS "pruio_pwm_Value"( _
     BYVAL Io AS PruIo PTR _

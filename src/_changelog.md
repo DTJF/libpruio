@@ -13,7 +13,7 @@ Further Development {#SecFurtherVev}
 Feel free to send further ideas to the author (\Email).
 
 
-libpruio-0.2.0.2 {#SecV-0-2-0-2}
+libpruio-0.2.2 {#SecV-0-2-2}
 ================
 
 Released in 2014, December.
@@ -24,7 +24,7 @@ New:
 - Build management added (by CMake).
 - Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
 - Documentation page Pins added.
-- Configuration variables to influence A and B output of PWM modules.
+- PWM configuration variables to directly influence A and B output of PWM modules.
 - Timer subsystem???
 - QEP module???
 

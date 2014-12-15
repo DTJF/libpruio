@@ -63,6 +63,8 @@
 #define U3 r17
 #define U4 r18
 #define U5 r19
+#define U6 r20
+#define U7 r21
 
 #define PtrR r29   // pointer register (only for ADC_MM_Data)
 

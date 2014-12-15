@@ -488,9 +488,9 @@ typedef struct pruIo{
   gpioUdt* Gpio;   //!< Pointer to GPIO subsystem structure.
   pwmssUdt* PwmSS; //!< Pointer to PWMSS subsystem structure.
   timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
-  pwmMod* Pwm;     //!< Pointer to the ePWM module structure (in PWMSS subsystems).
-  capMod* Cap;     //!< Pointer to the eCAP module structure (in PWMSS subsystems).
-  qepMod* Qep;      //!< pointer to the eQEP module structure (in PWMSS subsystems)
+  pwmMod* Pwm;     //!< Pointer to ePWM module structure (in PWMSS subsystem).
+  capMod* Cap;     //!< Pointer to eCAP module structure (in PWMSS subsystem).
+  qepMod* Qep;     //!< pointer to eQEP module structure (in PWMSS subsystem)
 
   char* Errr;      //!< Pointer for error messages.
   uint32* DRam;    //!< Pointer to access PRU DRam.
@@ -525,10 +525,10 @@ typedef struct pruIo{
 
 
 /** \brief Wrapper function for the constructor PruIo::PruIo().
-\param Act mask for active subsystems and PRU number
-\param Av avaraging for default steps (0 to 16, defaults to 0)
-\param OpD open delay for default steps (0 to 0x3FFFF, defaults to 0x98)
-\param SaD sample delay for default steps (0 to 255, defaults to 0)
+\param Act The mask for active subsystems and PRU number.
+\param Av The avaraging for default steps (0 to 16, defaults to 0).
+\param OpD The open delay for default steps (0 to 0x3FFFF, defaults to 0x98).
+\param SaD The sample delay for default steps (0 to 255, defaults to 0).
 \returns A pointer for the new instance.
 
 Since the constructor reads the original subsystem configurations and
@@ -547,41 +547,41 @@ pruIo* pruio_new(uint16 Act, uint8 Av, uint32 OpD, uint8 SaD);
 void pruio_destroy(pruIo* Io);
 
 /** \brief Wrapper function for PruIo::config().
-\param Io The pointer of the  PruIo instance
-\param Samp number of samples to fetch (defaults to zero)
-\param Mask mask for active steps (defaults to all 8 channels active in steps 1 to 8)
-\param Tmr timer value in [ns] to specify the sampling rate (defaults to zero, MM only)
-\param Mds modus for output (defaults to 4 = 16 bit)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Samp The number of samples to fetch (defaults to zero).
+\param Mask The mask for active steps (defaults to all 8 channels active in steps 1 to 8).
+\param Tmr The timer value in [ns] to specify the sampling rate (defaults to zero, MM only).
+\param Mds The modus for output bit encoding (defaults to 4 = 16 bit).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
 char* pruio_config(pruIo* Io, uint32 Samp, uint32 Mask, uint32 Tmr, uint16 Mds);
 
 /** \brief Wrapper function for PruIo::get_config().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to describe
-\returns a human-readable text string (internal string, never free it)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to describe.
+\returns A human-readable text string (internal string, never free it).
 
 \since 0.2
 */
 char* pruio_Pin(pruIo* Io, uint8 Ball);
 
 /** \brief Wrapper function for PruIo::mm_start().
-\param Io The pointer of the  PruIo instance
-\param Trg1 settings for first trigger (default = no trigger)
-\param Trg2 settings for second trigger (default = no trigger)
-\param Trg3 settings for third trigger (default = no trigger)
-\param Trg4 settings for fourth trigger (default = no trigger)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Trg1 Settings for first trigger (default = no trigger).
+\param Trg2 Settings for second trigger (default = no trigger).
+\param Trg3 Settings for third trigger (default = no trigger).
+\param Trg4 Settings for fourth trigger (default = no trigger).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
 char* pruio_mm_start(pruIo* Io, uint32 Trg1, uint32 Trg2, uint32 Trg3, uint32 Trg4);
 
 /** \brief Wrapper function for PruIo::rb_start().
-\param Io The pointer of the  PruIo instance
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
@@ -589,30 +589,29 @@ char* pruio_rb_start(pruIo* Io);
 
 
 /** \brief Wrapper function for GpioUdt::config().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to set
-\param Modus the mode for the GPIO
-\returns zero on success (otherwise a pointer to an error message)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to set.
+\param Modus The mode for the GPIO.
+\returns Zero on success (otherwise a pointer to an error message).
 
 \since 0.2
 */
 char* pruio_gpio_config(pruIo* Io, uint8 Ball, uint8 Modus);
 
 /** \brief Wrapper function for GpioUdt::setValue().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to set
-\param Modus the mode for the GPIO
-\returns zero on success (otherwise a pointer to an error message)
-\since 0.2
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to set.
+\param Modus The mode for the GPIO output.
+\returns Zero on success (otherwise a pointer to an error message).
 
 \since 0.2
 */
 char* pruio_gpio_setValue(pruIo* Io, uint8 Ball, uint8 Modus);
 
 /** \brief Wrapper function for GpioUdt::Value().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to test
-\returns GPIO state (otherwise -1, check  PruIo::Errr for an error message)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to test.
+\returns The GPIO state (otherwise -1, check  PruIo::Errr for an error message).
 
 \since 0.2
 */
@@ -620,24 +619,24 @@ uint32 pruio_gpio_Value(pruIo* Io, uint8 Ball);
 
 
 /** \brief Wrapper function for AdcUdt::setStep().
-\param Io The pointer of the  PruIo instance
-\param Stp step index (0 = step 0 => charge step, 1 = step 1 (=> AIN0 by default),  ..., 17 = idle step)
-\param ChN channel number to scan (0 = AIN0, 1 = AIN1, ...)
-\param Av new value for avaraging (defaults to 4)
-\param SaD new value for sample delay (defaults to 0)
-\param OpD new value for open delay (defaults to 0x98)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Stp Step index (0 = step 0 => charge step, 1 = step 1 (=> AIN0 by default),  ..., 17 = idle step).
+\param ChN Channel number to scan (0 = AIN0, 1 = AIN1, ...).
+\param Av New value for avaraging (defaults to 4).
+\param SaD New value for sample delay (defaults to 0).
+\param OpD New value for open delay (defaults to 0x98).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
 char* pruio_adc_setStep(pruIo* Io, uint8 Stp, uint8 ChN, uint8 Av, uint8 SaD, uint32 OpD);
 
 /** \brief Wrapper function for AdcUdt::mm_trg_pin().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to test
-\param GpioV the state to check (defaults to high = 1)
-\param Skip the number of samples to skip (defaults to 0 = zero, max. 1023)
-\returns the trigger configuration (or zero in case of an error, check  PruIo::Errr)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to test.
+\param GpioV The state to check (defaults to high = 1).
+\param Skip The number of samples to skip (defaults to 0 = zero, max. 1023).
+\returns The trigger configuration (or zero in case of an error, check  PruIo::Errr).
 
 \since 0.2
 */
@@ -645,46 +644,71 @@ uint32 pruio_adc_mm_trg_pin(pruIo* Io, uint8 Ball, uint8 GpioV, uint16 Skip);
 
 
 /** \brief Wrapper function for AdcUdt::mm_trg_ain().
-\param Io The pointer of the  PruIo instance
-\param Stp the step number to use for trigger input
-\param AdcV the sample value to match (positive check greater than, negative check less than)
-\param Rela if AdcV is relative to the current input
-\param Skip the number of samples to skip (defaults to 0 = zero, max. 1023)
-\returns the trigger configuration (or zero in case of an error, check  PruIo::Errr)
+\param Io The pointer of the  PruIo instance.
+\param Stp The step number to use for trigger input.
+\param AdcV The sample value to match (positive check greater than, negative check less than).
+\param Rela If AdcV is relative to the current input.
+\param Skip The number of samples to skip (defaults to 0 = zero, max. 1023).
+\returns The trigger configuration (or zero in case of an error, check  PruIo::Errr).
 
 \since 0.2
 */
 uint32 pruio_adc_mm_trg_ain(pruIo* Io, uint8 Stp, int32 AdcV, uint8 Rela, uint16 Skip);
 
 /** \brief Wrapper function for AdcUdt::mm_trg_pre().
-\param Io The pointer of the  PruIo instance
-\param Stp the step number to use for trigger input
-\param AdcV the sample value to match (positive check greater than, negative check less than)
-\param Samp the number of samples for the pre-trigger
-\param Rela if AdcV is relative to the current input
-\returns the trigger configuration (or zero in case of an error, check  PruIo::Errr)
+\param Io The pointer of the  PruIo instance.
+\param Stp The step number to use for trigger input.
+\param AdcV The sample value to match (positive check greater than, negative check less than).
+\param Samp The number of samples for the pre-trigger.
+\param Rela If AdcV is relative to the current input.
+\returns The trigger configuration (or zero in case of an error, check  PruIo::Errr).
 
 \since 0.2
 */
 uint32 pruio_adc_mm_trg_pre(pruIo* Io, uint8 Stp, int32 AdcV, uint16 Samp, uint8 Rela);
 
 
+/** \brief Wrapper function for QepMod::config().
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number (either input A, B or I).
+\param PMax The maximum position counter value (defaults to &h7FFFFFFF).
+\param VHz The frequency to compute velocity values (defaults to 25 Hz).
+\param Scale The Scale factor for velocity values (defaults to 1.0).
+\param Mo The modus to use for pinmuxing (0 or PRUIO_PIN_RESET).
+\returns Zero on success (otherwise a string with an error message).
+
+\since 0.2.2
+*/
+char* pruio_qep_config(pruIo* Io, uint8 Ball, uint32 PMax, float_t VHz, float_t Scale, uint8 Mo);
+
+/** \brief Wrapper function for QepMod::Value().
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number (as in QepMod::config() call).
+\param Posi A pointer to store the position value (or NULL).
+\param Velo A pointer to store the valocity value (or NULL).
+\returns Zero on success (otherwise a string with an error message).
+
+\since 0.2.2
+*/
+char* pruio_qep_Value(pruIo* Io, uint8 Ball, uint23* Posi, float_t* Velo);
+
+
 /** \brief Wrapper function for CapMod::config().
-\param Io The pointer of the  PruIo instance
-\param Ball The CPU ball number to configure
-\param FLow Minimal frequency to measure (> .0232831)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to configure.
+\param FLow Minimal frequency to measure (> .0232831).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
 char* pruio_cap_config(pruIo* Io, uint8 Ball, float_t FLow);
 
 /** \brief Wrapper function for CapMod::Value().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to test
-\param Hz A pointer to store the frequency value (or null)
-\param Du A pointer to store the duty cycle value (or null)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to test.
+\param Hz A pointer to store the frequency value (or null).
+\param Du A pointer to store the duty cycle value (or null).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
@@ -692,11 +716,11 @@ char* pruio_cap_Value(pruIo* Io, uint8 Ball, float_t* Hz, float_t* Du);
 
 
 /** \brief Wrapper function for PwmMod::Value().
-\param Io The pointer of the  PruIo instance
-\param Ball the CPU ball number to test
-\param Hz A pointer to store the frequency value (or null)
-\param Du A pointer to store the duty cycle value (or null)
-\returns zero on success (otherwise a string with an error message)
+\param Io The pointer of the  PruIo instance.
+\param Ball The CPU ball number to test.
+\param Hz A pointer to store the frequency value (or null).
+\param Du A pointer to store the duty cycle value (or null).
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
@@ -707,7 +731,7 @@ char* pruio_pwm_Value(pruIo* Io, uint8 Ball, float_t* Hz, float_t* Du);
 \param Ball the CPU ball number to set
 \param Hz The frequency to set (or -1 for no change).
 \param Du The duty cycle to set (0.0 to 1.0, or -1 for no change).
-\returns zero on success (otherwise a string with an error message)
+\returns Zero on success (otherwise a string with an error message).
 
 \since 0.2
 */
