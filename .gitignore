@@ -7,6 +7,7 @@ cmake_install.cmake
 install_manifest.txt
 
 dts_universal
+dts_custom
 
 1
 analyse
@@ -22,6 +23,7 @@ stepper
 triggers
 pasm_init.bi
 pasm_run.bi
+libpruio.so
 
 # Use wildcards as well
 CMake*
@@ -33,8 +35,6 @@ doc/html/**/*
 doc/latex/**/*
 CMakeFiles/**/*
 
-
-libpruio.so
 src/pruio/CMakeFiles/**/*
 src/config/CMakeFiles/**/*
 src/examples/CMakeFiles/**/*

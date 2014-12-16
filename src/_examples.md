@@ -325,6 +325,61 @@ pwm_cap {#SubSecExaPwmCap}
   src/c_examples/pwm_cap.c
 
 
+qep {#SubSecExaQep}
+---
+
+\Item{Description}
+
+  This example shows how to analyse input from a Quadrature encoder
+  that is connected to some header pins. It creates a PruIo structure
+  configured in IO mode and reads input (digital pulse trains) from up
+  to three header pins. Either a real encoder can get connected or the
+  encoder signals can get simulated by PWM output.
+
+\Item{Preparation}
+
+  Here's the wiring diagram
+
+  ![Wiring diagram for qep example (encoder simulation)](qep_circuit.png)
+
+\Item{Operation}
+
+  Start the program by `./rb_file` and you'll see console output like
+
+~~~{.txt}
+
+PWM frequency: 50 (50)
+00000046      100
+~~~
+
+  When you connected a real sensor, then ignore the first line "PWM
+  ...". The second line shows continously the computed results, the
+  position (first hexadecimal number) and the speed (second real
+  number). When you move the sensor, both values should change
+  depending on the sensor movement. On startup just one sensor signal
+  (A input on pin P8_12) is used. The position counter is running in
+  upwards direction and the speed value is always positive. You can
+  change the QEP module configuration
+
+| Key | Description                                              |
+| :-: | :------------------------------------------------------- |
+|  A  | use A input (only speed information, positive direction) |
+|  B  | use A and B input (position, speed and direction)        |
+|  I  | use A, B and Index input (position, speed and direction) |
+
+  In contrast, when you connected the pins for sensor simulation, you
+  should see the position counter running in upward direction and the
+  speed value showing a constant value, that is the double frequency in
+  case of A input and four times the frequency in case of A and B
+  input.
+
+\Item{Source Code}
+
+  src/examples/rb_file.bas
+
+  src/c_examples/rb_file.c
+
+
 rb_file {#SubSecExaRbFile}
 -------
 

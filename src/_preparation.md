@@ -57,9 +57,9 @@ The first and second preconditions can be reached at once by loading an
 appropriate device tree overlay. Either prepare, install and load a
 customized overlay with fixed pin mode configurations (created by the
 dts_custom.bas tool, see section \ref SecPinConfig for details). Or
-install and load the universal overlay (file
-src/config/libpruio-0A00.dtbo ust get copied to folder /lib/firmware)
-shipped with the libpruio package by executing
+install (copy file src/config/libpruio-0A00.dtbo to folder
+/lib/firmware) and load the universal overlay shipped with the libpruio
+package by executing
 
 ~~~{.sh}
 sudo echo libpruio > /sys/devices/bone_capemgr.*/slots

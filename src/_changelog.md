@@ -21,29 +21,31 @@ Released in 2014, December.
 New:
 ----
 
-- Build management added (by CMake).
-- Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
 - Documentation page Pins added.
+- Build management added (by CMake).
+- QEP module support (function QepMod::config() and QepMod::Value() ).
+- Example qep, analyses Quadrature encoder signals (and simulates such signals).
+- Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
 - PWM configuration variables to directly influence A and B output of PWM modules.
 - Timer subsystem???
-- QEP module???
 
 
 Changes:
 --------
 
 - Function Gpio->setValue calls Gpio->config() now, in case of improper pinmuxing.
-- New numbers for PRU commands, checking tree now (faster).
-- Pruio_c_wrapper in folder src/pruio now.
+- New numbers for PRU commands, checking tree structure now (faster).
+- Pruio_c_wrapper now in folder src/pruio.
 - Folder c_wrapper renamed to c_include.
-- Tools dts_custom.bas and dts_universal.bas read command line argument path.
+- Tools dts_custom.bas and dts_universal.bas evaluate path command line argument.
+- Tool dts_custom.bas generates fragment@1 section (no export required any more).
 - Device tree overlay: QEP input pins have no restistor now.
 
 Bugfixes:
 ---------
 
 - RB and MM modes are working now, when libpruio is configured to use PRU-0.
-- C-Wrapper contains enumerators pinMuxing now.
+- C-Wrapper missing enumerators pinMuxing added.
 - C-Wrapper function pruio_gpio_config() implemented now.
 - Clock value for ADC subsystem corrected (greater sampling rates up to 200 kHz).
 - Device tree overlay file name fixed (now libpruio-00A0.dtbo).
@@ -128,6 +130,7 @@ Thanks go to:
   config-pin tool.
 
 - The libpruio users for testing, reporting bugs and sending ideas
-  to improve it. (Special thanks to Emir Elkholy and Nils Kohrs.)
+  to improve it. (Special thanks to Rafael Vega, Emir Elkholy and Nils
+  Kohrs.)
 
 - All others I forgot to mention.
