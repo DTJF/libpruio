@@ -192,6 +192,8 @@ member variables AdcSet::St_p `(i).Confg` and
 AdcSet::St_p `(i).Delay`. See \ArmRef{12} for details on ADC
 configurations.
 
+C-wrapper function: pruio_adc_setStep().
+
 \since 0.2
 '/
 FUNCTION AdcUdt.setStep CDECL( _
@@ -238,6 +240,8 @@ mode while the GPIO gets checked.
        value = zero). When you switch off the subsystem after creating
        the trigger specification, the trigger has no effect (it gets
        skipped).
+
+C-wrapper function: pruio_adc_mm_trg_pin().
 
 \since 0.2
 '/
@@ -325,6 +329,8 @@ trigger step since there is no channel muxing.)
       be on the save side, re-create your trigger specifications after
       each call to function PruIo::config().
 
+C-wrapper function: pruio_adc_mm_trg_ain().
+
 \since 0.2
 '/
 FUNCTION AdcUdt.mm_trg_ain CDECL( _
@@ -409,6 +415,8 @@ activated steps while waiting for the trigger event.
 \note A pre-trigger is always the last trigger specification in the
       call to function PruIo::mm_start() (all further
       specifications get ignored).
+
+C-wrapper function: pruio_adc_mm_trg_pre().
 
 \since 0.2
 '/

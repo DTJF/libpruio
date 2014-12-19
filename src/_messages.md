@@ -196,6 +196,9 @@ Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
 setPin {#SubSecPruIoSetPin}
 ------
 
+\Item{"unknown pin number"} The specified ball number is too big. ->
+Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
+
 \Item{"unknown setPin ball number"} The specified ball number is too
 big. -> Make sure that parameter *Ball* is less or equal \ref
 PRUIO_AZ_BALL.
@@ -310,39 +313,19 @@ GPIO {#SecErrGpio}
 config {#SubSecErrGpioConfig}
 ------
 
-\Item{"unknown GPIO pin number"} The specified ball number is too big. ->
-Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
-
 \Item{"GPIO subsystem not enabled"} Setting a header pin in GPIO mode
 is required, but the related GPIO subsystem isn't enabled. -> Set
 `PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIO subsystem
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"no GPIO pin"} Setting a header pin in GPIO mode is required, but
-the specified header pin (CPU ball number) isn't in the specified mode
-and the pinmuxing failed. -> Check the parameter *Ball*. Make sure that
-the CPU ball is in the appropriate mode before you execute the program.
-Or make sure that pinmuxing is availible in libpruio.
+\Item{"no GPIO mode"} Setting a header pin in GPIO mode is required,
+but the specified mode in parameter *Mo* is not a GPIO mode. -> Make
+sure to specify a valid GPIO mode (ie. from enumerators PinMuxing).
 
-\Item{"no ocp.* access"}
-
-\Item{"no header pin"} The required CPU ball (parameter *Ball*) is not
-connected to a header pin. libpruio pinmuxing is limited to a set of
-CPU balls, specified in the libpruio device tree overlay. This set only
-contains CPU balls connected to one of the headers P8 or P9. -> Check
-the parameter *Ball*. Extend the device tree overlay if you need access
-to further CPU balls.
-
-\Item{"no pin control"} The required CPU ball is not in the specified
-mode. libpruio tried to change the mode, but failed. -> Check the
-parameter *Ball*. Check if the user has access to pinmuxing and the CPU
-ball is specified in the libpruio device tree overlay. And check if the
-overlay isn't loaded. Extend the device tree overlay if you need access
-to further CPU balls.
-
-\Item{"pinmux failed: P._.. -> x.." (points replaced by numbers)}
-Pinmuxing cannot be done for that pin or that state.
+\note When the pin (CPU ball) is not in the matching mode, libpruio
+      tries to configure it. In that case you also may get error
+      messages as described in \ref SubSecPruIoSetPin.
 
 
 Value {#SubSecErrGpioValue}
@@ -405,7 +388,10 @@ related PWMSS subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"set frequency in first call"}
+\Item{"set frequency in first call"} This is the first call to set PWM
+output at the given pin, but the specified frequency in parameter
+*Hz* is invalid. -> Make sure to pass a valid frequency in the first
+call.
 
 \Item{"frequency not supported"} The module (PWM or CAP) isn't capable
 to generate output at the required frequency. -> Check the parameter
@@ -453,6 +439,9 @@ related PWMSS subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
+\note When the pin (CPU ball) is not in the matching mode, libpruio
+      tries to configure it. In that case you also may get error
+      messages as described in \ref SubSecPruIoSetPin.
 
 
 Value {#SubSecErrCapValue}
@@ -465,10 +454,8 @@ Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
 header pin (CPU ball) isn't in CAP mode. -> Call function
 CapMod::config(), first.
 
-
 \Item{"IO/RB mode not running"} Fetching a value is required, but the
-PRU software isn't running. -> Call function PruIo::config(),
-first.
+PRU software isn't running. -> Call function PruIo::config(), first.
 
 \Item{"CAP not enabled"} Fetching a value is required, but the related
 PWMSS subsystem isn't enabled. -> Set `PruIo->PwmSS->Conf(n)->ClVa = 2`
@@ -482,13 +469,31 @@ QEP {#SecErrQep}
 config {#SubSecErrQepConfig}
 ------
 
-\Item{To be continued ...}
+\Item{pin has no QEP capability} The specified ball number can not get
+muxed to a PWMSS-QEP module -> Make sure to specify a correct pin, see
+\ref SubSecQep for details.
+
+\Item{QEP not enabled} Setting a CPU ball for QEP is required, but the
+related PWMSS subsystem isn't enabled. -> Set
+`PruIo->PwmSS(n)->Conf->ClVa = 2` (n is the number of the PWMSS
+connected to that ball number) and call function PruIo::config(),
+first.
+
+\Item{frequency not supported} The specified frequency for speed
+measurement is out of the supported range -> Specify a frequency in the
+range of 12 to 50e6 Hz, see \ref SubSecQep for details.
+
+\note When the pin (CPU ball) is not in the matching mode, libpruio
+      tries to configure it. In that case you also may get error
+      messages as described in \ref SubSecPruIoSetPin.
 
 
 Value {#SubSecErrQepValue}
 -----
 
-\Item{To be continued ...}
+\Item{pin has no QEP capability} The specified ball number is not
+connected to a PWMSS-QEP module -> Make sure to specify a correct pin,
+see \ref SubSecQep for details.
 
-
-
+\Item{IO/RB mode not running} Fetching a value is required, but the PRU
+software isn't running. -> Call function PruIo::config(), first.

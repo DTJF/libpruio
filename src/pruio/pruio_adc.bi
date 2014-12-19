@@ -90,7 +90,7 @@ TYPE AdcUdt
     LslMode _  '*< Bit shift modus (0 to 4, for 12 to 16 bits).
   , ChAz       '*< The number of active steps.
   AS UInt16 PTR _
-    Value      '*< Fetched ADC samples.
+    Value      '*< Fetched ADC samples (step 1 => Value[1], ..., step 16 => Value[16]).
   AS ZSTRING PTR _
     E0 = @"step number too big" _         '*< Common error message.
   , E1 = @"channel number too big" _      '*< Common error message.

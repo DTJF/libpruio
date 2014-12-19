@@ -14,8 +14,10 @@ analyse
 button
 io_input
 oszi
+performance
 pwm_adc
 pwm_cap
+qep
 rb_file
 rb_oszi
 sos
@@ -26,6 +28,7 @@ pasm_run.bi
 libpruio.so
 
 # Use wildcards as well
+*.bz2
 CMake*
 CPack*
 !CMakeLists.txt
@@ -34,6 +37,7 @@ CPack*
 doc/html/**/*
 doc/latex/**/*
 CMakeFiles/**/*
+_CPack*/**/*
 
 src/pruio/CMakeFiles/**/*
 src/config/CMakeFiles/**/*
