@@ -114,6 +114,8 @@ as enumerators PruIo::PinMuxing :
 | PRUIO_GPIO_OUT0  | output pin set to low (no resistor)      |
 | PRUIO_GPIO_OUT1  | output pin set to high (no resistor)     |
 
+C-wrapper function: pruio_gpio_config().
+
 \since 0.2
 '/
 FUNCTION GpioUdt.config CDECL( _
@@ -128,8 +130,8 @@ FUNCTION GpioUdt.config CDECL( _
       , m = 1 SHL n           ' mask for bit
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
 
-    VAR x = Mo AND &b1111111
-    IF x <> .BallConf[Ball] THEN IF .setPin(Ball, Mo) THEN        RETURN .Errr
+    VAR x = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
+    IF x <> .BallConf[Ball] THEN IF .setPin(Ball, x) THEN         RETURN .Errr
     IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV       THEN         RETURN 0 ' input, we're done
 
     WITH *Conf(i)
@@ -173,6 +175,8 @@ macros defined in pruio_pins.bi (ie. P8_03 selects pin 3 on header P8).
 Parameter *Mo* specifies either the state to set (0 or 1). Or it
 specifies the pinmux mode to test and the state in the MSB.
 
+C-wrapper function: pruio_gpio_setValue().
+
 \since 0.2
 '/
 FUNCTION GpioUdt.setValue CDECL( _
@@ -188,9 +192,6 @@ FUNCTION GpioUdt.setValue CDECL( _
 
     IF 2 <> Conf(i)->ClVa THEN                 .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
     IF .BallConf[Ball] <> x THEN
-      'IF x AND &b111 <> 7 THEN                 .Errr = E1 : RETURN .Errr ' no GPIO mode
-      'IF .setPin(Ball, x) THEN                              RETURN .Errr ' pinmux failed
-      'if Mo = 1 then x += 128
       SELECT CASE AS CONST Mo
       CASE 0: x = PRUIO_GPIO_OUT0
       CASE 1: x = PRUIO_GPIO_OUT1
@@ -238,6 +239,8 @@ are
 | 1     | GPIO is in high state         |
 | 0     | GPIO is in low state          |
 | -1    | error (undefined ball number) |
+
+C-wrapper function: pruio_gpio_Value().
 
 \since 0.2
 '/

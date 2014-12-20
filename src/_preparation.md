@@ -244,7 +244,7 @@ cd FB_prussdrv-0.0
 cp include/* /usr/local/include/freebasic/BBB
 cp bin/pasm /usr/local/bin
 cd ..
-wget http://www.freebasic-portal.de/dlfiles/539/libpruio-0.2.tar.bz2
+wget http://www.freebasic-portal.de/dlfiles/592/libpruio-0.2.tar.bz2
 tar xjf libpruio-0.2.tar.bz2
 cd libpruio-0.2
 cp src/c_wrapper/libpruio.so /usr/local/lib
@@ -289,7 +289,7 @@ vanilla Debian (Ubuntu) system, based on a Rafael Vega post (find the
 -# Install FreeBasic compiler in BBB
  -# Download and uncompress package from [BBB-FBC (fbc für Beaglebone Black)](http://www.freebasic-portal.de/downloads/fb-on-arm/bbb-fbc-fbc-fuer-beaglebone-black-283.html)
 ~~~{.sh}
-wget http://www.freebasic-portal.de/dlfiles/452/BBB_fbc-1.00.tar.bz2
+wget http://www.freebasic-portal.de/dlfiles/589/BBB_fbc-1.00.tar.bz2
 tar xjf BBB_fbc-1.00.tar.bz2
 ~~~
  -# Copy files
@@ -329,7 +329,7 @@ cp bin/pasm /usr/local/bin
 -# Install libpruio
  -# Download and uncompress package from [libpruio (D/A - I/O schnell und einfach)](http://www.freebasic-portal.de/downloads/fb-on-arm/libpruio-325.html)
 ~~~{.sh}
-wget http://www.freebasic-portal.de/dlfiles/539/libpruio-0.2.tar.bz2
+wget http://www.freebasic-portal.de/dlfiles/592/libpruio-0.2.tar.bz2
 tar xjf libpruio-0.2.tar.bz2
 ~~~
  -# Copy files

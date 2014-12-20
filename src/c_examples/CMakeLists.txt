@@ -3,6 +3,7 @@ SET(c_tar
   "button"
   "io_input"
   "pwm_cap"
+  "qep"
   "rb_file"
   "sos"
   "stepper"
