@@ -6,6 +6,7 @@ SET(fb_tar
   "oszi"
   "pwm_adc"
   "pwm_cap"
+  "qep"
   "rb_file"
   "rb_oszi"
   "sos"

@@ -133,6 +133,8 @@ This functions computes the real PWM output of a header pin. The real
 setting may differ from the parameters passed to function
 PwmMod::setValue(). Use this function to compute the active settings.
 
+C-wrapper function: pruio_pwm_Value().
+
 \since 0.2
 '/
 FUNCTION PwmMod.Value CDECL( _
@@ -202,6 +204,8 @@ combinations are impossible to match exactly, due to hardware
 limitations (ie. 17 bit resolution in case of eHRPWM modules). Use
 function PwmMod::Value() to compute the active settings and
 calculate differences.
+
+C-wrapper function: pruio_pwm_setValue().
 
 \since 0.2
 '/
@@ -537,6 +541,8 @@ seconds before the new values are available. To shorten this time, you
 can specify the lowest frequency. When a period without change is over,
 the counter gets restarted.
 
+C-wrapper function: pruio_cap_config().
+
 \since 0.2
 '/
 FUNCTION CapMod.config CDECL( _
@@ -604,6 +610,8 @@ restarts and zero gets returned for both results (*Hz* and *Du*). The
 minimal frequency can get adapted by parameter *FLow* in the previous
 call to function CapMod::config().
 
+C-wrapper function: pruio_cap_Value().
+
 \since 0.2
 '/
 FUNCTION CapMod.Value CDECL( _
@@ -657,7 +665,7 @@ encoder pulse trains.
 
 The constructor just copies a pointer to the calling main UDT PruIo.
 
-\since 0.2
+\since 0.2.2
 '/
 CONSTRUCTOR QepMod(BYVAL T AS Pruio_ PTR)
   Top = T
@@ -724,6 +732,8 @@ sensor with 1024 lines per revolution, set this factor as
 Scale = 60 [s/min] / (1024 [imp/rev] * 4 [cnt/imp])
 ~~~
 
+C-wrapper function: pruio_qep_config().
+
 \since 0.2.2
 '/
 FUNCTION QepMod.config CDECL( _
@@ -771,7 +781,7 @@ FUNCTION QepMod.config CDECL( _
     END SELECT
   END WITH
   WITH *Top->PwmSS->Conf(m)
-    if 2 <> .ClVa then  Top->Errr = E2 /' QEP not enabled '/ : RETURN E2
+    if 2 <> .ClVa then  /' QEP not enabled '/ Top->Errr = E2 : RETURN E2
     .QPOSCNT = 0
     .QPOSINIT = 0
     '.QPOSMAX = iif(PMax andalso x <> 2, PMax, &h7FFFFFFFuL)
@@ -779,7 +789,7 @@ FUNCTION QepMod.config CDECL( _
     .QUTMR = 0
     .QUPRD = cuint(PWMSS_CLK / VHz)
 
-    var ccps = (.QUPRD \ &h10000)
+    var ccps = .QUPRD \ &h10000
     if ccps > 1 then ccps = 1 + int(log(ccps) / log(2))
     SELECT CASE AS CONST x
     CASE 2 '                                               up count mode
@@ -847,6 +857,8 @@ configuration of all input pins, meaning it computes (erratic) output
 even if some (or all) of the pins are not in the matching
 configuration.
 
+C-wrapper function: pruio_qep_Value().
+
 \since 0.2.2
 '/
 FUNCTION QepMod.Value CDECL( _
@@ -865,10 +877,10 @@ FUNCTION QepMod.Value CDECL( _
     END SELECT
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN
-      if Posi then *Posi = 0
-      if Velo then *Velo = 0.
-                           .Errr = @"IO mode not running" : return .Errr
-    end if
+      IF Posi THEN *Posi = 0
+      IF Velo THEN *Velo = 0.
+                        .Errr = @"IO/RB mode not running" : RETURN .Errr
+    END IF
   END WITH
   WITH *Top->PwmSS->Raw(m)
    if Velo then

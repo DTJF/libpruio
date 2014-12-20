@@ -282,14 +282,14 @@ See \ArmRef{15.4} for hardware details.
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS ZSTRING PTR _
-    E0 = @"pin has no QEPA capability" _ '*< common error message
-  , E1 = @"pin not in QEP mode" _        '*< common error message
-  , E2 = @"QEP not enabled"              '*< common error message
+    E0 = @"pin has no QEP capability" _ '*< common error message
+  , E1 = @"pin not in QEP mode" _       '*< common error message
+  , E2 = @"QEP not enabled"             '*< common error message
   AS Float_T _
-    FVh(PRUIO_AZ_PWMSS) _                '*< Factor for high velocity measurement.
-  , FVl(PRUIO_AZ_PWMSS)                  '*< Factor for low velocity measurement.
+    FVh(PRUIO_AZ_PWMSS) _               '*< Factor for high velocity measurement.
+  , FVl(PRUIO_AZ_PWMSS)                 '*< Factor for low velocity measurement.
   AS UInt32 _
-    Prd(PRUIO_AZ_PWMSS)                  '*< Period value to switch velocity measurement.
+    Prd(PRUIO_AZ_PWMSS)                 '*< Period value to switch velocity measurement.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _

@@ -233,6 +233,110 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   src/c_examples/io_input.c
 
 
+performance {#SubSecExaPerformance}
+-----------
+
+\Item{Description}
+
+This file contains an example on measuring the execution speed of
+different controllers that toggles a GPIO output. It measures the
+frequency of the toggled GPIO output from open and closed loop
+controllers and compares their execution speed agains each other.
+
+The code performs 50 tests of each controller version and computes the
+toggling frequencies Minimum, Avarage and Maximum in Hz at the end. The
+controllers are classified by
+
+-# Open loop
+  - Direct GPIO
+  - Function Gpio->Value
+-# Closed loop
+  - Input direct GPIO, output direct GPIO
+  - Input function Gpio->Value, output direct GPIO
+  - Input function Gpio->Value, output function Gpio->setValue
+  - Input Adc->Value, output direct GPIO
+  - Input Adc->Value, output function Gpio->Value
+
+\Item{Preparation}
+
+  Pinmuxing is required for this example, since the used pins are in
+  GPIO mode by default. So make sure that you accordingly prepared your
+  system, see chapter \ref SecPinConfig for details.
+
+  These are the used pins
+
+|  Pin  | Function | Description                          |
+| :---: | :------: | :----------------------------------- |
+| P8_16 |  output  | Common controller output             |
+| P8_14 |   input  | GPIO input for closed loop control   |
+| P9_42 |   input  | CAP input to measure the frequency   |
+| P9_39 |   input  | Analog input for closed loop control |
+
+  The common controller output gets connected to all inputs, the analog
+  input is protected by a voltage divider to avoid overvoltage.
+
+  Here's the wiring diagram
+
+  ![Wiring diagram for pwm_cap example](perf_circuit.png)
+
+\Item{Operation}
+
+  Start the program by `sudo ./performance` and you'll see a bunch of
+  lines like
+
+~~~{.txt}
+ 305810.4      179856.1      72150.07      69589.42      69637.88      93109.87      81366.97
+~~~
+
+which shows the measured frequencies of the different controllers in a
+single test. After 50 lines of test results, the resume gets shown like
+
+~~~{.txt}
+  Results:
+Open loop, direct GPIO:
+  Minimum:  140252.453125
+  Avarage:  233242.59875
+  Maximum:  306748.46875
+Open loop, function Gpio->Value:
+  Minimum:  127226.4609375
+  Avarage:  176452.04203125
+  Maximum:  187617.265625
+Closed loop, direct GPIO to direct GPIO:
+  Minimum:  69589.421875
+  Avarage:  70626.28109375
+  Maximum:  72150.0703125
+Closed loop, function Gpio->Value to direct GPIO:
+  Minimum:  13061.6513671875
+  Avarage:  70048.3459765625
+  Maximum:  81168.828125
+Closed loop, function Gpio->Value to function Gpio->setValue:
+  Minimum:  62814.0703125
+  Avarage:  71022.87359375
+  Maximum:  81168.828125
+Closed loop, Adc->Value to direct GPIO:
+  Minimum:  92850.5078125
+  Avarage:  93054.59218750001
+  Maximum:  93283.5859375
+Closed loop, Adc->Value to function Gpio->Value:
+  Minimum:  69589.421875
+  Avarage:  86433.71312499999
+  Maximum:  93196.6484375
+~~~
+
+All values are measured frequencies of the toggled output in Hz. Since
+the controller performs two steps to toggle the output, the controller
+frequency is twice the measured toggle frequency. The differences
+between Minimum and Maximum are due to the load of the host (ARM) CPU,
+which sometimes has to execute interrupts (ie. keyboard, mouse,
+network, ...).
+
+\Item{Source Code}
+
+  src/examples/performance.bas
+
+  src/c_examples/performance.c
+
+
 pwm_cap {#SubSecExaPwmCap}
 -------
 
@@ -248,7 +352,7 @@ pwm_cap {#SubSecExaPwmCap}
 
 \Item{Preparation}
 
-  Pinmuxing is required for this example, since to used pins are in
+  Pinmuxing is required for this example, since the used pins are in
   GPIO mode by default. So make sure that you accordingly prepared your
   system, see chapter \ref SecPinConfig for details.
 
@@ -333,23 +437,38 @@ qep {#SubSecExaQep}
   This example shows how to analyse input from a Quadrature encoder
   that is connected to some header pins. It creates a PruIo structure
   configured in IO mode and reads input (digital pulse trains) from up
-  to three header pins. Either a real encoder can get connected or the
-  encoder signals can get simulated by PWM output.
+  to three header pins, see \ref SubSecQep for details on QEP feature.
+  Either a real encoder can get connected or the encoder signals can
+  get simulated by PWM output. The frequency measurement is running at
+  25 Hz update rate.
 
 \Item{Preparation}
 
-  Here's the wiring diagram
+  If you have a Quadrature encoder (ie. an old ball driven computer
+  mouse) then make sure that the high output doesn't exeed 3V3 and
+  connect the A and B signals to header pins P8_12 and P8_11. If the
+  encoder generates an index signal, connect this to P8_16.
+
+  When you don't have a Quadrature encoder, then use the signal
+  simulation included in the example. The code uses PWM output on pins
+  P9_14 and P9_16 to simulate the A and B input. Both signals get
+  generated with a duty cycle of 50 % and a phase shift of 1 / 4 by the
+  PWM module of PWMSS-1, running in symetrical up-down mode.
+  Additionaly the CAP module of PWMSS-0 is used to generate a short
+  impulse to simulate the index event on pin P9_42 every two seconds
+  (0.5 Hz). Here's the wiring diagram
 
   ![Wiring diagram for qep example (encoder simulation)](qep_circuit.png)
 
 \Item{Operation}
 
-  Start the program by `./rb_file` and you'll see console output like
+  Start the program by `sudo ./qep` and when a real sensor is connected, you
+  should see console output like
 
 ~~~{.txt}
 
-PWM frequency: 50 (50)
-00000046      100
+       A input, 50Hz (50), PMax=4095
+00000000      0
 ~~~
 
   When you connected a real sensor, then ignore the first line "PWM
@@ -366,18 +485,51 @@ PWM frequency: 50 (50)
 |  A  | use A input (only speed information, positive direction) |
 |  B  | use A and B input (position, speed and direction)        |
 |  I  | use A, B and Index input (position, speed and direction) |
+|  0  | set *PMax* to 0 (=&h7FFFFFFF)                            |
+|  1  | set *PMax* to 1024                                       |
+|  4  | set *PMax* to 4096                                       |
+|  5  | set *PMax* to 512                                        |
+|  8  | set *PMax* to 8191                                       |
 
-  In contrast, when you connected the pins for sensor simulation, you
-  should see the position counter running in upward direction and the
-  speed value showing a constant value, that is the double frequency in
-  case of A input and four times the frequency in case of A and B
-  input.
+  Each keystroke outputs a header line showing the new configuration.
+  Using a real sensor, only the input part and PMax parts are of
+  interest.
+
+  In contrast, when you start the program with sensor simulation
+  connected (as shown in the above circuit), you'll see console output
+  like
+
+~~~{.txt}
+
+       A input, 50Hz (50), PMax=4095
+00000046      100
+~~~
+
+  The position counter is running in upward direction and the speed
+  value is constant. It's the double frequency in case of A input (and
+  four times the frequency when you switch to A and B input by pressing
+  key 'B').
+
+  You can change the simulated sensor output
+
+| Key | Description                              |
+| :-: | :--------------------------------------- |
+|  *  | double the frequency (speed)             |
+|  /  | half the frequency (speed)               |
+|  p  | add 5 Hz to the frequency (speed)        |
+|  m  | subtract 5 Hz from the frequency (speed) |
+|  +  | generate positive direction output       |
+|  -  | generate negative direction output       |
+
+  The frequency of the simulated sensor gets shown in the header line
+  as demand value and as real value in brackets. The frequency is
+  limited to the range of 25 Hz to 500 kHz.
 
 \Item{Source Code}
 
-  src/examples/rb_file.bas
+  src/examples/qep.bas
 
-  src/c_examples/rb_file.c
+  src/c_examples/qep.c
 
 
 rb_file {#SubSecExaRbFile}
