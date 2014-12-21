@@ -272,8 +272,9 @@ controllers are classified by
 | P9_42 |   input  | CAP input to measure the frequency   |
 | P9_39 |   input  | Analog input for closed loop control |
 
-  The common controller output gets connected to all inputs, the analog
-  input is protected by a voltage divider to avoid overvoltage.
+  The common controller output gets connected to all inputs. The analog
+  input is protected by a voltage divider to avoid overvoltage. A 47 k
+  variable resistor in middle position was used for the tests.
 
   Here's the wiring diagram
 

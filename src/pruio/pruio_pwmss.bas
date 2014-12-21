@@ -444,7 +444,7 @@ FUNCTION PwmMod.pwm_set CDECL( _
       IF 2 > cycle THEN                       Top->Errr = E4 : RETURN E4 ' frequency not supported
 
       freq(Nr) = ABS(F)
-      IF cycle <= &h10000 ANDALSO 0 = ForceUpDown THEN ' count up mode
+      IF cycle <= &h10000 ANDALSO 0 = BIT(ForceUpDown, Nr) THEN ' count up mode
         cnt(Nr) = cycle - 1
       ELSEIF cycle < &h20000 THEN '        no divisor count up-down mode
         cnt(Nr) = cycle SHR 1
@@ -467,7 +467,7 @@ FUNCTION PwmMod.pwm_set CDECL( _
 
     IF Da >= 0. THEN d_a(Nr) = IIF(Da > 1., 1., Da) : c_a(Nr) = 0
     IF 0 = c_a(Nr) THEN '                     calc new duty for A output
-      IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
+      IF BIT(.TBCTL, 1) ORELSE BIT(ForceUpDown, Nr) THEN '  up-down mode
         IF d_a(Nr) >= .5 _
           THEN .AQCTLA = AqCtl(0, Nr, 2) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
           ELSE .AQCTLA = AqCtl(0, Nr, 1) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
@@ -479,7 +479,7 @@ FUNCTION PwmMod.pwm_set CDECL( _
 
     IF Db >= 0. THEN d_b(Nr) = IIF(Db > 1., 1., Db) : c_b(Nr) = 0
     IF 0 = c_b(Nr) THEN '                     calc new duty for B output
-      IF BIT(.TBCTL, 1) ORELSE ForceUpDown THEN '           up-down mode
+      IF BIT(.TBCTL, 1) ORELSE BIT(ForceUpDown, Nr) THEN '  up-down mode
         IF d_b(Nr) >= .5 _
           THEN .AQCTLB = AqCtl(1, Nr, 2) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
           ELSE .AQCTLB = AqCtl(1, Nr, 1) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))

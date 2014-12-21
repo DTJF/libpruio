@@ -32,10 +32,11 @@ VAR io = NEW PruIo '*< Create a PruIo structure, wakeup subsystems.
 
 WITH *io
   DO
-    IF .Errr THEN ?"NEW failed: " & *.Errr : EXIT DO
+    IF .Errr THEN                     ?"NEW failed: " & *.Errr : EXIT DO
 
     '' configure PWM-1 for symetric output duty 50% and phase shift 1 / 4
-    .Pwm->ForceUpDown = 1
+    '.Pwm->ForceUpDown = 1
+    .Pwm->ForceUpDown OR= 1 SHL 1
     .Pwm->AqCtl(0, 1, 1) = &b000000000110
     .Pwm->AqCtl(1, 1, 1) = &b011000000000
 

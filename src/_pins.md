@@ -213,8 +213,8 @@ pre-scaler. For high frequencies (low counter periods) the counter runs
 in up-count mode (16 bit resolution). For frequencies below 1526 Hz (=
 100e6 / 65536) the counter runs in up-down mode (17 bit duty
 resolution, 16 bit frequency resolution). This up-down mode can be
-forced for high frequencies also by setting member variable
-PwmMod::ForceUpDown to 1.
+forced for high frequencies also by masking the subsystems bit in
+member variable PwmMod::ForceUpDown to 1.
 
 A PWMSS-PWM subsystem handles two outputs at the same frequency. Two
 Action Qualifiers are used to set the states of the outputs A and B in

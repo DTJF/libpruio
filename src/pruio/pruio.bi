@@ -137,8 +137,6 @@ TYPE PruIo
   AS INT16 _
     ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.
-  AS STRING _
-    MuxAcc      '*< Path for pinmuxing.
 
   '* interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel)
   AS tpruss_intc_initdata IntcInit = _
@@ -182,6 +180,9 @@ TYPE PruIo
   ,  85,  29,   0,   1,   2,    3,   4,   5,   6,   7 _
   ,  40,  41,  42,  43,  12,   13,  14,  15, 101, 102 _ ' 90
   , 110, 111, 112, 113, 114,  115, 116, 117,  19,  20}
+
+  AS STRING _
+    MuxAcc      '*< Path for pinmuxing.
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _

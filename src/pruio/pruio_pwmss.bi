@@ -142,13 +142,13 @@ TYPE PwmssArr
   AS UInt32 _
     DeAd   '*< Subsystem address.
   AS UInt32 _
-    CMax _ '*< Maximum counter value.
-  , C1 _   '*< On time counter value.
-  , C2 _   '*< Period time counter value.
-  , QPos _ '*< Position counter (QEP).
-  , NPos _ '*< New position latch.
-  , OPos _ '*< Old position latch.
-  , PLat   '*< New period timer latch.
+    CMax _ '*< Maximum counter value (CAP).
+  , C1 _   '*< On time counter value (CAP).
+  , C2 _   '*< Period time counter value (CAP).
+  , QPos _ '*< Current position counter (QEP).
+  , NPos _ '*< New position latch (QEP).
+  , OPos _ '*< Old position latch (QEP).
+  , PLat   '*< New period timer latch (QEP).
 END TYPE
 
 
@@ -196,12 +196,6 @@ and duty cycle (load) by a call to function PwmMod::setValue().
 '/
 TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  AS ZSTRING PTR _
-    E0 = @"pin has no PWM capability" _   '*< Common error message.
-  , E1 = @"pin not in PWM mode" _         '*< Common error message.
-  , E2 = @"PWMSS not enabled" _           '*< Common error message.
-  , E3 = @"set frequency in first call" _ '*< Common error message.
-  , E4 = @"frequency not supported"       '*< Common error message.
   AS UInt16 _
     ForceUpDown = 0 _                 '*< Switch to force up-down counter for ePWM modules.
   , Cntrl(PRUIO_AZ_PWMSS) = _         '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
@@ -213,6 +207,12 @@ TYPE PwmMod
 , { {&b000100000010, &b000100000010, &b010000000010} _
   , {&b000100000010, &b000100000010, &b010000000010} _
   , {&b000100000010, &b000100000010, &b010000000010} } }
+  AS ZSTRING PTR _
+    E0 = @"pin has no PWM capability" _   '*< Common error message.
+  , E1 = @"pin not in PWM mode" _         '*< Common error message.
+  , E2 = @"PWMSS not enabled" _           '*< Common error message.
+  , E3 = @"set frequency in first call" _ '*< Common error message.
+  , E4 = @"frequency not supported"       '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION Value CDECL( _
@@ -256,9 +256,9 @@ See \ArmRef{15.3} for hardware details.
 TYPE CapMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS ZSTRING PTR _
-    E0 = @"pin has no CAP capability" _ '*< common error message
-  , E1 = @"pin not in CAP mode" _       '*< common error message
-  , E2 = @"CAP not enabled"             '*< common error message
+    E0 = @"pin has no CAP capability" _ '*< Common error message.
+  , E1 = @"pin not in CAP mode" _       '*< Common error message.
+  , E2 = @"CAP not enabled"             '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _
@@ -281,15 +281,15 @@ See \ArmRef{15.4} for hardware details.
 '/
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  AS ZSTRING PTR _
-    E0 = @"pin has no QEP capability" _ '*< common error message
-  , E1 = @"pin not in QEP mode" _       '*< common error message
-  , E2 = @"QEP not enabled"             '*< common error message
   AS Float_T _
     FVh(PRUIO_AZ_PWMSS) _               '*< Factor for high velocity measurement.
   , FVl(PRUIO_AZ_PWMSS)                 '*< Factor for low velocity measurement.
   AS UInt32 _
     Prd(PRUIO_AZ_PWMSS)                 '*< Period value to switch velocity measurement.
+  AS ZSTRING PTR _
+    E0 = @"pin has no QEP capability" _ '*< Common error message.
+  , E1 = @"pin not in QEP mode" _       '*< Common error message.
+  , E2 = @"QEP not enabled"             '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _

@@ -377,15 +377,15 @@ typedef struct pwmssSet{
 */
 typedef struct pwmssArr{
   uint32
-    DeAd;      //!< Subsystem address.
+    DeAd; //!< Subsystem address.
   uint32
-    CMax,      //!< Maximum counter value.
-    C1,        //!< On time counter value.
-    C2,        //!< Period time counter value.
-    fe1,       //!< Future expansion.
-    fe2,       //!< Future expansion.
-    fe3,       //!< Future expansion.
-    fe4;       //!< Future expansion.
+    CMax  //!< Maximum counter value (CAP).
+  , C1    //!< On time counter value (CAP).
+  , C2    //!< Period time counter value (CAP).
+  , QPos  //!< Current position counter (QEP).
+  , NPos  //!< New position latch (QEP).
+  , OPos  //!< Old position latch (QEP).
+  , PLat; //!< New period timer latch (QEP).
 } pwmssArr;
 
 
@@ -402,7 +402,8 @@ typedef struct pwmssUdt{
     *Raw[PRUIO_AZ_PWMSS + 1];  //!< Pointer to current raw subsystem data (IO).
   uint32 InitParA;             //!< Offset to read data block offset.
   const uint16
-    CapMod;                    //!< Value for ECCTL2 in CAP mode (&b11010110).
+    PwmMod                     //!< Value for ECCTL2 in PWM mode (&b1011010000).
+  , CapMod;                    //!< Value for ECCTL2 in CAP mode (&b0011010110).
 } pwmssUdt;
 
 
@@ -410,7 +411,19 @@ typedef struct pwmssUdt{
 
 \since 0.2
 */
-typedef struct pwmMod pwmMod;
+typedef struct pwmMod{
+  pruIo* Top;  //!< pointer to the calling PruIo instance
+  uint16
+    ForceUpDown               //!< Switch to force up-down counter for ePWM modules.
+  , Cntrl[PRUIO_AZ_PWMSS + 1] //!< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
+  , AqCtl[1 + 1][PRUIO_AZ_PWMSS + 1][2 + 1]; //!< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
+  char
+    *E0  //!< Common error message.
+  , *E1  //!< Common error message.
+  , *E2  //!< Common error message.
+  , *E3  //!< Common error message.
+  , *E4; //!< Common error message.
+} pwmMod;
 
 /** \brief Wrapper structure for CapMod.
 
@@ -422,7 +435,18 @@ typedef struct capMod capMod;
 
 \since 0.2.2
 */
-typedef struct qepMod qepMod;
+typedef struct qepMod{
+  pruIo* Top;  //!< pointer to the calling PruIo instance
+  float_t
+    FVh[PRUIO_AZ_PWMSS + 1]  //!< Factor for high velocity measurement.
+  , FVl[PRUIO_AZ_PWMSS + 1]; //!< Factor for low velocity measurement.
+  uint32
+    Prd[PRUIO_AZ_PWMSS + 1]; //!< Period value to switch velocity measurement.
+  char
+    *E0  //!< Common error message.
+  , *E1  //!< Common error message.
+  , *E2; //!< Common error message.
+} qepMod;
 
 
 //! the PRUSS driver library
@@ -452,20 +476,20 @@ enum pinMuxing{
 \since 0.2
 */
 enum activateDevice{
-  PRUIO_ACT_PRU1  =   1    , //!< Activate PRU-1 (= default, instead of PRU-0).
-  PRUIO_ACT_ADC   = 1 << 1 , //!< Activate ADC.
-  PRUIO_ACT_GPIO0 = 1 << 2 , //!< Activate GPIO-0.
-  PRUIO_ACT_GPIO1 = 1 << 3 , //!< Activate GPIO-1.
-  PRUIO_ACT_GPIO2 = 1 << 4 , //!< Activate GPIO-2.
-  PRUIO_ACT_GPIO3 = 1 << 5 , //!< Activate GPIO-3.
-  PRUIO_ACT_PWM0  = 1 << 6 , //!< Activate PWMSS-0 (including eCAP, eQEP, ePWM).
-  PRUIO_ACT_PWM1  = 1 << 7 , //!< Activate PWMSS-1 (including eCAP, eQEP, ePWM).
-  PRUIO_ACT_PWM2  = 1 << 8 , //!< Activate PWMSS-2 (including eCAP, eQEP, ePWM).
-  PRUIO_ACT_TIM4  = 1 << 9 , //!< Activate TIMER-4.
-  PRUIO_ACT_TIM5  = 1 << 10, //!< Activate TIMER-5.
-  PRUIO_ACT_TIM6  = 1 << 11, //!< Activate TIMER-6.
-  PRUIO_ACT_TIM7  = 1 << 12, //!< Activate TIMER-7.
-  PRUIO_DEF_ACTIVE = 0xFFFFF //!< Activate all subsystems.
+  PRUIO_ACT_PRU1  =   1      //!< Activate PRU-1 (= default, instead of PRU-0).
+, PRUIO_ACT_ADC   = 1 << 1   //!< Activate ADC.
+, PRUIO_ACT_GPIO0 = 1 << 2   //!< Activate GPIO-0.
+, PRUIO_ACT_GPIO1 = 1 << 3   //!< Activate GPIO-1.
+, PRUIO_ACT_GPIO2 = 1 << 4   //!< Activate GPIO-2.
+, PRUIO_ACT_GPIO3 = 1 << 5   //!< Activate GPIO-3.
+, PRUIO_ACT_PWM0  = 1 << 6   //!< Activate PWMSS-0 (including eCAP, eQEP, ePWM).
+, PRUIO_ACT_PWM1  = 1 << 7   //!< Activate PWMSS-1 (including eCAP, eQEP, ePWM).
+, PRUIO_ACT_PWM2  = 1 << 8   //!< Activate PWMSS-2 (including eCAP, eQEP, ePWM).
+, PRUIO_ACT_TIM4  = 1 << 9   //!< Activate TIMER-4.
+, PRUIO_ACT_TIM5  = 1 << 10  //!< Activate TIMER-5.
+, PRUIO_ACT_TIM6  = 1 << 11  //!< Activate TIMER-6.
+, PRUIO_ACT_TIM7  = 1 << 12  //!< Activate TIMER-7.
+, PRUIO_DEF_ACTIVE = 0xFFFFF //!< Activate all subsystems.
 };
 
 
@@ -503,7 +527,7 @@ typedef struct pruIo{
     *DConf,        //!< Pointer to block of subsystems configuration data.
     *MOffs;        //!< Configuration offset for modules.
   uint8
-    *BallOrg,      //!< Pointer for original Ball configuration.
+    *BallInit,     //!< Pointer for original Ball configuration.
     *BallConf;     //!< Pointer to ball configuration (CPU pin muxing).
   uint32
     EAddr,         //!< The address of the external memory (PRUSS-DDR).
@@ -690,7 +714,7 @@ char* pruio_qep_config(pruIo* Io, uint8 Ball, uint32 PMax, float_t VHz, float_t 
 
 \since 0.2.2
 */
-char* pruio_qep_Value(pruIo* Io, uint8 Ball, uint23* Posi, float_t* Velo);
+char* pruio_qep_Value(pruIo* Io, uint8 Ball, uint32* Posi, float_t* Velo);
 
 
 /** \brief Wrapper function for CapMod::config().
