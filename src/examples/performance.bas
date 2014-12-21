@@ -30,9 +30,9 @@ Compile by: `fbc -w all performance.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "BBB/pruio.bi"
+#INCLUDE ONCE "../pruio/pruio.bi"
 ' include the convenience macros for header pins
-#INCLUDE ONCE "BBB/pruio_pins.bi"
+#INCLUDE ONCE "../pruio/pruio_pins.bi"
 
 '* The pin to use for CAP input.
 #DEFINE C_IN P9_42
@@ -68,6 +68,7 @@ Compile by: `fbc -w all performance.bas`
   .DRam[1] = PRUIO_COM_GPIO_OUT SHL 24
 #ENDMACRO
 
+'* Macro to set output by normal GPIO function (for better readability).
 #DEFINE FUNC(_O_) IF .Gpio->setValue(GOUT, _O_) THEN _ ' set GPIO output
                       ?"GPIO setValue failed (" & *.Errr & ")" : EXIT DO
 
@@ -95,8 +96,8 @@ WITH *io
     IF .config(1, 1 SHL 1) THEN _ '                        start IO mode
                              ?"config failed (" & *.Errr & ")" : EXIT DO
 
-    DIM AS CONST ZSTRING PTR desc(...) = { _
-      @"Open loop, direct GPIO" _
+    DIM AS CONST ZSTRING PTR desc(...) = _ '*< A text description for the tests.
+    { @"Open loop, direct GPIO" _
     , @"Open loop, function Gpio->Value" _
     , @"Closed loop, direct GPIO to direct GPIO" _
     , @"Closed loop, function Gpio->Value to direct GPIO" _
@@ -209,5 +210,5 @@ DELETE io '                    reset ADC, PinMux and GPIOs, clear memory
 
 '' help Doxygen to dokument the main code
 '&/** The main function. */
-'&int main() {PruIo::PruIo(); GpioUdt::config(); PruIo::config(); GpioUdt::Value(); PruIo::~PruIo();}
+'&int main() {PruIo::PruIo(); GpioUdt::config(); PruIo::config(); CapMod::Value(); GpioUdt::Value(); GpioUdt::setValue(); PruIo::~PruIo();}
 

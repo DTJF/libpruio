@@ -63,6 +63,8 @@ The first enumerator PRUIO_ACT_PRU1 is used to specify the PRU
 subsystem to execute libpruio. By default the bit is set and libpruio
 runs on PRU-1. See PruIo::PruIo() for further information.
 
+C wrapper equivalent activateDevice.
+
 \since 0.2
 '/
 ENUM ActivateDevice
@@ -89,6 +91,8 @@ This UDT contains a set of all pad control registers. This is the
 muxing between CPU balls and the internal subsystem targets, the pullup
 or pulldown configuration and the receiver activation.
 
+C wrapper equivalent ballSet.
+
 \since 0.2
 '/
 TYPE BallSet
@@ -101,6 +105,8 @@ END TYPE
 This UDT glues all together. It downloads and start software on the
 PRUSS, controls the initialisation and configuration processes and
 reads or writes the pinmux configurations.
+
+C wrapper equivalent pruIo.
 
 \since 0.0
 '/

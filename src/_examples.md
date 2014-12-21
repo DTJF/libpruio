@@ -238,24 +238,24 @@ performance {#SubSecExaPerformance}
 
 \Item{Description}
 
-This file contains an example on measuring the execution speed of
-different controllers that toggles a GPIO output. It measures the
-frequency of the toggled GPIO output from open and closed loop
-controllers and compares their execution speed agains each other.
+  This file contains an example on measuring the execution speed of
+  different controllers that toggles a GPIO output. It measures the
+  frequency of the toggled GPIO output from open and closed loop
+  controllers and compares their execution speed agains each other.
 
-The code performs 50 tests of each controller version and computes the
-toggling frequencies Minimum, Avarage and Maximum in Hz at the end. The
-controllers are classified by
+  The code performs 50 tests of each controller version and computes
+  the toggling frequencies Minimum, Avarage and Maximum in Hz at the
+  end. The controllers are classified by
 
--# Open loop
-  - Direct GPIO
-  - Function Gpio->Value
--# Closed loop
-  - Input direct GPIO, output direct GPIO
-  - Input function Gpio->Value, output direct GPIO
-  - Input function Gpio->Value, output function Gpio->setValue
-  - Input Adc->Value, output direct GPIO
-  - Input Adc->Value, output function Gpio->Value
+  -# Open loop
+    - Direct GPIO
+    - Function Gpio->Value
+  -# Closed loop
+    - Input direct GPIO, output direct GPIO
+    - Input function Gpio->Value, output direct GPIO
+    - Input function Gpio->Value, output function Gpio->setValue
+    - Input Adc->Value, output direct GPIO
+    - Input Adc->Value, output function Gpio->Value
 
 \Item{Preparation}
 
@@ -264,14 +264,12 @@ controllers are classified by
   system, see chapter \ref SecPinConfig for details.
 
   These are the used pins
-
-|  Pin  | Function | Description                          |
-| :---: | :------: | :----------------------------------- |
-| P8_16 |  output  | Common controller output             |
-| P8_14 |   input  | GPIO input for closed loop control   |
-| P9_42 |   input  | CAP input to measure the frequency   |
-| P9_39 |   input  | Analog input for closed loop control |
-
+  |  Pin  | Function | Description                          |
+  | :---: | :------: | :----------------------------------- |
+  | P8_16 |  output  | Common controller output             |
+  | P8_14 |   input  | GPIO input for closed loop control   |
+  | P9_42 |   input  | CAP input to measure the frequency   |
+  | P9_39 |   input  | Analog input for closed loop control |
   The common controller output gets connected to all inputs. The analog
   input is protected by a voltage divider to avoid overvoltage. A 47 k
   variable resistor in middle position was used for the tests.
@@ -284,14 +282,12 @@ controllers are classified by
 
   Start the program by `sudo ./performance` and you'll see a bunch of
   lines like
-
 ~~~{.txt}
  305810.4      179856.1      72150.07      69589.42      69637.88      93109.87      81366.97
 ~~~
-
-which shows the measured frequencies of the different controllers in a
-single test. After 50 lines of test results, the resume gets shown like
-
+  which shows the measured frequencies of the different controllers in
+  a single test. After 50 lines of test results, the subsumtion gets
+  shown like
 ~~~{.txt}
   Results:
 Open loop, direct GPIO:
@@ -323,13 +319,12 @@ Closed loop, Adc->Value to function Gpio->Value:
   Avarage:  86433.71312499999
   Maximum:  93196.6484375
 ~~~
-
-All values are measured frequencies of the toggled output in Hz. Since
-the controller performs two steps to toggle the output, the controller
-frequency is twice the measured toggle frequency. The differences
-between Minimum and Maximum are due to the load of the host (ARM) CPU,
-which sometimes has to execute interrupts (ie. keyboard, mouse,
-network, ...).
+  All values are measured frequencies of the toggled output in Hz.
+  Since the controller performs two steps to toggle the output, the
+  controller frequency is twice the measured toggle frequency. The
+  differences between Minimum and Maximum are due to the load of the
+  host (ARM) CPU, which sometimes has to execute interrupts (ie.
+  keyboard, mouse, network, ...).
 
 \Item{Source Code}
 
@@ -465,13 +460,11 @@ qep {#SubSecExaQep}
 
   Start the program by `sudo ./qep` and when a real sensor is connected, you
   should see console output like
-
 ~~~{.txt}
 
        A input, 50Hz (50), PMax=4095
 00000000      0
 ~~~
-
   When you connected a real sensor, then ignore the first line "PWM
   ...". The second line shows continously the computed results, the
   position (first hexadecimal number) and the speed (second real
@@ -480,18 +473,16 @@ qep {#SubSecExaQep}
   (A input on pin P8_12) is used. The position counter is running in
   upwards direction and the speed value is always positive. You can
   change the QEP module configuration
-
-| Key | Description                                              |
-| :-: | :------------------------------------------------------- |
-|  A  | use A input (only speed information, positive direction) |
-|  B  | use A and B input (position, speed and direction)        |
-|  I  | use A, B and Index input (position, speed and direction) |
-|  0  | set *PMax* to 0 (=&h7FFFFFFF)                            |
-|  1  | set *PMax* to 1024                                       |
-|  4  | set *PMax* to 4096                                       |
-|  5  | set *PMax* to 512                                        |
-|  8  | set *PMax* to 8191                                       |
-
+  | Key | Description                                              |
+  | :-: | :------------------------------------------------------- |
+  |  A  | use A input (only speed information, positive direction) |
+  |  B  | use A and B input (position, speed and direction)        |
+  |  I  | use A, B and Index input (position, speed and direction) |
+  |  0  | set *PMax* to 0 (=&h7FFFFFFF)                            |
+  |  1  | set *PMax* to 1024                                       |
+  |  4  | set *PMax* to 4096                                       |
+  |  5  | set *PMax* to 512                                        |
+  |  8  | set *PMax* to 8191                                       |
   Each keystroke outputs a header line showing the new configuration.
   Using a real sensor, only the input part and PMax parts are of
   interest.
@@ -499,29 +490,25 @@ qep {#SubSecExaQep}
   In contrast, when you start the program with sensor simulation
   connected (as shown in the above circuit), you'll see console output
   like
-
 ~~~{.txt}
 
        A input, 50Hz (50), PMax=4095
 00000046      100
 ~~~
-
   The position counter is running in upward direction and the speed
   value is constant. It's the double frequency in case of A input (and
   four times the frequency when you switch to A and B input by pressing
   key 'B').
 
   You can change the simulated sensor output
-
-| Key | Description                              |
-| :-: | :--------------------------------------- |
-|  *  | double the frequency (speed)             |
-|  /  | half the frequency (speed)               |
-|  p  | add 5 Hz to the frequency (speed)        |
-|  m  | subtract 5 Hz from the frequency (speed) |
-|  +  | generate positive direction output       |
-|  -  | generate negative direction output       |
-
+  | Key | Description                              |
+  | :-: | :--------------------------------------- |
+  |  *  | double the frequency (speed)             |
+  |  /  | half the frequency (speed)               |
+  |  p  | add 5 Hz to the frequency (speed)        |
+  |  m  | subtract 5 Hz from the frequency (speed) |
+  |  +  | generate positive direction output       |
+  |  -  | generate negative direction output       |
   The frequency of the simulated sensor gets shown in the header line
   as demand value and as real value in brackets. The frequency is
   limited to the range of 25 Hz to 500 kHz.
