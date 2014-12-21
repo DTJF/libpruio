@@ -14,7 +14,7 @@ Feel free to send further ideas to the author (\Email).
 
 
 libpruio-0.2.2 {#SecV-0-2-2}
-================
+==============
 
 Released in 2014, December.
 
@@ -24,30 +24,30 @@ New:
 - Documentation page Pins added.
 - Build management added (by CMake).
 - QEP module support (function QepMod::config() and QepMod::Value() ).
-- Example qep, analyses Quadrature encoder signals (and simulates such signals).
-- Example rb_file, uses ring buffer mode to fetch ADC samples and save raw data to file(s).
+- Example qep: analyse Quadrature encoder signals (and simulates such signals).
+- Example performance: measure speed of different open and closed loop controllers toggling a GPIO.
+- Example rb_file: use ring buffer mode to fetch ADC samples and save raw data to file(s).
 - PWM configuration variables to directly influence A and B output of PWM modules.
 - Timer subsystem???
-
 
 Changes:
 --------
 
-- Function Gpio->setValue calls Gpio->config() now, in case of improper pinmuxing.
+- Function Gpio->setValue calls Gpio->config() now, in case of improper pin mode.
 - New numbers for PRU commands, checking tree structure now (faster).
 - Pruio_c_wrapper now in folder src/pruio.
 - Folder c_wrapper renamed to c_include.
 - Tools dts_custom.bas and dts_universal.bas evaluate path command line argument.
-- Tool dts_custom.bas generates fragment@1 section (no export required any more).
+- Tool dts_custom.bas generates fragment@1 section (no export command required).
 - Device tree overlay: QEP input pins have no restistor now.
 
 Bugfixes:
 ---------
 
-- RB and MM modes are working now, when libpruio is configured to use PRU-0.
+- RB and MM modes are working now, even when libpruio is configured to use PRU-0.
 - C-Wrapper missing enumerators pinMuxing added.
 - C-Wrapper function pruio_gpio_config() implemented now.
-- Clock value for ADC subsystem corrected (greater sampling rates up to 200 kHz).
+- Clock value for ADC subsystem corrected (higher sampling rates for multi step setup).
 - Device tree overlay file name fixed (now libpruio-00A0.dtbo).
 - Gpio::config() works with PRUIO_PIN_RESET now.
 - PwmMod::pwm_set() no more interferences between channels A and B.

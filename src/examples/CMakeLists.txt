@@ -20,7 +20,7 @@ ADD_DEPENDENCIES(examples fb_examples)
 
 FOREACH(tar ${fb_tar})
   ADD_CUSTOM_COMMAND(OUTPUT ${tar}
-    COMMAND ${CMAKE_Fbc_COMPILER} -v -w all -e ${tar}.bas
+    COMMAND ${CMAKE_Fbc_COMPILER} -w all -e ${tar}.bas
     DEPENDS ${tar}.bas
     )
 ENDFOREACH(tar)

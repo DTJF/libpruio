@@ -10,7 +10,7 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-Compile by: `gcc -Wall -o qep qep.c -lpruio`
+Compile by: `gcc -Wall -o qep qep.c -lpruio -lprussdrv  `
 
 */
 
@@ -28,7 +28,7 @@ Compile by: `gcc -Wall -o qep qep.c -lpruio`
 //! The frequency for speed measurement.
 #define VHz 25
 //! The header pins to use for input (PWMSS-1).
-const uint8 PINS(...) = {P8_12, P8_11, P8_16};
+static const uint8 PINS[3] = {P8_12, P8_11, P8_16};
 
 /*! \brief Wait for keystroke or timeout.
 \param mseconds Timeout value in milliseconds.
@@ -65,67 +65,106 @@ int main(int argc, char **argv)
                printf("initialisation failed (%s)\n", Io->Errr); break;}
 
     // configure PWM-1 for symetric output duty 50% and phase shift 1 / 4
-    *Io->Pwm->ForceUpDown = 1
-    *Io->Pwm->AqCtl(0, 1, 1) = &b000000000110
-    *Io->Pwm->AqCtl(1, 1, 1) = &b011000000000
+    Io->Pwm->ForceUpDown = 1 << 1;
+    Io->Pwm->AqCtl[0][1][1] = 0x006; //&b000000000110
+    Io->Pwm->AqCtl[1][1][1] = 0x600; //&b011000000000;
 
-    DIM AS Float_t freq = 50., realfreq
-    if (pruio_cap_config(Io, P_IN, 2.)) { //         configure input pin
-          printf("failed setting input @P_IN (%s)\n", Io->Errr); break;}
+    float_t freq, realfreq;
+    freq = 50.;
+    if (pruio_pwm_setValue(Io, P9_14, freq, .00)) {
+                printf("failed setting P9_14 (%s)\n", Io->Errr); break;}
 
-    float_t
-        f1 //                         Variable for calculated frequency.
-      , d1 //                        Variable for calculated duty cycle.
-      , f0 = 31250 //                            The required frequency.
-      , d0 = .5;   //                           The required duty cycle.
-    if (pruio_pwm_setValue(Io, P_OUT, f0, d0)) {
-        printf("failed setting output @P_OUT (%s)\n", Io->Errr); break;}
+    if (pruio_pwm_setValue(Io, P9_16, freq, .25)) {
+                printf("failed setting P9_16 (%s)\n", Io->Errr); break;}
 
-    //           pin config OK, transfer local settings to PRU and start
-    if (pruio_config(Io, 1, 0x1FE, 0, 4)) {
+    if (pruio_pwm_setValue(Io, P9_42, .5, .00000005)) {
+                printf("failed setting P9_42 (%s)\n", Io->Errr); break;}
+
+    if (pruio_pwm_Value(Io, P9_14, &realfreq, NULL)) {
+            printf("failed getting PWM value (%s)\n", Io->Errr); break;}
+
+    uint32 pmax = PMX;
+    if (pruio_qep_config(Io, PINS[0], pmax, VHz, 1., 0)) {
+        printf("QEP pin configuration failed (%s)\n", Io->Errr); break;}
+
+    if (pruio_config(Io, 1, 0, 0, 4)) {
                        printf("config failed (%s)\n", Io->Errr); break;}
 
+//printf("\n input,  Hz , PMax= %s", Io->Errr); //freq, realfreq, pmax);
+    static char *t[] = {"       A", "   A & B", "A, B & I"};
+    uint32 posi, m = -1, p = 0;
+    float_t velo;
+    //printf("\n%s input, %10f Hz (%10f), PMax=%u", t[p], freq, realfreq, pmax);
+
+    printf("\n  p=%u", p);
+    printf("\n  m=%i", m);
+    printf("\n  %s input", t[p]);
+    printf("\n  %s input", t[0]);
+    printf("\n  %s input", t[1]);
+    printf("\n  %s input", t[2]);
+
     struct termios oldt, newt; //             make terminal non-blocking
-    tcgetattr( STDIN_FILENO, &oldt );
+    tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
-    newt.c_lflag &= ~( ICANON );
+    newt.c_lflag &= ~(ICANON);
     newt.c_cc[VMIN] = 0;
     newt.c_cc[VTIME] = 1;
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
+    //printf("\n%s input, %10f Hz (%10f), PMax=%u", t[p], 1., 1., 0); //freq, realfreq, pmax);
+ //printf("\n input,  Hz , PMax= %s", Io->Errr); //freq, realfreq, pmax);
+
+
+ //printf("\n input,  Hz , PMax= %s", Io->Errr); //freq, realfreq, pmax);
     while(1) { //                                       run endless loop
-      if (1 == isleep(1)) {
+      fflush(STDIN_FILENO);
+      if (1 == isleep(20)) {
         switch (getchar()) { //                       evaluate keystroke
-          case '0' : d0 = 0.0; break;
-          case '1' : d0 = 0.1; break;
-          case '2' : d0 = 0.2; break;
-          case '3' : d0 = 0.3; break;
-          case '4' : d0 = 0.4; break;
-          case '5' : d0 = 0.5; break;
-          case '6' : d0 = 0.6; break;
-          case '7' : d0 = 0.7; break;
-          case '8' : d0 = 0.8; break;
-          case '9' : d0 = 0.9; break;
-          case ',' : d0 = 1.0; break;
-          case 'm' : f0 = (f0 > 5.5 ? f0 - 5. : .5); break;
-          case 'p' : f0 = (f0 < 999995. ? f0 + 5. : 1000000.); break;
-          case '*' : f0 = (f0 < 1000000 ? f0 * 2 : 1000000.); break;
-          case '/' : f0 = (f0 > .5 ? f0 / 2 : .5); break;
-          case '+' : f0 = 1000000; break;
-          case '-' : f0 = .5; break;
+          case 'a' : case 'A' : m = 0; break;
+          case 'b' : case 'B' : m = 1; break;
+          case 'i' : case 'I' : m = 2; break;
+          case 'p' : case 'P' : m = 3; freq = (freq < 499995.) ? freq + 5. : 500000.; break;
+          case 'm' : case 'M' : m = 3; freq = (freq >     20.) ? freq - 5. :     25.; break;
+          case '*'            : m = 3; freq = (freq < 250000.) ? freq * 5. : 500000.; break;
+          case '/'            : m = 3; freq = (freq >     50.) ? freq / 5. :     25.; break;
+          case '0' : m = p; pmax =    0; break;
+          case '1' : m = p; pmax = 1023; break;
+          case '4' : m = p; pmax = 4095; break;
+          case '5' : m = p; pmax =  511; break;
+          case '8' : m = p; pmax = 8191; break;
+          case '+' : m = 3; Io->Pwm->AqCtl[0][1][1] = 0x6; break;
+          case '-' : m = 3; Io->Pwm->AqCtl[0][1][1] = 0x9; break;
+          case  13 : m = 3; freq = 50.;
+            if (pruio_pwm_setValue(Io, P9_14, freq, -1.)) {
+                printf("failed setting PWM value (%s)\n", Io->Errr);
+                goto finish;}
+            if (pruio_pwm_Value(Io, P9_14, &realfreq, NULL)) {
+                printf("failed getting PWM value (%s)\n", Io->Errr);
+                goto finish;}
+            break;
           default: goto finish;
         };
-        if (pruio_pwm_setValue(Io, P_OUT, f0, d0)) { //   set new output
-           printf("failed setting PWM output (%s)\n", Io->Errr); break;}
-
-        printf("\n--> Frequency: %10f , Duty: %10f\n", f0, d0); //  info
+        switch (m) { //                                 evaluate command
+          case 3:
+            if (pruio_pwm_setValue(Io, P9_14, freq, -1.)) {
+              printf("failed setting PWM value (%s)\n", Io->Errr);
+              goto finish;}
+            if (pruio_pwm_Value(Io, P9_14, &realfreq, NULL)) {
+              printf("failed getting PWM value (%s)\n", Io->Errr);
+              goto finish;}
+            break;
+          default:
+            p = m;
+            if (pruio_qep_config(Io, PINS[p], pmax, VHz, 1., 0)) { //reconfigure QEP pins
+              printf("QEP pin reconfiguration failed (%s)\n", Io->Errr);
+              goto finish;}
+        };
+        printf("\n%s input, %10f Hz (%10f), PMax=%u", t[p], freq, realfreq, pmax);
       }
+      if (pruio_qep_Value(Io, PINS[p], &posi, &velo)) { // get new input
+            printf("failed getting QEP Value (%s)\n", Io->Errr); break;}
 
-      if (pruio_cap_Value(Io, P_IN, &f1, &d1)) { //    get current input
-          printf("failed reading input @P_IN (%s)\n", Io->Errr); break;}
-
-      printf("\r    Frequency: %10f , Duty: %10f     ", f1, d1); // info
-      fflush(STDIN_FILENO);
+      printf("\r  Position: %8X , Speed: %7.2f", posi, velo); // info
     }
 
 finish:
