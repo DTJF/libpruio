@@ -138,6 +138,20 @@ TYPE PruIo
     ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.
 
+  '* list of GPIO numbers, corresponding to ball index
+  AS UInt8 BallGpio(PRUIO_AZ_BALL) = { _
+     32,  33,  34,  35,  36,   37,  38,  39,  22,  23 _
+  ,  26,  27,  44,  45,  46,   47,  48,  49,  50,  51 _ ' 10
+  ,  52,  53,  54,  55,  56,   57,  58,  59,  30,  31 _
+  ,  60,  61,  62,  63,  64,   65,  66,  67,  68,  69 _ ' 30
+  ,  70,  71,  72,  73,  74,   75,  76,  77,  78,  79 _
+  ,  80,  81,   8,   9,  10,   11,  86,  87,  88,  89 _ ' 50
+  ,  90,  91,  92,  93,  94,   95,  96,  97,  98,  99 _
+  , 100,  16,  17,  21,  28,  105, 106,  82,  83,  84 _ ' 70
+  ,  85,  29,   0,   1,   2,    3,   4,   5,   6,   7 _
+  ,  40,  41,  42,  43,  12,   13,  14,  15, 101, 102 _ ' 90
+  , 110, 111, 112, 113, 114,  115, 116, 117,  19,  20}
+
   '* interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel)
   AS tpruss_intc_initdata IntcInit = _
     TYPE<tpruss_intc_initdata>( _
@@ -166,20 +180,6 @@ TYPE PruIo
       (PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR _
        PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK OR PRUIO_MASK) _
       )
-
-  '* list of GPIO numbers, corresponding to ball index
-  AS UInt8 BallGpio(PRUIO_AZ_BALL) = { _
-     32,  33,  34,  35,  36,   37,  38,  39,  22,  23 _
-  ,  26,  27,  44,  45,  46,   47,  48,  49,  50,  51 _ ' 10
-  ,  52,  53,  54,  55,  56,   57,  58,  59,  30,  31 _
-  ,  60,  61,  62,  63,  64,   65,  66,  67,  68,  69 _ ' 30
-  ,  70,  71,  72,  73,  74,   75,  76,  77,  78,  79 _
-  ,  80,  81,   8,   9,  10,   11,  86,  87,  88,  89 _ ' 50
-  ,  90,  91,  92,  93,  94,   95,  96,  97,  98,  99 _
-  , 100,  16,  17,  21,  28,  105, 106,  82,  83,  84 _ ' 70
-  ,  85,  29,   0,   1,   2,    3,   4,   5,   6,   7 _
-  ,  40,  41,  42,  43,  12,   13,  14,  15, 101, 102 _ ' 90
-  , 110, 111, 112, 113, 114,  115, 116, 117,  19,  20}
 
   AS STRING _
     MuxAcc      '*< Path for pinmuxing.

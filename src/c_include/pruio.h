@@ -539,12 +539,10 @@ typedef struct pruIo{
   int16
     ParOffs,       //!< The offset for the parameters of a module.
     DevAct;        //!< Active subsystems.
-
-//! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
-  struct __pruss_intc_initdata IntcInit;
-
 //! List of GPIO numbers, corresponding to ball index.
   uint8 BallGpio[PRUIO_AZ_BALL + 1];
+//! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
+  struct __pruss_intc_initdata IntcInit;
 } pruIo;
 
 
