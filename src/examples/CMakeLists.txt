@@ -4,6 +4,7 @@ SET(fb_tar
   "button"
   "io_input"
   "oszi"
+  "performance"
   "pwm_adc"
   "pwm_cap"
   "qep"

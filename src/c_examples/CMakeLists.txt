@@ -2,6 +2,7 @@ SET(C_TAR
   "1"
   "button"
   "io_input"
+  "performance"
   "pwm_cap"
   "qep"
   "rb_file"
