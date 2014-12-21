@@ -10,7 +10,7 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-Compile by: `gcc -Wall -o qep qep.c -lpruio -lprussdrv  `
+Compile by: `gcc -Wall -o qep qep.c -lpruio -lprussdrv`
 
 */
 

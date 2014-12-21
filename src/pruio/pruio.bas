@@ -375,27 +375,33 @@ configurations get loaded. Also the Pru_Run instructions get
 re-initialized.
 
 In case of an error the PRU will be disabled after this call. Otherwise
-it's running and
+it
 
-- waits for a call to PruIo::mm_start() or PruIo::rb_start() (in case of Samp > 1) or
-- it starts sampling immediately and feads values to AdcUdt::Value otherwise.
+- is running and waits for a call to PruIo::mm_start() or PruIo::rb_start() (in case of *Samp* > 1), or
+- it starts sampling immediately and feads values to AdcUdt::Value otherwise (*Samp* = 1).
+- it halts after loading the local configuration to the subsystem registers (*Samp* = 0).
 
-The *Samp* parameter specifies the number of samples to convert for
-each channel. In single mode (Samp <= 1 = default) sampling starts
-immediately and the index in the array PruIo::Value[] is equal to the
-step number. Inactive steps return 0 (zero) in this case.
+The *Samp* parameter specifies the run mode (IO, RB or MM) and the
+number of samples to convert for each step. In IO mode (*Samp* = 1,
+default) sampling starts immediately and the index in the array
+AdcUdt::Value[] is equal to the step number. Inactive steps return 0
+(zero) in this case.
 
-| field    | result of   | defaults to   |
-| -------: | :---------: | :------------ |
-| Value[0] | charge step | allways zero  |
-| Value[1] | step 1      | AIN-0         |
-| Value[2] | step 2      | AIN-1         |
-| ...      | ...         | ...           |
+| field     | result of   | defaults to   |
+| --------: | :---------: | :------------ |
+| Value[0]  | charge step | allways zero  |
+| Value[1]  | step 1      | AIN-0         |
+| Value[2]  | step 2      | AIN-1         |
+| ...       | ...         | ...           |
+| Value[8]  | step 8      | AIN-7         |
+| Value[9]  | step 9      | undefined     |
+| ...       | ...         | ...           |
+| Value[16] | step 16     | undefined     |
 
-In MM (Samp > 1) the array PruIo::Value[] contains no zero values.
+In MM (*Samp* > 1) the array AdcUdt::Value[] contains no zero values.
 Instead only values from active steps get collected. The charge step
 (step 0) returns no value. So when 3 steps are active in the Mask and
-Samp is set to 5, a total of 3 times 5 = 15 values get available in the
+*Samp* is set to 5, a total of 3 times 5 = 15 values get available in the
 array AdcUdt::Value[] (after the call to function PruIo::mm_start() ).
 The array contains the active steps, so when ie. steps 3, 6 and 7 are
 active in the Mask, the array contains:
@@ -456,7 +462,7 @@ the same frequency. Some examples
 | 1e6      | 1000               |
 | 22675    | ~44100             |
 
-\note This value has no effect in single mode (when Samp is less than 2).
+\note This value has no effect in IO mode (when *Samp* = 1).
 
 The *Mds* parameter specifies the bit encoding (range) of the samples.
 By default (Mds = 4) the samples from the ADC (12 bit) get left shifted

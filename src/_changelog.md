@@ -28,6 +28,7 @@ New:
 - Example performance: measure speed of different open and closed loop controllers toggling a GPIO.
 - Example rb_file: use ring buffer mode to fetch ADC samples and save raw data to file(s).
 - PWM configuration variables to directly influence A and B output of PWM modules.
+- More links between the FB and the C documentation.
 - Timer subsystem???
 
 Changes:
@@ -47,6 +48,7 @@ Bugfixes:
 - RB and MM modes are working now, even when libpruio is configured to use PRU-0.
 - C-Wrapper missing enumerators pinMuxing added.
 - C-Wrapper function pruio_gpio_config() implemented now.
+- pruio.h: minor improvements in structure pruIo.
 - Clock value for ADC subsystem corrected (higher sampling rates for multi step setup).
 - Device tree overlay file name fixed (now libpruio-00A0.dtbo).
 - Gpio::config() works with PRUIO_PIN_RESET now.

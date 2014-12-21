@@ -26,7 +26,7 @@ When done,
 -# execute the binary with root privileges by `sudo ./dts_universal`
 
 to install the compiled overlay in /lib/firmware. The overlay source
-remains in the current folder (file libpruio-0A00.dts). Load the
+remains in the current folder (file libpruio-00A0.dts). Load the
 overlay by
 
 ~~~{.sh}

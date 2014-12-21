@@ -19,13 +19,13 @@ When done,
 -# Compile the tool by `fbc -w all dts_custom.bas`.
 
 -# Execute the binary without root privileges by `./dts_custom` to
-   control the generated source pruio_custom-0A00.dts, or
+   control the generated source pruio_custom-00A0.dts, or
 
 -# execute the binary with root privileges by `sudo ./dts_custom` to
    install the compiled overlay in /lib/firmware.
 
 The overlay source remains in the current folder (file
-pruio_custom-0A00.dts). Load the overlay by
+pruio_custom-00A0.dts). Load the overlay by
 
 ~~~{.sh}
 sudo su

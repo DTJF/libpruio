@@ -24,7 +24,7 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-Compile by: `gcc -Wall -o performance performance.c -lpruio -lprussdrv  `
+Compile by: `gcc -Wall -o performance performance.c -lpruio -lprussdrv`
 
 */
 
@@ -32,19 +32,17 @@ Compile by: `gcc -Wall -o performance performance.c -lpruio -lprussdrv  `
 #define _GNU_SOURCE 1
 #include "stdio.h"
 #include "time.h"
-//#include <termios.h>
-//#include <unistd.h>
-//#include <errno.h>
 #include "../c_include/pruio.h"
 #include "../c_include/pruio_pins.h"
 
-//* The pin to use for CAP input.
+//! The pin to use for CAP input.
 #define C_IN P9_42
-//* The pin to use for GPIO output.
+//! The pin to use for GPIO output.
 #define GOUT P8_16
-//* The pin to use for GPIO input.
+//! The pin to use for GPIO input.
 #define G_IN P8_14
 
+//! Macro to measure the frequency and compute statistics.
 #define FREQ(_N_) \
   if(pruio_cap_Value(Io, C_IN, &f0, NULL)) { /*       get CAP input */ \
              printf("Cap->Value failed (%s)", Io->Errr); goto finish;} \
@@ -53,6 +51,7 @@ Compile by: `gcc -Wall -o performance performance.c -lpruio -lprussdrv  `
   if(f0 > xf[_N_]) {xf[_N_] = f0;} \
   printf("%f\t", f0);
 
+//! Macro to set output pin by fast direct PRU command (no error checking).
 #define DIRECT(_O_) \
   if(_O_){cd &= ~m0; sd |= m0;} else {sd &= ~m0; cd |= m0;} \
   while(Io->DRam[1]){} \
@@ -61,6 +60,7 @@ Compile by: `gcc -Wall -o performance performance.c -lpruio -lprussdrv  `
   Io->DRam[2] = ad; \
   Io->DRam[1] = PRUIO_COM_GPIO_OUT << 24;
 
+//! Macro to set output by normal GPIO function (for better readability).
 #define FUNC(_O_) \
   if(pruio_gpio_setValue(Io, GOUT, _O_)) { /* set GPIO output */ \
             printf("GPIO setValue failed (%s)", Io->Errr); goto finish;}

@@ -40,7 +40,9 @@ WITH *io
     .Pwm->AqCtl(0, 1, 1) = &b000000000110
     .Pwm->AqCtl(1, 1, 1) = &b011000000000
 
-    DIM AS Float_t freq = 50., realfreq
+    DIM AS Float_t _
+      freq = 50. _ '*< The current frequency (startvalue here).
+    , realfreq     '*< The real frequency of PWM output.
     IF .Pwm->setValue(P9_14, freq, .0) THEN _
               ?"failed setting " & P9_14 & " (" & *.Errr & ")" : EXIT DO
 
@@ -53,7 +55,7 @@ WITH *io
     IF .Pwm->Value(P9_14, @realfreq, NULL) THEN _
                   ?"failed getting PWM value (" & *.Errr & ")" : EXIT DO
 
-    DIM AS UInt32 pmax = PMX
+    DIM AS UInt32 pmax = PMX '*< The maximum position value.
     IF .Qep->config(PINS(0), pmax, VHz) THEN _ '      configure QEP pins
               ?"QEP pin configuration failed (" & *.Errr & ")" : EXIT DO
 
@@ -61,8 +63,11 @@ WITH *io
       ?"config failed: " & *.Errr & " --> " & .DRam[0] : SLEEP : EXIT DO
 
     STATIC AS CONST ZSTRING PTR t(...) = {@"       A", @"   A & B", @"A, B & I"}
-    DIM AS UInt32 posi, m = -1, p = 0
-    DIM AS Float_t velo
+    DIM AS UInt32 _
+      posi _   '*< The current position value.
+    , m = -1 _ '*< The operation mode for user configurations.
+    , p = 0    '*< The pin index to use for re-configuration.
+    DIM AS Float_t velo '*< The current speed.
     ?!"\n" & *t(p) & " input, " & freq & "Hz (" & realfreq & "), PMax=" & pmax
     DO '                           print current state (until keystroke)
       VAR k = ASC(INKEY()) '*< The key code.

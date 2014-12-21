@@ -28,6 +28,8 @@ all modules, but the functions to control the modules are separated in
 the module UDTs PwmMod, CapMod and QepMod in order to
 make the API more clear.
 
+C wrapper equivalent pwmssSet.
+
 \since 0.2
 '/
 TYPE PwmssSet
@@ -136,6 +138,8 @@ END TYPE
 This UDT is used to fetch the current register data from eCAP and eQEP
 modules in IO and RB mode.
 
+C wrapper equivalent pwmssArr.
+
 \since 0.2
 '/
 TYPE PwmssArr
@@ -158,6 +162,8 @@ This UDT contains (only) the configuration of the three PWMSS
 subsystems in the CPU. The functions to drive the hardware are in
 separate UDTs, to make the API more easy to understand. See UDTs
 PwmMod, CapMod and QepMod for details.
+
+C wrapper equivalent pwmssUdt.
 
 \since 0.2
 '/
@@ -192,16 +198,18 @@ To use a header pins as PWM output, the pin must be in *pwm* mode
 before starting your code. Then just set the desired period (frequency)
 and duty cycle (load) by a call to function PwmMod::setValue().
 
+C wrapper equivalent pwmMod.
+
 \since 0.2
 '/
 TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS UInt16 _
-    ForceUpDown = 0 _                 '*< Switch to force up-down counter for ePWM modules.
-  , Cntrl(PRUIO_AZ_PWMSS) = _         '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
+    ForceUpDown = 0 _               '*< Switch to force up-down counter for ePWM modules.
+  , Cntrl(PRUIO_AZ_PWMSS) = _       '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
     {&b1010000000010000, &b1010000000010000, &b1010000000010000} _
-  , AqCtl(1, PRUIO_AZ_PWMSS, 2) = { _ '*< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
-  { {&b000000010010, &b000000010010, &b000001000010} _
+  , AqCtl(1, PRUIO_AZ_PWMSS, 2) = _ '*< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
+{ { {&b000000010010, &b000000010010, &b000001000010} _
   , {&b000000010010, &b000000010010, &b000001000010} _
   , {&b000000010010, &b000000010010, &b000001000010} } _
 , { {&b000100000010, &b000100000010, &b010000000010} _
@@ -278,6 +286,9 @@ modul in the PWMSS subsystems.
 
 See \ArmRef{15.4} for hardware details.
 
+C wrapper equivalent qepMod.
+
+\since 0.2.2
 '/
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance

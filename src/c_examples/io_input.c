@@ -8,7 +8,7 @@ Licence: GPLv3
 
 Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-Compile by: `gcc -Wall -o io_input io_input.c -lpruio`
+Compile by: `gcc -Wall -o io_input io_input.c -lpruio -lprussdrv`
 
 */
 
