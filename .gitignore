@@ -29,7 +29,6 @@ libpruio.so
 
 # Use wildcards as well
 *.bz2
-CMake*
 CPack*
 !CMakeLists.txt
 
