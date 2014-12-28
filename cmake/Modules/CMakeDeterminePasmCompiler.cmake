@@ -69,7 +69,7 @@ IF(NOT CMAKE_PLATFORM_INFO_DIR)
 ENDIF()
 
 # configure variables set in this file for fast reload later on
-CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakePasmCompiler.cmake.in
+CONFIGURE_FILE(${CMAKE_MODULE_PATH}/CMakePasmCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakePasmCompiler.cmake
   @ONLY IMMEDIATE # IMMEDIATE must be here for compatibility mode <= 2.0
   )
