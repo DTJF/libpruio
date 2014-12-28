@@ -1,7 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-PROJECT(libpruio Fbc C)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+PROJECT(libpruio Pasm Fbc C)
+#~ PROJECT(libpruio Fbc C)
 
 #INCLUDE(AddFileDependencies)
 
