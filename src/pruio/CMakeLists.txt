@@ -71,3 +71,48 @@ INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
         DESTINATION include/freebasic/BBB
         COMPONENT fb_install
         )
+
+
+
+EXECUTE_PROCESS(
+  COMMAND pasm
+  RESULT_VARIABLE assembler_works
+	OUTPUT_VARIABLE output
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+
+# Check the PRU assembler pasm (presence and version):
+IF(NOT PASM_ASSEMBER_WORKS)
+  IF(assembler_works EQUAL "1")
+    STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
+    SET(works FALSE)
+    FOREACH(line IN LISTS output_lines)
+      IF(line MATCHES "PRU Assembler Version")
+        SET(PASM_ASSEMBER_ID ${line})
+      ELSEIF(line MATCHES "y  - Create 'FreeBasic array' binary output")
+        SET(works TRUE)
+        BREAK()
+      ENDIF()
+    ENDFOREACH()
+
+    IF(works)
+      MESSAGE(STATUS "PASM assembler OK (${PASM_ASSEMBER_ID})")
+      SET(PASM_ASSEMBER_WORKS "${works}" CACHE FILEPATH "pasm assembler" FORCE)
+      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
+        "Determining if the pasm assembler works passed with "
+        "the following output:\n${output}\n\n")
+    ELSE()
+      MESSAGE(FATAL_ERROR "Wrong PASM assembler version!")
+      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+        "Determining if the pasm assembler works failed with "
+        "the following output:\n${OUTPUT}\n\n")
+    ENDIF()
+  ELSE()
+    MESSAGE(FATAL_ERROR "PASM assembler not found (command pasm)!")
+    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+      "Finding the pasm assembler failed!")
+  ENDIF()
+ENDIF()
+
+MARK_AS_ADVANCED(PASM_ASSEMBER_WORKS)
