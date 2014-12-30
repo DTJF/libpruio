@@ -34,13 +34,13 @@ SET(FBC_BI_EXTRA
 
 
 ADD_CUSTOM_COMMAND(OUTPUT pasm_init.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Init pasm_init.p
+  COMMAND pasm ARGS -V3 -y -CPru_Init ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.p
   COMMAND ${CMAKE_COMMAND} -E touch pruio.bas
   DEPENDS pasm_init.p ${PASM_SRC}
   )
 
 ADD_CUSTOM_COMMAND(OUTPUT pasm_run.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Run pasm_run.p
+  COMMAND pasm ARGS -V3 -y -CPru_Run ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.p
   COMMAND ${CMAKE_COMMAND} -E touch pruio.bas
   DEPENDS pasm_run.p ${PASM_SRC}
   )
@@ -74,6 +74,8 @@ INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
 
 
 
+
+# Check the PRU assembler pasm (presence and version):
 EXECUTE_PROCESS(
   COMMAND pasm
   RESULT_VARIABLE assembler_works
@@ -81,8 +83,6 @@ EXECUTE_PROCESS(
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-
-# Check the PRU assembler pasm (presence and version):
 IF(NOT PASM_ASSEMBER_WORKS)
   IF(assembler_works EQUAL "1")
     STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
@@ -97,7 +97,7 @@ IF(NOT PASM_ASSEMBER_WORKS)
     ENDFOREACH()
 
     IF(works)
-      MESSAGE(STATUS "PASM assembler OK (${PASM_ASSEMBER_ID})")
+      MESSAGE(STATUS "Check for working PASM assembler OK ==> ${PASM_ASSEMBER_ID}")
       SET(PASM_ASSEMBER_WORKS "${works}" CACHE FILEPATH "pasm assembler" FORCE)
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the pasm assembler works passed with "
@@ -106,7 +106,7 @@ IF(NOT PASM_ASSEMBER_WORKS)
       MESSAGE(FATAL_ERROR "Wrong PASM assembler version!")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if the pasm assembler works failed with "
-        "the following output:\n${OUTPUT}\n\n")
+        "the following output:\n${output}\n\n")
     ENDIF()
   ELSE()
     MESSAGE(FATAL_ERROR "PASM assembler not found (command pasm)!")

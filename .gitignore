@@ -29,6 +29,7 @@ libpruio.so
 
 # Use wildcards as well
 *.bz2
+*.deb
 CMakeCache*
 CPack*
 
