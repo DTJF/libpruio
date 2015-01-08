@@ -95,6 +95,7 @@ SET(CMAKE_INCLUDE_FLAG_FBC "-I ")
 SET(CMAKE_INCLUDE_FLAG_Fbc_SEP " ")
 SET(CMAKE_LIBRARY_PATH_FLAG "-L ")
 SET(CMAKE_LINK_LIBRARY_FLAG "-l ")
+SET(CMAKE_LINK_LIBRARY_FILE_FLAG "-Wl")
 #SET(CMAKE_Fbc_VERSION_FLAG "")
 
 # for most systems a module is the same as a shared library
@@ -144,21 +145,19 @@ IF(NOT CMAKE_Fbc_LINK_EXECUTABLE)
 ENDIF()
 
 MARK_AS_ADVANCED(
-CMAKE_Fbc_FLAGS
-CMAKE_Fbc_FLAGS_DEBUG
-CMAKE_Fbc_FLAGS_MINSIZEREL
-CMAKE_Fbc_FLAGS_RELEASE
-CMAKE_Fbc_FLAGS_RELWITHDEBINFO
-)
-
-FIND_PROGRAM(CMAKE_Fbc_DEPS_TOOL cmake_fb_deps DOC "FreeBASIC dependencies tool.")
+  CMAKE_Fbc_FLAGS
+  CMAKE_Fbc_FLAGS_DEBUG
+  CMAKE_Fbc_FLAGS_MINSIZEREL
+  CMAKE_Fbc_FLAGS_RELEASE
+  CMAKE_Fbc_FLAGS_RELWITHDEBINFO
+  )
 
 IF(NOT CMAKE_Fbc_DEPS_TOOL)
   MESSAGE(STATUS "Tool cmake_fb_deps not available -> no Fbc extensions!")
 ELSE()
   # the macro to add dependencies to a native FB target
   MACRO(ADD_Fbc_SRC_DEPS Tar)
-    SET(_file ${CMAKE_CURRENT_LIST_DIR}/CMakeFiles/${Tar}_deps.cmake)
+    SET(_file ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${Tar}_deps.cmake)
     GET_TARGET_PROPERTY(_src ${Tar} SOURCES)
     EXECUTE_PROCESS(
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} cmake_fb_deps ${_file} ${_src}
@@ -179,14 +178,14 @@ ELSE()
       INCLUDE_DIRECTORIES(${_dir})
       EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory ${_dir})
     ELSE()
-      SET(_dir ${CMAKE_CURRENT_LIST_DIR})
+      SET(_dir ${CMAKE_CURRENT_BINARY_DIR})
     ENDIF()
 
     IF(ARG_OUT_NAM)
       SET(_tar ${ARG_OUT_NAM}_deps)
       SET(_deps ${_dir}/${ARG_OUT_NAM}.cmake)
     ELSE()
-      SET(_deps ${CMAKE_CURRENT_LIST_DIR}/CMakeFiles/bas2c_deps.cmake)
+      SET(_deps ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/bas2c_deps.cmake)
     ENDIF()
 
     SET(flags "")
@@ -205,11 +204,14 @@ ELSE()
       STRING(REGEX REPLACE ".[Bb][Aa][Ss]$" ".c" c_nam ${src})
       SET(c_file "${_dir}/${c_nam}")
       EXECUTE_PROCESS(
-        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} -gen gcc -r ${CMAKE_CURRENT_SOURCE_DIR}/${src}
+        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} -gen gcc -r ${src}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
-      IF(ARG_OUT_DIR)
+      #IF(ARG_OUT_DIR)
+      IF(${CMAKE_CURRENT_SOURCE_DIR} NOT EQUAL ${_dir})
         EXECUTE_PROCESS(
-          COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_SOURCE_DIR}/${c_nam} ${c_file}
+          COMMAND ${CMAKE_COMMAND} -E rename ${c_nam} ${c_file}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
           )
       ENDIF()
       ADD_CUSTOM_COMMAND(OUTPUT ${c_file}
@@ -218,7 +220,7 @@ ELSE()
         DEPENDS ${src}
         )
       LIST(APPEND c_src ${c_file})
-    ENDFOREACH(src ${fbc_src})
+    ENDFOREACH()
 
     IF(NOT ARG_NO_DEPS)
       EXECUTE_PROCESS(

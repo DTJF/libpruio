@@ -66,7 +66,7 @@ VAR PATH_NAME = "/lib/firmware"
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"
 #INCLUDE ONCE "P9.bi"
-' ... then delete unwanted
+' ... then delete unwanted pin groups (or single pins)
 PIN_DEL(HDMI_Pins)
 PIN_DEL(EMMC2_Pins)
 PIN_DEL(I2C1_Pins)
