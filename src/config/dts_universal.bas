@@ -41,7 +41,7 @@ information.)
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 
 Compile by:
@@ -84,25 +84,21 @@ IF OPEN(fnam & ".dts" FOR OUTPUT AS fnr) THEN
   ?"failed writing file: " & fnam & ".dts"
 ELSE
   PRINT #fnr, ALL_START;
-
   FOR i AS LONG = 0 TO UBOUND(M)
     VAR x = IIF(LEN(M(i)), nameBall(i), 0) '*< The header pin name.
     IF x THEN PRINT #fnr, ENTRY_EXCL(*x);
   NEXT
 
   PRINT #fnr, FRAG0_START;
-
   FOR i AS LONG = 0 TO UBOUND(M)
     IF LEN(M(i)) THEN PRINT #fnr, f0entry(i);
   NEXT
-
   PRINT #fnr, FRAG0_END;
-  PRINT #fnr, FRAG1_START;
 
+  PRINT #fnr, FRAG1_START;
   FOR i AS LONG = 0 TO UBOUND(M)
     IF LEN(M(i)) THEN PRINT #fnr, f1entry(i);
   NEXT
-
   PRINT #fnr, FRAG1_END;
   PRINT #fnr, ALL_END;
   CLOSE #fnr

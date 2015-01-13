@@ -16,7 +16,7 @@ Feel free to send further ideas to the author (\Email).
 libpruio-0.2.2 {#SecV-0-2-2}
 ==============
 
-Released in 2014, December.
+Released in 2015, January.
 
 New:
 ----

@@ -22,7 +22,7 @@ by
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `fbc -w all performance.bas`
 
@@ -49,6 +49,7 @@ Compile by: `fbc -w all performance.bas`
   IF f0 < nf(_N_) THEN nf(_N_) = f0
   IF f0 > xf(_N_) THEN xf(_N_) = f0
   ?f0,
+  SLEEP 1
 #ENDMACRO
 
 '* Macro to set output pin by fast direct PRU command (no error checking).
@@ -109,41 +110,41 @@ WITH *io
       , nf(UBOUND(desc)) _ '*< The minimum frequencies.
       , xf(UBOUND(desc)) _ '*< The maximum frequencies.
       , sf(UBOUND(desc))   '*< The summe of measured frequencies (to compute avarage).
-    VAR n = 0 _ '*< The counter for test cycles.
-      , c = 3 _ '*< The number of cycles for each test.
-      , r1 = .BallGpio(G_IN) _  '*< Resulting input GPIO (index and bit number).
-      , g1 = r1 SHR 5 _         '*< Index of input GPIO.
-      , m1 = 1 SHL (r1 AND 31) _'*< The bit number of input bit.
-      , r0 = .BallGpio(GOUT) _  '*< Resulting output GPIO (index and bit number).
-      , g0 = r0 SHR 5 _         '*< Index of output GPIO.
-      , m0 = 1 SHL (r0 AND 31)  '*< Mask for output bit.
     DIM AS UInt32 _
-       cd = 0 _                '*< Register value for CLEARDATAOUT.
+        n = 0 _ '*< The counter for test cycles.
+      , c = 3 _ '*< The number of cycles for each test.
+     , r1 = .BallGpio(G_IN) _  '*< Resulting input GPIO (index and bit number).
+     , g1 = r1 SHR 5 _         '*< Index of input GPIO.
+     , m1 = 1 SHL (r1 AND 31) _'*< The bit number of input bit.
+     , r0 = .BallGpio(GOUT) _  '*< Resulting output GPIO (index and bit number).
+     , g0 = r0 SHR 5 _         '*< Index of output GPIO.
+     , m0 = 1 SHL (r0 AND 31) _'*< Mask for output bit.
+     , cd = 0 _                '*< Register value for CLEARDATAOUT.
      , sd = 0 _                '*< Register value for SETDATAOUT.
      , ad = .Gpio->Conf(g0)->DeAd + &h100 '*< Subsystem adress.
+
+?.BallGpio(G_IN),r1,g1,m1
+?.BallGpio(GOUT),r0,g0,m0
 
     FOR i AS INTEGER = 0 TO UBOUND(desc) ' initialize minimum values
       nf(i) = 100e6
     NEXT
 
     FOR n = 0 TO 49 '                                  perform the tests
-    '' Open loop controllers
-      SLEEP 1
+'' Open loop controllers
       FOR i AS INTEGER = 0 TO c
         DIRECT(1)
         DIRECT(0)
       NEXT
       FREQ(0) ' Open loop, direct GPIO
 
-      SLEEP 1
       FOR i AS INTEGER = 0 TO c
         FUNC(1) '                                   set GPIO output high
         FUNC(0) '                                    set GPIO output low
       NEXT
       FREQ(1) ' Open loop, function Gpio->Value
 
-    '' Closed loop controllers
-      SLEEP 1
+'' Closed loop controllers
       FOR i AS INTEGER = 0 TO c
         DIRECT(1) '                                 set GPIO output high
         WHILE  0 = (.Gpio->Raw(g1)->Mix AND m1) : WEND
@@ -153,7 +154,6 @@ WITH *io
       NEXT
       FREQ(2) ' Closed loop, direct GPIO to direct GPIO
 
-      SLEEP 1
       FOR i AS INTEGER = 0 TO c
         DIRECT(1) '                                 set GPIO output high
         WHILE .Gpio->Value(G_IN) < 1 : WEND
@@ -163,7 +163,6 @@ WITH *io
       NEXT
       FREQ(3) ' Closed loop, function Gpio->Value to direct GPIO
 
-      SLEEP 1
       FOR i AS INTEGER = 0 TO c
         FUNC(1) '                                   set GPIO output high
         WHILE .Gpio->Value(G_IN) < 1 : WEND
@@ -173,7 +172,6 @@ WITH *io
       NEXT
       FREQ(4) ' Closed loop, function Gpio->Value to function Gpio->setValue
 
-      SLEEP 1
       FOR i AS INTEGER = 0 TO c
         DIRECT(1)
         WHILE .Adc->Value[1] <= &h7FFF : WEND
@@ -183,7 +181,6 @@ WITH *io
       NEXT
       FREQ(5) ' Closed loop, Adc->Value to direct GPIO
 
-      SLEEP 1
       FOR i AS INTEGER = 0 TO c
         FUNC(1) '                                   set GPIO output high
         WHILE .Adc->Value[1] <= &h7FFF : WEND
@@ -201,7 +198,6 @@ WITH *io
       ?"  Avarage: "; sf(i) / n
       ?"  Maximum: "; xf(i)
     NEXT : ?
-?hex(ad, 8), bin(sd, 32), bin(cd, 32), m0, r0
   LOOP UNTIL 1
   IF .Errr THEN ?"press any key to quit" : SLEEP
 END WITH

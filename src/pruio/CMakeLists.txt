@@ -1,4 +1,3 @@
-
 SET(PASM_SRC
     "pruio.hp"
     "pruio_ball.p"
@@ -33,20 +32,23 @@ SET(FBC_BI_EXTRA
   )
 
 
-ADD_CUSTOM_COMMAND(OUTPUT pasm_init.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Init ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.p
-  COMMAND ${CMAKE_COMMAND} -E touch pruio.bas
+ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi
+  COMMAND pasm ARGS -V3 -y -CPru_Init pasm_init.p
+  COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_init.p ${PASM_SRC}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-ADD_CUSTOM_COMMAND(OUTPUT pasm_run.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Run ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.p
-  COMMAND ${CMAKE_COMMAND} -E touch pruio.bas
+ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
+  COMMAND pasm ARGS -V3 -y -CPru_Run pasm_run.p
+  COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_run.p ${PASM_SRC}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-ADD_CUSTOM_TARGET(pasm
-  DEPENDS pasm_init.bi pasm_run.bi
+ADD_CUSTOM_TARGET(pasm DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi
+  ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
   )
 
   #BAS_2_C(C_SRC
@@ -69,21 +71,26 @@ ADD_Fbc_SRC_DEPS(fbcode)
 
 INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
   DESTINATION include/freebasic/BBB
-  COMPONENT devfb
+  COMPONENT fb_dev
   )
 
 
 
 
+# Check libprussdrv:
+#IF (NOT EXISTS /usr/local/include/freebasic/BBB/prussdrv.bi)
+#ENDIF()
+#IF (NOT EXISTS /usr/local/include/freebasic/BBB/pruss_intc_mapping.bi)
+#ENDIF()
 # Check the PRU assembler pasm (presence and version):
-EXECUTE_PROCESS(
-  COMMAND pasm
-  RESULT_VARIABLE assembler_works
-	OUTPUT_VARIABLE output
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
 IF(NOT PASM_ASSEMBER_WORKS)
+  EXECUTE_PROCESS(
+    COMMAND pasm
+    RESULT_VARIABLE assembler_works
+	  OUTPUT_VARIABLE output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
   IF(assembler_works EQUAL "1")
     STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
     SET(works FALSE)

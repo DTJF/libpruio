@@ -61,7 +61,7 @@ or at the world wide web:
 
 \subsection SubLicLib libpruio (LGPLv2):
 
-Copyright &copy; 2014 by \Email
+Copyright &copy; 2014-2015 by \Email
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the Lesser GNU General Public License version 2 as
@@ -80,7 +80,7 @@ http://www.gnu.org/licenses/lgpl-2.0.html
 
 \subsection SubLicExa Examples (GPLv3):
 
-Copyright &copy; 2014 by \Email
+Copyright &copy; 2014-2015 by \Email
 
 The examples of this bundle are free software as well; you can
 redistribute them and/or modify them under the terms of the GNU

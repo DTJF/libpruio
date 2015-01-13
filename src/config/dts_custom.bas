@@ -39,7 +39,7 @@ information.)
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 
 Compile by:
@@ -63,9 +63,8 @@ fbc -w all dts_custom.bas
 VAR PATH_NAME = "/lib/firmware"
 
 ' create settings for all required pins here
-M(P8_07) = CHR(7 + _I_)  ' example: pin 7 at header P8 in mode 7 as input with pulldown resistor
-
-M(P9_42) = CHR(0 + _I_)
+M(P8_09) = CHR(7 + _I_)  ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
+M(P9_42) = CHR(0 + _O_)  ' example: pin 42 at header P9 in mode 0 (eCAP) as output (no resistor)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
 
@@ -77,33 +76,21 @@ IF OPEN(fnam & ".dts" FOR OUTPUT AS fnr) THEN
   ?"failed writing file: " & fnam & ".dts"
 ELSE
   PRINT #fnr, ALL_START;
-
   FOR i AS LONG = 0 TO UBOUND(M)
     VAR x = IIF(LEN(M(i)), nameBall(i), 0) '*< The header pin name.
     IF x THEN PRINT #fnr, ENTRY_EXCL(*x);
   NEXT
 
   PRINT #fnr, FRAG0_START;
-  'PRINT #fnr, !"\n        " & FILE_NAME &": " & FILE_NAME & "_pins" _
-             '& " {pinctrl-single,pins = <";
-
-  'FOR i AS LONG = 0 TO UBOUND(M)
-    'IF LEN(M(i)) THEN PRINT #fnr, f0custom(i);
-  'NEXT
-
-  'PRINT #fnr, !"\n        >;};";
-
   FOR i AS LONG = 0 TO UBOUND(M)
     IF LEN(M(i)) THEN PRINT #fnr, f0entry(i);
   NEXT
-
   PRINT #fnr, FRAG0_END;
-  PRINT #fnr, FRAG1_START;
 
+  PRINT #fnr, FRAG1_START;
   FOR i AS LONG = 0 TO UBOUND(M)
     IF LEN(M(i)) THEN PRINT #fnr, f1entry(i);
   NEXT
-
   PRINT #fnr, FRAG1_END;
   PRINT #fnr, ALL_END;
   CLOSE #fnr
