@@ -71,7 +71,7 @@ ADD_Fbc_SRC_DEPS(fbcode)
 
 INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
   DESTINATION include/freebasic/BBB
-  COMPONENT fb_dev
+  COMPONENT fbinc
   )
 
 
