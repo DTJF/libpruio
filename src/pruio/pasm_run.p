@@ -75,7 +75,7 @@
 #include "pruio_gpio.p"
 #include "pruio_ball.p"
 #include "pruio_pwmss.p"
-#include "pruio_timer.p"
+//#include "pruio_timer.p"
 
 
 .origin 0
