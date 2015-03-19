@@ -1,25 +1,5 @@
-SET(dtbo libpruio-00A0.dtbo)
-SET(univ dts_universal)
-
-ADD_CUSTOM_TARGET(dtbo DEPENDS ${dtbo})
-
-ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
-  COMMAND ${CMAKE_Fbc_COMPILER} -w all -x ${univ} -e ${CMAKE_CURRENT_SOURCE_DIR}/${univ}.bas
-  COMMAND ./${univ} .
-  COMMAND ${CMAKE_COMMAND} -E remove ${univ}
-  DEPENDS ${univ}.bas P8.bi P9.bi pruiotools.bas
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-  )
-
-INSTALL(FILES ${dtbo}
-  DESTINATION /lib/firmware
-  COMPONENT bin
-  )
-
-
 # Check the device tree compiler dtc (presence and version):
-IF(NOT DTC_COMPILER_WORKS)
+IF(NOT DEFINED DTC_COMPILER_WORKS)
   EXECUTE_PROCESS(
     COMMAND dtc -v
     RESULT_VARIABLE compiler_works
@@ -45,21 +25,45 @@ IF(NOT DTC_COMPILER_WORKS)
 
     IF(DTC_COMPILER_WORKS)
       MESSAGE(STATUS "Check for working DTC compiler OK ==> ${DTC_COMPILER_ID}")
-      SET(DTC_COMPILER_WORKS "${DTC_COMPILER_WORKS}" CACHE FILEPATH "dtc compiler" FORCE)
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the dtc compiler works passed with "
         "the following output:\n${DTC_COMPILER_ID}\n\n")
+      SET(DTC_COMPILER_WORKS "${DTC_COMPILER_WORKS}" CACHE FILEPATH "dtc compiler" FORCE)
+      MARK_AS_ADVANCED(DTC_COMPILER_WORKS)
     ELSE()
-      MESSAGE(FATAL_ERROR "Wrong DTC compiler (${DTC_COMPILER_ID}, no option -@)!")
+      MESSAGE(STATUS "Wrong DTC compiler (${DTC_COMPILER_ID}, no option -@)!")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the dtc compiler works failed with "
         "the following output:\n${DTC_COMPILER_ID}, no option -@\n\n")
     ENDIF()
   ELSE()
-    MESSAGE(FATAL_ERROR "DTC compiler not found (command dtc)!")
+    MESSAGE(STATUS "DTC compiler not found (command dtc)!")
     FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
       "Finding the dtc compiler failed!")
   ENDIF()
 ENDIF()
+IF(NOT DTC_COMPILER_WORKS)
+  RETURN()
+ENDIF()
 
-MARK_AS_ADVANCED(DTC_COMPILER_WORKS)
+
+SET(dtbo libpruio-00A0.dtbo)
+SET(univ dts_universal)
+
+ADD_CUSTOM_TARGET(dtbo DEPENDS ${dtbo})
+
+ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
+  COMMAND ${CMAKE_Fbc_COMPILER} -w all -x ${univ} -e ${CMAKE_CURRENT_SOURCE_DIR}/${univ}.bas
+  COMMAND ./${univ} .
+  COMMAND ${CMAKE_COMMAND} -E remove ${univ}
+  DEPENDS ${univ}.bas P8.bi P9.bi pruiotools.bas
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  VERBATIM
+  )
+
+INSTALL(FILES ${dtbo}
+  DESTINATION /lib/firmware
+  COMPONENT bin
+  )
+
+

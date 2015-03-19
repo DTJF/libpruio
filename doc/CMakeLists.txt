@@ -7,14 +7,54 @@ IF(NOT DEFINED DOXYGEN_FOUND)
   SET(DOXYGEN_FOUND "${DOXYGEN_FOUND}" CACHE STRING "skip target doc" FORCE)
   IF(NOT DOXYGEN_FOUND)
     MESSAGE(STATUS "=> no target 'make doc'")
+    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+      "Determining if doxygen works failed\n\n")
   ENDIF()
 ENDIF()
-
 IF(NOT DOXYGEN_FOUND)
   RETURN()
 ENDIF()
 
+# check for fbdoc tool (note: not fb-doc)
+IF(NOT DEFINED FBDOC_WORKS)
+  EXECUTE_PROCESS(
+    COMMAND fbdoc -v
+    RESULT_VARIABLE result
+    ERROR_VARIABLE output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
 
+  IF(NOT (result EQUAL "0"))
+    MESSAGE(FATAL_ERROR "fbdoc tool not found! (tried command fbdoc)")
+    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+      "Finding the fbdoc tool failed!")
+    RETURN()
+  ENDIF()
+
+  STRING(REGEX MATCH "[0-9][.][0-9][.][0-9]" FBDOC_ID "${output}")
+  STRING(COMPARE LESS "${FBDOC_ID}" "0.3.9" not_working)
+
+  IF(not_working)
+    MESSAGE(STATUS "fbdoc-${FBDOC_ID} found, but required is 0.3.9 ==> 'make doc' not available!")
+    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+      "Determining if the fbdoc tool works failed with "
+      "the following output:\n${output}\n\n")
+    RETURN()
+  ENDIF()
+
+  MESSAGE(STATUS "Check for working fbdoc tool OK ==> ${FBDOC_ID}")
+  SET(FBDOC_WORKS "1" CACHE FILEPATH "fbdoc tool" FORCE)
+  MARK_AS_ADVANCED(FBDOC_WORKS)
+  FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
+    "Determining if the fbdoc tool works passed with "
+    "the following output:\n${output}\n\n")
+ENDIF()
+IF(NOT FBDOC_WORKS)
+  RETURN()
+ENDIF()
+
+
+# All OK, so let's start
 SET(inp ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
 SET(lfn ${CMAKE_CURRENT_SOURCE_DIR}/fb-doc.lfn)
 SET(res ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)

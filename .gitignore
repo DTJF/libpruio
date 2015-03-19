@@ -36,6 +36,7 @@ _CPack*
 
 # Can also ignore all directories and files in a directory.
 CMakeFiles/**/*
+doc/CMakeFiles/**/*
 src/pruio/CMakeFiles/**/*
 src/config/CMakeFiles/**/*
 src/examples/CMakeFiles/**/*
