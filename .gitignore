@@ -1,8 +1,9 @@
 $ cat .gitignore
 
 # Can ignore specific files
-Makefile
 pruio.geany
+Makefile
+CMakeCache.txt
 cmake_install.cmake
 install_manifest.txt
 

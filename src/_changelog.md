@@ -16,20 +16,20 @@ Feel free to send further ideas to the author (\Email).
 libpruio-0.2.2 {#SecV-0-2-2}
 ==============
 
-Released in 2014, December.
+Released in 2015, ???.
 
 New:
 ----
 
 - Documentation page Pins added.
 - Build management added (by CMake).
+- GIT version control system implemented.
 - QEP module support (function QepMod::config() and QepMod::Value() ).
-- Example qep: analyse Quadrature encoder signals (and simulates such signals).
-- Example performance: measure speed of different open and closed loop controllers toggling a GPIO.
-- Example rb_file: use ring buffer mode to fetch ADC samples and save raw data to file(s).
+- New example qep: analyse Quadrature encoder signals (and simulates such signals).
+- New eample performance: measure speed of different open and closed loop controllers toggling a GPIO.
+- New example rb_file: use ring buffer mode to fetch ADC samples and save raw data to file(s).
 - PWM configuration variables to directly influence A and B output of PWM modules.
 - More links between the FB and the C documentation.
-- Timer subsystem???
 
 Changes:
 --------
