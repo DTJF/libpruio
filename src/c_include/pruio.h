@@ -17,7 +17,7 @@ also file pruio_pins.h for a convenient way to declare header pins.
 
 Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
-Copyright 2014 by \Email
+Copyright 2014-2015 by \Email
 
 */
 

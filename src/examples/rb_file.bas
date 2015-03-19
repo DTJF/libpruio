@@ -8,7 +8,7 @@ as raw data to some files.
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `fbc -w all rb_file.bas`
 

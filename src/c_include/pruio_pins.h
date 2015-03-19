@@ -11,6 +11,10 @@ beaglebone black hardware. These contain all pins that belong to a
 device like the EMMC2 or HDMI and can be used ie. to lock or unlock
 these pins as one group.
 
+Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
+
+Copyright 2014-2015 by \Email
+
 */
 
 #define P8_03  6  // emmc2

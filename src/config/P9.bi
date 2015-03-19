@@ -5,6 +5,10 @@ This files gets included by dts_universal.bas. It declares the pin
 settings for all CPU balls connected to the header P9 connectors on
 Beaglebone hardware.
 
+Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
+
+Copyright 2014-2015 by \Email
+
 '/
 
 ' Load convenience macros.

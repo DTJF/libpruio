@@ -10,7 +10,7 @@ terminal output.
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 
 Compile by: `fbc -w all pwm_cap.bas`

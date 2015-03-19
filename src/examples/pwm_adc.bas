@@ -9,7 +9,7 @@ AIN-2 and shown as a line graf in a graphics windows.
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 
 Compile by: `fbc -w all pwm_adc.bas`

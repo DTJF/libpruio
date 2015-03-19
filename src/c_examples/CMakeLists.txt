@@ -15,13 +15,7 @@ SET_TARGET_PROPERTIES(c_examples PROPERTIES EXCLUDE_FROM_ALL 1)
 ADD_DEPENDENCIES(examples c_examples)
 
 FOREACH(tar ${C_TAR})
-  ADD_CUSTOM_COMMAND(OUTPUT ${tar}
-    COMMAND ${CMAKE_C_COMPILER} -Wall -o ${tar} ${tar}.c -lpruio -lprussdrv -Wno-unused-variable
-    DEPENDS ${tar}.c
-    )
+  ADD_EXECUTABLE(${tar}_c EXCLUDE_FROM_ALL ${tar}.c)
+  TARGET_LINK_LIBRARIES(${tar}_c pruio prussdrv)
+  ADD_DEPENDENCIES(c_examples ${tar}_c)
 ENDFOREACH(tar)
-
-#FOREACH(tar ${C_TAR})
-  #ADD_EXECUTABLE(${tar}_c EXCLUDE_FROM_ALL ${tar}.c)
-  #ADD_DEPENDENCIES(c_examples ${tar}_c)
-#ENDFOREACH(tar)

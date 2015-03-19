@@ -4,7 +4,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 PROJECT(libpruio Fbc C)
 
-#INCLUDE(AddFileDependencies)
+FIND_PACKAGE(LIBPRUSSDRV REQUIRED)
 
 ADD_SUBDIRECTORY(src/config)
 ADD_SUBDIRECTORY(src/pruio)
@@ -22,24 +22,140 @@ ADD_SUBDIRECTORY(src/examples)
 ADD_SUBDIRECTORY(src/c_examples)
 
 
+INSTALL(TARGETS pruio
+  LIBRARY DESTINATION lib
+  COMPONENT bin
+  )
+
 SET(C_HEADERS
   "src/pruio/pruio.hp"
   "src/c_include/pruio.h"
   "src/c_include/pruio_pins.h"
   )
 INSTALL(FILES ${C_HEADERS}
-        DESTINATION include
-        COMPONENT c_install
-        )
-INSTALL(TARGETS pruio
-        LIBRARY DESTINATION lib
-        )
+  DESTINATION include
+  COMPONENT cinc
+  )
+
+INSTALL(FILES debian/changelog
+  DESTINATION usr/share/doc
+  )
+
+
+#ADD_CUSTOM_TARGET(deb DEPENDS pruio)
+
+#ADD_CUSTOM_COMMAND(TARGET deb
+  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
+  #WORKING_DIRECTORY ${BUILD_DIR}
+  #)
+
+#ADD_CUSTOM_COMMAND(TARGET deb
+  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
+  #WORKING_DIRECTORY ${BUILD_DIR}
+  #)
+
+ADD_CUSTOM_TARGET(deb DEPENDS pruio
+  COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
+  COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
+  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebFbDev.cmake
+  WORKING_DIRECTORY ${BUILD_DIR}
+  )
+
+
+
+#ADD_CUSTOM_TARGET(deb_bin
+  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
+  #WORKING_DIRECTORY ${BUILD_DIR}
+  #)
+
+#ADD_CUSTOM_TARGET(deb_dev #DEPENDS deb_bin
+  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
+  #WORKING_DIRECTORY ${BUILD_DIR}
+  #)
+
+#ADD_CUSTOM_TARGET(deb DEPENDS pruio deb_dev deb_bin)
+#ADD_CUSTOM_TARGET(deb DEPENDS pruio deb_bin)
+
+
+
+#INSTALL(FILES debian/changelog
+  #DESTINATION include
+  #COMPONENT bin dev fbdev
+  #)
+
 
 #SET(CPACK_GENERATOR "TBZ2")
+#SET(CPACK_GENERATOR "DEB")
 
-# autogenerate dependency information
-SET (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-SET(CPACK_GENERATOR "DEB")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Thomas Freiherr") #required
+#SET(CPACK_PACKAGE_VENDOR "TJF")
+#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_NAME} - fast and easy digital I/O and analog I for BeagleboneBlack")
+#SET(CPACK_PACKAGE_DESCRIPTION "${CMAKE_PROJECT_NAME} offers functions to operate fast and easy digital input and output and analog input on the BeagleboneBlack")
+#SET(CPACK_PACKAGE_VERSION "0.2.2")
+#SET(CPACK_PACKAGE_VERSION_MAJOR "0")
+#SET(CPACK_PACKAGE_VERSION_MINOR "2")
+#SET(CPACK_PACKAGE_VERSION_PATCH "2")
+#SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${CMAKE_PROJECT_NAME})
+#SET(CPACK_PACKAGE_CONTACT "Thomas Freiherr <Thomas.Freiherr@gmx.net>")
 
-INCLUDE(CPack)
+#SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}")
+
+#SET(CPACK_COMPONENTS_ALL
+  #bin
+  #fbdev
+  #dev
+  #)
+
+## autogenerate dependency information
+##SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+##SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Thomas Freiherr") #required
+#SET(CPACK_DEBIAN_PACKAGE_DEPENDS "am335x-pru-package")
+##set(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME OFF)
+
+##set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+##set(CPACK_COMPONENTS_IGNORE_GROUPS IGNORE)
+##SET(CPACK_COMPONENTS_GROUPING IGNORE)
+#SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
+#SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+
+#SET(CPACK_DEB_COMPONENT_INSTALL ON)
+#UNSET(CPACK_MONOLITHIC_INSTALL)
+
+#SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
+  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/${CMAKE_PROJECT_NAME}.postinst"
+  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/${CMAKE_PROJECT_NAME}.postrm"
+  #)
+
+#INCLUDE(CPack)
+
+#CPACK_ADD_COMPONENT(bin
+  #DISPLAY_NAME "library binary and device tree overlay"
+  #DESCRIPTION "The library binary and the device tree overlay to be used at run-time."
+  #REQUIRED
+  ##DEPENDS
+  ##GROUP
+  ##[INSTALL_TYPES type1 type2 ... ]
+  ##[DOWNLOADED]
+  ##ARCHIVE_FILE filename1
+  #)
+
+#CPACK_ADD_COMPONENT(cinc
+  #DISPLAY_NAME "C headers"
+  #DESCRIPTION "The header files for development using C compiler."
+  #DISABLED
+  #DEPENDS bin
+  #GROUP ddev
+  ##[INSTALL_TYPES type1 type2 ... ]
+  ##[DOWNLOADED]
+  ##ARCHIVE_FILE filename2
+  #)
+
+#CPACK_ADD_COMPONENT(fbinc
+  #DISPLAY_NAME "FreeBASIC headers"
+  #DESCRIPTION "The header files for development using FreeBASIC compiler."
+  #DISABLED
+  #DEPENDS bin
+  #GROUP ddev
+  ##[INSTALL_TYPES type1 type2 ... ]
+  ##[DOWNLOADED]
+  ##ARCHIVE_FILE filename3
+  #)

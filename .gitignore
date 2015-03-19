@@ -30,17 +30,17 @@ libpruio.so
 
 # Use wildcards as well
 *.bz2
-CPack*
-!CMakeLists.txt
+*.deb
+CMakeCache*
+_CPack*
 
 # Can also ignore all directories and files in a directory.
-doc/html/**/*
-doc/latex/**/*
 CMakeFiles/**/*
-_CPack*/**/*
-
 src/pruio/CMakeFiles/**/*
 src/config/CMakeFiles/**/*
 src/examples/CMakeFiles/**/*
 src/c_examples/CMakeFiles/**/*
 src/c_include/CMakeFiles/**/*
+_CPack*/**/*
+doc/html/**/*
+doc/latex/**/*

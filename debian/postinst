@@ -1,0 +1,10 @@
+#!/bin/sh
+# libpruio.postinst, runs ldconfig
+set -e
+
+case "$1" in
+  configure)
+    echo "postinst running ldconfig ..."
+    ldconfig
+    ;;
+esac

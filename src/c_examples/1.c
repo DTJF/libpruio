@@ -8,7 +8,7 @@ between FreeBASIC and C.
 
 Licence: GPLv3
 
-Copyright 2014 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `gcc -Wall -o 1 1.c -lpruio -lprussdrv`
 
