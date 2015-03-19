@@ -237,7 +237,7 @@ subfolder called BBB. It's recommended to install by
 
 ~~~{.sh}
 sudo su
-mkdir /usr/local/include/freebasic/BBB
+mkdir -p /usr/local/include/freebasic/BBB
 wget http://www.freebasic-portal.de/dlfiles/539/FB_prussdrv-0.0.tar.bz2
 tar xjf FB_prussdrv-0.0.tar.bz2
 cd FB_prussdrv-0.0
@@ -302,7 +302,7 @@ cp -R usr/local/lib/freebasic /usr/local/lib/
 ~~~{.sh}
 fbc -version
 ~~~
-    should result in
+    should result in something like
 ~~~{.sh}
 FreeBASIC Compiler - Version 1.01.0 (10-14-2014), built for linux-arm (32bit)
 Copyright (C) 2004-2014 The FreeBASIC development team.
@@ -321,7 +321,7 @@ tar xjf FB_prussdrv-0.0.tar.bz2
  -# Copy files
 ~~~{.sh}
 cd FB_prussdrv-0.0
-mkdir /usr/local/include/freebasic/BBB
+mkdir -p /usr/local/include/freebasic/BBB
 cp include/* /usr/local/include/freebasic/BBB
 cp bin/pasm /usr/local/bin
 ~~~

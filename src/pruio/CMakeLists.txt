@@ -4,7 +4,7 @@ SET(PASM_SRC
     "pruio_adc.p"
     "pruio_gpio.p"
     "pruio_pwmss.p"
-    "pruio_timer.p"
+    #"pruio_timer.p"
   )
 
 SET(FBC_BAS
@@ -12,7 +12,7 @@ SET(FBC_BAS
     "pruio_adc.bas"
     "pruio_gpio.bas"
     "pruio_pwmss.bas"
-    "pruio_timer.bas"
+    #"pruio_timer.bas"
     "pruio_c_wrapper.bas"
   )
 
@@ -24,7 +24,7 @@ SET(FBC_BI
     "pruio_adc.bi"
     "pruio_gpio.bi"
     "pruio_pwmss.bi"
-    "pruio_timer.bi"
+    #"pruio_timer.bi"
   )
 
 SET(FBC_BI_EXTRA

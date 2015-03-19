@@ -13,8 +13,8 @@ is in here.
 #include ONCE "pruio_globals.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #include ONCE "pruio_pwmss.bi"
-' Header for TIMER part.
-#include ONCE "pruio_timer.bi"
+'' Header for TIMER part.
+'#include ONCE "pruio_timer.bi"
 ' driver header file
 #include ONCE "pruio.bi"
 ' Header file with convenience macros.
@@ -619,9 +619,9 @@ FUNCTION CapMod.Value CDECL( _
   , BYVAL Hz AS Float_t PTR = 0 _
   , BYVAL Du AS Float_t PTR = 0) AS ZSTRING PTR
 
-  var m = 0
+  VAR m = 0
   WITH *Top
-    dim AS ZSTRING PTR e
+    DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
     CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
@@ -644,7 +644,7 @@ FUNCTION CapMod.Value CDECL( _
       IF Hz THEN *Hz = IIF(.C2, PWMSS_CLK / .C2, 0.)
       IF Du THEN *Du = IIF(.C2, (.C2 - .C1) / .C2, 0.)
                                                                 RETURN 0
-    end if
+    END IF
     IF Hz THEN *Hz = 0
     IF Du THEN *Du = 0
     Top->Errr = E2                     /' CAP not enabled '/ : RETURN E2
@@ -743,45 +743,45 @@ FUNCTION QepMod.config CDECL( _
   , BYVAL Scale AS Float_t = 1. _
   , BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
 
-  var m = 0, x = 0
-  static as Float_t fmin = PWMSS_CLK / (&hFFFF SHL 7) ' minimal frequency
+  VAR m = 0, x = 0
+  STATIC AS Float_t fmin = PWMSS_CLK / (&hFFFF SHL 7) ' minimal frequency
   WITH *Top
-    if VHz < fmin orelse VHz > PWMSS_CLK_2 then _
-                          .Errr = @"frequency not supported" : Return .Errr
+    IF VHz < fmin ORELSE VHz > PWMSS_CLK_2 THEN _
+                          .Errr = @"frequency not supported" : RETURN .Errr
     SELECT CASE AS CONST Ball
     CASE P8_11, P8_12, P8_16 : m = 2
-      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
-      if ModeCheck(P8_12,4) THEN ModeSet(P8_12,v)
-      if Ball = P8_12 then x = 2 : exit select
-      if ModeCheck(P8_11,4) THEN ModeSet(P8_11,v)
-      if Ball = P8_11 then x = 1 : exit select
-      if ModeCheck(P8_16,4) THEN ModeSet(P8_16,v)
+      VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
+      IF ModeCheck(P8_12,4) THEN ModeSet(P8_12,v)
+      IF Ball = P8_12 THEN x = 2 : EXIT SELECT
+      IF ModeCheck(P8_11,4) THEN ModeSet(P8_11,v)
+      IF Ball = P8_11 THEN x = 1 : EXIT SELECT
+      IF ModeCheck(P8_16,4) THEN ModeSet(P8_16,v)
     CASE P8_33, P8_35, P8_31 : m = 1
-      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
-      if ModeCheck(P8_35,2) THEN ModeSet(P8_35,v)
-      if Ball = P8_35 then x = 2 : exit select
-      if ModeCheck(P8_33,2) THEN ModeSet(P8_33,v)
-      if Ball = P8_33 then x = 1 : exit select
-      if ModeCheck(P8_31,2) THEN ModeSet(P8_31,v)
+      VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
+      IF ModeCheck(P8_35,2) THEN ModeSet(P8_35,v)
+      IF Ball = P8_35 THEN x = 2 : EXIT SELECT
+      IF ModeCheck(P8_33,2) THEN ModeSet(P8_33,v)
+      IF Ball = P8_33 THEN x = 1 : EXIT SELECT
+      IF ModeCheck(P8_31,2) THEN ModeSet(P8_31,v)
     CASE P8_41, P8_42, P8_39 : m = 2
-      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
-      if ModeCheck(P8_41,3) THEN ModeSet(P8_41,v)
-      if Ball = P8_42 then x = 2 : exit select
-      if ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
-      if Ball = P8_42 then x = 1 : exit select
-      if ModeCheck(P8_39,3) THEN ModeSet(P8_39,v)
+      VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
+      IF ModeCheck(P8_41,3) THEN ModeSet(P8_41,v)
+      IF Ball = P8_42 THEN x = 2 : EXIT SELECT
+      IF ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
+      IF Ball = P8_42 THEN x = 1 : EXIT SELECT
+      IF ModeCheck(P8_39,3) THEN ModeSet(P8_39,v)
     CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
-      var v = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
-      if ModeCheck( 104 ,1) THEN ModeSet( 104 ,v)
-      if Ball = P9_42 orelse Ball = 104 then x = 2 : exit select
-      if ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
-      if Ball = P9_27 then x = 1 : exit select
-      if ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
+      VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
+      IF ModeCheck( 104 ,1) THEN ModeSet( 104 ,v)
+      IF Ball = P9_42 ORELSE Ball = 104 THEN x = 2 : EXIT SELECT
+      IF ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
+      IF Ball = P9_27 THEN x = 1 : EXIT SELECT
+      IF ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
     CASE ELSE :  /'  pin has no QEP capability '/ .Errr = E0 : RETURN .Errr
     END SELECT
   END WITH
   WITH *Top->PwmSS->Conf(m)
-    if 2 <> .ClVa then  /' QEP not enabled '/ Top->Errr = E2 : RETURN E2
+    IF 2 <> .ClVa THEN  /' QEP not enabled '/ Top->Errr = E2 : RETURN E2
     .QPOSCNT = 0
     .QPOSINIT = 0
     '.QPOSMAX = iif(PMax andalso x <> 2, PMax, &h7FFFFFFFuL)
@@ -789,8 +789,8 @@ FUNCTION QepMod.config CDECL( _
     .QUTMR = 0
     .QUPRD = cuint(PWMSS_CLK / VHz)
 
-    var ccps = .QUPRD \ &h10000
-    if ccps > 1 then ccps = 1 + int(log(ccps) / log(2))
+    VAR ccps = .QUPRD \ &h10000
+    IF ccps > 1 THEN ccps = 1 + INT(LOG(ccps) / LOG(2))
     SELECT CASE AS CONST x
     CASE 2 '                                               up count mode
       .QPOSMAX = &h7FFFFFFFuL
@@ -812,13 +812,13 @@ FUNCTION QepMod.config CDECL( _
     .QCTMR = 0
     .QCPRD = 0
 
-    var fx = 1 SHL ((.QCAPCTL SHr 4) and &b111) _
-      , fp = 1 SHL (.QCAPCTL and &b1111) _
+    VAR fx = 1 SHL ((.QCAPCTL SHR 4) AND &b111) _
+      , fp = 1 SHL (.QCAPCTL AND &b1111) _
       , t = .QUPRD \ fx _
       , p2 = fp / 2
     FVh(m) = Scale * PWMSS_CLK / .QUPRD
     FVl(m) = Scale * PWMSS_CLK / fx * fp
-    Prd(m) = cuint(fp * t / (-p2 + sqr(p2 * p2 + t / fp))) SHL 16
+    Prd(m) = CUINT(fp * t / (-p2 + SQR(p2 * p2 + t / fp))) SHL 16
     IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                     RETURN 0
 
     WHILE Top->DRam[1] : WEND '                     wait, if PRU is busy
@@ -828,7 +828,7 @@ FUNCTION QepMod.config CDECL( _
     Top->DRam[3] = .QPOSMAX
     Top->DRam[2] = .DeAd + &h180
     Top->DRam[1] = PRUIO_COM_QEP SHL 24
-  END WITH :                                                   return 0
+  END WITH :                                                   RETURN 0
 END FUNCTION
 
 
@@ -866,7 +866,7 @@ FUNCTION QepMod.Value CDECL( _
   , BYVAL Posi AS UInt32 PTR = 0 _
   , BYVAL Velo AS Float_t PTR = 0) AS ZSTRING PTR
 
-  var m = 0
+  VAR m = 0
   WITH *Top
     SELECT CASE AS CONST Ball
     CASE P8_11, P8_12, P8_16 : m = 2
@@ -883,15 +883,15 @@ FUNCTION QepMod.Value CDECL( _
     END IF
   END WITH
   WITH *Top->PwmSS->Raw(m)
-   if Velo then
-     var dx = CINT(.NPos - .OPos)
-     if .PLat > Prd(m) then
-        *Velo = dx * FVh(m)
-      else
-        *Velo = iif(hiword(.PLat), sgn(dx) * FVl(m) / hiword(.PLat), 0.)
-      end if
-    end if
-   if Posi then *Posi = .QPos
+  IF Velo THEN
+    VAR dx = CINT(.NPos - .OPos)
+    IF .PLat > Prd(m) THEN
+      *Velo = dx * FVh(m)
+    ELSE
+      *Velo = IIF(HIWORD(.PLat), SGN(dx) * FVl(m) / HIWORD(.PLat), 0.)
+    END IF
+  END IF
+  IF Posi THEN *Posi = .QPos
 
-  END WITH :                                                    return 0
+  END WITH :                                                    RETURN 0
 END FUNCTION

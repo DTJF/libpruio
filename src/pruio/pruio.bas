@@ -119,8 +119,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #INCLUDE ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #INCLUDE ONCE "pruio_pwmss.bi"
-' Header for TIMER part.
-#INCLUDE ONCE "pruio_timer.bi"
+'' Header for TIMER part.
+'#INCLUDE ONCE "pruio_timer.bi"
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
 ' Header file with convenience macros.
