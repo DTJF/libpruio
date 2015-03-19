@@ -51,22 +51,12 @@ ADD_CUSTOM_TARGET(pasm DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
   )
 
-  #BAS_2_C(C_SRC
-    #SOURCES ${FBC_BAS}
-    #OUT_DIR "CMakeFiles/ccode.dir"
-    #)
-  #ADD_LIBRARY(fbcode OBJECT ${C_SRC})
-  #SET_TARGET_PROPERTIES(fbcode PROPERTIES
-    #COMPILE_FLAGS "-fPIC"
-    #)
-  #ADD_DEPENDENCIES(fbcode pasm)
-
-ADD_LIBRARY(fbcode OBJECT ${FBC_BAS})
-SET_TARGET_PROPERTIES(fbcode PROPERTIES
+ADD_LIBRARY(pruiofbcode OBJECT ${FBC_BAS})
+SET_TARGET_PROPERTIES(pruiofbcode PROPERTIES
   COMPILE_FLAGS "-Wc -fPIC"
   )
-ADD_DEPENDENCIES(fbcode pasm)
-ADD_Fbc_SRC_DEPS(fbcode)
+ADD_DEPENDENCIES(pruiofbcode pasm)
+ADD_Fbc_SRC_DEPS(pruiofbcode)
 
 
 INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
@@ -75,13 +65,6 @@ INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
   )
 
 
-
-
-# Check libprussdrv:
-#IF (NOT EXISTS /usr/local/include/freebasic/BBB/prussdrv.bi)
-#ENDIF()
-#IF (NOT EXISTS /usr/local/include/freebasic/BBB/pruss_intc_mapping.bi)
-#ENDIF()
 # Check the PRU assembler pasm (presence and version):
 IF(NOT PASM_ASSEMBER_WORKS)
   EXECUTE_PROCESS(

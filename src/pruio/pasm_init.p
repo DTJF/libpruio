@@ -55,7 +55,7 @@
   GPIO_Init
   BALL_Init
   PWMSS_Init
-  TIMER_Init
+  //TIMER_Init
 
 // report to host and halt
   MOV  UR, PRUIO_MSG_INIT_OK

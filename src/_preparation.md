@@ -363,3 +363,97 @@ sudo src/examples/1
       - `cp ... /usr/...`
       - `cp ... /lib/...`
       - `echo ... /sys/...`
+
+
+CMake build system  {#SecCMake}
+==================
+
+Since version 0.2.2 the libpruio source package contains scripts for the
+CMake build system. The following targets are supported
+
+\Item{all} (= default): build the library binary libpruio.so
+\Item{dtbo}: build the universal device tree overlay (source libpruio-00A0.dts and binary libpruio-00A0.dtbo) in folder src/config
+\Item{install}: install libpruio binary and header files (C and FB headers)
+\Item{doc}: build the documentation (html tree / LaTeX files / XML files, depending on the context of configuration file doc/Doxyfile)
+\Item{examples}: compile all examples from FB and C source in folders examples and c_examples
+\Item{fb_examples}: compile all examples from FB source in folder examples
+\Item{c_examples}: compile all examples from C source in folder c_examples
+\Item{???}: build ???
+
+The scripts supports in-source and out-of-source builds. Initiate the
+build scripts and check the system capabilities by executing (in your
+build folder)
+
+~~~{.sh}
+cmake PATH/TO/pruio
+~~~
+
+where "PATH/TO" is the relative or absolute path to the root directory
+of the unpacked libpruio source code package.
+
+Examples:
+
+-# For an out-of-source build creat a build directory (here at the same
+   level as the package root directory), move there and execute
+   ~~~{.sh}
+   mkdir pruio_build
+   cd pruio_build
+   cmake ../pruio
+   ~~~
+
+-# Or alternativly for a in-source build change to the package root
+   directory and execute
+   ~~~{.sh}
+   cd pruio
+   cmake .
+   ~~~
+   to build all stuff in the source tree.
+
+You should receive output like
+
+~~~{.sh}
+-- Check for working cmake_fb_deps tool OK ==> /usr/local/bin/cmake_fb_deps
+-- The C compiler identification is GNU 4.6.3
+-- Check for working Fbc compiler OK ==> /usr/bin/fbc (FreeBASIC 1.01.0)
+-- Check for working C compiler: /usr/bin/gcc
+-- Check for working C compiler: /usr/bin/gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Found PkgConfig: /usr/bin/pkg-config (found version "0.26")
+-- Found libprussdrv: /usr/local/lib/libprussdrv.so
+-- Check for working DTC compiler OK ==> Version: DTC 1.4.0
+-- Check for working PASM assembler OK ==> PRU Assembler Version 0.84
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/debian/Projekte/pruio_build
+~~~
+
+
+make all  {#SubSecMakeAll}
+--------
+
+This command
+
+make dtbo  {#SubSecMakeDtbo}
+---------
+
+
+make install  {#SubSecMakeInstall}
+------------
+
+
+make doc  {#SubSecMakeDoc}
+--------
+
+
+make examples  {#SubSecMakeExamples}
+-------------
+
+
+make fb_examples  {#SubSecMakeFbExamples}
+----------------
+
+
+make c_examples  {#SubSecMakeCExamples}
+---------------
+

@@ -114,7 +114,7 @@ TYPE PruIo
   AS AdcUdt PTR Adc     '*< Pointer to ADC subsystem structure.
   AS GpioUdt PTR Gpio   '*< Pointer to GPIO subsystems structure.
   AS PwmssUdt PTR PwmSS '*< Pointer to PWMSS subsystems structure.
-  AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
+  'AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
   AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
   AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).

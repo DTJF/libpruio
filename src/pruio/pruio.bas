@@ -258,7 +258,7 @@ CONSTRUCTOR PruIo( _
   ParOffs += 1 : DRam[ParOffs] = &h44E10800 '           pinmux registers
 
   PwmSS = NEW PwmssUdt(@THIS)
-  TimSS = NEW TimerUdt(@THIS)
+  'TimSS = NEW TimerUdt(@THIS)
   '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt();
 
   ASSERT(ParOffs < DRam[1] SHR 4)
@@ -296,7 +296,7 @@ CONSTRUCTOR PruIo( _
   IF Adc->initialize(Av, OpD, SaD) THEN                 EXIT CONSTRUCTOR
   IF Gpio->initialize() THEN                            EXIT CONSTRUCTOR
   IF PwmSS->initialize() THEN                           EXIT CONSTRUCTOR
-  IF TimSS->initialize() THEN                           EXIT CONSTRUCTOR
+  'IF TimSS->initialize() THEN                           EXIT CONSTRUCTOR
   '& AdcUdt::initialize(); GpioUdt::initialize(); PwmssUdt::initialize(); TimerUdt::initialize();
 END CONSTRUCTOR
 

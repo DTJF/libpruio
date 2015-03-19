@@ -4,14 +4,26 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 PROJECT(libpruio Fbc C)
 
-FIND_PACKAGE(LIBPRUSSDRV REQUIRED)
+# constants
+SET(PROJ_NAME "${CMAKE_PROJECT_NAME}" CACHE STRING "project name" FORCE)
+SET(PROJ_DESC "Input/Output driver for digital/analog lines on Beagleboard hardware" CACHE STRING "project description" FORCE)
+SET(PROJ_VERS "0.2.2"  CACHE STRING "project version" FORCE)
+SET(PROJ_AUTH "TJF"    CACHE STRING "project authors" FORCE)
+SET(PROJ_MAIL "Thomas.Freiherr@gmx.net"  CACHE STRING "project mail address" FORCE)
+SET(PROJ_WEBS "http://www.freebasic-portal.de" CACHE STRING "project website" FORCE)
+SET(PROJ_LICE "GPLv3"  CACHE STRING "project licence" FORCE)
+#STRING(TIMESTAMP tmp "%Y" UTC)
+#SET(PROJ_YEAR "${tmp}"             CACHE STRING "project year" FORCE)
+SET(PROJ_YEAR "2015"   CACHE STRING "project year" FORCE)
 
+FIND_PACKAGE(LIBPRUSSDRV REQUIRED)
+ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(src/config)
 ADD_SUBDIRECTORY(src/pruio)
 
-ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:fbcode>)
+ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
 
-ADD_DEPENDENCIES(pruio fbcode)
+ADD_DEPENDENCIES(pruio pruiofbcode)
 
 #SET(CMAKE_VERBOSE_MAKEFILE 1)
 
@@ -37,9 +49,9 @@ INSTALL(FILES ${C_HEADERS}
   COMPONENT dev
   )
 
-INSTALL(FILES debian/changelog
-  DESTINATION usr/share/doc
-  )
+#INSTALL(FILES debian/changelog
+  #DESTINATION usr/share/doc
+  #)
 
 
 #ADD_CUSTOM_TARGET(deb DEPENDS pruio)

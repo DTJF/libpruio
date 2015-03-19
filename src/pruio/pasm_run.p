@@ -99,7 +99,7 @@
   GPIO_Config
   BALL_Config
   PWMSS_Config
-  TIMER_Config
+  //TIMER_Config
 
 // start mode: IO | [RB, MM]
   QBLT MmStart, Samp, 1   // if MM or RB required -> start

@@ -74,7 +74,8 @@ FUNCTION GpioUdt.initialize CDECL() AS ZSTRING PTR
         .ClVa = 2
         .CLEARDATAOUT = 0
         .SETDATAOUT = 0
-        .DATAOUT = Init(i).DATAOUT
+        .DATAIN = Init(i)->DATAIN
+        .DATAOUT = Init(i)->DATAOUT
       END WITH
 
       WITH *Init(i)

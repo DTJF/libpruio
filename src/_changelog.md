@@ -132,7 +132,11 @@ Thanks go to:
   config-pin tool.
 
 - The libpruio users for testing, reporting bugs and sending ideas
-  to improve it. (Special thanks to Rafael Vega, Emir Elkholy and Nils
-  Kohrs.)
+  to improve it. Especially
+
+  - [Rafael Vega](http://www.freebasic.net/forum/viewtopic.php?p=198419#p198419)
+  - Emir Elkholy
+  - Nils Kohrs
+  - [jem](http://www.freebasic.net/forum/viewtopic.php?p=206081#p206081)
 
 - All others I forgot to mention.

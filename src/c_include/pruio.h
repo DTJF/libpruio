@@ -209,61 +209,61 @@ typedef struct gpioUdt{
 
 \since 0.4
 */
-typedef struct timerSet{
-  uint32
-    DeAd, //!< Subsystem address.
-    ClAd, //!< Clock address.
-    ClVa; //!< Clock value.
+//typedef struct timerSet{
+  //uint32
+    //DeAd, //!< Subsystem address.
+    //ClAd, //!< Clock address.
+    //ClVa; //!< Clock value.
 
-  uint32
-    TIDR         //!< Register at offset  00h (see \ArmRef{20.1.5.1} ).
-  , TIOCPCFG     //!< Timer OCP Configuration Register (offset 10h, see \ArmRef{20.1.5.2} ).
-  , IRQEOI       //!< Timer IRQ End-of-Interrupt Register (offset 20h, see \ArmRef{20.1.5.3} ).
-  , IRQSTATUSRAW //!< Timer Status Raw Register (offset 24h, see \ArmRef{20.1.5.4} ).
-  , IRQSTATUS    //!< Timer Status Register (offset 28h, see \ArmRef{20.1.5.5} ).
-  , IRQENABLESET //!< Timer Interrupt Enable Set Register (offset 2Ch, see \ArmRef{20.1.5.6} ).
-  , IRQENABLECLR //!< Timer Interrupt Enable Clear Register (offset 30h, see \ArmRef{20.1.5.7} ).
-  , IRQWAKEEN    //!< Timer IRQ Wakeup Enable Register (offset 34h, see \ArmRef{20.1.5.8} ).
-  , TCLR   //!< Timer Control Register (offset 38h, see \ArmRef{20.1.5.9} ).
-  , TCRR   //!< Timer Counter Register (offset 3Ch, see \ArmRef{20.1.5.10} ).
-  , TLDR   //!< Timer Load Register (offset 40h, see \ArmRef{20.1.5.11} ).
-  , TTGR   //!< Timer Trigger Register (offset 44h, see \ArmRef{20.1.5.12} ).
-  , TWPS   //!< Timer Write Posting Bits Register (offset 48h, see \ArmRef{20.1.5.13} ).
-  , TMAR   //!< Timer Match Register (offset 4Ch, see \ArmRef{20.1.5.14} ).
-  , TCAR1  //!< Timer Capture Register (offset 50h, see \ArmRef{20.1.5.15} ).
-  , TSICR  //!< Timer Synchronous Interface Control Register (offset 54h, see \ArmRef{20.1.5.16} ).
-  , TCAR2; //!< Timer Capture Register (offset 58h, see \ArmRef{20.1.5.17} ).
-} timerSet;
+  //uint32
+    //TIDR         //!< Register at offset  00h (see \ArmRef{20.1.5.1} ).
+  //, TIOCPCFG     //!< Timer OCP Configuration Register (offset 10h, see \ArmRef{20.1.5.2} ).
+  //, IRQEOI       //!< Timer IRQ End-of-Interrupt Register (offset 20h, see \ArmRef{20.1.5.3} ).
+  //, IRQSTATUSRAW //!< Timer Status Raw Register (offset 24h, see \ArmRef{20.1.5.4} ).
+  //, IRQSTATUS    //!< Timer Status Register (offset 28h, see \ArmRef{20.1.5.5} ).
+  //, IRQENABLESET //!< Timer Interrupt Enable Set Register (offset 2Ch, see \ArmRef{20.1.5.6} ).
+  //, IRQENABLECLR //!< Timer Interrupt Enable Clear Register (offset 30h, see \ArmRef{20.1.5.7} ).
+  //, IRQWAKEEN    //!< Timer IRQ Wakeup Enable Register (offset 34h, see \ArmRef{20.1.5.8} ).
+  //, TCLR   //!< Timer Control Register (offset 38h, see \ArmRef{20.1.5.9} ).
+  //, TCRR   //!< Timer Counter Register (offset 3Ch, see \ArmRef{20.1.5.10} ).
+  //, TLDR   //!< Timer Load Register (offset 40h, see \ArmRef{20.1.5.11} ).
+  //, TTGR   //!< Timer Trigger Register (offset 44h, see \ArmRef{20.1.5.12} ).
+  //, TWPS   //!< Timer Write Posting Bits Register (offset 48h, see \ArmRef{20.1.5.13} ).
+  //, TMAR   //!< Timer Match Register (offset 4Ch, see \ArmRef{20.1.5.14} ).
+  //, TCAR1  //!< Timer Capture Register (offset 50h, see \ArmRef{20.1.5.15} ).
+  //, TSICR  //!< Timer Synchronous Interface Control Register (offset 54h, see \ArmRef{20.1.5.16} ).
+  //, TCAR2; //!< Timer Capture Register (offset 58h, see \ArmRef{20.1.5.17} ).
+//} timerSet;
 
 
 /** \brief Wrapper structure for TimerArr.
 
 \since 0.4
 */
-typedef struct timerArr{
-  uint32
-    DeAd; //!< Subsystem address.
+//typedef struct timerArr{
+  //uint32
+    //DeAd; //!< Subsystem address.
 
-  uint32
-    TCAR1 //!< Current value of TCAR1 register (IO, RB).
-  , TCAR2 //!< Current value of TCAR2 register (IO, RB).
-  , TCRR; //!< Current value of TCRR register (IO, RB).
-} timerArr;
+  //uint32
+    //TCAR1 //!< Current value of TCAR1 register (IO, RB).
+  //, TCAR2 //!< Current value of TCAR2 register (IO, RB).
+  //, TCRR; //!< Current value of TCRR register (IO, RB).
+//} timerArr;
 
 
 /** \brief Wrapper structure for TimerUdt.
 
 \since 0.4
 */
-typedef struct timerUdt{
-  pruIo* Top;                 //!< Pointer to the calling PruIo instance.
-  timerSet
-    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
-    *Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
-  timerArr
-    *Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
-  uint32 InitParA;            //!< Offset to read data block offset.
-} timerUdt;
+//typedef struct timerUdt{
+  //pruIo* Top;                 //!< Pointer to the calling PruIo instance.
+  //timerSet
+    //*Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    //*Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
+  //timerArr
+    //*Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
+  //uint32 InitParA;            //!< Offset to read data block offset.
+//} timerUdt;
 
 
 //#include "pruio_pwm.bi"
@@ -511,7 +511,7 @@ typedef struct pruIo{
   adcUdt* Adc;     //!< Pointer to ADC subsystem structure.
   gpioUdt* Gpio;   //!< Pointer to GPIO subsystem structure.
   pwmssUdt* PwmSS; //!< Pointer to PWMSS subsystem structure.
-  timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
+  //timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
   pwmMod* Pwm;     //!< Pointer to ePWM module structure (in PWMSS subsystem).
   capMod* Cap;     //!< Pointer to eCAP module structure (in PWMSS subsystem).
   qepMod* Qep;     //!< pointer to eQEP module structure (in PWMSS subsystem)
