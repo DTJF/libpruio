@@ -34,7 +34,7 @@ SET(C_HEADERS
   )
 INSTALL(FILES ${C_HEADERS}
   DESTINATION include
-  COMPONENT cinc
+  COMPONENT dev
   )
 
 INSTALL(FILES debian/changelog
@@ -138,7 +138,7 @@ ADD_CUSTOM_TARGET(deb DEPENDS pruio
   ##ARCHIVE_FILE filename1
   #)
 
-#CPACK_ADD_COMPONENT(cinc
+#CPACK_ADD_COMPONENT(dev
   #DISPLAY_NAME "C headers"
   #DESCRIPTION "The header files for development using C compiler."
   #DISABLED
@@ -149,7 +149,7 @@ ADD_CUSTOM_TARGET(deb DEPENDS pruio
   ##ARCHIVE_FILE filename2
   #)
 
-#CPACK_ADD_COMPONENT(fbinc
+#CPACK_ADD_COMPONENT(fbdev
   #DISPLAY_NAME "FreeBASIC headers"
   #DESCRIPTION "The header files for development using FreeBASIC compiler."
   #DISABLED
