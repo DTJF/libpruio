@@ -136,7 +136,9 @@ Thanks go to:
 
   - [Rafael Vega](http://www.freebasic.net/forum/viewtopic.php?p=198419#p198419)
   - Emir Elkholy
-  - Nils Kohrs
+  - [Nils Kohrs](http://beagleboard.org/Community/Forums?place=msg%2Fbeagleboard%2FCN5qKSmPIbc%2FdHiyHP-PxcMJ)
+  - [jleb](http://beagleboard.org/Community/Forums?place=msg%2Fbeagleboard%2F3AFiCNtxGis%2Fejo1qZ67ihkJ)
   - [jem](http://www.freebasic.net/forum/viewtopic.php?p=206081#p206081)
+  - [Benoît](http://www.freebasic.net/forum/viewtopic.php?p=206131#p206131)
 
 - All others I forgot to mention.

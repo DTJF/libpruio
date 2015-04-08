@@ -538,7 +538,7 @@ mode). Otherwise only the mode number gets shown.
 '/
 FUNCTION PruIo.Pin CDECL( _
   BYVAL Ball AS UInt8, _
-  BYVAL Mo AS UInt32 = 0) AS ZSTRING PTR
+  BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
   STATIC AS STRING*50 t
 
   VAR x = nameBall(Ball)
@@ -550,7 +550,7 @@ FUNCTION PruIo.Pin CDECL( _
     t = "b " & RIGHT("00" & Ball, 3)
   END IF
 
-  VAR r = IIF(Mo, BallInit[Ball], BallConf[Ball]) _
+  VAR r = IIF(Mo, BallConf[Ball], BallInit[Ball]) _
     , m = r AND &b111
   IF m = 7 THEN
     VAR i = BallGpio(Ball) SHR 5 _
@@ -560,7 +560,7 @@ FUNCTION PruIo.Pin CDECL( _
     IF BIT(r, 5) THEN
       t &= ": input"
     ELSE
-      WITH *IIF(Mo, Gpio->Init(i), Gpio->Conf(i))
+      WITH *IIF(Mo, Gpio->Conf(i), Gpio->Init(i))
         t &= ": output-" & *IIF((.DATAOUT OR .SETDATAOUT) AND m, @"1", @"0")
       END WITH
     END IF

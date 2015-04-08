@@ -61,9 +61,10 @@ END FUNCTION
 '* \brief Wrapper function for PruIo::Pin().
 FUNCTION pruio_Pin CDECL ALIAS "pruio_Pin"( _
     BYVAL Io AS PruIo PTR _
-  , BYVAL Ball AS UInt8) AS ZSTRING PTR EXPORT
+  , BYVAL Ball AS UInt8, _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR EXPORT
 
-  RETURN Io->Pin(Ball)
+  RETURN Io->Pin(Ball, Mo)
 END FUNCTION
 
 '* \brief Wrapper function for PruIo::mm_start().

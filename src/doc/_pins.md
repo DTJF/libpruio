@@ -3,20 +3,21 @@ Pins  {#ChaPins}
 \tableofcontents
 
 The Beaglebone hardware contains two header connectors, each with 46
-pins. That is 92 pins in total. Some of them have no input / output
-capability (such as RESET, GND or power supply lines). But the majority
-are either analog or digital lines, free or unfree, all to be controled
-by libpruio.
+pins. That is 92 pins in total. Most of them have input / output
+capabilities, while just a few are related to other features (such as
+RESET, GND or power supply lines). Input / output pins are either
+analog or digital lines, free or unfree (used by the system in default
+configuration). All can get controled by libpruio.
 
 Analog lines always operate as input. In contrast, digital lines can
 either operate as input or output. Some digital lines have several
-features and need to get configured in the maching mode (pinmuxing)
-before usage. Some lines are used to control the boot sequence and
-mustn't be connected at boot-time. Others are reserved to be used by
-the operating system, but they can get freed by massive
-re-configuration of the boot sequence, so that libpruio can control
-them. Some header pins are connected to two CPU balls (and both CPU
-balls must not be set in contrary output states).
+features at the same pin and need to get configured in the machting
+mode before usage (pinmuxing). Some lines are used to control the boot
+sequence and mustn't be connected at boot-time. Others are reserved to
+be used by the operating system, but they can get freed by massive
+re-configuration of the boot sequence, so that you can use them. Some
+header pins are connected to two CPU balls (and both CPU balls must not
+be set in contrary output states, in order to avoid hardware damages).
 
 Here's an overview of the Beaglebone Black default configuration (the
 Beaglebone White setting is different). libpruio can operate on all

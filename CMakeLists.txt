@@ -6,7 +6,7 @@ PROJECT(libpruio Fbc C)
 
 # constants
 SET(PROJ_NAME "${CMAKE_PROJECT_NAME}" CACHE STRING "project name" FORCE)
-SET(PROJ_DESC "Input/Output driver for digital/analog lines on Beagleboard hardware" CACHE STRING "project description" FORCE)
+SET(PROJ_DESC "Fast and easy Input/Output driver for digital/analog lines on Beagleboard hardware" CACHE STRING "project description" FORCE)
 SET(PROJ_VERS "0.2.2"  CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "TJF"    CACHE STRING "project authors" FORCE)
 SET(PROJ_MAIL "Thomas.Freiherr@gmx.net"  CACHE STRING "project mail address" FORCE)

@@ -2,8 +2,8 @@ Preparation {#ChaPreparation}
 ===========
 \tableofcontents
 
-This page describes how to get libpruio working on your system. At the
-bottom you'll find a step by step guide to install the complete
+This chapter describes how to get libpruio working on your system. At
+the bottom you'll find a step by step guide to install the complete
 system. Eager users may skip the theory and jump to \ref
 SecInstallation directly.
 
@@ -24,12 +24,12 @@ depending on what you intend to do:
 <TR>
 <TD>[am335x_pru_package](https://github.com/beagleboard/am335x_pru_package)</TD>
 <TD>[am335x_pru_package](https://github.com/beagleboard/am335x_pru_package)</TD>
-<TD>[FB prussdrv Kit](http://www.freebasic-portal.de/downloads/fb-on-arm/fb-prussdrv-kit-bbb-324.html)</TD>
+<TD>[FB prussdrv Kit (am335x_pru_package fork)](http://www.freebasic-portal.de/downloads/fb-on-arm/fb-prussdrv-kit-bbb-324.html)</TD>
 </TR>
 <TR>
 <TD></TD>
 <TD>any C compiler</TD>
-<TD>[BBB-FBC](http://www.freebasic-portal.de/downloads/fb-on-arm/bbb-fbc-fbc-fuer-beaglebone-black-283.html)</TD>
+<TD>[FreeBASIC compiler](http://www.freebasic-portal.de/downloads/fb-on-arm/bbb-fbc-fbc-fuer-beaglebone-black-283.html)</TD>
 </TR>
 </TABLE>
 
@@ -224,8 +224,39 @@ Compiling FB {#SecPreFB}
 ============
 
 To compile your FreeBASIC source code against libpruio you need the
-[FB prussdrv Kit](http://www.freebasic-portal.de/downloads/fb-on-arm/fb-prussdrv-kit-bbb-324.html)
-and from  the libpruio package library binary and the header files.
+
+- [FreeBASIC PrussDrv Kit](https://github.com/DTJF/fb_prussdrv) and the
+- [FreeBASIC compiler](http://www.freebasic-portal.de/downloads/fb-on-arm/debian-package-fbc-1-01-357.html)
+
+and from the libpruio package library binary and the header files.
+
+
+Debian Package  {#SubSecFbcDebian}
+--------------
+
+The most convenient way to install the FreeBASIC compiler is to
+download the Debian package (3.4 MB). It comes with standard header
+files and resolves all dependencies. Execute with root privileges (or
+prepend `sudo` to each command)
+
+~~~{.sh}
+wget http://www.freebasic-portal.de/dlfiles/625/freebasic_1.01.0debian7_armhf.deb
+dpkg --install freebasic_1.01.0debian7_armhf.deb
+apt-get -f install
+~~~
+
+When you've an old installation on your box, move the header files to
+the new package folder and remove the binary files by executing
+
+~~~{.sh}
+mv -R /usr/local/include/freebasic/BBB /usr/include/freebasic/
+rm /usr/local/bin/fbc
+rm -R -f /usr/local/lib/freebasic
+~~~
+
+
+Manual Installation  {#SubSecFbcManual}
+-------------------
 
 - src/c_wrapper/libpruio.so
 - src/pruio/pruio*.bi

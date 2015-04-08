@@ -7,7 +7,7 @@ Header file for including global libpruio definitions and declarations.
 '/
 
 ' Common macros, shared with PRU pasm compiler.
-#include ONCE "pruio.hp"
+#INCLUDE ONCE "pruio.hp"
 
 '* The default setting for avaraging.
 #DEFINE PRUIO_DEF_AVRAGE 4

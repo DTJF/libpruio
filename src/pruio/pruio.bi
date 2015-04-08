@@ -140,7 +140,7 @@ TYPE PruIo
   , PruNo     _ '*< The PRU number to use (defaults to 1).
   , PruIRam   _ '*< The PRU instruction ram to load.
   , PruDRam     '*< The PRU data ram.
-  AS INT16 _
+  AS Int16 _
     ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.
 
@@ -203,7 +203,7 @@ TYPE PruIo
   , BYVAL AS UInt16 = PRUIO_DEF_LSLMOD) AS ZSTRING PTR
   DECLARE FUNCTION Pin CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS UInt32 = 0) AS ZSTRING PTR
+  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
   DECLARE FUNCTION setPin CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR

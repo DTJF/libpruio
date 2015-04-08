@@ -32,7 +32,7 @@ libpruio.so
 *.bz2
 *.deb
 CMakeCache*
-_CPack*
+CPack*
 
 # Can also ignore all directories and files in a directory.
 CMakeFiles/**/*
