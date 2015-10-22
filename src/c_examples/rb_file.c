@@ -31,8 +31,8 @@ int main(int argc, char **argv)
   const uint32 NoFile = 2;      //!< The number of files to write.
   const char *NamFil = "output.%u"; //!< The output file names.
   struct timespec mSec;
-  mSec.tv_nsec=1000000;
-  pruIo *io = pruio_new(PRUIO_DEF_ACTIVE, 0x98, 0, 1); //! create new driver
+  mSec.tv_nsec = 1000000;
+  pruIo *io = pruio_new(PRUIO_DEF_ACTIVE, 0, 0, 0); //! create new driver
   if (io->Errr){
                printf("constructor failed (%s)\n", io->Errr); return 1;}
 

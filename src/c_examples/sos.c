@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
     printf("watch SOS code on user LED 3 (near ethernet connector)\n\n");
     printf("execute the following command to get rid of mmc1 triggers\n");
-    printf("  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && exit\n\n");
+    printf("  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && echo 0 > /sys/class/leds/beaglebone:green:usr3/brightness && exit\n\n");
     printf("press any key to quit");
 
     struct termios oldt, newt;          /* make terminal non-blocking */

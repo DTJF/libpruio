@@ -3,13 +3,13 @@ Features  {#ChaFeatures}
 \tableofcontents
 
 libpruio is designed to enable fast (faster than sysfs), flexible
-(customizablee) and easy (single source) access to the AM33xx CPU
+(customizable) and easy (single source) access to the AM33xx CPU
 subsystems. Its features in short
 
 - run on PRU-0 or PRU-1 (default)
 - control subsystems at runtime (disable or enable and configure)
 - run in different run modi (IO, RB and MM)
-- configure a header pin
+- configure header pins
 - get digital input (GPIO)
 - set digital output (GPIO)
 - analyse digital input train (CAP frequency and duty cycle)
@@ -17,10 +17,10 @@ subsystems. Its features in short
 - get analog input (ADC)
 - apply samples bit encoding (12 to 16 bit)
 - configure ADC settings (input channel, timing, averaging)
-- perform high-speed measurements (up to 160 kSamples/s)
+- perform high-speed measurements (up to 200 kSamples/s)
 - start measurement by trigger events (up to 4)
-- trigger on analog or digital lines
-- perform a pre-trigger that starts measurement before the event happens
+- trigger on analog (single or all) or digital (GPIO) lines
+- perform a pre-trigger that starts measurement before the trigger event happens
 
 
 PRUSS {#SecPruss}
@@ -37,7 +37,7 @@ PruIo::PruIo().
 Operation {#SecOperation}
 =========
 
-libpruio controls the AM3359 CPU subsystems
+libpruio controls the AM33xx CPU subsystems
 
 - TSC_ADCSS (Touch Screen Controler and Analog to Digital Converter
   SubSystem)
@@ -52,22 +52,21 @@ by a sequence of these three steps
 -# Create a PruIo structure, read initial configuration (constructor
    PruIo::PruIo() ).
 
--# Upload customize configuration to the subsystem registers and start
-   operation (function PruIo::config() ).
+-# Upload customize configuration to the subsystem registers (function
+   PruIo::config() ) and start operation (functions PruIo::rb_start()
+   or PruIo::mm_start() ).
 
 -# When done, restore original register configuration and destroy the
    PruIo structure (destructor PruIo::~PruIo).
-
-Customize the configuration of analog and digital lines and the
-subsystem registers before step 2. And operate the configured
-subsystems and lines after step 2.
 
 \note Create just one PruIo structure at a time.
 
 libpruio offers a set of API functions to do simple IO task at a
 reasonable speed. They may be inefficient in case of advanced
 requirements. Therefor libpruio allows direct access to all register
-configurations of the subsystems. The later is for experts only.
+configurations of the subsystems. This is for experts only. Further
+customization of the subsystems configuration for analog and digital
+lines can get done by adapting the subsystem registers before step 2.
 
 \note It's save to control the Beaglebone hardware by the libpruio API
       functions. In contrast accessing the register sets directly is
@@ -99,11 +98,11 @@ timing of the ADC subsystem restarts:
 Choose the run modus by setting parameter *Samp* in the call to
 function PruIo::config()
 
-- `Samp = 1` for IO mode, immediate start.
+- `Samp = 1` for IO mode, immediate start, run endless.
 
-- `Samp > 1` for RB, call function PruIo::rb_start() to start.
+- `Samp > 1` for RB, call function PruIo::rb_start() to start, run endless.
 
-- `Samp > 1` for MM, each call to function PruIo::mm_start() starts a new measurement.
+- `Samp > 1` for MM, each call to function PruIo::mm_start() starts a new measurement, stop after samples done.
 
 To stop an endless mode (IO or RB) call function PruIo::config() again.
 Or destroy the libpruio structure when done by calling the destructor
@@ -117,11 +116,12 @@ A digital line of the AM33xx CPU needs to be configured before use
 (see section \ref SecPinConfig for details). libpruio checks the pin
 configuration at run-time, and tries to adapt it if necessary.
 
-- An output line gets configured by the first call to the setValue
-  member function (ie. GpioUdt::setValue() or PwmMod::setValue() ).
-
 - An input line gets configured by a call to the config member function
   (ie. GpioUdt::config() or CapMod::config() ).
+
+- An output line gets configured either by the above functions or by
+  the first call to the setValue member function (ie.
+  GpioUdt::setValue() or PwmMod::setValue() ).
 
 Pinmuxing at run-time requires administrator privileges. To run your
 libpruio application with user privileges, make sure that digital lines
@@ -159,7 +159,7 @@ and duty cycle of an Beaglebone header input pin can get measured.
 
 - Call function CapMod::Value() to get the current frequency and/or duty cycle.
 
-A minimal frequency can get specified to reduce the reaction time in
+A minimal frequency can get specified to limit the reaction time in
 case of no input.
 
 
@@ -302,8 +302,8 @@ subsystems and restores their state by the destructor when finished.
 Active subsystems can get enabled or disabled at run-time. Each call to
 function PruIo::config() can change a subsystem state.
 
-- Set its status bit in parameter *Act* when calling the constructor
-  PruIo::PruIo().
+- Set a subsystem status bit in parameter *Act* when calling the
+  constructor PruIo::PruIo() to enable it.
 
 - To disable a subsystem, set the clock value to `0` (zero), before
   calling function PruIo::config(). Ie. set
@@ -319,15 +319,19 @@ Overlays {#SecOverlays}
 ========
 
 The libpruio package contains tools to create, compile and install
-device tree overlays in folder src/config. Either an overlay with fixed
-pin configuration. This overlay type configures the pins before the
-libpruio code gets executed. The code can run with user privileges. Or
-an universal overlay, that provide run-time pinmuxing capability. That
-means the pin mode and resistor / receiver configuration can get
-changed when the libpruio code is running. The later needs admin
-privileges.
+device tree overlays in folder src/config.
 
-Adapt the source code, compile and execute it.
+- Either an overlay with fixed pin configuration. This overlay type
+  configures the pins to a certain state before the libpruio code gets
+  executed. The code can run with user privileges.
+
+- Or an universal overlay, that provide run-time pinmuxing capability.
+  That means the pin mode and resistor / receiver configuration can get
+  changed when the libpruio code is running. The later needs admin
+  privileges.
+
+For a customized overlay adapt the source code, compile and execute it:
 
 - Use dts_custom.bas for overlays with fixed pinmuxing, or
+
 - use dts_universal.bas for overlays providing run-time pinmuxing capability.
