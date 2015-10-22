@@ -62,12 +62,12 @@ WITH *io
         CASE ASC("7") : d0 = 0.7
         CASE ASC("8") : d0 = 0.8
         CASE ASC("9") : d0 = 0.9
-        CASE ASC(",") : d0 = 1.0
-        CASE ASC("*") : f0 = IIF(f0 < 1000000, f0 * 2, 1000000.)
-        CASE ASC("/") : f0 = IIF(f0 > .5, f0 / 2, .5)
-        CASE ASC("m") : f0 = IIF(f0 > 5.5, f0 - 5., .5)
+        CASE ASC(","), ASC(".") : d0 = 1.0
+        CASE ASC("*") : f0 = IIF(f0 < 500000., f0 * 2 , 1000000.)
+        CASE ASC("/") : f0 = IIF(f0 > 1.     , f0 / 2 , .5)
+        CASE ASC("m") : f0 = IIF(f0 > 5.5    , f0 - 5., .5)
         CASE ASC("p") : f0 = IIF(f0 < 999995., f0 + 5., 1000000.)
-        CASE ASC("+") : f0 = 1000000
+        CASE ASC("+") : f0 = 1000000.
         CASE ASC("-") : f0 = .5
         CASE ELSE : EXIT WHILE '                                  finish
         END SELECT

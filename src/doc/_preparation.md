@@ -121,7 +121,7 @@ It's best to auto-execute these commands at startup (ie. in the
 Pin Configuration {#SecPinConfig}
 =================
 
-Beaglebone hardware contains a TI AM3359 CPU, which includes lots of
+Beaglebone hardware contains a TI AM33xx CPU, which includes lots of
 subsystems with different connectors like analog or digital lines. The
 number of subsystem connectors is greater than the number of connectors
 at the CPU housing (= CPU balls), in order to keep the housing small.
@@ -402,13 +402,20 @@ CMake build system  {#SecCMake}
 Since version 0.2.2 the libpruio source package contains scripts for the
 CMake build system. The following targets are supported
 
-\Item{all} (= default): build the library binary libpruio.so
+\Item{all} (= default): build the library binary (= libpruio.so)
+
 \Item{dtbo}: build the universal device tree overlay (source libpruio-00A0.dts and binary libpruio-00A0.dtbo) in folder src/config
+
 \Item{install}: install libpruio binary and header files (C and FB headers)
+
 \Item{doc}: build the documentation (html tree / LaTeX files / XML files, depending on the context of configuration file doc/Doxyfile)
+
 \Item{examples}: compile all examples from FB and C source in folders examples and c_examples
+
 \Item{fb_examples}: compile all examples from FB source in folder examples
+
 \Item{c_examples}: compile all examples from C source in folder c_examples
+
 \Item{???}: build ???
 
 The scripts supports in-source and out-of-source builds. Initiate the

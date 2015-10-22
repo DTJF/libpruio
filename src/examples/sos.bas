@@ -47,7 +47,7 @@ WITH *io
     ?"watch SOS code on user LED 3 (near ethernet connector)"
     ?
     ?"execute the following command to get rid of mmc1 triggers"
-    ?"  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && exit"
+    ?"  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && echo 0 > /sys/class/leds/beaglebone:green:usr3/brightness && exit"
     ?
     ?"press any key to quit"
     DO '                           print current state (until keystroke)

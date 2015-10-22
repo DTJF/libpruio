@@ -67,7 +67,7 @@ EA20 E210 DDD0 CED0 00E0 0820 1850 EEA0
 E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
 ~~~
   The last column (AIN-7) is the on board voltage divided by 2 (`&hEE50
-  / &hFFF0 * 1,8 = 1.67 V`). The fifth column is channel AIN-4, which
+  / &hFFF0 * 1V8 = 1V67 V`). The fifth column is channel AIN-4, which
   is connected to ground (P9_34 = AGND) during the test. The other
   channels are open ended.
 
@@ -85,7 +85,7 @@ analyse {#SubSecExaAnalyse}
 \Item{Description}
 
   This example shows how to read the subsystem configurations. It
-  creates a PruIo structure and prints out all startup registers
+  creates a PruIo instance and prints out all startup registers
   context (Init).
 
 \Item{Preparation}
@@ -212,8 +212,8 @@ EEA0 E7D0 E630 DA00  0C80 1510 24A0 EE60
 
   You can watch the heartbeat (user LED 0) in the third line (GPIO-1,
   bit 21). The last analog value (AIN-7) is the measured voltage on the
-  board (it should be the half of 3.3 V: `&hEE60 / &hFFF0 * 1.8 V =
-  1.676 V)`.
+  board (it should be the half of 3V3: `&hEE60 / &hFFF0 * 1V8 =
+  1V676`).
 
   To end the program press any key.
 
@@ -276,7 +276,7 @@ performance {#SubSecExaPerformance}
 
   Here's the wiring diagram
 
-  ![Wiring diagram for pwm_cap example](perf_circuit.png)
+  ![Wiring diagram for performance example](perf_circuit.png)
 
 \Item{Operation}
 
@@ -381,7 +381,8 @@ pwm_cap {#SubSecExaPwmCap}
   |  8  |  80 % |
   |  9  |  90 % |
   |  ,  | 100 % |
-  To change the frequency (in the range of 0.5 Hz to 5.0 Hz), use
+  |  .  | 100 % |
+  To change the frequency (in the range of 0.5 Hz to 1 kHz), use
   | Key | Function                           |
   | :-: | :--------------------------------- |
   |  +  | set maximum frequency 1 000 000 Hz |
@@ -404,10 +405,10 @@ pwm_cap {#SubSecExaPwmCap}
   middle of the possible frequency range and grows when you come to the
   upper or lower edge. When you switch to 100 % (always high) or 0 %
   (always low), there's no pulse train anymore and the frequency gets
-  shown as 0 (zero). The minimal frequency is set to 2 Hz, so after 0.5
-  seconds the measured values jump to 0 Hz / 0 %. Any output frequency
-  below 2 Hz also results in measured 0 Hz / 0 %. And in case of 2 Hz
-  output the measured value jumps between
+  shown as 0 (zero). The CAP minimal frequency is set to 2 Hz, so after
+  0.5 seconds the measured values jump to 0 Hz / 0 %. Any output
+  frequency below 2 Hz also results in measured 0 Hz / 0 %. And in case
+  of 2 Hz output the measured value jumps between
 ~~~{.txt}
 --> Frequency: 2        , Duty: 0.5
     Frequency: 1.999974 , Duty: 0.5
@@ -431,7 +432,7 @@ qep {#SubSecExaQep}
 \Item{Description}
 
   This example shows how to analyse input from a Quadrature encoder
-  that is connected to some header pins. It creates a PruIo structure
+  that is connected to some header pins. It creates a PruIo instance
   configured in IO mode and reads input (digital pulse trains) from up
   to three header pins, see \ref SubSecQep for details on QEP feature.
   Either a real encoder can get connected or the encoder signals can
@@ -575,8 +576,9 @@ sos {#SubSecExaSos}
 \Item{Description}
 
   This example shows how to control a GPIO output that is not connected
-  to header pin. It creates a PruIo structure configured in IO mode and
-  controls the user LED-3, which is placed near the ethernet connector.
+  to header pin (internal user LED in this case). It creates a PruIo
+  instance configured in IO mode and controls the user LED-3, which is
+  placed near the ethernet connector.
 
 \Item{Preparation}
 
@@ -591,7 +593,7 @@ sos {#SubSecExaSos}
 watch SOS code on user LED 3 (near ethernet connector)
 
 execute this command to get rid of mmc1 triggers
-  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && exit
+  sudo su && echo none > /sys/class/leds/beaglebone:green:usr3/trigger && echo 0 > /sys/class/leds/beaglebone:green:usr3/brightness && exit
 
 press any key to quit
 ~~~
@@ -615,7 +617,7 @@ stepper {#SubSecExaStepper}
 \Item{Description}
 
   This example shows how to control a unipolar stepper motor by
-  libpruio. It creates a PruIo structure configured in IO mode and
+  libpruio. It creates a PruIo instance configured in IO mode and
   prepares four GPIO lines as output. You can change motor direction
   and speed, stop the motor and switch of all pins.
 
@@ -707,7 +709,7 @@ pwm_adc {#SubSecExaPwmAdc}
   It needs some wiring to execute this example. The digital signals
   from the PWM pins (P9_14, P9_16 and P9_42) have to be connected to
   the analog inputs. Since digital output is 3V3 and analog inputs are
-  maximum 1V8, we need to transform the signalsby voltage dividers. We
+  maximum 1V8, we need to transform the signals by voltage dividers. We
   use potentiometers (RV0, RV1 and RV2) for that purpose. The divider
   outputs get connected to the analog input pins (AIN-0 = P9_39, AIN-1
   = P9_40 and AIN-2 = P9_37). The potentionmeters should be liniear and
@@ -736,14 +738,15 @@ pwm_adc {#SubSecExaPwmAdc}
 ~~~{.txt}
 sudo ./pwm_adc 640x150
 ~~~
-  and you'll see grafic window with three rectangle lines like
+  and you'll see a grafic window with three rectangle lines like
 
   ![3 PWM outputs at 2.5 Hz (red = P9_14@50%, green = P9_16@20% and blue = P9_42@80%)](pwm_adc_screen.png)
 
   which is continously up-dating the signals. (Adjust the
-  potentiometers to see three lines at different hights.)
+  potentiometers to see three lines at different hights, but avoid
+  touching the upper border = overvoltage.)
 
-  The frequenz and the duty cycle of each signal can get customized.
+  The frequency and the duty cycle of each signal can get customized.
   The active channel (the one to edit) is shown in the window title
   (P9_42 at startup). To switch to another channel, use
   | Key | Channel              |
@@ -765,6 +768,7 @@ sudo ./pwm_adc 640x150
   |  8  |  80 % |
   |  9  |  90 % |
   |  ,  | 100 % |
+  |  .  | 100 % |
   To change the frequency (in the range of 0.5 Hz to 5.0 Hz), use
   | Key | Function                     |
   | :-: | :--------------------------- |
@@ -805,7 +809,7 @@ oszi {#SubSecExaOszi}
 \Item{Description}
 
   This example shows how to sample ADC data. It creates a PruIo
-  structure configured in IO mode and draws a continously updated graph
+  instance configured in IO mode and draws a continously updated graph
   of the analog lines AIN-0 to AIN-7. The graph gets updated column by
   column by the currently sampled values. You can switch channels on or
   off to watch just a subset. By default it creates a full screen
@@ -826,7 +830,7 @@ oszi {#SubSecExaOszi}
 
   ![Screenshot of the oszi window (eight analog lines)](oszi_screen.png)
 
-  The grafic is scaled 0 V at the bottom and 1.8 V at the top. You can
+  The grafic is scaled 0 V at the bottom and 1V8 at the top. You can
   toggle the channels on or off by pressing keys 0 to 7 (0 = AIN-0, ...
   7 = AIN-7). The program prevents de-activating all channels (at least
   one channel stays active). Key '+' restores the default setting (all
@@ -834,7 +838,7 @@ oszi {#SubSecExaOszi}
 
   The less channels are activated, the faster the ADC subsystem samples
   the data. Ie. check it by connecting a constant frequency sine wave
-  (0 to maximal 1.8 V) to any channel and switch off the others one by
+  (0 to maximal 1V8) to any channel and switch off the others one by
   one.
 
 \Item{Source Code}
@@ -848,7 +852,7 @@ rb_oszi {#SubSecExaRbOszi}
 \Item{Description}
 
   This example shows how to sample ADC data in RB mode. It creates and
-  configures a PruIo structure and draws a continously updated graph of
+  configures a PruIo instance and draws a continously updated graph of
   the analog lines AIN-4 and AIN-7. The graph gets updated in one step
   when one half of the ring buffer is filled. By default it creates a
   full screen window without a frame. You can customize the window by
@@ -868,7 +872,7 @@ rb_oszi {#SubSecExaRbOszi}
 
   ![Screenshot of the rb_oszi window (two analog lines)](rb_oszi_screen.png)
 
-  The grafic is scaled 0 V at the bottom and 1.8 V at the top. Any
+  The grafic is scaled 0 V at the bottom and 1V8 at the top. Any
   keypress quits the program.
 
 \Item{Source Code}
@@ -888,7 +892,7 @@ triggers {#SubSecExaTriggers}
   customize the window by setting the size as command line option (ie
   like `./triggers 640x400` for width = 640 and hight = 400).
 
-  The example offers to choose one from of four different trigger types
+  The example offers to choose one of four different trigger types:
   - no trigger, or
   - a digital trigger, or
   - an analog trigger at AIN-4 line, or
@@ -930,7 +934,7 @@ Choose trigger type
   2 = analog trigger (AIN-4 > 0.9 V)
   3 = analog pre-trigger (any AIN < 0.9 V)
 ~~~
-  The grafic is scaled 0 V at the bottom and 1.8 V at the top. The
+  The grafic is scaled 0 V at the bottom and 1V8 at the top. The
   sampling rate is 1 kHz. You can start a measurement of two channels
   (AIN-4 and AIN-7) immediately or by a trigger.
 
@@ -945,7 +949,7 @@ Choose trigger type
     -# Press key 0. After a short while (less than 1 second) a black
        and a red line show up in the window. Black = AIN-4 (open
        connector) shows any signal and red = AIN-7 (board voltage =
-       1.65 V) is always near the top of the window.
+       1V65) is always near the top of the window.
 
     -# The menu showns up again for the next test.
 
@@ -963,16 +967,16 @@ waiting for GPIO trigger (pin P8_07 low) ...
        P8_07 (trigger pin). After a short while (less than 1 second) a
        black and a red line show up in the window. Black = AIN-4
        (potentiometer or open connector) shows any signal and red =
-       AIN-7 (board voltage = 1.65 V) is always at the top of the
+       AIN-7 (board voltage = 1V65) is always at the top of the
        window.
 
     -# You'll see a window like following (some input on AIN-4 here)
 
-       ![Analog input on AIN-4 (black = any signal) and AIN-7 (red = 1.65 V on board)](triggers_pin.png)
+       ![Analog input on AIN-4 (black = any signal) and AIN-7 (red = 1V65 on board)](triggers_pin.png)
 
     -# The menu showns up again for the next test.
 
-  <b>2 = analog trigger (AIN-4 > 0.9 V)</b>
+  <b>2 = analog trigger (AIN-4 > 0V9)</b>
 
     -# Adjust the variable resistor to the P9_34 side or connect a
        cable between P9_34 (AGND) and P9_33 (AIN-4).
@@ -991,11 +995,11 @@ waiting for analog trigger (AIN-4 > 0.9 V) ...
        following (here AIN-4 signal is generated manually by the
        potentiometer)
 
-       ![Analog input on AIN-4 (black = trigger signal) and AIN-7 (red = 1.65 V on board)](triggers_ain.png)
+       ![Analog input on AIN-4 (black = trigger signal) and AIN-7 (red = 1V65 on board)](triggers_ain.png)
 
        Black = AIN-4 starts on the left side in the middle of the
        window hight (the trigger event) and shows any signal. Red =
-       AIN-7 (board voltage = 1.65 V) is always at the top of the
+       AIN-7 (board voltage = 1V65) is always at the top of the
        window. The menu showns up again for the next test.
 
        In case of no potentiometer, release the cable. The channel
@@ -1005,7 +1009,7 @@ waiting for analog trigger (AIN-4 > 0.9 V) ...
 
     -# The menu showns up again for the next test.
 
-  <b>3 = analog pre-trigger (any AIN < 0.9 V)</b>
+  <b>3 = analog pre-trigger (any AIN < 0V9)</b>
 
     -# Adjust the variable resistor to the P9_32 side or connect a cable
        between P9_32 (VADC) and P9_33 (AIN-4).
@@ -1024,17 +1028,17 @@ waiting for analog pre-trigger (any AIN < 0.9 V) ...
        following (here AIN-4 signal is generated manually by the
        potentiometer)
 
-       ![Valid pre-trigger input on AIN-4 (black = trigger signal) and AIN-7 (red = 1.65 V on board)](triggers_pre_full.png)
+       ![Valid pre-trigger input on AIN-4 (black = trigger signal) and AIN-7 (red = 1V65 on board)](triggers_pre_full.png)
 
        Black = AIN-4 starts on the left side in the upper part of the
        window and passes through the middle (the trigger event). Red =
-       AIN-7 (board voltage = 1.65 V) is always at the top of the
+       AIN-7 (board voltage = 1V65) is always at the top of the
        window.
 
-       When any analog line is below 0.9 V at the start of the trigger,
+       When any analog line is below 0V9 at the start of the trigger,
        you'll see a window like
 
-       ![Invalid pre-trigger samples (black = trigger signal AIN-4 below 0.9 V)](triggers_pre_empty.png)
+       ![Invalid pre-trigger samples (black = trigger signal AIN-4 below 0V9)](triggers_pre_empty.png)
 
        Here no pre-trigger samples are available (since the measurement
        starts immediately) and these samples get set to 0 (zero).

@@ -101,11 +101,12 @@ int main(int argc, char **argv)
           case '8' : d0 = 0.8; break;
           case '9' : d0 = 0.9; break;
           case ',' : d0 = 1.0; break;
-          case 'm' : f0 = (f0 > 5.5 ? f0 - 5. : .5); break;
+          case '.' : d0 = 1.0; break;
+          case 'm' : f0 = (f0 > 5.5     ? f0 - 5. : .5); break;
           case 'p' : f0 = (f0 < 999995. ? f0 + 5. : 1000000.); break;
-          case '*' : f0 = (f0 < 1000000 ? f0 * 2 : 1000000.); break;
-          case '/' : f0 = (f0 > .5 ? f0 / 2 : .5); break;
-          case '+' : f0 = 1000000; break;
+          case '*' : f0 = (f0 < 500000. ? f0 * 2  : 1000000.); break;
+          case '/' : f0 = (f0 > 1.      ? f0 / 2  : .5); break;
+          case '+' : f0 = 1000000.; break;
           case '-' : f0 = .5; break;
           default: goto finish;
         };

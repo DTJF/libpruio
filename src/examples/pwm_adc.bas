@@ -133,7 +133,7 @@ WITH *io
         CASE ASC("7") : m = BITRESET(&hFF, n) : ch(n).Duty = 0.7
         CASE ASC("8") : m = BITRESET(&hFF, n) : ch(n).Duty = 0.8
         CASE ASC("9") : m = BITRESET(&hFF, n) : ch(n).Duty = 0.9
-        CASE ASC(",") : m = BITRESET(&hFF, n) : ch(n).Duty = 1.0
+        CASE ASC(","), ASC(".") : m = BITRESET(&hFF, n) : ch(n).Duty = 1.0
         CASE ASC("+") : IF ch(n).Freq < 5.0 THEN ch(n).Freq += .5
         CASE ASC("-") : IF ch(n).Freq > 0.9 THEN ch(n).Freq -= .5
         CASE ASC("*") : ch(n).Freq = 5.0

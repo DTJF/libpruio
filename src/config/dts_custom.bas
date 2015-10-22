@@ -59,7 +59,6 @@ fbc -w all dts_custom.bas
 '* The version.
 #DEFINE VERS_NAME "00A0"
 '* The folder to place the compiled overlay binary.
-'#DEFINE PATH_NAME "/lib/firmware"
 VAR PATH_NAME = "/lib/firmware"
 
 ' create settings for all required pins here
