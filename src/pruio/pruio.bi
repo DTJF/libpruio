@@ -111,6 +111,9 @@ C wrapper equivalent pruIo.
 \since 0.0
 '/
 TYPE PruIo
+  AS ZSTRING PTR _
+    Errr = 0    '*< Pointer for error messages.
+
   AS AdcUdt PTR Adc     '*< Pointer to ADC subsystem structure.
   AS GpioUdt PTR Gpio   '*< Pointer to GPIO subsystems structure.
   AS PwmssUdt PTR PwmSS '*< Pointer to PWMSS subsystems structure.
@@ -119,8 +122,6 @@ TYPE PruIo
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
   AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
 
-  AS ZSTRING PTR _
-    Errr = 0    '*< Pointer for error messages.
   AS  UInt32 PTR DRam '*< Pointer to access PRU DRam.
   AS BallSet PTR _
     Init _      '*< The subsystems register data at start-up (to restore when finished).
