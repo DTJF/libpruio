@@ -207,7 +207,6 @@ ELSE()
         COMMAND ${CMAKE_Fbc_COMPILER} ${flags} -gen gcc -r ${src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
-      #IF(ARG_OUT_DIR)
       IF(${CMAKE_CURRENT_SOURCE_DIR} NOT EQUAL ${_dir})
         EXECUTE_PROCESS(
           COMMAND ${CMAKE_COMMAND} -E rename ${c_nam} ${c_file}

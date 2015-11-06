@@ -399,7 +399,7 @@ sudo src/examples/1
 CMake build system  {#SecCMake}
 ==================
 
-Since version 0.2.2 the libpruio source package contains scripts for the
+Since version 0.4.0 the libpruio source package contains scripts for the
 CMake build system. The following targets are supported
 
 \Item{all} (= default): build the library binary (= libpruio.so)

@@ -288,7 +288,7 @@ See \ArmRef{15.4} for hardware details.
 
 C wrapper equivalent qepMod.
 
-\since 0.2.2
+\since 0.4.0
 '/
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance

@@ -3,7 +3,7 @@
 
 Header file for including global libpruio definitions and declarations.
 
-\since 0.2.2
+\since 0.4.0
 '/
 
 ' Common macros, shared with PRU pasm compiler.

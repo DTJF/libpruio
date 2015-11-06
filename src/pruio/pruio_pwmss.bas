@@ -64,10 +64,10 @@ context, if the subsystem woke up and is enabled.
 
 \since 0.2
 '/
-FUNCTION PwmssUdt.initialize cdecl() AS zstring ptr
+FUNCTION PwmssUdt.initialize CDECL() AS ZSTRING PTR
   WITH *Top
-    var p_mem = .MOffs + .DRam[InitParA] _
-      , p_raw = cast(any ptr, .DRam) + PRUIO_DAT_PWM
+    VAR p_mem = .MOffs + .DRam[InitParA] _
+      , p_raw = CAST(ANY PTR, .DRam) + PRUIO_DAT_PWM
     FOR i AS LONG = 0 TO PRUIO_AZ_PWMSS
       Raw(i) = p_raw
       Raw(i)->CMax = 0
@@ -162,7 +162,9 @@ FUNCTION PwmMod.Value CDECL( _
     CASE P9_29 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 1))
     CASE P9_31 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 0))
     CASE P9_28 : e = IIF(ModeCheck(Ball,4), E1, cap_get(2, Hz, Du))
+    CASE JT_05 : e = IIF(ModeCheck(Ball,4), E1, cap_get(1, Hz, Du))
     CASE P9_42 : e = IIF(ModeCheck(Ball,0), E1, cap_get(0, Hz, Du))
+    'CASE P8_15 : e = IIF(ModeCheck(Ball,5), E1, pru_cap_get(Hz, Du))
     CASE ELSE  : e = E0
     END SELECT : IF e THEN .Errr = e :                      RETURN .Errr
   END WITH : RETURN 0
@@ -250,8 +252,12 @@ FUNCTION PwmMod.setValue CDECL( _
       RETURN pwm_set(0, Hz, Du, -1.)
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN cap_set(2, Hz, Du)
+    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+      RETURN cap_set(1, Hz, Du)
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
       RETURN cap_set(0, Hz, Du)
+    'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D)
+      'RETURN pru_cap_set(Hz, Du)
     END SELECT :                               .Errr = E0 : RETURN .Errr
   END WITH
 END FUNCTION
@@ -554,11 +560,12 @@ FUNCTION CapMod.config CDECL( _
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
+    'CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24) ' input???
+      'm = 1
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
+    'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h25) ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
     'CASE    88 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h22)
       'm = 1
-    'CASE    92 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
-      'm = 2
     'CASE    93 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       'm = 1
     'CASE    98 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h23)
@@ -624,9 +631,10 @@ FUNCTION CapMod.Value CDECL( _
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
+    'CASE JT_05 IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  '-> eCAP1_in_PWM1_out, JTag header input???
     CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
+    'CASE P8_15: IF ModeCheck(Ball,5) THEN e = E1 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
     'CASE 88 : IF ModeCheck(Ball,2) THEN e = E1 ELSE m = 1
-    'CASE 92 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
     'CASE 93 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1
     'CASE 98 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 2
     'CASE 99 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 1
@@ -665,7 +673,7 @@ encoder pulse trains.
 
 The constructor just copies a pointer to the calling main UDT PruIo.
 
-\since 0.2.2
+\since 0.4.0
 '/
 CONSTRUCTOR QepMod(BYVAL T AS Pruio_ PTR)
   Top = T
@@ -734,7 +742,7 @@ Scale = 60 [s/min] / (1024 [imp/rev] * 4 [cnt/imp])
 
 C-wrapper function: pruio_qep_config().
 
-\since 0.2.2
+\since 0.4.0
 '/
 FUNCTION QepMod.config CDECL( _
     BYVAL Ball AS UInt8 _
@@ -859,7 +867,7 @@ configuration.
 
 C-wrapper function: pruio_qep_Value().
 
-\since 0.2.2
+\since 0.4.0
 '/
 FUNCTION QepMod.Value CDECL( _
     BYVAL Ball AS UInt8 _

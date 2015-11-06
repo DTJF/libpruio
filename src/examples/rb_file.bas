@@ -12,7 +12,7 @@ Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `fbc -w all rb_file.bas`
 
-\since 0.2.0.2
+\since 0.4.0
 '/
 
 

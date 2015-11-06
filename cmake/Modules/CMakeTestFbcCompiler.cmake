@@ -28,7 +28,7 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
   SET(testfile testFbcCompiler)
   SET(testpath ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp)
   FILE(WRITE ${testpath}/${testfile}.bas
-    "?__FB_SIGNATURE__;\nSCREEN 100,100\nEND SIZEOF(ANY PTR)\n")
+    "?__FB_VERSION__;\nSCREEN 100,100\nEND SIZEOF(ANY PTR)\n")
   EXECUTE_PROCESS(
     COMMAND fbc -v -m ${testfile} ${testfile}.bas
     WORKING_DIRECTORY ${testpath}
@@ -142,14 +142,10 @@ IF(CMAKE_Fbc_COMPILER_WORKS)
       "the following output:\n${OUTPUT}\n\n")
   ENDIF()
 
-  # fix for cmake < 2.8.10
-  IF(NOT CMAKE_PLATFORM_INFO_DIR)
-    SET(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
-  ENDIF()
-
   # Re-configure to save learned information.
+  GET_FILENAME_COMPONENT(modpath ${CMAKE_CURRENT_LIST_FILE} PATH)
   CONFIGURE_FILE(
-    ${CMAKE_MODULE_PATH}/CMakeFbcCompiler.cmake.in
+    ${modpath}/CMakeFbcCompiler.cmake.in
     ${CMAKE_PLATFORM_INFO_DIR}/CMakeFbcCompiler.cmake
     @ONLY IMMEDIATE # IMMEDIATE must be here for compatibility mode <= 2.0
     )

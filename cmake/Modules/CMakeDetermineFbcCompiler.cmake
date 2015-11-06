@@ -72,11 +72,13 @@ FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
 
 # fix for CMake < 2.8.10
 IF(NOT CMAKE_PLATFORM_INFO_DIR)
-  SET(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+  SET(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
 ENDIF()
 
 # configure variables set in this file for fast reload later on
-CONFIGURE_FILE(${CMAKE_MODULE_PATH}/CMakeFbcCompiler.cmake.in
+GET_FILENAME_COMPONENT(modpath ${CMAKE_CURRENT_LIST_FILE} PATH)
+CONFIGURE_FILE(
+  ${modpath}/CMakeFbcCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakeFbcCompiler.cmake
   @ONLY IMMEDIATE # IMMEDIATE must be here for compatibility mode <= 2.0
   )

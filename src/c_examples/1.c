@@ -22,7 +22,7 @@ Compile by: `gcc -Wall -o 1 1.c -lpruio -lprussdrv`
 int main(int argc, char **argv)
 {
   int i, n;
-  pruIo *io = pruio_new(PRUIO_DEF_ACTIVE, 0x98, 0, 1); //! create new driver structure
+  pruIo *io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0); //! create new driver structure
   if (pruio_config(io, 1, 0x1FE, 0, 4)){ // upload (default) settings, start IO mode
                               printf("config failed (%s)\n", io->Errr);}
   else {

@@ -22,7 +22,7 @@ different components together and provides all declarations.
 #ENDIF
 
 '* Version string.
-#DEFINE PRUIO_VERSION "0.2.2"
+'#DEFINE PRUIO_VERSION "0.2.2"
 
 '* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
@@ -46,7 +46,7 @@ different components together and provides all declarations.
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
 
-/'* \brief Mask to be used in the constructor to choose PRUSS number and enable divices controls.
+/'* \brief Mask for PRUSS number and divice enabling.
 
 This enumerators are used in the constructor PruIo::PruIo() to enable
 single subsystems. By default all subsystems are enabled. If a device
@@ -97,7 +97,7 @@ C wrapper equivalent ballSet.
 '/
 TYPE BallSet
   AS UInt32 DeAd                 '*< Base address of Control Module subsystem.
-  AS  UInt8 Value(PRUIO_AZ_BALL) '*< The values of the pad control registers.
+  AS UInt8  Value(PRUIO_AZ_BALL) '*< The values of the pad control registers.
 END TYPE
 
 /'* \brief Main structure, binding all components together.

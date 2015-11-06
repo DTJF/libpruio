@@ -14,7 +14,7 @@ Thanks for C code translation: Nils Kohrs <nils.kohrs@gmail.com>
 
 Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio -lprussdrv`
 
-\since 0.2.0.2
+\since 0.4.0
 */
 
 #include "unistd.h"

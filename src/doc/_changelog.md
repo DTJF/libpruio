@@ -3,8 +3,7 @@ Changelog & Credits {#ChaChangelog}
 \tableofcontents
 
 
-Further Development {#SecFurtherVev}
-===================
+# Further Development {#SecFurtherVev}
 
 - Add QEP features of PWMSS. ???
 - Add TIMER subsystem support.
@@ -13,26 +12,24 @@ Further Development {#SecFurtherVev}
 Feel free to send further ideas to the author (\Email).
 
 
-libpruio-0.2.2 {#SecV-0-2-2}
-==============
+# libpruio-0.4.0 {#SecV-0-4-0}
 
 Released in 2015, ???.
 
-New:
-----
+## New:
 
 - Documentation page Pins added.
 - Build management added (by CMake).
 - GIT version control system implemented.
 - QEP module support (function QepMod::config() and QepMod::Value() ).
 - New example qep: analyse Quadrature encoder signals (and simulates such signals).
-- New eample performance: measure speed of different open and closed loop controllers toggling a GPIO.
+- New example performance: measure speed of different open and closed loop controllers toggling a GPIO.
 - New example rb_file: use ring buffer mode to fetch ADC samples and save raw data to file(s).
 - PWM configuration variables to directly influence A and B output of PWM modules.
 - More links between the FB and the C documentation.
+- PWM output on JTag 5 (PWMSS-1.eCAP)
 
-Changes:
---------
+## Changes:
 
 - Function Gpio->setValue calls Gpio->config() now, in case of improper pin mode.
 - New numbers for PRU commands, checking tree structure now (faster).
@@ -42,8 +39,7 @@ Changes:
 - Tool dts_custom.bas generates fragment@1 section (no export command required).
 - Device tree overlay: QEP input pins have no restistor now.
 
-Bugfixes:
----------
+## Bugfixes:
 
 - RB and MM modes are working now, even when libpruio is configured to use PRU-0.
 - C-Wrapper missing enumerators pinMuxing added.
@@ -56,13 +52,11 @@ Bugfixes:
 - Example pwm_adc: frequency interferences fixed for A + B channel.
 
 
-libpruio-0.2 {#SecV-0-2}
-============
+# libpruio-0.2 {#SecV-0-2}
 
 Released in 2014 October, 26.
 
-New:
-----
+## New:
 
 - Ring buffer (RB) run mode (samples analog input continously).
 - PWM output in IO and RB mode (variable frequency and duty cycles).
@@ -73,8 +67,7 @@ New:
 - Tools included to create, compile and install universal or customized device tree overlays.
 - Advanced error messages from constructor.
 
-Changes:
---------
+## Changes:
 
 - Completely renewed source code (modular now, for easier expansions).
 - Completely renewed documentation (interferences between C and FB source solved).
@@ -84,15 +77,13 @@ Changes:
 - Access to all subsystem registers supported.
 - Optimized error checking in PwmMod and CapMod functions.
 
-Bugfixes:
----------
+## Bugfixes:
 
 - Pinmuxing now available.
 - GPIO output fixed (former gpio_set sometimes skipped a setting).
 
 
-libpruio-0.0.2 {#SecV-0-0-2}
-==============
+# libpruio-0.0.2 {#SecV-0-0-2}
 
 Released on 2014 June, 6.
 
@@ -101,15 +92,24 @@ Released on 2014 June, 6.
 - Cosmetic: Minor adaptions in the source code
 
 
-libpruio-0.0 {#SecV-0-0}
-============
+# libpruio-0.0 {#SecV-0-0}
 
 Released on 2014 May, 9.
 
 
+# References  {#SecReferences}
 
-Credits {#SecCredits}
-=======
+Meanwhile \Proj is used in many projects. Here're some of them
+
+- [Using low cost single-board microcontrollers to record underwater acoustical data](http://www.acoustics.asn.au/conference_proceedings/INTERNOISE2014/papers/p236.pdf)
+- [Browser controlled tank (video)](https://www.youtube.com/watch?v=3cXCUmCWQHQ)
+- [Library upgrade to PRU gives Fast IO on Beaglebone](http://hackaday.com/2015/02/16/library-upgrade-to-pru-gives-fast-io-on-beaglebone/#comments)
+- [Pd BeagleBone Black IO](http://java-hackers.com/p/rvega/pd-bbb-gpio)
+- [How to create a very-low-cost, very-low-power, credit-card-sized and real-time-ready datalogger](http://www.adv-geosci.net/40/37/2015/adgeo-40-37-2015.pdf)
+- []()
+
+
+# Credits  {#SecCredits}
 
 Thanks go to:
 

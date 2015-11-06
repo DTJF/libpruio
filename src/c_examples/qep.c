@@ -59,7 +59,7 @@ isleep(unsigned int mseconds)
 //! The main function.
 int main(int argc, char **argv)
 {
-  pruIo *Io = pruio_new(PRUIO_DEF_ACTIVE, 0x98, 0, 1); //! create new driver structure
+  pruIo *Io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0); //! create new driver structure
   do {
     if (Io->Errr) {
                printf("initialisation failed (%s)\n", Io->Errr); break;}
