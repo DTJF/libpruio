@@ -60,7 +60,7 @@ SET(PASM_SRC
   CACHE FILEPATH "ASM source files" FORCE
   )
 
-SET(FBC_BAS
+SET(SRC_BAS
     "pruio.bas"
     "pruio_adc.bas"
     "pruio_gpio.bas"
@@ -70,7 +70,7 @@ SET(FBC_BAS
   CACHE FILEPATH "BASIC source files" FORCE
   )
 
-SET(FBC_BI
+SET(SRC_BI
     "pruio.hp"
     "pruio.bi"
     "pruio_globals.bi"
@@ -82,7 +82,7 @@ SET(FBC_BI
   CACHE FILEPATH "header files" FORCE
   )
 
-SET(FBC_BI_EXTRA
+SET(SRC_BI_EXTRA
     "pruio_out.bi"
   )
 
@@ -106,16 +106,22 @@ ADD_CUSTOM_TARGET(pasm DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
   )
 
-ADD_LIBRARY(pruiofbcode OBJECT ${FBC_BAS})
+ADD_LIBRARY(pruiofbcode OBJECT ${SRC_BAS})
 SET_TARGET_PROPERTIES(pruiofbcode PROPERTIES
   COMPILE_FLAGS "-Wc -fPIC"
   )
 ADD_DEPENDENCIES(pruiofbcode pasm)
 ADD_Fbc_SRC_DEPS(pruiofbcode)
 
-
-INSTALL(FILES ${FBC_BI} ${FBC_BI_EXTRA}
-  DESTINATION include/freebasic/BBB
+# install the header files (*.bi)
+GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
+IF(UNIX)
+  SET(bi_dest ${fbpath}/../include)
+ELSE()
+  SET(bi_dest ${fbpath}/../inc)
+ENDIF()
+INSTALL(FILES ${SRC_BI} ${SRC_BI_EXTRA}
+  DESTINATION ${bi_dest}/freebasic/BBB
   COMPONENT fbdev
   )
 

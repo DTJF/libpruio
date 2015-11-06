@@ -508,6 +508,8 @@ typedef struct ballSet{
 \since 0.0
 */
 typedef struct pruIo{
+  char* Errr;      //!< Pointer for error messages.
+
   adcUdt* Adc;     //!< Pointer to ADC subsystem structure.
   gpioUdt* Gpio;   //!< Pointer to GPIO subsystem structure.
   pwmssUdt* PwmSS; //!< Pointer to PWMSS subsystem structure.
@@ -516,7 +518,6 @@ typedef struct pruIo{
   capMod* Cap;     //!< Pointer to eCAP module structure (in PWMSS subsystem).
   qepMod* Qep;     //!< pointer to eQEP module structure (in PWMSS subsystem)
 
-  char* Errr;      //!< Pointer for error messages.
   uint32* DRam;    //!< Pointer to access PRU DRam.
   ballSet
     *Init,         //!< The subsystems register data at start-up (to restore subsystems at the end).
