@@ -243,6 +243,8 @@ CONSTRUCTOR PruIo( _
   prussdrv_map_extmem(@ERam)
   ESize = prussdrv_extmem_size()
   EAddr = prussdrv_get_phys_addr(ERam)
+
+  prussdrv_pru_disable(PruNo) '          disable PRU (if running before)
   DRam[0] = 0
   DRam[1] = PRUIO_DAT_ALL '                          start of data block
   ParOffs = 1
@@ -262,11 +264,10 @@ CONSTRUCTOR PruIo( _
   '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt();
 
   ASSERT(ParOffs < DRam[1] SHR 4)
-  prussdrv_pru_disable(PruNo) '          disable PRU (if running before)
   VAR l = ArrayBytes(Pru_Init)
   IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Init(0), l) THEN _
        Errr = @"failed loading Pru_Init instructions" : EXIT CONSTRUCTOR
-  prussdrv_pruintc_init(@IntcInit) '           get interrupt initialized
+  prussdrv_pruintc_init(@IntcInit) '          get interrupts initialized
   prussdrv_pru_enable(PruNo)
 
   Pwm = NEW PwmMod(@THIS)
@@ -620,7 +621,7 @@ FUNCTION PruIo.setPin CDECL( _
                       Errr = @"unknown setPin ball number" : RETURN Errr
 
   VAR m = IIF(Mo = PRUIO_PIN_RESET, BallInit[Ball], Mo)
-  if BallConf[Ball] = m then                                    RETURN 0 ' nothing to do
+  IF BallConf[Ball] = m THEN                                    RETURN 0 ' nothing to do
 
   IF 0 = LEN(MuxAcc) THEN        Errr = @"no ocp.* access" : RETURN Errr
 
@@ -633,7 +634,7 @@ FUNCTION PruIo.setPin CDECL( _
 
   STATIC AS STRING*30 e = "pinmux failed: P._.. -> x.."
   VAR x = nameBall(Ball)
-  if x then MID(e, 16, 5) = *x else MID(e, 16, 5) = "bal" & HEX(Ball, 2)
+  IF x THEN MID(e, 16, 5) = *x ELSE MID(e, 16, 5) = "bal" & HEX(Ball, 2)
   MID(e, 26, 2) = h :                       Errr = SADD(e) : RETURN Errr
 END FUNCTION
 
@@ -720,6 +721,8 @@ FUNCTION PruIo.nameBall CDECL(BYVAL Ball AS UInt8) AS ZSTRING PTR
   CASE 100 : RETURN @"P9_31"
   CASE 109 : RETURN @"P9_41"
   CASE  89 : RETURN @"P9_42"
+  CASE  92 : RETURN @"JT_04"
+  CASE  93 : RETURN @"JT_05"
   END SELECT : RETURN 0
 END FUNCTION
 

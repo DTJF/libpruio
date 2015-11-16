@@ -7,12 +7,10 @@
 //    pasm -V3 -y -CPru_Init pasm_init.p
 
 #include "pruio.hp"
-#define IRPT PRUIO_IRPT + 16
 
-#define CTBIR      0x22020
-#define CONST_PRUCFG C4
-
-#define DRam C24
+//
+// register aliases
+//
 #define Targ r1
 #define Cntr r2
 #define Para r3

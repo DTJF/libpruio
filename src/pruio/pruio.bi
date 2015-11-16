@@ -41,7 +41,7 @@ different components together and provides all declarations.
 #DEFINE PRUIO_EVNT PRU_EVTOUT_5
 
 '* Macro to calculate the total size of an array in bytes.
-#DEFINE ArrayBytes(_A_) (UBOUND(_A_) + 1) * SIZEOF(_A_)
+#DEFINE ArrayBytes(_A_) (UBOUND(_A_) + 1) * SIZEOF(_A_(0))
 '* Macro to check a CPU ball number (0 to 109 is valid range).
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
