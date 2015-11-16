@@ -163,6 +163,7 @@ LATEX_OUTPUT     = latex
     ADD_DEPENDENCIES(doc DEPENDS doc_pdf)
     LIST(APPEND targets "doc_pdf")
   ENDIF()
+  MESSAGE(STATUS "found ${DOXYGEN_EXECUTABLE}-${DOXYGEN_VERSION}")
   MESSAGE(STATUS "FB_DOCUMENTATION configured: ${msg} targets ${targets}")
 ENDFUNCTION(FB_DOCUMENTATION)
 

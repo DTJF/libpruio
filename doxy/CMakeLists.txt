@@ -12,13 +12,13 @@ BAS_SRC
   ${FBC_BI}
   ${PASM_SRC}
 DEPENDS
-    "../src/_features.md"
-    "../src/_preparation.md"
-    "../src/_exampleses.md"
-    "../src/_pins.md"
-    "../src/_memory.md"
-    "../src/_messages.md"
-    "../src/_changelog.md"
+    "../src/doc/_1_features.md"
+    "../src/doc/_2_preparation.md"
+    "../src/doc/_3_pins.md"
+    "../src/doc/_4_examples.md"
+    "../src/doc/_5_memory.md"
+    "../src/doc/_6_messages.md"
+    "../src/doc/_z_changelog.md"
   ../CMakeLists.txt
   Doxyfile
   libpruio.css

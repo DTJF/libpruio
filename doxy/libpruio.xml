@@ -7,8 +7,8 @@
     <tab type="usergroup" title="Description">
       <tab type="user" url="@ref ChaFeatures" title="Features"/>
       <tab type="user" url="@ref ChaPreparation" title="Preparation"/>
-      <tab type="user" url="@ref ChaExamples" title="Examples"/>
       <tab type="user" url="@ref ChaPins" title="Pins"/>
+      <tab type="user" url="@ref ChaExamples" title="Examples"/>
       <tab type="user" url="@ref ChaMemory" title="Memory Organisation"/>
       <tab type="user" url="@ref ChaMessages" title="Messages"/>
       <tab type="user" url="@ref ChaChangelog" title="Changelog &amp; Credits"/>

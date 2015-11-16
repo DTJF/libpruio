@@ -50,8 +50,6 @@ ENDIF()
 SET(dtbo libpruio-00A0.dtbo)
 SET(univ dts_universal)
 
-ADD_CUSTOM_TARGET(dtbo DEPENDS ${dtbo})
-
 ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
   COMMAND ${CMAKE_Fbc_COMPILER} -w all -x ${univ} -e ${CMAKE_CURRENT_SOURCE_DIR}/${univ}.bas
   COMMAND ./${univ} .
@@ -60,6 +58,8 @@ ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
   )
+
+ADD_CUSTOM_TARGET(dtbo DEPENDS ${dtbo})
 
 INSTALL(FILES ${dtbo}
   DESTINATION /lib/firmware

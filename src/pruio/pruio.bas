@@ -31,8 +31,8 @@ the subsystems
 
 The driver supports three run modi
 
-- IO mode: digital and analog lines, timing conrolled by the host,
-- RB mode: digital and analog lines, accurate ADC timing conrolled by the PRU,
+- IO mode: digital and analog lines, sloppy timing controlled by the host,
+- RB mode: digital and analog lines, accurate ADC timing controlled by the PRU,
 - MM mode: analog lines and optional triggers, accurate ADC timing controlled by the PRU.
 
 The \em libpruio library is developed and tested on a Beaglebone Black

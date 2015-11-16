@@ -326,7 +326,7 @@ signal that resets the position counter.
 | P8_42 | B input |   2   |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
 | P8_39 | I input |   2   |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
 | P9_42 | A input |   0   |   X   |     -     |     -    |   -   |              | free (double pin) |
-| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        | free (double pin) |
+| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        | free              |
 | P9_41 | I input |   0   |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
 
 Direction information is derived from two different signals that "look"
