@@ -19,6 +19,15 @@ preprocessor blocks that never get parsed.
 Note that the interrupt channel and mask has to be adapted in file
 pruio.bi in case of any change here.
 
+\def PRUIO_IRPT
+\brief The interrupt pointer to use (/dev/uio5)
+\def CTBIR
+\brief Adress in constant table
+\def CONST_PRUCFG
+\brief Constant table entry for config (to enable OCP master port).
+\def DRam
+\brief Constant table entry for DRam.
+
 \def PRUIO_AZ_BALL
 \brief The number of CPU balls to handle (minus one).
 \def PRUIO_AZ_GPIO
@@ -85,6 +94,10 @@ pruio.bi in case of any change here.
 #endif
 
 #define PRUIO_IRPT 25
+#define IRPT PRUIO_IRPT + 16
+#define CTBIR      0x22020
+#define CONST_PRUCFG C4
+#define DRam C24
 
 #define PRUIO_AZ_BALL  109
 #define PRUIO_AZ_GPIO  3

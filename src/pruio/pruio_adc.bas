@@ -126,7 +126,7 @@ FUNCTION AdcUdt.configure CDECL( _
         VAR opd = .Delay AND &h3FFFF _
           , smd = .Delay SHR 24 _
           , avr = (.Confg SHR 2) AND &b111
-        d += opd + 1 + (14 + smd) * IIF(avr, 1 SHL avr, 1)
+        d += opd + 1 + (14 + smd) * (1 SHL avr)
       END WITH
     NEXT
 

@@ -124,7 +124,7 @@ WITH *io
 
       IF .mm_start(trg) THEN ?"mm_start failed (" & *.Errr & ")" : CONTINUE DO
 
-      line (0, 0)-STEP (S_W, 7), bg, BF
+      LINE (0, 0)-STEP (S_W, S_H), bg, BF
       FOR c AS INTEGER = 0 TO .Adc->ChAz - 1 '                draw graph
         VAR i = c + .Adc->ChAz _ '*< The samples index.
           , x = gap              '*< The x position at the screen.
