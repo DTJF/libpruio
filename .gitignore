@@ -28,6 +28,8 @@ pasm_init.bi
 pasm_run.bi
 libpruio.so
 
+doxy/fb-doc.lfn
+
 # Use wildcards as well
 *.bz2
 *.deb
