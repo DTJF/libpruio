@@ -104,6 +104,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #DEFINE __PRUIO_COMPILING__
 '* The start of the pinmux-helper folder names in /sys/devices/ocp.*/.
 #DEFINE PMUX_NAME "pruio-"
+'#DEFINE PMUX_NAME "ocp:pruio-"
 
 
 ' The PRUSS driver library.
@@ -119,8 +120,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #INCLUDE ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #INCLUDE ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#INCLUDE ONCE "pruio_timer.bi"
+' Header for TIMER part.
+#INCLUDE ONCE "pruio_timer.bi"
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
 ' Header file with convenience macros.
@@ -159,6 +160,10 @@ PRU number to run the software:
 
 | Bit | Function                         |
 | --: | :------------------------------- |
+|  12 | TIMER-7: 0 = inactiv, 1 = active |
+|  11 | TIMER-6: 0 = inactiv, 1 = active |
+|  10 | TIMER-5: 0 = inactiv, 1 = active |
+|   9 | TIMER-4: 0 = inactiv, 1 = active |
 |   8 | PWMSS-2: 0 = inactiv, 1 = active |
 |   7 | PWMSS-1: 0 = inactiv, 1 = active |
 |   6 | PWMSS-0: 0 = inactiv, 1 = active |
@@ -224,7 +229,12 @@ CONSTRUCTOR PruIo( _
 
   VAR p = "/sys/devices/" _
     , n = DIR(p & "ocp.*", fbDirectory)
-  IF LEN(n) THEN MuxAcc = p & n & "/"
+  IF LEN(n) THEN
+    MuxAcc = p & n & "/"
+  ELSE
+    p &= "platform/ocp/ocp:"
+    IF LEN(DIR(p & "pruio-*", fbDirectory)) THEN MuxAcc = p
+  END IF
 
   IF Act AND PRUIO_ACT_PRU1 THEN
     PruIRam = PRUSS0_PRU1_IRAM
@@ -260,7 +270,7 @@ CONSTRUCTOR PruIo( _
   ParOffs += 1 : DRam[ParOffs] = &h44E10800 '           pinmux registers
 
   PwmSS = NEW PwmssUdt(@THIS)
-  'TimSS = NEW TimerUdt(@THIS)
+  TimSS = NEW TimerUdt(@THIS)
   '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt();
 
   ASSERT(ParOffs < DRam[1] SHR 4)
@@ -297,7 +307,7 @@ CONSTRUCTOR PruIo( _
   IF Adc->initialize(Av, OpD, SaD) THEN                 EXIT CONSTRUCTOR
   IF Gpio->initialize() THEN                            EXIT CONSTRUCTOR
   IF PwmSS->initialize() THEN                           EXIT CONSTRUCTOR
-  'IF TimSS->initialize() THEN                           EXIT CONSTRUCTOR
+  IF TimSS->initialize() THEN                           EXIT CONSTRUCTOR
   '& AdcUdt::initialize(); GpioUdt::initialize(); PwmssUdt::initialize(); TimerUdt::initialize();
 END CONSTRUCTOR
 
@@ -517,12 +527,12 @@ END FUNCTION
 
 /'* \brief Create a text description for a CPU ball configuration.
 \param Ball The CPU ball number to describe.
-\param Mo The configuration to read (0 = Init, else Conf).
+\param Mo The configuration to read (0 = Init, else Conf = default).
 \returns A human-readable text string (internal string, never free it).
 
 This function is used to create a text description for the current
-state of a CPU ball (called a pin when it's connected to one of
-the Beaglebone headers P8 or P9).
+state of a CPU ball (named pin when connected to one of the Beaglebone
+headers P8 or P9).
 
 The description contains the pin name and its mode. Header pin names
 start with a capital 'P', CPU ball names start with a lower case 'b'.
@@ -539,7 +549,7 @@ mode). Otherwise only the mode number gets shown.
 '/
 FUNCTION PruIo.Pin CDECL( _
   BYVAL Ball AS UInt8, _
-  BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
+  BYVAL Mo AS UInt8 = 1) AS ZSTRING PTR
   STATIC AS STRING*50 t
 
   VAR x = nameBall(Ball)
@@ -623,19 +633,39 @@ FUNCTION PruIo.setPin CDECL( _
   VAR m = IIF(Mo = PRUIO_PIN_RESET, BallInit[Ball], Mo)
   IF BallConf[Ball] = m THEN                                    RETURN 0 ' nothing to do
 
-  IF 0 = LEN(MuxAcc) THEN        Errr = @"no ocp.* access" : RETURN Errr
+  'IF 0 = LEN(MuxAcc) THEN          Errr = @"no ocp access" : RETURN Errr
 
-  VAR p = DIR(MuxAcc & "/" & PMUX_NAME & HEX(Ball, 2) & ".*", fbDirectory)
-  IF 0 = LEN(p) THEN              Errr = @"no pin control" : RETURN Errr
+  'VAR p = DIR(MuxAcc & "/" & PMUX_NAME & HEX(Ball, 2) & ".*", fbDirectory)
+  'VAR p = DIR(MuxAcc & PMUX_NAME & HEX(Ball, 2), fbDirectory)
+  'IF 0 = LEN(p) THEN              Errr = @"no pin control" : RETURN Errr
 
-  VAR h = HEX(m, 2) _
-    , r = SHELL("echo x"  & h & " > " & MuxAcc & p & "/state")
-  IF 0 = r THEN BallConf[Ball] = m :                            RETURN 0
+  'VAR h = HEX(m, 2) _
+    ', r = SHELL("echo x"  & h & " > " & MuxAcc & p & "/state")
+
+  'VAR p = MuxAcc & PMUX_NAME & HEX(Ball, 2) _
+    ', r = SHELL("echo x"  & HEX(m, 2) & " > " & p & "/state")
+  'IF 0 = r THEN BallConf[Ball] = m :                            RETURN 0
+
+  VAR fnam = MuxAcc & PMUX_NAME & HEX(Ball, 2)
+
+  SELECT CASE AS CONST LEN(MuxAcc)
+  CASE 0 :                         Errr = @"no ocp access" : RETURN Errr
+  CASE 30 '   kernel 4.x
+  CASE ELSE ' kernel 3.8
+    VAR p = DIR(fnam & ".*", fbDirectory)
+    fnam &= mid(p, instr(p, "."))
+  END SELECT
+
+  VAR fnr = FREEFILE
+  IF 0 = OPEN(fnam & "/state" FOR OUTPUT AS fnr) THEN
+    print #fnr, "x" & HEX(m, 2)
+    CLOSE #fnr : BallConf[Ball] = m :                           RETURN 0
+  END IF
 
   STATIC AS STRING*30 e = "pinmux failed: P._.. -> x.."
   VAR x = nameBall(Ball)
   IF x THEN MID(e, 16, 5) = *x ELSE MID(e, 16, 5) = "bal" & HEX(Ball, 2)
-  MID(e, 26, 2) = h :                       Errr = SADD(e) : RETURN Errr
+  MID(e, 26, 2) = HEX(m, 2) :               Errr = SADD(e) : RETURN Errr
 END FUNCTION
 
 
@@ -654,75 +684,75 @@ returns 0 (zero).
 '/
 FUNCTION PruIo.nameBall CDECL(BYVAL Ball AS UInt8) AS ZSTRING PTR
   SELECT CASE AS CONST Ball '                                  find name
-  CASE   6 : RETURN @"P8_03"
-  CASE   7 : RETURN @"P8_04"
-  CASE   2 : RETURN @"P8_05"
-  CASE   3 : RETURN @"P8_06"
-  CASE  36 : RETURN @"P8_07"
-  CASE  37 : RETURN @"P8_08"
-  CASE  39 : RETURN @"P8_09"
-  CASE  38 : RETURN @"P8_10"
-  CASE  13 : RETURN @"P8_11"
-  CASE  12 : RETURN @"P8_12"
-  CASE   9 : RETURN @"P8_13"
-  CASE  10 : RETURN @"P8_14"
-  CASE  15 : RETURN @"P8_15"
-  CASE  14 : RETURN @"P8_16"
-  CASE  11 : RETURN @"P8_17"
-  CASE  35 : RETURN @"P8_18"
-  CASE   8 : RETURN @"P8_19"
-  CASE  33 : RETURN @"P8_20"
-  CASE  32 : RETURN @"P8_21"
-  CASE   5 : RETURN @"P8_22"
-  CASE   4 : RETURN @"P8_23"
-  CASE   1 : RETURN @"P8_24"
-  CASE   0 : RETURN @"P8_25"
-  CASE  31 : RETURN @"P8_26"
-  CASE  56 : RETURN @"P8_27"
-  CASE  58 : RETURN @"P8_28"
-  CASE  57 : RETURN @"P8_29"
-  CASE  59 : RETURN @"P8_30"
-  CASE  54 : RETURN @"P8_31"
-  CASE  55 : RETURN @"P8_32"
-  CASE  53 : RETURN @"P8_33"
-  CASE  51 : RETURN @"P8_34"
-  CASE  52 : RETURN @"P8_35"
-  CASE  50 : RETURN @"P8_36"
-  CASE  48 : RETURN @"P8_37"
-  CASE  49 : RETURN @"P8_38"
-  CASE  46 : RETURN @"P8_39"
-  CASE  47 : RETURN @"P8_40"
-  CASE  44 : RETURN @"P8_41"
-  CASE  45 : RETURN @"P8_42"
-  CASE  42 : RETURN @"P8_43"
-  CASE  43 : RETURN @"P8_44"
-  CASE  40 : RETURN @"P8_45"
-  CASE  41 : RETURN @"P8_46"
-  CASE  28 : RETURN @"P9_11"
-  CASE  30 : RETURN @"P9_12"
-  CASE  29 : RETURN @"P9_13"
-  CASE  18 : RETURN @"P9_14"
-  CASE  16 : RETURN @"P9_15"
-  CASE  19 : RETURN @"P9_16"
-  CASE  87 : RETURN @"P9_17"
-  CASE  86 : RETURN @"P9_18"
-  CASE  95 : RETURN @"P9_19"
-  CASE  94 : RETURN @"P9_20"
-  CASE  85 : RETURN @"P9_21"
-  CASE  84 : RETURN @"P9_22"
-  CASE  17 : RETURN @"P9_23"
-  CASE  97 : RETURN @"P9_24"
-  CASE 107 : RETURN @"P9_25"
-  CASE  96 : RETURN @"P9_26"
-  CASE 105 : RETURN @"P9_27"
-  CASE 103 : RETURN @"P9_28"
-  CASE 101 : RETURN @"P9_29"
-  CASE 102 : RETURN @"P9_30"
-  CASE 100 : RETURN @"P9_31"
-  CASE 109 : RETURN @"P9_41"
-  CASE  89 : RETURN @"P9_42"
-  CASE  92 : RETURN @"JT_04"
-  CASE  93 : RETURN @"JT_05"
+  CASE P8_03 : RETURN @"P8_03"
+  CASE P8_04 : RETURN @"P8_04"
+  CASE P8_05 : RETURN @"P8_05"
+  CASE P8_06 : RETURN @"P8_06"
+  CASE P8_07 : RETURN @"P8_07"
+  CASE P8_08 : RETURN @"P8_08"
+  CASE P8_09 : RETURN @"P8_09"
+  CASE P8_10 : RETURN @"P8_10"
+  CASE P8_11 : RETURN @"P8_11"
+  CASE P8_12 : RETURN @"P8_12"
+  CASE P8_13 : RETURN @"P8_13"
+  CASE P8_14 : RETURN @"P8_14"
+  CASE P8_15 : RETURN @"P8_15"
+  CASE P8_16 : RETURN @"P8_16"
+  CASE P8_17 : RETURN @"P8_17"
+  CASE P8_18 : RETURN @"P8_18"
+  CASE P8_19 : RETURN @"P8_19"
+  CASE P8_20 : RETURN @"P8_20"
+  CASE P8_21 : RETURN @"P8_21"
+  CASE P8_22 : RETURN @"P8_22"
+  CASE P8_23 : RETURN @"P8_23"
+  CASE P8_24 : RETURN @"P8_24"
+  CASE P8_25 : RETURN @"P8_25"
+  CASE P8_26 : RETURN @"P8_26"
+  CASE P8_27 : RETURN @"P8_27"
+  CASE P8_28 : RETURN @"P8_28"
+  CASE P8_29 : RETURN @"P8_29"
+  CASE P8_30 : RETURN @"P8_30"
+  CASE P8_31 : RETURN @"P8_31"
+  CASE P8_32 : RETURN @"P8_32"
+  CASE P8_33 : RETURN @"P8_33"
+  CASE P8_34 : RETURN @"P8_34"
+  CASE P8_35 : RETURN @"P8_35"
+  CASE P8_36 : RETURN @"P8_36"
+  CASE P8_37 : RETURN @"P8_37"
+  CASE P8_38 : RETURN @"P8_38"
+  CASE P8_39 : RETURN @"P8_39"
+  CASE P8_40 : RETURN @"P8_40"
+  CASE P8_41 : RETURN @"P8_41"
+  CASE P8_42 : RETURN @"P8_42"
+  CASE P8_43 : RETURN @"P8_43"
+  CASE P8_44 : RETURN @"P8_44"
+  CASE P8_45 : RETURN @"P8_45"
+  CASE P8_46 : RETURN @"P8_46"
+  CASE P9_11 : RETURN @"P9_11"
+  CASE P9_12 : RETURN @"P9_12"
+  CASE P9_13 : RETURN @"P9_13"
+  CASE P9_14 : RETURN @"P9_14"
+  CASE P9_15 : RETURN @"P9_15"
+  CASE P9_16 : RETURN @"P9_16"
+  CASE P9_17 : RETURN @"P9_17"
+  CASE P9_18 : RETURN @"P9_18"
+  CASE P9_19 : RETURN @"P9_19"
+  CASE P9_20 : RETURN @"P9_20"
+  CASE P9_21 : RETURN @"P9_21"
+  CASE P9_22 : RETURN @"P9_22"
+  CASE P9_23 : RETURN @"P9_23"
+  CASE P9_24 : RETURN @"P9_24"
+  CASE P9_25 : RETURN @"P9_25"
+  CASE P9_26 : RETURN @"P9_26"
+  CASE P9_27 : RETURN @"P9_27"
+  CASE P9_28 : RETURN @"P9_28"
+  CASE P9_29 : RETURN @"P9_29"
+  CASE P9_30 : RETURN @"P9_30"
+  CASE P9_31 : RETURN @"P9_31"
+  CASE P9_41 : RETURN @"P9_41"
+  CASE P9_42 : RETURN @"P9_42"
+  CASE JT_04 : RETURN @"JT_04"
+  CASE JT_05 : RETURN @"JT_05"
   END SELECT : RETURN 0
 END FUNCTION
 

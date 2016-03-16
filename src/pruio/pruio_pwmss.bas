@@ -145,10 +145,10 @@ FUNCTION PwmMod.Value CDECL( _
   WITH *Top
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    'CASE P8_07 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(0, Hz, Du))
-    'CASE P8_09 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(1, Hz, Du))
-    'CASE P8_10 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(2, Hz, Du))
-    'CASE P8_08 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(3, Hz, Du))
+    CASE P8_07 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(0, Hz, Du))
+    CASE P8_09 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(1, Hz, Du))
+    CASE P8_10 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(2, Hz, Du))
+    CASE P8_08 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(3, Hz, Du))
     CASE P8_13 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 1))
     CASE P8_19 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 0))
     CASE P8_34 : e = IIF(ModeCheck(Ball,2), E1, pwm_get(1, Hz, Du, 1))
@@ -218,14 +218,14 @@ FUNCTION PwmMod.setValue CDECL( _
 
   WITH *Top
     SELECT CASE AS CONST Ball
-    'CASE P8_07 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      'RETURN .TimSS->pwm_set(0, Hz, Du)
-    'CASE P8_09 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      'RETURN .TimSS->pwm_set(1, Hz, Du)
-    'CASE P8_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      'RETURN .TimSS->pwm_set(2, Hz, Du)
-    'CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      'RETURN .TimSS->pwm_set(3, Hz, Du)
+    CASE P8_07 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+      RETURN .TimSS->pwm_set(0, Hz, Du)
+    CASE P8_09 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+      RETURN .TimSS->pwm_set(1, Hz, Du)
+    CASE P8_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+      RETURN .TimSS->pwm_set(2, Hz, Du)
+    CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+      RETURN .TimSS->pwm_set(3, Hz, Du)
     CASE P8_13 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN pwm_set(2, Hz, -1., Du)
     CASE P8_19 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)

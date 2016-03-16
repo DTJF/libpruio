@@ -70,7 +70,7 @@
 #include "pruio_gpio.p"
 #include "pruio_ball.p"
 #include "pruio_pwmss.p"
-//#include "pruio_timer.p"
+#include "pruio_timer.p"
 
 
 .origin 0
@@ -94,7 +94,7 @@
   GPIO_Config
   BALL_Config
   PWMSS_Config
-  //TIMER_Config
+  TIMER_Config
 
 // start mode: IO | [RB, MM]
   QBLT MmStart, Samp, 1   // if MM or RB required -> start
@@ -131,7 +131,7 @@ IoLoop:
 IoData:
   GPIO_IO_Data
   PWMSS_IO_Data
-  //TIMER_IO_Data
+  TIMER_IO_Data
 
 // re-configuration commands
   LBCO Comm, DRam, 4, 4   // get command
@@ -141,7 +141,7 @@ IoData:
 IoComm:
   GPIO_IO_Command
   PWMSS_IO_Command
-  //TIMER_IO_Command
+  TIMER_IO_Command
   QBLT IoCEnd, Samp, 1    // if not IO mode -> skip ADC mask setting
   ADC_IO_Command
 

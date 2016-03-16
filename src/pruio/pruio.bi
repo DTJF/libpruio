@@ -17,8 +17,8 @@ different components together and provides all declarations.
 #INCLUDE ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #INCLUDE ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#INCLUDE ONCE "pruio_timer.bi"
+' Header for TIMER part.
+#INCLUDE ONCE "pruio_timer.bi"
 #ENDIF
 
 '* Version string.
@@ -117,7 +117,7 @@ TYPE PruIo
   AS AdcUdt PTR Adc     '*< Pointer to ADC subsystem structure.
   AS GpioUdt PTR Gpio   '*< Pointer to GPIO subsystems structure.
   AS PwmssUdt PTR PwmSS '*< Pointer to PWMSS subsystems structure.
-  'AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
+  AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
   AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
   AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
@@ -204,7 +204,7 @@ TYPE PruIo
   , BYVAL AS UInt16 = PRUIO_DEF_LSLMOD) AS ZSTRING PTR
   DECLARE FUNCTION Pin CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
+  , BYVAL AS UInt8 = 1) AS ZSTRING PTR
   DECLARE FUNCTION setPin CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR

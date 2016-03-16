@@ -57,7 +57,7 @@ SET(PASM_SRC
     "pruio_adc.p"
     "pruio_gpio.p"
     "pruio_pwmss.p"
-    #"pruio_timer.p"
+    "pruio_timer.p"
   CACHE FILEPATH "ASM source files" FORCE
   )
 
@@ -66,7 +66,7 @@ SET(SRC_BAS
     "pruio_adc.bas"
     "pruio_gpio.bas"
     "pruio_pwmss.bas"
-    #"pruio_timer.bas"
+    "pruio_timer.bas"
     "pruio_c_wrapper.bas"
   CACHE FILEPATH "BASIC source files" FORCE
   )
@@ -79,7 +79,7 @@ SET(SRC_BI
     "pruio_adc.bi"
     "pruio_gpio.bi"
     "pruio_pwmss.bi"
-    #"pruio_timer.bi"
+    "pruio_timer.bi"
   CACHE FILEPATH "header files" FORCE
   )
 

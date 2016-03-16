@@ -25,8 +25,8 @@ compile by (static and dynamic library)
 #include ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #include ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#include ONCE "pruio_timer.bi"
+' Header for TIMER part.
+#include ONCE "pruio_timer.bi"
 ' driver header file
 #include ONCE "pruio.bi"
 

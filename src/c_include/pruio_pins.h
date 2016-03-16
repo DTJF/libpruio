@@ -88,133 +88,133 @@ Copyright 2014-2015 by \Email
 
 //! CPU ball numbers for all pins on header P8
 static uint8 P8_Pins[] = {
-  6
-, 7
-, 2
-, 3
-, 36
-, 37
-, 39
-, 38
-, 13
-, 12
-, 9
-, 10
-, 15
-, 14
-, 11
-, 35
-, 8
-, 33
-, 32
-, 5
-, 4
-, 1
-, 0
-, 31
-, 56
-, 58
-, 57
-, 59
-, 54
-, 55
-, 53
-, 51
-, 52
-, 50
-, 48
-, 49
-, 46
-, 47
-, 44
-, 45
-, 42
-, 43
-, 40
-, 41
+  P8_03
+, P8_04
+, P8_05
+, P8_06
+, P8_07
+, P8_08
+, P8_09
+, P8_10
+, P8_11
+, P8_12
+, P8_13
+, P8_14
+, P8_15
+, P8_16
+, P8_17
+, P8_18
+, P8_19
+, P8_20
+, P8_21
+, P8_22
+, P8_23
+, P8_24
+, P8_25
+, P8_26
+, P8_27
+, P8_28
+, P8_29
+, P8_30
+, P8_31
+, P8_32
+, P8_33
+, P8_34
+, P8_35
+, P8_36
+, P8_37
+, P8_38
+, P8_39
+, P8_40
+, P8_41
+, P8_42
+, P8_43
+, P8_44
+, P8_45
+, P8_46
   };
 
 //! CPU ball numbers for all digital pins on header P9
 static uint8 P9_Pins[] = {
-  28
-, 30
-, 29
-, 18
-, 16
-, 19
-, 87
-, 86
-, 95
-, 94
-, 85
-, 84
-, 17
-, 97
-, 107
-, 96
-, 105
-, 103
-, 101
-, 102
-, 100
-, 109
-, 89
+  P9_11
+, P9_12
+, P9_13
+, P9_14
+, P9_15
+, P9_16
+, P9_17
+, P9_18
+, P9_19
+, P9_20
+, P9_21
+, P9_22
+, P9_23
+, P9_24
+, P9_25
+, P9_26
+, P9_27
+, P9_28
+, P9_29
+, P9_30
+, P9_31
+, P9_41
+, P9_42
   };
 
 //! CPU ball numbers for emmc2 pin group on header P8 (locked on BBB)
 static uint8 EMMC2_Pins[] = {
-  6
-, 7
-, 2
-, 3
-, 33
-, 32
-, 5
-, 4
-, 1
-, 0
+  P8_03
+, P8_04
+, P8_05
+, P8_06
+, P8_20
+, P8_21
+, P8_22
+, P8_23
+, P8_24
+, P8_25
   };
 
 //! CPU ball numbers for hdmi pin group on header P8 (locked on BBB)
 static uint8 HDMI_Pins[] = {
-  56
-, 58
-, 57
-, 59
-, 54
-, 55
-, 53
-, 51
-, 52
-, 50
-, 48
-, 49
-, 46
-, 47
-, 44
-, 45
-, 42
-, 43
-, 40
-, 41
+  P8_27
+, P8_28
+, P8_29
+, P8_30
+, P8_31
+, P8_32
+, P8_33
+, P8_34
+, P8_35
+, P8_36
+, P8_37
+, P8_38
+, P8_39
+, P8_40
+, P8_41
+, P8_42
+, P8_43
+, P8_44
+, P8_45
+, P8_46
   };
 
 //! CPU ball numbers for i2c1 pin group on header P9 (locked)
 static uint8 I2C1_Pins[] = {
-  87
-, 86
+  P9_17
+, P9_18
   };
 
 //! CPU ball numbers for i2c2 pin group on header P9 (locked)
 static uint8 I2C2_Pins[] = {
-  95
-, 94
+  P9_19
+, P9_20
   };
 
 //! CPU ball numbers for mcasp0 pin group on header P9 (locked)
 static uint8 MCASP0_Pins[] = {
-  107
-, 103
-, 101
-, 100
+  P9_25
+, P9_28
+, P9_29
+, P9_31
   };
