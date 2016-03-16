@@ -28,7 +28,7 @@
 #include "pruio_gpio.p"
 #include "pruio_ball.p"
 #include "pruio_pwmss.p"
-//#include "pruio_timer.p"
+#include "pruio_timer.p"
 
 .origin 0
 // Enable OCP master port (clear SYSCFG[STANDBY_INIT])
@@ -53,7 +53,7 @@
   GPIO_Init
   BALL_Init
   PWMSS_Init
-  //TIMER_Init
+  TIMER_Init
 
 // report to host and halt
   MOV  UR, PRUIO_MSG_INIT_OK
