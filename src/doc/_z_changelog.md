@@ -14,7 +14,7 @@ Feel free to send further ideas to the author (\Email).
 
 # libpruio-0.4.0 {#SecV-0-4-0}
 
-Released in 2015, ???.
+Released in 2016, ???.
 
 ## New:
 
@@ -28,9 +28,11 @@ Released in 2015, ???.
 - PWM configuration variables to directly influence A and B output of PWM modules.
 - More links between the FB and the C documentation.
 - PWM output on JTag 5 (PWMSS-1.eCAP)
+- setPin works with kernels 3.8 and 4.1 now (new sysfs folder structure)
 
 ## Changes:
 
+- Function Pin returns the current configuration by default and needs parameter Mo = 0 to show initial state.
 - Function Gpio->setValue calls Gpio->config() now, in case of improper pin mode.
 - New numbers for PRU commands, checking tree structure now (faster).
 - Pruio_c_wrapper now in folder src/pruio.

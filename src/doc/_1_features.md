@@ -23,8 +23,7 @@ subsystems. Its features in short
 - perform a pre-trigger that starts measurement before the trigger event happens
 
 
-PRUSS {#SecPruss}
-=====
+# PRUSS {#SecPruss}
 
 libpruio contains software running on the host system (ARM) and
 software running on a Programable Realtime Unit SubSystem (PRUSS). The
@@ -34,8 +33,7 @@ just clear bit 0 in parameter *Act* when calling the constructor
 PruIo::PruIo().
 
 
-Operation {#SecOperation}
-=========
+# Operation {#SecOperation}
 
 libpruio controls the AM33xx CPU subsystems
 
@@ -73,8 +71,7 @@ lines can get done by adapting the subsystem registers before step 2.
       for experts only and may cause non-revisible hardware damages.
 
 
-Modi {#SecModi}
-====
+# Modi {#SecModi}
 
 libpruio supports three run modi. They differ in the priority of the
 timing of the ADC subsystem restarts:
@@ -109,8 +106,7 @@ Or destroy the libpruio structure when done by calling the destructor
 PruIo::~PruIo.
 
 
-Pinmuxing {#SecPinmuxing}
-=========
+# Pinmuxing {#SecPinmuxing}
 
 A digital line of the AM33xx CPU needs to be configured before use
 (see section \ref SecPinConfig for details). libpruio checks the pin
@@ -128,8 +124,7 @@ libpruio application with user privileges, make sure that digital lines
 are in the required state (configuration) before executing the code.
 
 
-GPIO {#SecGpio}
-====
+# GPIO {#SecGpio}
 
 General Purpose Input Output is available by the GpioUdt member
 functions (in IO and RB mode, for all header pins).
@@ -148,8 +143,7 @@ Furthermore, simultameous input and output can get realized by direct
 access to the PRU software (experts only).
 
 
-CAP {#SecCap}
-===
+# CAP {#SecCap}
 
 Capture and Analyse a digital Pulse train is available by the CapMod
 member functions (in IO and RB mode, two header pins). The frequency
@@ -163,8 +157,7 @@ A minimal frequency can get specified to limit the reaction time in
 case of no input.
 
 
-PWM {#SecPwm}
-===
+# PWM {#SecPwm}
 
 Generating a Pulse Width Modulated output is available by the PwmMod
 member functions (in IO and RB mode). Therefor libpruio uses the PWMSS
@@ -183,8 +176,7 @@ direct access to the register configuration and PRU software (experts
 only).
 
 
-ADC {#SecAdc}
-===
+# ADC {#SecAdc}
 
 In all modes (IO, RB and MM) Analog Digital Converted input can get
 sampled by the AdcUdt member functions, controling the Touch Screen
@@ -209,8 +201,7 @@ AIN-7.
   *Samp* in the most recent call to function PruIo::config().
 
 
-Bit Encoding {#SubSecBitEncoding}
-------------
+## Bit Encoding {#SubSecBitEncoding}
 
 The Beaglebone ADC subsystem samples 12 bit values in the range of `0` to
 `4095`. Most other devices (ie. like sound cards) use `16` bit encoding
@@ -222,8 +213,7 @@ default the output is 16 bit encoded (range 0 to 65520).
   customize the bit encoding.
 
 
-Ring Buffer {#SubSecRB}
------------
+## Ring Buffer {#SubSecRB}
 
 In Ring Buffer mode the samples from the ADC subsystem continously get
 stored in the external memory. The calling software has to make sure
@@ -233,8 +223,7 @@ that only valid values get read.
   index).
 
 
-Triggers {#SubSecTriggers}
---------
+## Triggers {#SubSecTriggers}
 
 In Measurement Mode (MM mode) the start of a measurement can either be
 immediately, or the start can get triggered by up to four events. When
@@ -267,8 +256,7 @@ Pass the trigger specification[s] to function PruIo::mm_start()
 to activate them.
 
 
-Subsystem Control {#SecSubSysCont}
-=================
+# Subsystem Control {#SecSubSysCont}
 
 libpruio controls several subsystems, listed in section \ref
 SecOperation. Each of these subsystems can either
@@ -315,8 +303,7 @@ function PruIo::config() can change a subsystem state.
   to enable the ADC subsystem.
 
 
-Overlays {#SecOverlays}
-========
+# Overlays {#SecOverlays}
 
 The libpruio package contains tools to create, compile and install
 device tree overlays in folder src/config.

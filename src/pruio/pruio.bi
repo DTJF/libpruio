@@ -17,8 +17,8 @@ different components together and provides all declarations.
 #INCLUDE ONCE "pruio_gpio.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
 #INCLUDE ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#INCLUDE ONCE "pruio_timer.bi"
+' Header for TIMER part.
+#INCLUDE ONCE "pruio_timer.bi"
 #ENDIF
 
 '* Version string.

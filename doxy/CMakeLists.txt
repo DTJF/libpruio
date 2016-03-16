@@ -20,6 +20,7 @@ DEPENDS
     "../src/doc/_6_messages.md"
     "../src/doc/_z_changelog.md"
   ../CMakeLists.txt
+  ../ReadMe.md
   Doxyfile
   libpruio.css
   libpruio.xml

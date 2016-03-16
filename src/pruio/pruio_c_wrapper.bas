@@ -17,18 +17,7 @@ compile by (static and dynamic library)
 '/
 
 
-' PruIo global declarations.
-#include ONCE "pruio_globals.bi"
-' Header for ADC part.
-#include ONCE "pruio_adc.bi"
-' Header for GPIO part.
-#include ONCE "pruio_gpio.bi"
-' Header for PWMSS part, containing modules QEP, CAP and PWM.
-#include ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#include ONCE "pruio_timer.bi"
-' driver header file
-#include ONCE "pruio.bi"
+#INCLUDE ONCE "pruio.bi"
 
 '* \brief Wrapper function for constructor PruIo::PruIo().
 FUNCTION pruio_new CDECL ALIAS "pruio_new"( _

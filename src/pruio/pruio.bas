@@ -9,97 +9,6 @@ wrapper functions are not included as in the original version).
 '/
 
 
-/'* \mainpage libpruio
-
-Welcome to *libpruio* library,
-
-- a driver for ARM33xx micro processors,
-- developed on [Beaglebone hardware](http://www.beaglebone.org), supporting
-- analog input and
-- digital input and output features.
-
-It's designed for easy configuration and data handling at high speed.
-\em libpruio software runs on the host (ARM) and in parallel on a
-Programmable Realtime Unit SubSystem (= PRUSS or just PRU) and controls
-the subsystems
-
-- Control Module
-- GPIO: General Purpose Input / Output,
-- PWMSS: Pulse-Width Modulation Subsystem,
-- TSC_ADC_SS: Touch Screen Controler and Analog-to-Digital Convertor SubSystem (or just ADC).
-- TIMER: Timers 4 to 7
-
-The driver supports three run modi
-
-- IO mode: digital and analog lines, sloppy timing controlled by the host,
-- RB mode: digital and analog lines, accurate ADC timing controlled by the PRU,
-- MM mode: analog lines and optional triggers, accurate ADC timing controlled by the PRU.
-
-The \em libpruio library is developed and tested on a Beaglebone Black
-under Ubuntu 13.10 and Debian Image 2014-08-05. It should run on all
-Beaglebone platforms with Debian based LINUX operating system. It's
-compiled by the [FreeBasic compiler](http://www.freebasic.net). A
-wrapper for C programming language is included.
-
-Find more information in the Description pages
-
-- \subpage ChaFeatures
-- \subpage ChaMemory
-- \subpage ChaPreparation
-- \subpage ChaExamples
-- \subpage ChaMessages
-- \subpage ChaChangelog
-
-or at the world wide web:
-
- - [en: libpruio (fast and easy D/A - I/O)](http://beagleboard.org/project/libpruio/)
- - [en: libpruio (BB D/A - I/O fast and easy)](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501)
- - [de: libpruio (D/A - I/O schnell und einfach)](http://www.freebasic-portal.de/downloads/fb-on-arm/libpruio-325.html)
-
-
-\section SecLicence Licence:
-
-\subsection SubLicLib libpruio (LGPLv2):
-
-Copyright &copy; 2014-2015 by \Email
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the Lesser GNU General Public License version 2 as
-published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-
-1301, USA. For further details please refer to:
-http://www.gnu.org/licenses/lgpl-2.0.html
-
-\subsection SubLicExa Examples (GPLv3):
-
-Copyright &copy; 2014-2015 by \Email
-
-The examples of this bundle are free software as well; you can
-redistribute them and/or modify them under the terms of the GNU
-General Public License version 3 as published by the Free Software
-Foundation.
-
-The programs are distributed in the hope that they will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-
-1301, USA. For further details please refer to:
-http://www.gnu.org/licenses/gpl-3.0.html
-
-'/
-
 '* Tell the header pruio.bi that we won't include libpruio.so.
 #DEFINE __PRUIO_COMPILING__
 '* The start of the pinmux-helper folder names in /sys/devices/ocp.*/.
@@ -184,7 +93,7 @@ that PRU-0 is free for other software.
 
 The other parameters *Av*, *OpD* and *SaD* are used to create a default
 step configuration for analog input. They get passed to function
-AdcUdt::initialize() to generates default step configuration data for
+AdcUdt::initialize() to generate default step configuration data for
 all analog lines (AIN-0 to AIN-7) in the steps 1 to 8. For these steps,
 the default values can get customized using the (optional) parameter
 list:
@@ -364,7 +273,7 @@ END DESTRUCTOR
 
 
 /'* \brief Load configuration from host (ARM) to driver (PRU).
-\param Samp Number of samples to fetch (defaults to zero).
+\param Samp Number of samples to fetch (defaults to 1).
 \param Mask Mask for active ADC steps (defaults to all 8 channels active in steps 1 to 8).
 \param Tmr Timer value in [ns] to specify the sampling rate (defaults to zero, MM only).
 \param Mds Modus for output (defaults to 4 = 16 bit).

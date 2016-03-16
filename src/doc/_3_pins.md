@@ -7,7 +7,7 @@ pins. That is 92 pins in total. Most of them have input / output
 capabilities, while just a few are related to other features (such as
 RESET, GND or power supply lines). Input / output pins are either
 analog or digital lines, free or unfree (used by the system in default
-configuration). All can get controled by libpruio.
+configuration). All can get controled by \Proj.
 
 Analog lines always operate as input. In contrast, digital lines can
 either operate as input or output. Some digital lines have several
@@ -21,14 +21,13 @@ that you can use them. Some header pins are connected to two CPU balls
 to avoid hardware damages).
 
 Here's an overview of the Beaglebone Black default configuration (the
-Beaglebone White setting is different). libpruio can operate on all
+Beaglebone White setting is different). \Proj can operate on all
 colored pins
 
 ![Header pins controllable by libpruio](pins.png)
 
 
-Analog {#SecAnalog}
-======
+# Analog {#SecAnalog}
 
 Analog lines work always as input line. Analog output isn't supported
 by the Beaglebone hardware (but can get achieved by a combination of a
@@ -39,18 +38,31 @@ directly connected to the CPU connectors. There's no overvoltage
 protection, so in order to avoid hardware damages you mustn't trespass
 the maximum voltage range.
 
-The ADC subsystem samples the input with 12 bit resolution. The minimum
-input (0V) gets sampled as 0 (zero) and the maximum input (1V8) gets
-sampled as 4095.
-
 In addition to the seven analog lines available on the header pins
-(AIN-0 to AIN-6), libpruio can also receive samples from the AIN-7
+(see table below), \Proj can also receive samples from the AIN-7
 line, which is internal connected to the board power line (3V3) by a
 50/50 voltage divider. This may be useful to measure the on board
 voltage, in oder to control the power supply.
 
-libpruio offers full control over the ADC subsystem configuration. Up
-to 16 ADC steps can get configured to switch the required input line,
+| Ball  | Description                            |
+| ----- | :------------------------------------- |
+| P9_39 | AIN-0 (default configuration in step 1 |
+| P9_40 | AIN-1 (default configuration in step 2 |
+| P9_37 | AIN-2 (default configuration in step 3 |
+| P9_38 | AIN-3 (default configuration in step 4 |
+| P9_33 | AIN-4 (default configuration in step 5 |
+| P9_36 | AIN-5 (default configuration in step 6 |
+| P9_35 | AIN-6 (default configuration in step 7 |
+
+The ADC subsystem samples the input with 12 bit resolution. The minimum
+input (0V) gets sampled as 0 (zero) and the maximum input (1V8) gets
+sampled as 4095. In order to make this raw data comparable with other
+ADC input, \Proj can encode to different bit formats. The default
+encoding is 16 bit. This means the maximum input of 1V8 gets measured
+as 65520 (= 4095 * 16).
+
+\Proj offers full control over the ADC subsystem configuration. Up to
+16 ADC steps can get configured to switch the required input line,
 specify individual delay values and maybe apply avaraging. The ADC
 subsystem supports analog input up to a frequency of 200 kHz. This
 works for up to eight steps. The maximum frequency shrinks when
@@ -76,16 +88,11 @@ constructor PruIo::PruIo() )
 
 -# Get the samples in array AdcUdt::Value.
 
-Samples are always scaled as raw data (digits), but can get encoded in
-different bit formats. The default encoding is 16 bit. This means the
-maximum input of 1V8 gets measured as 65520 (= 4095 * 16).
-
 Find further details on analog lines and the ADC subsystem
 configurations in \ArmRef{12}.
 
 
-Digital {#SecDigital}
-=======
+# Digital {#SecDigital}
 
 Each digital header pin can get configured either in GPIO mode or in
 one of up to seven alternative modes, see \ref SecPinConfig for further
@@ -94,12 +101,12 @@ the CPU logic. Find the subset of the Beaglebone headers described in
 the \BbbRef{7}. Or find the complete description in the CPU
 dokumentation \MpuRef{2.2} .
 
-Before a digital header pin gets used, libpruio checks its mode. When
-the current setting matches the required feature, libpruio just
-continues and operates the pin. Otherwise it tries to change the
-pinmuxing appropriately, first. This needs the libpruio-00A0.dtbo
-device tree overlay loaded and the program has to be executed with
-admin privileges for write access to the pinmuxing folders in
+Before a digital header pin gets used, \Proj checks its mode. When the
+current setting matches the required feature, \Proj just continues and
+operates the pin. Otherwise it tries to change the pinmuxing
+appropriately, first. This needs the libpruio-00A0.dtbo device tree
+overlay loaded and the program has to be executed with admin privileges
+for write access to the pinmuxing folders in
 
 ~~~{.sh}
 /sys/devices/ocp.?/pruio-??.??
@@ -118,9 +125,9 @@ to ensure that all used digital header pins are in the appropriate mode
 before you start the program (so that the initial checks succeed). This
 can get achieved by loading a customized overlay. In contrast to the
 universal overlay, the customized contains only one configuration for
-the used header pins and libpruio cannot change the mode at run-time.
-You can easily create a customized overlay with fixed pinmuxing by
-using the tool dts_custom.bas.
+the used header pins and \Proj cannot change the mode at run-time. You
+can easily create a customized overlay with fixed pinmuxing by using
+the tool dts_custom.bas.
 
 In any case, all digital lines operates in the range of 0 to 3V3. An
 input pin returns low in the range of 0 to 0V8 and high in the range of
@@ -151,7 +158,7 @@ GPIO {#SubSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
-program can detect the state of any connected hardware. libpruio can
+program can detect the state of any connected hardware. \Proj can
 configure and use any digital header pin in one of the following five
 GPIO modes. (Therefor the universal device tree overlay
 libpruio-00A0.dtbo has to be loaded and the program has to be executed
@@ -167,9 +174,9 @@ with admin privileges.) Find details on GPIO hardware in \ArmRef{25}.
 
 An input pin can get configured with pullup or pulldown resistor, or
 none of them. Those resistors (about 10 k) are incorporated in the CPU.
-In contrast, libpruio configures an output pin always with no CPU
-resistor connection (to minimize power consumption). So the first two
-modes (PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
+In contrast, \Proj configures an output pin always with no CPU resistor
+connection (to minimize power consumption). So the first two modes
+(PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
 
 Those modes are predefined in the universal overlay libpruio-00A0.dtbo for each claimed header pin.
 
@@ -198,7 +205,7 @@ an output pin without resistor connection. This pin gets auto-set to
 high or low state, depending on a counter running on a certain clock
 rate. When the counter matches specified values, the state of the
 output toggles. Since PWM output can get generated by different
-subsystems (and libpruio supports many of them), the resolution and the
+subsystems (and \Proj supports many of them), the resolution and the
 frequency range vary between the pins.
 
 | Pin   | Subsystem       | Frequency Range        | Notice            |
@@ -228,7 +235,7 @@ frequencies) are possible. The maximum is ??? days.
 
 In contrast the PWMSS-PWM subsystems use a 16 bit counter with 17 bit
 duty resolution in up-down mode. The frequency range can get extended
-by a clock pre-scaler. libpruio auto-configures the mode and the
+by a clock pre-scaler. \Proj auto-configures the mode and the
 pre-scaler. For high frequencies (low counter periods) the counter runs
 in up-count mode (16 bit resolution). For frequencies below 1526 Hz (=
 100e6 / 65536) the counter runs in up-down mode (17 bit duty
@@ -239,7 +246,7 @@ member variable PwmMod::ForceUpDown to 1.
 A PWMSS-PWM subsystem handles two outputs at the same frequency. Two
 Action Qualifiers are used to set the states of the outputs A and B in
 case of six different events, see \ArmRef{5.2.4.3} for details. By
-default libpruio configures the Action Qualifiers to set both outputs to
+default \Proj configures the Action Qualifiers to set both outputs to
 high state at the beginning of a period and switch to low state when
 the counter matches the duty value. The default configuration can get
 overriden in array PwmMod::AcCtl. This three dimensional array contains
@@ -274,8 +281,8 @@ of the counter value. The frequency gets measured as the difference
 between two positive transitions (a period). The duty cycle gets
 measured as the ratio between a period and the on-time of the signal. A
 positive transition resets the couter. Since CAP input can get analysed
-by different subsystems (and libpruio support some of them), the
-frequency range vary between the pins.
+by different subsystems (and \Proj support some of them), the frequency
+range vary between the pins.
 
 | Pin   | Subsystem      | Frequency Range        | Notice            |
 | ----- | :------------: | :--------------------- | :---------------- |
@@ -350,8 +357,8 @@ For low speed values transitions period time is used in equation v = n
 input, n = 4 for B or I input). The higher the speed value, the smaller
 the speed resolution. So in contrast, high speed values get computed by
 counting the number of input transitions in the given period of time
-(T), using equation v = &Delta;x / T. libpruio auto-switches between
-both equations and auto-computes the optimal speed value for switching
+(T), using equation v = &Delta;x / T. \Proj auto-switches between both
+equations and auto-computes the optimal speed value for switching
 (array QepMod::Prd), in order to get maximum speed resolution.
 
 The speed limits are depending on the hardware in use. Linear sensors
@@ -372,12 +379,12 @@ The minimum speed is limited by the measurement frequency (*VHz*). When
 no transition period (2 transitions for A input, 4 transitions for B or
 I input) occurs in the measurement time (*VHz*), the speed gets
 computed to zero. That's also the case when the direction changes
-during the measurement period. By default libpruio doesn't count each
+during the measurement period. By default \Proj doesn't count each
 transition, because time measurement in this case requires high
 accuracy of the sensor mechanics. If either the duty cycle of a signal
 is not exactly 50 % or the phase shift between A and B signals is not
 exactly 1 / 4 (90 &deg;), the computed speed values will change
-erratic. Since most sensors don't fulfill those requirements, libpruio
+erratic. Since most sensors don't fulfill those requirements, \Proj
 measures frequency on just one transition of a single signal. This
 means at least two (in case of A input) or four position counts (in
 case of B and I input) are necessary to measure a non-zero speed value.

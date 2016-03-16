@@ -26,7 +26,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n/plugin/;" _
   !"\n" _
   !"\n/ {" _
-  !"\n    compatible = ""ti,beaglebone"", ""ti,beaglebone-black"";" _
+  !"\n    compatible = ""ti,beaglebone"", ""ti,beaglebone-black"", ""ti,beaglebone-green"";" _
   !"\n" _
   !"\n    // identification" _
   !"\n    board-name = """ & FILE_NAME & """;" _
