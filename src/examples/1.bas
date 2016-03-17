@@ -13,6 +13,7 @@ Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `fbc -w all 1.bas`
 
+\since 0.0.0
 '/
 
 
@@ -23,20 +24,19 @@ VAR io = NEW PruIo()              '*< create new driver UDT
 IF io->config() THEN '          upload (default) settings, start IO mode
                                 PRINT"config failed (" & *io->Errr & ")"
 ELSE
-'' now current ADC samples are available for AIN0 to AIN7 in array Adc->Value[]
-
-  FOR n AS LONG = 1 TO 13 ''                            print some lines
-    FOR i AS LONG = 1 TO 8 ''                                  all steps
-      PRINT " " & HEX(io->Adc->Value[i], 4); ''output one channel in hex
+  ' here current ADC samples are available in array Adc->Value[]
+  FOR n AS LONG = 1 TO 13 '                             print some lines
+    FOR i AS LONG = 1 TO 8 '                                   all steps
+      PRINT " " & HEX(io->Adc->Value[i], 4); ' output one channel in hex
     NEXT
-    PRINT ''                                                   next line
+    PRINT '                                                    next line
   NEXT
 END IF
 
-'' we're done
+' we're done
 
 DELETE io                         '   destroy driver UDT
 
-'' help Doxygen to dokument the main code
+' help Doxygen to dokument the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); PruIo::config(); PruIo::~PruIo();}

@@ -19,7 +19,7 @@ preprocessor blocks that never get parsed.
 Note that the interrupt channel and mask has to be adapted in file
 pruio.bi in case of any change here.
 
-\def PRUIO_IRPT
+\def IRPT
 \brief The interrupt pointer to use (/dev/uio5)
 \def CTBIR
 \brief Adress in constant table
