@@ -96,15 +96,15 @@ END FUNCTION
 
 /'* \brief Configure PWM output at a TIMER pin (private).
 \param Nr The TIMER subsystem index.
-\param F The frequency to set (or -1 for no change).
-\param D The duty cycle to set (0.0 to 1.0, or -1 for no change).
+\param Freq The frequency to set (or -1 for no change).
+\param Duty The duty cycle to set (0.0 to 1.0, or -1 for no change).
 \returns Zero on success, an error string otherwise.
 
 This private function configures a TIMER subsystem for PWM output. It
-sets the frequency and the duty cycle. Only positive values in these
-parameters force a change. Pass a negative value to stay with the
-current setting. A duty parameter greater than 1.0 gets limited to 1.0
-(= 100%).
+sets the frequency `Freq` and the duty cycle `Duty`. Only positive
+values in these parameters force a change. Pass a negative value to
+stay with the current setting. A `Duty` parameter greater than 1.0 gets
+limited to 1.0 (= 100%).
 
 \note This is a private function designed for internal use. It doesn't
       check the validity of the *Nr* parameter. Values greater than
@@ -114,13 +114,13 @@ current setting. A duty parameter greater than 1.0 gets limited to 1.0
 '/
 FUNCTION TimerUdt.pwm_set CDECL( _
     BYVAL Nr AS UInt8 _
-  , BYVAL F AS Float_t _
-  , BYVAL D AS Float_t = 0.) AS ZSTRING PTR
+  , BYVAL Freq AS Float_t _
+  , BYVAL Duty AS Float_t = 0.) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
     f_min = TMRSS_CLK / &hFFFFFFFFuL '* 256 '' minimal frequency
-  STATIC AS Float_t _
-   freq(...) = {0., 0., 0., 0.} '' initial timer frequencies
+  'STATIC AS Float_t _
+    'frq(...) = {0., 0., 0., 0.} '' initial timer frequencies
   STATIC AS UInt32 _
     cnt(...) = {0, 0, 0, 0} _  '' initial timer periods
   , cmp(...) = {0, 0, 0, 0}    '' initial timer match values
@@ -129,18 +129,21 @@ FUNCTION TimerUdt.pwm_set CDECL( _
     VAR r = 0
     IF 2 <> Conf(Nr)->ClVa THEN                    .Errr = E0 : RETURN .Errr ' TIMER not enabled
     IF 0 = cnt(Nr) ANDALSO _
-      F <= 0. THEN                           .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
+      Freq <= 0. THEN                        .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
 
-    IF F > 0. THEN
-      IF F < f_min ORELSE _
-         F > TMRSS_CLK_2 THEN                .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
-     cnt(Nr) = CUINT(TMRSS_CLK / F) ' !!! ToDo
+    IF Freq > 0. THEN
+      IF Freq < f_min ORELSE _
+         Freq > TMRSS_CLK_2 THEN             .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+     cnt(Nr) = CUINT(TMRSS_CLK / Freq) ' !!! ToDo
     END IF
-    IF D >= 0 THEN cmp(Nr) = IIF(D > 1., cnt(Nr), CUINT(cnt(Nr) * D))
+    IF Duty >= 0 THEN
+      cmp(Nr) = IIF(Duty >= 1., cnt(Nr), CUINT(cnt(Nr) * Duty))
+      if cmp(Nr) >= cnt(Nr) then cmp(Nr) = cnt(Nr) - 1
+    END IF
 
-' check distance 2 units !!!
     Conf(Nr)->TLDR = &hFFFFFFFFuL - cnt(Nr)
-    Conf(Nr)->TMAR = &hFFFFFFFFuL - cmp(Nr)
+    'Conf(Nr)->TMAR = &hFFFFFFFFuL - cmp(Nr)
+    Conf(Nr)->TMAR = Conf(Nr)->TLDR + cmp(Nr)
     IF Conf(Nr)->TCLR <> PwmMode THEN
       Conf(Nr)->TCLR = PwmMode
       Raw(Nr)->CMax = 0

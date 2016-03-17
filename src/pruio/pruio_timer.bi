@@ -1,5 +1,5 @@
 /'* \file pruio_timer.bi
-\brief FreeBASIC header file for GPIO component of libpruio.
+\brief FreeBASIC header file for TIMER component of libpruio.
 
 Header file for including in to libpruio. It contains the declarations
 for the TIMER component of the library.
@@ -52,7 +52,7 @@ subsystems in IO and RB mode.
 '/
 TYPE TimerArr
   AS UInt32 _
-    DeAd      '*< Base address of GPIO subsystem + 0x100.
+    DeAd      '*< Base address of TIMER subsystem
   AS UInt32 _
     CMax _ '*< Maximum counter value.
   , TCAR1 _   '*< Current value of TCAR1 register (IO, RB).
