@@ -316,8 +316,8 @@ FUNCTION PwmMod.cap_set CDECL( _
 
   STATIC AS CONST Float_t _
     f_min = PWMSS_CLK / &hFFFFFFFFuL '' minimal frequency
-  STATIC AS Float_t _
-   freq(...) = {0., 0., 0.} '' initial module frequencies
+  'STATIC AS Float_t _
+   'freq(...) = {0., 0., 0.} '' initial module frequencies
   STATIC AS UInt32 _
     cnt(...) = {0, 0, 0} _  '' initial module periods
   , cmp(...) = {0, 0, 0}    '' initial module compares
@@ -560,7 +560,7 @@ FUNCTION CapMod.config CDECL( _
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
-    'CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24) ' input???
+    'CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24) ' input???
       'm = 1
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h25) ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)

@@ -101,6 +101,21 @@ Released on 2014 May, 9.
 
 # References  {#SecReferences}
 
+Here's some feedback about the \Proj project. [lejan
+wrote](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p217404)
+
+~~~{.txt}
+Dear TJF,
+
+I just wanted to thank you for sharing such a great library! I have
+been using this in C for a robotics project and this library really
+took the hassle out of a lot of the programming work. The Beaglebone is
+not as well supported as Arduino or Rasp Pi so your library is very
+much appreciated.
+
+Peter
+~~~
+
 Meanwhile \Proj is used in many projects. Here're some of them
 
 - [Using low cost single-board microcontrollers to record underwater acoustical data](http://www.acoustics.asn.au/conference_proceedings/INTERNOISE2014/papers/p236.pdf)

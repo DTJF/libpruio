@@ -135,8 +135,6 @@ PwmCopy:
   SBBO UR, DeAd, 0x00, 2*6  // write register TBCTL to TBPRD
 
   SUB  DeAd, DeAd, 0x80     // switch to eQEP registers (+0x180)
-  //LBBO UR, Para, 2*61, 2    // load QCPRDLAT register
-  //SBBO UR, DeAd, 0x40, 2    // write register
   LBBO UR, Para, 4*29, 2*4  // load QEINT to QFRC registers
   SBBO UR, DeAd, 0x30, 2*4  // write registers
   LBBO UR, Para, 4*23, 2*6  // load QWDTMR to QPOSCTL registers
@@ -154,7 +152,6 @@ PwmCopy:
   SBBO UR, DeAd, 0x28, 2*3  // write registers
 
   LBBO UR, Para, 4*4, 4*6   // load TSCTR to CAP4 registers
-  //SBBO UR, DeAd, 0x00, 4*6  // write registers
   SBBO UR, DeAd, 0x00, 4*4  // write registers TSCTR to CAP2
 
 
@@ -212,8 +209,6 @@ PwmQep:
 
   QBBC QepUnder, U5.t6     // if no overflow -> check underflow
   LBBO U2, U1, 0x08, 4     // load QPOSMAX register
-  //ADD  U2, U2, 1           // increase QPOSMAX
-  //SUB  U4, U4, U2          // adapt old value
   SUC  U4, U4, U2          // adapt old value
   JMP  QepPrd
 QepUnder:
@@ -235,11 +230,9 @@ QepSkip:
 LBBO U5.w0, U1, 0x38, 2  // load QCPRDLAT
 
   LDI  U2, 0b10001100      // bit mask to reset QEPSTS
-  //LDI  U2, 0b11111111      // bit mask to reset QEPSTS
 
   SBBO U2, U1, 0x38, 2     // reset sticky QEPSTS flags
   LDI  U2, 0b100001101001  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
-  //LDI  U2, 0b111111111111  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)
 
   SBBO U2, U1, 0x34, 2     // clear QCLR
   SBBO U3, UR, 4*5 , 4*3   // write variables
@@ -293,9 +286,6 @@ QepCom:
   SBBO U4, U2, 0x20, 4      // write new QUPRD value
 
   SBBO U6.w2, U2, 0x2C, 2   // disable QCAPCTL
-  //SBBO U6.w2, U2, 0x3A, 2   // reset QCTMR value
-  //LDI  U4, 0b10001100       // bit mask to reset QEPSTS
-  //SBBO U4, U2, 0x38, 2      // reset sticky QEPSTS flags
   SBBO U5, U2, 0x28, 2*3    // write new QDECCTL & QEPCTL & QCAPCTL values
 
   LDI  U4, 0b100001101001  // bit mask to reset QFLG (UTO,PCO,PCU,QDC,INT)

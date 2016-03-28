@@ -18,8 +18,6 @@ Source code file containing the function bodies of the TIMER component.
 
 '* The TIMER clock frequency.
 #define TMRSS_CLK  24e6
-'* The half TIMER clock frequency.
-#define TMRSS_CLK_2 12e6
 
 /'* \brief The constructor for the TIMER features.
 \param T A pointer of the calling PruIo structure.
@@ -118,43 +116,59 @@ FUNCTION TimerUdt.pwm_set CDECL( _
   , BYVAL Duty AS Float_t = 0.) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
-    f_min = TMRSS_CLK / &hFFFFFFFFuL '* 256 '' minimal frequency
-  'STATIC AS Float_t _
-    'frq(...) = {0., 0., 0., 0.} '' initial timer frequencies
+    f_min = TMRSS_CLK / &hFFFFFFFF00uLL _'' minimal frequency
+  , f_max = TMRSS_CLK / &h10 ''             maximal frequency
   STATIC AS UInt32 _
-    cnt(...) = {0, 0, 0, 0} _  '' initial timer periods
+         pre = 0 _
+         , r = &b001100001000011 _
+  , cnt(...) = {0, 0, 0, 0} _  '' initial timer periods
   , cmp(...) = {0, 0, 0, 0}    '' initial timer match values
 
   WITH *Top
-    VAR r = 0
     IF 2 <> Conf(Nr)->ClVa THEN                    .Errr = E0 : RETURN .Errr ' TIMER not enabled
-    IF 0 = cnt(Nr) ANDALSO _
-      Freq <= 0. THEN                        .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
 
-    IF Freq > 0. THEN
+    IF Freq < 0. THEN
+      IF 0 = cnt(Nr) THEN                    .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
+    ELSE
       IF Freq < f_min ORELSE _
-         Freq > TMRSS_CLK_2 THEN             .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
-     cnt(Nr) = CUINT(TMRSS_CLK / Freq) ' !!! ToDo
+         Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+      var x = CULNGINT(TMRSS_CLK / Freq)
+      SELECT CASE AS CONST x SHR 32 '' faster than LOG
+      CASE   0        : pre = 0
+      CASE   1        : pre = &b100000 : cnt(Nr) = x SHR 1
+      CASE   2 to   3 : pre = &b100100 : cnt(Nr) = x SHR 2
+      CASE   4 to   7 : pre = &b101000 : cnt(Nr) = x SHR 3
+      CASE   8 to  15 : pre = &b101100 : cnt(Nr) = x SHR 4
+      CASE  16 to  31 : pre = &b110000 : cnt(Nr) = x SHR 5
+      CASE  32 to  63 : pre = &b110100 : cnt(Nr) = x SHR 6
+      CASE  64 to 127 : pre = &b111000 : cnt(Nr) = x SHR 7
+      CASE 128 to 255 : pre = &b111100 : cnt(Nr) = x SHR 8
+      CASE ELSE :                            .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+      END SELECT
+      Conf(Nr)->TLDR = &hFFFFFFFFuL - cnt(Nr)
     END IF
-    IF Duty >= 0 THEN
+
+    IF Duty >= 0. THEN
       cmp(Nr) = IIF(Duty >= 1., cnt(Nr), CUINT(cnt(Nr) * Duty))
-      if cmp(Nr) >= cnt(Nr) then cmp(Nr) = cnt(Nr) - 1
+      SELECT CASE cmp(Nr)
+      CASE is >= cnt(Nr) - 1 : r = &b000000010000011
+      CASE is <=           1 : r = &b000000000000011
+      CASE ELSE              : r = &b001100001000011 OR pre
+        Conf(Nr)->TMAR = Conf(Nr)->TLDR + cmp(Nr)
+      END SELECT
     END IF
 
-    Conf(Nr)->TLDR = &hFFFFFFFFuL - cnt(Nr)
-    'Conf(Nr)->TMAR = &hFFFFFFFFuL - cmp(Nr)
-    Conf(Nr)->TMAR = Conf(Nr)->TLDR + cmp(Nr)
-    IF Conf(Nr)->TCLR <> PwmMode THEN
-      Conf(Nr)->TCLR = PwmMode
-      Raw(Nr)->CMax = 0
-      r = PwmMode
+    IF Conf(Nr)->TCLR <> r THEN
+      Conf(Nr)->TCLR = r
+      Conf(Nr)->TCRR = &hFFFFFFFEuL
+    ELSE
+      r = 0
     END IF
-
-'?Nr, hex(&hFFFFFFFFuL - Conf(Nr)->TLDR, 8), hex(&hFFFFFFFFuL - Conf(Nr)->TMAR, 8)
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
     WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    .DRam[5] = Conf(Nr)->TCRR
     .DRam[4] = Conf(Nr)->TMAR
     .DRam[3] = Conf(Nr)->TLDR
     .DRam[2] = Conf(Nr)->DeAd
@@ -186,8 +200,9 @@ FUNCTION TimerUdt.pwm_get CDECL( _
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN Top->Errr = E0   /' TIMER disabled '/ : RETURN E0
     IF PwmMode <> .TCLR THEN          RETURN @"timer not in output mode"
-    VAR cnt = &hFFFFFFFFuL - .TLDR
-    IF Freq THEN *Freq = TMRSS_CLK / (cnt)
+    VAR cnt = &hFFFFFFFFuLL - .TLDR _
+      , pre = (.TCLR AND &b111100) SHR 2
+    IF Freq THEN *Freq = TMRSS_CLK / (cnt SHL IIF(pre, (pre AND &b111) + 1, 0))
     IF Duty THEN *Duty = cnt / (&hFFFFFFFFuL - .TMAR)
   END WITH :                                                    RETURN 0
 END FUNCTION
