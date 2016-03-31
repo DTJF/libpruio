@@ -29,6 +29,7 @@ pasm_run.bi
 libpruio.so
 
 doxy/fb-doc.lfn
+src/config/*.dtbo
 
 # Use wildcards as well
 *.bz2
@@ -47,4 +48,5 @@ src/config/CMakeFiles/**/*
 src/examples/CMakeFiles/**/*
 src/c_examples/CMakeFiles/**/*
 src/c_include/CMakeFiles/**/*
+src/test/**/*
 _CPack*/**/*
