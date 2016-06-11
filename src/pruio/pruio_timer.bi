@@ -92,12 +92,11 @@ TYPE TimerUdt
   DECLARE FUNCTION pwm_set CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t _
-  , BYVAL AS Float_t = 0. _
-  , BYVAL AS UInt8 = 0) AS ZSTRING PTR
+  , BYVAL AS Float_t = 0.) AS ZSTRING PTR
   DECLARE FUNCTION pwm_get CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t PTR = 0 _
-  , BYVAL AS Float_t PTR = 0 ) AS ZSTRING PTR
+  , BYVAL AS Float_t PTR = 0) AS ZSTRING PTR
   'DECLARE FUNCTION cap_get CDECL( _
     'BYVAL AS UInt8 _
   ', BYVAL AS Float_t PTR = 0 _
