@@ -285,7 +285,7 @@ END DESTRUCTOR
 /'* \brief Load configuration from host (ARM) to driver (PRU).
 \param Samp Number of samples to fetch (defaults to 1).
 \param Mask Mask for active ADC steps (defaults to all 8 channels active in steps 1 to 8).
-\param Tmr Timer value in [ns] to specify the sampling rate (defaults to zero, MM only).
+\param Tmr Timer value in [ns] to specify the sampling rate (defaults to zero, MM and RB mode only).
 \param Mds Modus for output (defaults to 4 = 16 bit).
 \returns Zero on success (otherwise a string with an error message).
 
@@ -424,7 +424,7 @@ FUNCTION PruIo.config CDECL( _
   CASE 1    : l = DRam[0] <> PRUIO_MSG_IO_OK
   CASE ELSE : l = DRam[0] <> PRUIO_MSG_MM_WAIT
   END SELECT
-  IF l THEN ?"  MURX: " & DRam[0] : _
+  IF l THEN _
            Errr = @"failed executing Pru_Run instructions" : RETURN Errr
   IF Samp < 2 THEN RETURN 0
 

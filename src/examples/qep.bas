@@ -44,13 +44,13 @@ WITH *io
       freq = 50. _ '*< The current frequency (startvalue here).
     , realfreq     '*< The real frequency of PWM output.
     IF .Pwm->setValue(P9_14, freq, .0) THEN _
-              ?"failed setting " & P9_14 & " (" & *.Errr & ")" : EXIT DO
+                      ?"failed setting P9_14 (" & *.Errr & ")" : EXIT DO
 
     IF .Pwm->setValue(P9_16, freq, .25) THEN _
-              ?"failed setting " & P9_16 & " (" & *.Errr & ")" : EXIT DO
+                      ?"failed setting P9_16 (" & *.Errr & ")" : EXIT DO
 
     IF .Pwm->setValue(P9_42, .5, .00000005) THEN _
-              ?"failed setting " & P9_42 & " (" & *.Errr & ")" : EXIT DO
+                      ?"failed setting P9_42 (" & *.Errr & ")" : EXIT DO
 
     IF .Pwm->Value(P9_14, @realfreq, NULL) THEN _
                   ?"failed getting PWM value (" & *.Errr & ")" : EXIT DO

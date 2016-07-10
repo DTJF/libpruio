@@ -8,7 +8,7 @@ as raw data to some files.
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Thanks for C code translation: Nils Kohrs <nils.kohrs@gmail.com>
 
