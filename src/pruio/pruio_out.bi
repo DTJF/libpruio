@@ -2,7 +2,7 @@
 \brief Pre-defined macros to print out the subsystems configurations.
 
 This file contains macros to print out the configuration of the
-subsystems handled by libpruio. The destructors runs the pruio__init.p
+subsystems handled by libpruio. The constructor runs the pruio__init.p
 code, which collects the register context of each subsystem. These
 convenience macros can print out all that register context.
 
