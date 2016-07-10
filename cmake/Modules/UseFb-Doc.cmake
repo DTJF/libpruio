@@ -35,7 +35,11 @@ FUNCTION(FB_DOCUMENTATION)
     RETURN()
   ENDIF()
 
-  CMAKE_PARSE_ARGUMENTS(ARG "NO_LFN;NO_PROJDATA;NO_HTM;NO_PDF;NO_WWW;NO_SELFDEP" "DOXYFILE;MIRROR_CMD" "BAS_SRC;DEPENDS;DOXYCONF" ${ARGN})
+  CMAKE_PARSE_ARGUMENTS(ARG
+    "NO_LFN;NO_PROJDATA;NO_HTM;NO_PDF;NO_WWW;NO_SELFDEP;NO_SYNTAX"
+    "DOXYFILE;MIRROR_CMD"
+    "BAS_SRC;DEPENDS;DOXYCONF"
+    ${ARGN})
 
   IF(ARG_NO_HTM AND ARG_NO_PDF AND ARG_NO_WWW)
     SET(msg "FB_DOCUMENTATION error: all output blocked ==> doc targets not available!")
@@ -47,6 +51,12 @@ FUNCTION(FB_DOCUMENTATION)
   IF(NOT ARG_NO_SELFDEP) #             add doc script to dependency list
     LIST(APPEND ARG_DEPENDS CMakeLists.txt)
     LIST(APPEND msg "SELFDEP")
+  ENDIF()
+  IF(NOT ARG_NO_SYNTAX) #                        add syntax highlighting
+    LIST(APPEND msg "SYNTAX")
+    SET(FbDoc_SYNTAX ${FbDoc_EXECUTABLE} -s)
+  ELSE()
+    SET(FbDoc_SYNTAX ${CMAKE_COMMAND} -E echo no syntax highlighting for)
   ENDIF()
 
   SET(doxyext ${CMAKE_CURRENT_BINARY_DIR}/DoxyExtension) # ext file name
@@ -70,6 +80,7 @@ ALIASES += \"Mail=${PROJ_MAIL}\" \\
   FILE(WRITE ${doxyext} #                           write extension file
 "
 @INCLUDE = ${ARG_DOXYFILE}
+EXTENSION_MAPPING      = bi=C++ bas=C++
 OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
 FILTER_PATTERNS        = *.bas=${FbDoc_EXECUTABLE} \\
                           *.bi=${FbDoc_EXECUTABLE}
@@ -112,7 +123,7 @@ GENERATE_RTF     = NO
       COMMAND ${ARG_MIRROR_CMD}
       )
     ADD_CUSTOM_TARGET(doc_www DEPENDS ${wwwfile})
-    ADD_DEPENDENCIES(doc_www DEPENDS doc_htm)
+    ADD_DEPENDENCIES(doc_www doc_htm)
     SET(ARG_NO_HTM)
     LIST(APPEND targets "doc_www")
   ENDIF()
@@ -129,13 +140,13 @@ HTML_OUTPUT      = html
     SET(htmfile ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
     ADD_CUSTOM_COMMAND(OUTPUT ${htmfile}
       COMMAND ${DOXYGEN_EXECUTABLE} ${htmconf}
-      COMMAND ${FbDoc_EXECUTABLE} -s ${htmconf}
+      COMMAND ${FbDoc_SYNTAX} ${htmconf}
       DEPENDS ${ARG_BAS_SRC} ${ARG_DEPENDS}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
       )
     ADD_CUSTOM_TARGET(doc_htm DEPENDS ${htmfile})
-    ADD_DEPENDENCIES(doc DEPENDS doc_htm)
+    ADD_DEPENDENCIES(doc doc_htm)
     LIST(APPEND targets "doc_htm")
   ENDIF()
   IF(NOT ARG_NO_PDF) #                           generate target doc_pdf
@@ -152,7 +163,7 @@ LATEX_OUTPUT     = latex
     SET(reffile ${CMAKE_CURRENT_BINARY_DIR}/latex/refman.pdf)
     ADD_CUSTOM_COMMAND(OUTPUT ${pdffile}
       COMMAND ${DOXYGEN_EXECUTABLE} ${pdfconf}
-      COMMAND ${FbDoc_EXECUTABLE} -s ${pdfconf}
+      COMMAND ${FbDoc_SYNTAX} ${pdfconf}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR}/latex make
       COMMAND ${CMAKE_COMMAND} -E rename ${reffile} ${pdffile}
       DEPENDS ${ARG_BAS_SRC} ${ARG_DEPENDS}
@@ -160,7 +171,7 @@ LATEX_OUTPUT     = latex
       VERBATIM
       )
     ADD_CUSTOM_TARGET(doc_pdf DEPENDS ${pdffile})
-    ADD_DEPENDENCIES(doc DEPENDS doc_pdf)
+    ADD_DEPENDENCIES(doc doc_pdf)
     LIST(APPEND targets "doc_pdf")
   ENDIF()
   MESSAGE(STATUS "found ${DOXYGEN_EXECUTABLE}-${DOXYGEN_VERSION}")

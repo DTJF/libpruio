@@ -23,15 +23,16 @@ information on
 The following table lists all dependencies for the \Proj package and
 their types. At least, you have to install the FreeBASIC compiler on
 your system to build any executable using the \Proj features. Beside
-this mandatory (M) tool, the others are optional. Some are recommended
+this mandatory (M) tools, the others are optional. Some are recommended
 (R) in order to make use of all package features. LINUX users find some
-packages in their distrubution management system (D).
+packages in their distrubution management system (D), or pre-installed
+(I).
 
 |                                               Name  | Type |  Function                                                      |
 | --------------------------------------------------: | :--: | :------------------------------------------------------------- |
 | [fbc](http://www.freebasic.net)                     | M    | FreeBASIC compiler to compile the source code                  |
 | [fb_prussdrv](https://github.com/DTJF/fb_prussdrv)  | M    | PRU assembler to compile PRU code and libprussdrv              |
-| [dtc](https://git.kernel.org/cgit/utils/dtc/dtc.git)| M  D | Device tree compiler to create overlays                        |
+| [dtc](https://git.kernel.org/cgit/utils/dtc/dtc.git)| M  I | Device tree compiler to create overlays                        |
 | [GIT](http://git-scm.com/)                          | R  D | Version control system to organize the files                   |
 | [CMake](http://www.cmake.org)                       | R  D | Build management system to build executables and documentation |
 | [cmakefbc](http://github.com/DTJF/cmakefbc)         | R    | FreeBASIC extension for CMake                                  |
@@ -44,21 +45,39 @@ It's beyond the scope of this guide to describe the installation for
 those tools. Find detailed installation instructions on the related
 websides, linked by the name in the first column.
 
--# First, install the distributed (D) packages of your choise:
-   ~~~{.sh}
+-# First, install the distributed (D) packages of your choise, either mandatory
+   ~~~{.txt}
+   sudo apt-get install git cmake
+   ~~~
+   or full install (recommended)
+   ~~~{.txt}
    sudo apt-get install dtc git cmake doxygen graphviz doxygen-latex texlive
    ~~~
 
 -# Then make the FB compiler working:
-   ~~~{.sh}
-   wget https://www.freebasic-portal.de/dlfiles/625/freebasic_1.01.0debian7_armhf.deb
-   sudo dpkg --install freebasic_1.01.0~debian7_armhf.deb
+   ~~~{.txt}
+   wget https://www.freebasic-portal.de/dlfiles/625/freebasic_1.06.0debian7_armhf.deb
+   sudo dpkg --install freebasic_1.06.0debian7_armhf.deb
    sudo apt-get -f install
+   ~~~
+
+-# Then make the FB version of prussdrv working:
+   ~~~{.txt}
+   git clone https://github.com/DTJF/fb_prussdrv
+   cd fb_prussdrv
+   sudo su
+   cp bin/libprussdrv.* /usr/local/lib
+   ldconfig
+   mkdir /usr/local/include/freebasic/BBB
+   cp include/* /usr/local/include/freebasic/BBB
+   cp bin/pasm /usr/local/bin
+   exit
+   cd ..
    ~~~
 
 -# Continue by installing cmakefbc (if wanted). That's easy, when you
    have GIT and CMake. Execute the commands
-   ~~~{.sh}
+   ~~~{.txt}
    git clone https://github.com/DTJF/cmakefbc
    cd cmakefbc
    mkdir build
@@ -66,12 +85,13 @@ websides, linked by the name in the first column.
    cmake ..
    make
    sudo make install
+   cd ../..
    ~~~
    \note Omit `sudo` in case of non-LINUX systems.
 
 -# And finaly, install fb-doc (if wanted) by using GIT and CMake.
    Execute the commands
-   ~~~{.sh}
+   ~~~{.txt}
    git clone https://github.com/DTJF/fb-doc
    cd fb-doc
    mkdir build
@@ -94,9 +114,9 @@ Using GIT is the prefered way to download the \Proj package (since it
 helps users to get involved in to the development process). Get your
 copy and change to the source tree by executing
 
-~~~{.sh}
-git clone https://github.com/DTJF/nettobac
-cd nettobac
+~~~{.txt}
+git clone https://github.com/DTJF/libpruio
+cd libpruio
 ~~~
 
 ## ZIP  {#SecGet_Zip}
@@ -109,3 +129,19 @@ the archive. Then change to the newly created folder.
 \note Zip files always contain the latest development version. You
       cannot switch to a certain point in the history.
 
+
+# Build Binary
+
+##CMake
+
+In the project folder, create a new directory for an out-of-source
+build, compile the source code and install:
+
+~~~{.txt}
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig
+~~~

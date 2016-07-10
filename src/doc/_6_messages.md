@@ -80,9 +80,9 @@ the configurations (Init and Conf). -> Make sure that you have at least
 
 ## Destructor {#SubSecPruIoDTor}
 
-\note The variable PruIo::Errr isn't valid when the destructor
-      finished. That's why the following messages get streamed directly
-      to stderr.
+\note The variable PruIo::Errr is no longer valid when the destructor
+      is called. That's why destructor messages don't use that
+      variable. Instead all messages get streamed directly to `STDERR`.
 
 \Item{"failed loading Pru_Exit instructions"} The destructor failed to
 load the instructions to restore the subsystems initial state to the

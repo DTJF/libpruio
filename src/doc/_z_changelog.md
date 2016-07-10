@@ -40,6 +40,7 @@ Released in 2016, ???.
 - Tools dts_custom.bas and dts_universal.bas evaluate path command line argument.
 - Tool dts_custom.bas generates fragment@1 section (no export command required).
 - Device tree overlay: QEP input pins have no restistor now.
+- single source for all ball numbers
 
 ## Bugfixes:
 
@@ -60,7 +61,7 @@ Released in 2014 October, 26.
 
 ## New:
 
-- Ring buffer (RB) run mode (samples analog input continously).
+- Ring buffer (RB) run mode (samples analog input continuously).
 - PWM output in IO and RB mode (variable frequency and duty cycles).
 - CAP input in IO and RB mode (analyses frequency and duty cycles of a pulse train).
 - New examples *pwm_adc*, *pwm_cap*, *rb_oszi*.

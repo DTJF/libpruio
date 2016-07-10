@@ -108,9 +108,8 @@ appropriately, first. This needs the libpruio-00A0.dtbo device tree
 overlay loaded and the program has to be executed with admin privileges
 for write access to the pinmuxing folders in
 
-~~~{.sh}
-/sys/devices/ocp.?/pruio-??.??
-~~~
+- `/sys/devices/ocp.?/pruio-??.*` (kernel 3.8)
+- `/sys/devices/platform/ocp/ocp:pruio-??` (kernel >3.8)
 
 The overlay contains pre-defined modes for a certain set of CPU balls.
 By default the overlay claims the free pins on the BBB headers. Those
@@ -210,14 +209,16 @@ frequency range vary between the pins.
 
 | Pin   | Subsystem       | Frequency Range        | Notice            |
 | ----- | :-------------: | :--------------------- | :---------------- |
-| P8_07 | TIMER-4         | 0,000007629 to 50e6 Hz | free              |
+| P8_07 | TIMER-4         | 0.000010914 to 12e6 Hz | free              |
+| P8_09 | TIMER-5         | 0.000010914 to 12e6 Hz | free              |
+| P8_10 | TIMER-6         | 0.000010914 to 12e6 Hz | free              |
+| P8_08 | TIMER-7         | 0.000010914 to 12e6 Hz | free              |
 | P8_13 | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | free              |
 | P8_19 | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | free              |
 | P9_14 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | free              |
 | P9_16 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | free              |
 | P9_21 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | free              |
 | P9_22 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | free              |
-| P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
 | P8_34 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
 | P8_36 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | HDMI              |
 | P8_45 | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
@@ -225,6 +226,7 @@ frequency range vary between the pins.
 | P9_29 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_31 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
+| P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
 | JT_05 | PWMSS-1, PRUCAP | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
@@ -260,7 +262,7 @@ the configurations for the Action Qualifiers.
 
 Additionally the PWMSS-PWM modules can get synchronized. ???
 
-The output gets specified by calling function PwmMod::setVakue(). Since
+The output gets specified by calling function PwmMod::setValue(). Since
 the output frequency may vary from the specified parameters due to
 resolution issues, the real values can get computed by calling function
 PwmMod::Value().
@@ -284,7 +286,7 @@ positive transition resets the couter. Since CAP input can get analysed
 by different subsystems (and \Proj support some of them), the frequency
 range vary between the pins.
 
-| Pin   | Subsystem      | Frequency Range        | Notice            |
+| Pin   |   Subsystem    | Frequency Range        | Notice            |
 | ----- | :------------: | :--------------------- | :---------------- |
 | P8_07 | TIMER-4        | 0,000007629 to 50e6 Hz | free              |
 | P9_28 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
@@ -321,20 +323,20 @@ information is available when calling function QepMod::Value(). The
 accuracy of the position information can get improved by using an index
 signal that resets the position counter.
 
-| Ball  | Type    | PWMSS | Speed | Direction | Position | Index | Further Pins | Notice            |
-| ----- | :-----: | :---: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
-| P8_12 | A input |   2   |   X   |     -     |     -    |   -   |              | free              |
-| P8_11 | B input |   2   |   X   |     X     |     X    |   -   | P8_12        | free              |
-| P8_16 | I input |   2   |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
-| P8_35 | A input |   1   |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_33 | B input |   1   |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
-| P8_31 | I input |   1   |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
-| P8_41 | A input |   2   |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_42 | B input |   2   |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
-| P8_39 | I input |   2   |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
-| P9_42 | A input |   0   |   X   |     -     |     -    |   -   |              | free (double pin) |
-| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        | free              |
-| P9_41 | I input |   0   |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
+| Ball  | Type    | Subsystem | Speed | Direction | Position | Index | Further Pins | Notice            |
+| ----- | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
+| P8_12 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
+| P8_11 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_12        | free              |
+| P8_16 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
+| P8_35 | A input |  PWMSS-1  |   X   |     -     |     -    |   -   |              | HDMI              |
+| P8_33 | B input |  PWMSS-1  |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
+| P8_31 | I input |  PWMSS-1  |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
+| P8_41 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | HDMI              |
+| P8_42 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
+| P8_39 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
+| P9_42 | A input |  PWMSS-0  |   X   |     -     |     -    |   -   |              | free (double pin) |
+| P9_27 | B input |  PWMSS-0  |   X   |     X     |     X    |   -   | P9_42        | free              |
+| P9_41 | I input |  PWMSS-0  |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
 
 Direction information is derived from two different signals that "look"
 at the sensor lines with a mechanical shift of 1 / 4 of the pitch. So

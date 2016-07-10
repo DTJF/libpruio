@@ -45,7 +45,7 @@ WITH *io
     IF half > tInd THEN half = tInd  '        adapt size for small files
     VAR samp = (half SHL 1) \ NoStep '*< The number of samples (per step).
 
-    IF .config(samp, mask, tmr, 0) THEN _ '                configure driver
+    IF .config(samp, mask, tmr, 0) THEN _ '             configure driver
                                    ?"config failed: " & *.Errr : EXIT DO
 
     IF .rb_start() THEN _ '                       start ring buffer mode

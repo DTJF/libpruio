@@ -8,9 +8,9 @@ ENDIF()
 
 FB_DOCUMENTATION(
 BAS_SRC
-  ${FBC_BAS}
-  ${FBC_BI}
-  ${PASM_SRC}
+  ${SRC_BAS}
+  ${SRC_BI}
+  #${PASM_SRC}
 DEPENDS
     "../src/doc/_1_features.md"
     "../src/doc/_2_preparation.md"
