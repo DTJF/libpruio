@@ -327,14 +327,13 @@ head) movement are supported.
 
 QEP is available on a subset of the header pins. Each of the three
 PWMSS subsystems contains a QEP module. (The QEP module of PWMSS-2 can
-get connected on two sets of to the header pins.)
+get connected on two sets of the header pins.)
 
 The module can operate in different modes, and depending on the mode it
 operates on a different set of input signals (header pins). Function
 QepMod::config() is used to specify the operational mode of the module.
 It configures one or more header pins, depending on the first parameter
-*Ball*. And depending on the mode (and the number of input pins),
-either
+*Ball*. Depending on the mode (and the number of input pins), either
 
 - speed, or
 - speed, direction and position
@@ -348,15 +347,15 @@ signal that resets the position counter.
 | P8_12 | A input |   2   |   X   |     -     |     -    |   -   |              | free              |
 | P8_11 | B input |   2   |   X   |     X     |     X    |   -   | P8_12        | free              |
 | P8_16 | I input |   2   |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
+| P9_42 | A input |   0   |   X   |     -     |     -    |   -   |              | free (double pin) |
+| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        | free              |
+| P9_41 | I input |   0   |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
 | P8_35 | A input |   1   |   X   |     -     |     -    |   -   |              | HDMI              |
 | P8_33 | B input |   1   |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
 | P8_31 | I input |   1   |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
 | P8_41 | A input |   2   |   X   |     -     |     -    |   -   |              | HDMI              |
 | P8_42 | B input |   2   |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
 | P8_39 | I input |   2   |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
-| P9_42 | A input |   0   |   X   |     -     |     -    |   -   |              | free (double pin) |
-| P9_27 | B input |   0   |   X   |     X     |     X    |   -   | P9_42        | free              |
-| P9_41 | I input |   0   |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
 
 Direction information is derived from two different signals that "look"
 at the sensor lines with a mechanical shift of 1 / 4 of the pitch. So
@@ -416,8 +415,8 @@ case of B and I input) are necessary to measure a non-zero speed value.
 
 Position information is computed by counting the transitions of the
 input signals considering the direction information (A and B inputs are
-necessary). In case of just one input the position counter runs in
-upwart direction.
+necessary). In case of just one input (A) the position counter always
+runs in upwart direction.
 
 An index signal (I input) can be used to reset the counter. By default
 the counter is set to zero on the positive transition of the index
