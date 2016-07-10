@@ -3,7 +3,7 @@
 /plugin/;
 
 / {
-    compatible = "ti,beaglebone", "ti,beaglebone-black";
+    compatible = "ti,beaglebone", "ti,beaglebone-black", "ti,beaglebone-green";
 
     // identification
     board-name = "libpruio";
@@ -37,6 +37,8 @@
       "P9.22",
       "P9.21",
       "P9.42",
+      "P9.20",
+      "P9.19",
       "P9.26",
       "P9.24",
       "P9.30",
@@ -290,6 +292,30 @@
         B59_37: 59_37 {pinctrl-single,pins = <0x1A0 0x2F  0x164 0x37>;};
         B59_27: 59_27 {pinctrl-single,pins = <0x1A0 0x2F  0x164 0x27>;};
         B59_0F: 59_0F {pinctrl-single,pins = <0x1A0 0x2F  0x164 0x0F>;};
+        B5E_20: 5E_20 {pinctrl-single,pins = <0x178 0x20>;};
+        B5E_21: 5E_21 {pinctrl-single,pins = <0x178 0x21>;};
+        B5E_09: 5E_09 {pinctrl-single,pins = <0x178 0x09>;};
+        B5E_0A: 5E_0A {pinctrl-single,pins = <0x178 0x0A>;};
+        B5E_2B: 5E_2B {pinctrl-single,pins = <0x178 0x2B>;};
+        B5E_2C: 5E_2C {pinctrl-single,pins = <0x178 0x2C>;};
+        B5E_25: 5E_25 {pinctrl-single,pins = <0x178 0x25>;};
+        B5E_26: 5E_26 {pinctrl-single,pins = <0x178 0x26>;};
+        B5E_2F: 5E_2F {pinctrl-single,pins = <0x178 0x2F>;};
+        B5E_37: 5E_37 {pinctrl-single,pins = <0x178 0x37>;};
+        B5E_27: 5E_27 {pinctrl-single,pins = <0x178 0x27>;};
+        B5E_0F: 5E_0F {pinctrl-single,pins = <0x178 0x0F>;};
+        B5F_08: 5F_08 {pinctrl-single,pins = <0x17C 0x08>;};
+        B5F_21: 5F_21 {pinctrl-single,pins = <0x17C 0x21>;};
+        B5F_09: 5F_09 {pinctrl-single,pins = <0x17C 0x09>;};
+        B5F_22: 5F_22 {pinctrl-single,pins = <0x17C 0x22>;};
+        B5F_2B: 5F_2B {pinctrl-single,pins = <0x17C 0x2B>;};
+        B5F_2C: 5F_2C {pinctrl-single,pins = <0x17C 0x2C>;};
+        B5F_0D: 5F_0D {pinctrl-single,pins = <0x17C 0x0D>;};
+        B5F_26: 5F_26 {pinctrl-single,pins = <0x17C 0x26>;};
+        B5F_2F: 5F_2F {pinctrl-single,pins = <0x17C 0x2F>;};
+        B5F_37: 5F_37 {pinctrl-single,pins = <0x17C 0x37>;};
+        B5F_27: 5F_27 {pinctrl-single,pins = <0x17C 0x27>;};
+        B5F_0F: 5F_0F {pinctrl-single,pins = <0x17C 0x0F>;};
         B60_20: 60_20 {pinctrl-single,pins = <0x180 0x20>;};
         B60_21: 60_21 {pinctrl-single,pins = <0x180 0x21>;};
         B60_0A: 60_0A {pinctrl-single,pins = <0x180 0x0A>;};
@@ -731,6 +757,40 @@
           pinctrl-10 = <&B59_37>;
           pinctrl-11 = <&B59_27>;
           pinctrl-12 = <&B59_0F>;
+        };
+        pruio-5E {
+          compatible = "bone-pinmux-helper";
+          status = "okay";
+          pinctrl-names = "x20", "x21", "x09", "x0A", "x2B", "x2C", "x25", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-0 = <&B5E_20>;
+          pinctrl-1 = <&B5E_21>;
+          pinctrl-2 = <&B5E_09>;
+          pinctrl-3 = <&B5E_0A>;
+          pinctrl-4 = <&B5E_2B>;
+          pinctrl-5 = <&B5E_2C>;
+          pinctrl-6 = <&B5E_25>;
+          pinctrl-7 = <&B5E_26>;
+          pinctrl-8 = <&B5E_2F>;
+          pinctrl-9 = <&B5E_37>;
+          pinctrl-10 = <&B5E_27>;
+          pinctrl-11 = <&B5E_0F>;
+        };
+        pruio-5F {
+          compatible = "bone-pinmux-helper";
+          status = "okay";
+          pinctrl-names = "x08", "x21", "x09", "x22", "x2B", "x2C", "x0D", "x26", "x2F", "x37", "x27", "x0F";
+          pinctrl-0 = <&B5F_08>;
+          pinctrl-1 = <&B5F_21>;
+          pinctrl-2 = <&B5F_09>;
+          pinctrl-3 = <&B5F_22>;
+          pinctrl-4 = <&B5F_2B>;
+          pinctrl-5 = <&B5F_2C>;
+          pinctrl-6 = <&B5F_0D>;
+          pinctrl-7 = <&B5F_26>;
+          pinctrl-8 = <&B5F_2F>;
+          pinctrl-9 = <&B5F_37>;
+          pinctrl-10 = <&B5F_27>;
+          pinctrl-11 = <&B5F_0F>;
         };
         pruio-60 {
           compatible = "bone-pinmux-helper";

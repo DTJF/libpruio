@@ -17,7 +17,7 @@ IF(NOT DEFINED DTC_COMPILER_WORKS)
     STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
     SET(DTC_COMPILER_WORKS FALSE)
     FOREACH(line IN LISTS output_lines)
-      IF(line MATCHES "-@, --symbols <arg>")
+      IF(line MATCHES "-@, --symbols")
         SET(DTC_COMPILER_WORKS TRUE)
         BREAK()
       ENDIF()
@@ -61,9 +61,9 @@ ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
 
 ADD_CUSTOM_TARGET(dtbo DEPENDS ${dtbo})
 
-INSTALL(FILES ${dtbo}
-  DESTINATION /lib/firmware
-  COMPONENT bin
-  )
+#INSTALL(FILES ${dtbo}
+  #DESTINATION /lib/firmware
+  #COMPONENT bin
+  #)
 
 

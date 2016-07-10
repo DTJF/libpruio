@@ -7,7 +7,7 @@ for non-C languages.
 
 Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-2016 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 
 compile by (static and dynamic library)

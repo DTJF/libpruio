@@ -214,7 +214,7 @@ EEA0 E7D0 E630 DA00  0C80 1510 24A0 EE60
 
   The C version outputs all in one line (make sure to use a wide
   console window) like
-~~~{.txt}0
+~~~{.txt}
 C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
 ~~~
   The first four columns are hexadecimal values of the GPIO subsystem
@@ -336,7 +336,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   Analyse a Pulsetrain) with libpruio. The code creates a PruIo
   instance configured in IO mode. One header pin (P9_21) gets
   configured as PWM output and an other (P9_42) as CAP input. The
-  measured pulse train data get shown in a continously updated line.
+  measured pulse train data get shown in a continuously updated line.
   You can adapt the output and watch the changes in the input.
 
 \Item{Preparation}
@@ -352,7 +352,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 \Item{Operation}
 
   Start the program by `sudo ./pwm_cap` and you'll see a single
-  continously updated new line
+  continuously updated new line
 ~~~{.txt}
     Frequency: 31250    , Duty: 0.5003125
 ~~~
@@ -387,7 +387,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   Any other key quits the program.
 
   Each keystroke results in two new lines, one for the demands and the
-  second is continously updated with the measured stuff. Ie. when the
+  second is continuously updated with the measured stuff. Ie. when the
   duty cycle gets changed to `30 %`, you'll see
 ~~~{.txt}
 --> Frequency: 31250    , Duty: 0.3
@@ -459,7 +459,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 00000000      0
 ~~~
   When you connected a real sensor, then ignore the first line "PWM
-  ...". The second line shows continously the computed results, the
+  ...". The second line shows continuously the computed results, the
   position (first hexadecimal number) and the speed (second real
   number). When you move the sensor, both values should change
   depending on the sensor movement. On startup just one sensor signal
@@ -645,7 +645,7 @@ Controls: (other keys quit, 1 and 3 only when Direction = 0)
 Pins          Direction     Sleep
 1-0-0-1         0           128
 ~~~
-  The last line gets updated continously and shows the current state of
+  The last line gets updated continuously and shows the current state of
   the pins, the direction of the motor and the number of miliseconds
   the program waits before the next update of the output pins. The
   latest is equal to the speed of the motor, a high value (long sleep)
@@ -729,7 +729,7 @@ sudo ./pwm_adc 640x150
 
   ![3 PWM outputs at 2.5 Hz (red = P9_14@50%, green = P9_16@20% and blue = P9_42@80%)](pwm_adc_screen.png)
 
-  which is continously up-dating the signals. (Adjust the
+  which is continuously up-dating the signals. (Adjust the
   potentiometers to see three lines at different hights, but avoid
   touching the upper border = overvoltage.)
 
@@ -795,7 +795,7 @@ sudo ./pwm_adc 640x150
 \Item{Description}
 
   This example shows how to sample ADC data. It creates a PruIo
-  instance configured in IO mode and draws a continously updated graph
+  instance configured in IO mode and draws a continuously updated graph
   of the analog lines AIN-0 to AIN-7. The graph gets updated column by
   column by the currently sampled values. You can switch channels on or
   off to watch just a subset. By default it creates a full screen
@@ -837,7 +837,7 @@ sudo ./pwm_adc 640x150
 \Item{Description}
 
   This example shows how to sample ADC data in RB mode. It creates and
-  configures a PruIo instance and draws a continously updated graph of
+  configures a PruIo instance and draws a continuously updated graph of
   the analog lines AIN-4 and AIN-7. The graph gets updated in one step
   when one half of the ring buffer is filled. By default it creates a
   full screen window without a frame. You can customize the window by
