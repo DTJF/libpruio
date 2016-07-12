@@ -130,7 +130,7 @@ the archive. Then change to the newly created folder.
       cannot switch to a certain point in the history.
 
 
-# Build Binary
+# Build Binary  {#SecBuildBin}
 
 ##CMake
 
@@ -145,3 +145,77 @@ make
 sudo make install
 sudo ldconfig
 ~~~
+
+
+# Build Examples
+
+##CMake
+
+In the that same build folder, build the examples by:
+
+~~~{.txt}
+make examples
+~~~
+
+That will build both, the FreeBASIC and the C examples. To run them execute ie.
+
+~~~{.txt}
+src/examples/1
+~~~
+
+to run the `1.bas` example, or
+
+~~~{.txt}
+src/c_examples/1_c
+~~~
+
+to run the `1.c` example.
+
+The build scripts also support separate builds
+
+~~~{.txt}
+make fb_examples
+make c_examples
+~~~
+
+\note In order to build the examples you have to install the library
+      binary first, see section \ref SecBuildBin.
+
+
+# Build Documentation
+
+##CMake
+
+In the that same build folder, build the documentation by:
+
+~~~{.txt}
+make doc
+~~~
+
+This will build the html tree (in `doxy/html`) and a pdf version (in
+the current folder) of the documentation content. The build scripts
+also support separate builds
+
+~~~{.txt}
+make doc_htm
+make doc_pdf
+~~~
+
+
+# Build Debian Package
+
+##CMake
+
+In the that same build folder, build the Debian packages by:
+
+~~~{.txt}
+make package
+~~~
+
+This will create the packages
+
+- libpruio-bin.deb contains the runtime binary and the overlay
+- libpruio-dev.deb contains the C header files
+- libpruio-fbdev.deb contains the FreeBASIC header files
+
+\ToDo -doc package

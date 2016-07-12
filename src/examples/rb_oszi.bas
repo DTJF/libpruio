@@ -8,7 +8,7 @@ mask cannot get changed in RB mode at run-time.
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 
 Compile by: `fbc -w all rb_oszi.bas`

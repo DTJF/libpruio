@@ -7,7 +7,7 @@ Beaglebone hardware.
 
 Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
-Copyright 2014-2015 by \Email
+Copyright 2014-\Year by \Mail
 
 '/
 

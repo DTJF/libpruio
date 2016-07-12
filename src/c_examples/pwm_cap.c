@@ -10,7 +10,7 @@ terminal output.
 
 Licence: GPLv3
 
-Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio -lprussdrv`
 

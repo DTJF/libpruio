@@ -38,6 +38,11 @@ or at related forum pages:
 - [BeagleBoard: libpruio (fast and easy D/A - I/O)](https://groups.google.com/forum/#!category-topic/beagleboard/CN5qKSmPIbc)
 - [FreeBASIC: libpruio (BB D/A - I/O fast and easy)](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501)
 
+\note The PRUSS are powerful precessors that can access any memory at
+      the host system. There's no kernel protection, the PRU can even
+      access kernel space memory. Malware running on a PRU can damage
+      your complete system. So be careful which software you run on,
+      and enable the PRUSS only when you need them.
 
 Licence:
 ========

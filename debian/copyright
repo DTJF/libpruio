@@ -1,20 +1,20 @@
 Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
-Name: gentoo
-Maintainer: Josip Rodin <joy-mg@debian.org>
-Source: http://sourceforge.net/projects/gentoo/files/
+Name: debian
+Maintainer: Thomas Freiherr <Thomas.Freiherr@gmx.net>
+Source: https://github.com/DTJF/libpruio
 
-Copyright: 1998-2010 Emil Brink <emil@obsession.se>
-License: GPL-2+
+Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+License: LGPL-2+
 
-Files: icons/*
-Copyright: 1998 Johan Hanson <johan@tiq.com>
-License: GPL-2+
+Files: src/examples/*;src/C_examples/*
+Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+License: GPL-3+
 
 Files: debian/*
-Copyright: 1998-2010 Josip Rodin <joy-mg@debian.org>
-License: GPL-2+
+Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+License: GPL-3+
 
-License: GPL-2+
+License: LGPL-2+
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
@@ -31,16 +31,16 @@ License: GPL-2+
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
+ `/usr/share/common-licenses/LGPL-2'.
 
 
 Licensing
 
-The FreeBASIC compiler (fbc) is licensed under the GNU GPLv2 or later.
-The FreeBASIC runtime library (libfb and the thread-safe version, libfbmt)
-and the FreeBASIC graphics library (libfbgfx and the thread-safe version,
-libfbgfxmt) are licensed under the GNU LGPLv2 or later, with this exception
-to allow linking to it statically:
+The libpruio binary (libpruio.so) and device tree overlay
+(libpruio-00A0.dtbo) is licensed under the GNU LGPLv2 or later. The
+examples source code (*.bas in src/examples) and C examples (*.c in
+src/c_examples) as well as the tools (*.bas in other src folders) are
+licensed under the GNU GPLv2 or later.
 
 As a special exception, the copyright holders of this library give
 you permission to link this library with independent modules to
@@ -54,10 +54,4 @@ you may extend this exception to your version of the library, but
 you are not obligated to do so. If you do not wish to do so, delete
 this exception statement from your version.
 
-The FreeBASIC documentation is licensed under the GNU FDL.
-
-Dependencies on third-party libraries:
-The FreeBASIC runtime library uses LibFFI to implement the Threadcall
-functionality. This means that, by default, FreeBASIC programs will be
-linked against LibFFI when using Threadcall. LibFFI is released under
-the MIT/Expat license, see doc/libffi-license.txt.
+The libpruio documentation is licensed under the GNU FDL.
