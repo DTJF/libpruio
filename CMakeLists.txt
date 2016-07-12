@@ -6,7 +6,7 @@ PROJECT(libpruio Fbc C)
 
 # constants
 SET(PROJ_NAME "${CMAKE_PROJECT_NAME}" CACHE STRING "project name" FORCE)
-SET(PROJ_DESC "Fast and easy Input/Output driver for digital/analog lines on Beagleboard hardware" CACHE STRING "project description" FORCE)
+SET(PROJ_DESC "Fast and easy Input/Output for digital/analog on Beagleboard" CACHE STRING "project description" FORCE)
 SET(PROJ_VERS "0.4.0"   CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "DTJF"    CACHE STRING "project authors" FORCE)
 SET(PROJ_MAIL "Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net"  CACHE STRING "project mail address" FORCE)
@@ -68,33 +68,46 @@ SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJ_WEBS}")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
   "Arend Lammertink <lamare@gmail.com>") #required
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
-SET(CPACK_PACKAGE_DESCRIPTION
-  ".aif saf hgk hsgh has aghahsg.k hasgkh .kahg kasg .shg hsgkh hsgh ashgl")
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+    "${PROJ_DESC}"
+  "\n ${PROJ_NAME} is a driver to handle input and putput of"
+  "\n digital and analog line on Beaglebone hardware."
+  "\n The driver bypasses the kernel driver and provides direct"
+  "\n access to the hardware, supported by the PRU subsystems."
+     )
 
 #SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
 SET(CPACK_DEB_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
-SET(CPACK_DEBIAN_bin_PACKAGE_CONTROL_EXTRA
+SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
   "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
   "${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
   )
 
-set(CPACK_COMPONENT_dev_DEPENDS bin)
-set(CPACK_COMPONENT_doc_DEPENDS bin)
+SET(CPACK_COMPONENT_DEV_DEPENDS bin)
+SET(CPACK_COMPONENT_DOC_DEPENDS bin)
 
-# Generate required change log files
-EXECUTE_PROCESS(COMMAND gzip -9 -c ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
-                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
-                )
-EXECUTE_PROCESS(COMMAND gzip -9 -c ${CMAKE_CURRENT_SOURCE_DIR}/debian/copyright
-                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                OUTPUT_FILE "${CMAKE_BINARY_DIR}/copyright.gz"
+# Generate required change log file
+EXECUTE_PROCESS(
+  COMMAND gzip -9 -c -n ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
+  )
+
+INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}-bin"
+                COMPONENT bin
                 )
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
-                "${CMAKE_BINARY_DIR}/copyright.gz"
-                DESTINATION "share/doc/${PROJ_NAME}-${PROJ_VERS}"
-                COMPONENT bin
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}-dev"
+                COMPONENT dev
+                )
+INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}-fbdev"
+                COMPONENT fbdev
                 )
 
 #SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
