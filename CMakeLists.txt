@@ -73,7 +73,7 @@ SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
   "\n ${PROJ_NAME} is a driver to handle input and putput of"
   "\n digital and analog line on Beaglebone hardware."
   "\n The driver bypasses the kernel driver and provides direct"
-  "\n access to the hardware, supported by the PRU subsystems."
+  "\n access to the hardware, supported by the PRU subsystems.y"
      )
 
 #SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
@@ -99,11 +99,13 @@ INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 DESTINATION "share/doc/${PROJ_NAME}-bin"
                 COMPONENT bin
                 )
+SET(CPACK_DEBIAN_DEV_PACKAGE_SECTION libdevel) # since 3.5!
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 "${CMAKE_SOURCE_DIR}/debian/copyright"
                 DESTINATION "share/doc/${PROJ_NAME}-dev"
                 COMPONENT dev
                 )
+SET(CPACK_DEBIAN_FBDEV_PACKAGE_SECTION libdevel)
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 "${CMAKE_SOURCE_DIR}/debian/copyright"
                 DESTINATION "share/doc/${PROJ_NAME}-fbdev"
