@@ -24,30 +24,35 @@ FIND_PACKAGE(LIBPRUSSDRV)
 ADD_SUBDIRECTORY(src/config)
 ADD_SUBDIRECTORY(src/pruio)
 
-IF(PASM_ASSEMBER_WORKS AND LIBPRUSSDRV_LIBRARY)
-  ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
-  ADD_DEPENDENCIES(pruio pruiofbcode)
-
-  SET(CMAKE_VERBOSE_MAKEFILE 1)
-
-  ADD_CUSTOM_TARGET(examples)
-  ADD_SUBDIRECTORY(src/examples)
-  ADD_SUBDIRECTORY(src/c_examples)
-  ADD_DEPENDENCIES(examples pruio)
-  #SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
-
-  INSTALL(TARGETS pruio
-    LIBRARY DESTINATION lib
-    COMPONENT bin
-    )
-ELSE()
+IF(NOT (PASM_ASSEMBER_WORKS AND LIBPRUSSDRV_LIBRARY))
   MESSAGE(STATUS ">> no target all")
   #ADD_EXECUTABLE(dummy src/config/dts_custom.bas)
   #SET_TARGET_PROPERTIES(dummy PROPERTIES COMPILE_FLAGS "-m dts_custom")
 
   SET_TARGET_PROPERTIES(doc PROPERTIES EXCLUDE_FROM_ALL 0)
-  #RETURN()
+  RETURN()
 ENDIF()
+
+ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
+ADD_DEPENDENCIES(pruio pruiofbcode)
+SET_TARGET_PROPERTIES(pruio PROPERTIES
+  LINK_FLAGS "-Wl -z,relro"
+  SOVERSION "${PROJ_VERS}"
+  )
+
+SET(CMAKE_VERBOSE_MAKEFILE 1)
+
+ADD_CUSTOM_TARGET(examples)
+ADD_SUBDIRECTORY(src/examples)
+ADD_SUBDIRECTORY(src/c_examples)
+ADD_DEPENDENCIES(examples pruio)
+#SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
+
+INSTALL(TARGETS pruio
+  #LIBRARY DESTINATION lib/${PROJ_NAME}-${PROJ_VERS}
+  LIBRARY DESTINATION lib/
+  COMPONENT bin
+  )
 
 SET(C_HEADERS
   "src/pruio/pruio.hp"
@@ -63,6 +68,7 @@ INSTALL(FILES ${C_HEADERS}
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_PACKAGE_VERSION "${PROJ_VERS}")
 #SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}-${CPACK_DEB_PACKAGE_COMPONENT_PART_NAME}-${PROJ_VERS}")
+SET(CPACK_PACKAGE_NAME "${PROJ_NAME}")
 SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJ_WEBS}")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
@@ -70,10 +76,10 @@ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
     "${PROJ_DESC}"
-  "\n ${PROJ_NAME} is a driver to handle input and putput of"
-  "\n digital and analog line on Beaglebone hardware."
+  "\n ${PROJ_NAME} is a driver to handle input and putput on"
+  "\n digital and analog lines on Beaglebone hardware."
   "\n The driver bypasses the kernel driver and provides direct"
-  "\n access to the hardware, supported by the PRU subsystems.y"
+  "\n access to the hardware, supported by the PRU subsystems."
      )
 
 #SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
@@ -112,6 +118,6 @@ INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 COMPONENT fbdev
                 )
 
-#SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 INCLUDE(CPack)
