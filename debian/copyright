@@ -6,7 +6,7 @@ Source: https://github.com/DTJF/libpruio
 Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
 License: LGPL-2+
 
-Files: src/examples/*;src/C_examples/*
+Files: src/examples/*;src/c_examples/*
 Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
 License: GPL-3+
 

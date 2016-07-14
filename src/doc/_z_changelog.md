@@ -5,8 +5,6 @@ Changelog & Credits {#ChaChangelog}
 
 # Further Development {#SecFurtherVev}
 
-- Add QEP features of PWMSS. ???
-- Add TIMER subsystem support.
 - More digital triggers for MM mode (ie. CAP and QEP).
 
 Feel free to send further ideas to the author (\Email).
@@ -148,6 +146,9 @@ Thanks go to:
 
 - Charles Steinkuehler for the universal device tree overlay and the
   config-pin tool.
+
+- Arend Lammertink for providing Debian packages and hosting them on
+  his server.
 
 - The libpruio users for testing, reporting bugs and sending ideas
   to improve it. Especially

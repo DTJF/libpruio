@@ -46,3 +46,15 @@ ENDIF()
 IF(NOT CMAKE_SIZEOF_VOID_P)
   SET(CMAKE_SIZEOF_VOID_P "@CMAKE_Fbc_SIZEOF_DATA_PTR@")
 ENDIF()
+
+
+
+#set(CMAKE_SHARED_LIBRARY_RUNTIME_Fbc_FLAG "-Wl,-rpath,")
+#set(CMAKE_SHARED_LIBRARY_RUNTIME_Fbc_FLAG_SEP ":")
+#set(CMAKE_SHARED_LIBRARY_RPATH_LINK_Fbc_FLAG "-Wl,-rpath-link,")
+set(CMAKE_SHARED_LIBRARY_SONAME_Fbc_FLAG "-Wl,-soname,")
+#set(CMAKE_EXE_EXPORTS_Fbc_FLAG "-Wl,--export-dynamic")
+
+# Shared libraries with no builtin soname may not be linked safely by
+# specifying the file path.
+#set(CMAKE_PLATFORM_USES_PATH_WHEN_NO_SONAME 1)

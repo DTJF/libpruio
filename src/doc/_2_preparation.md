@@ -2,10 +2,24 @@ Preparation {#ChaPreparation}
 ===========
 \tableofcontents
 
-This chapter describes how to get libpruio working on your system. At
-the bottom you'll find a step by step guide to install the complete
-system. Eager users may skip the theory and jump to \ref
-SecInstallation directly.
+This chapter describes how to get libpruio working on your system. The
+easy way is to install the Debian packages. They're not in mainline,
+yet. So you have to add a PPA (Personal Package Archive) to your
+package manament sources:
+
+~~~{.txt}
+sudo apt-get install ???
+~~~
+
+Once prepared, you can download the library, the header files and the
+documentation by executing
+
+~~~{.txt}
+sudo apt-get install libpruio libpruio-dev libpruio-doc
+~~~
+
+The further stuff in this chapter is for advanced users who want to
+adapt the source code and recompile the binary.
 
 
 # Tools  {#SecTools}

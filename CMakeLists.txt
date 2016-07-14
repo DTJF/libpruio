@@ -36,6 +36,7 @@ ENDIF()
 ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
 ADD_DEPENDENCIES(pruio pruiofbcode)
 SET_TARGET_PROPERTIES(pruio PROPERTIES
+  #LINK_FLAGS "-Wl -z,relro,-soname=${PROJ_NAME}.so.${PROJ_VERS}"
   LINK_FLAGS "-Wl -z,relro"
   SOVERSION "${PROJ_VERS}"
   )
@@ -82,17 +83,6 @@ SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
   "\n access to the hardware, supported by the PRU subsystems."
      )
 
-#SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
-SET(CPACK_DEB_COMPONENT_INSTALL ON)
-SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
-SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
-  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
-  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
-  )
-
-SET(CPACK_COMPONENT_DEV_DEPENDS bin)
-SET(CPACK_COMPONENT_DOC_DEPENDS bin)
-
 # Generate required change log file
 EXECUTE_PROCESS(
   COMMAND gzip -9 -c -n ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
@@ -100,24 +90,39 @@ EXECUTE_PROCESS(
   OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
   )
 
+#SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
+SET(CPACK_DEB_COMPONENT_INSTALL ON)
+SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
+
+SET(CPACK_COMPONENT_DEV_DEPENDS bin)
+SET(CPACK_COMPONENT_DOC_DEPENDS bin)
+
+SET(CPACK_DEBIAN_BIN_PACKAGE_SHLIBDEPS ON)
+#SET(CPACK_DEBIAN_BIN_PACKAGE_NAME "${PROJ_NAME}") # since 3.5!
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 "${CMAKE_SOURCE_DIR}/debian/copyright"
-                DESTINATION "share/doc/${PROJ_NAME}-bin"
+                DESTINATION "share/doc/${PROJ_NAME}"
                 COMPONENT bin
                 )
+SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
+  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
+  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
+  )
+
 SET(CPACK_DEBIAN_DEV_PACKAGE_SECTION libdevel) # since 3.5!
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 "${CMAKE_SOURCE_DIR}/debian/copyright"
                 DESTINATION "share/doc/${PROJ_NAME}-dev"
                 COMPONENT dev
                 )
-SET(CPACK_DEBIAN_FBDEV_PACKAGE_SECTION libdevel)
+SET(CPACK_DEBIAN_DOC_PACKAGE_SECTION doc)
 INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
                 "${CMAKE_SOURCE_DIR}/debian/copyright"
-                DESTINATION "share/doc/${PROJ_NAME}-fbdev"
-                COMPONENT fbdev
+                DESTINATION "share/doc/${PROJ_NAME}-doc"
+                COMPONENT doc
                 )
 
-SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+SET(CMAKE_INSTALL_RPATH /usr/local/lib)
+SET(CPACK_DEBIAN_PACKAGE_DEBUG ON)
 
 INCLUDE(CPack)
