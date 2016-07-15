@@ -24,8 +24,7 @@ Compile by: `fbc -w all pwm_cap.bas`
 #INCLUDE ONCE "../pruio/pruio_pins.bi"
 
 '* The pin for PWM output.
-'#DEFINE P_OUT P9_21
-#DEFINE P_OUT P8_09
+#DEFINE P_OUT P9_21
 '* The pin for CAP input.
 #DEFINE P_IN P9_42
 

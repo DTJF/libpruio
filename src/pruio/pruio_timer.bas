@@ -175,7 +175,7 @@ FUNCTION TimerUdt.setValue CDECL( _
          Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
       VAR x = CULNGINT(TMRSS_CLK / Freq)
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
-      CASE   0        : pre = 0
+      CASE   0        : pre = 0        : cnt(Nr) = x
       CASE   1        : pre = &b100000 : cnt(nr) = x SHR 1
       CASE   2 to   3 : pre = &b100100 : cnt(nr) = x SHR 2
       CASE   4 to   7 : pre = &b101000 : cnt(nr) = x SHR 3
@@ -259,7 +259,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
          Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
       VAR x = CULNGINT(TMRSS_CLK / Freq)
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
-      CASE   0        : pre = 0
+      CASE   0        : pre = 0        : cnt(Nr) = x
       CASE   1        : pre = &b100000 : cnt(Nr) = x SHR 1
       CASE   2 to   3 : pre = &b100100 : cnt(Nr) = x SHR 2
       CASE   4 to   7 : pre = &b101000 : cnt(Nr) = x SHR 3
