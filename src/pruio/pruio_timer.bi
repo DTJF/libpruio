@@ -79,16 +79,22 @@ TYPE TimerUdt
   AS UInt32 _
     InitParA _            '*< Offset to read data block offset.
   , PwmMode = &b001100001000011 _ '*< Control register for PWM output mode.
+  , PwmHigh = &b000000010000011 _ '*< Control register for PWM output 100%.
+  , Pwm_Low = &b000000000000011 _ '*< Control register for PWM output 0%.
+  , TimHigh = &b000000010000010 _ '*< Control register for Timer high.
+  , Tim_Low = &b000000000000010 _ '*< Control register for Timer low.
   , CapMode = &b010000110000000   '*< Control register for CAP input mode.
   AS ZSTRING PTR _
-    E0 = @"TIMER subsystem not enabled"   '*< Common error message.
-  ', E1 = @"no TIMER pin"                  '*< Common error message.
+    E0 = @"TIMER subsystem not enabled" _ '*< Common error message.
+  , E1 = @"pin has no TIMER capability" _ '*< Common error message.
+  , E2 = @"TIMER not in PWM output mode"  '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR
-  'DECLARE FUNCTION config CDECL( _
-    'BYVAL AS UInt8 _
-  ', BYVAL AS UInt8 = CAST(UInt8, PRUIO_GPIO_IN_0)) AS ZSTRING PTR
+  DECLARE FUNCTION setValue CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t _
+  , BYVAL AS SHORT = 1) AS ZSTRING PTR
   DECLARE FUNCTION pwm_set CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t _

@@ -18,7 +18,7 @@ compile by (static and dynamic library)
 
 
 ' driver header file
-#include ONCE "pruio.bi"
+#INCLUDE ONCE "pruio.bi"
 
 '* \brief Wrapper function for constructor PruIo::PruIo().
 FUNCTION pruio_new CDECL ALIAS "pruio_new"( _

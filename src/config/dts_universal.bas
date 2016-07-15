@@ -69,7 +69,7 @@ VAR PATH_NAME = "/lib/firmware"
 ' ... then delete unwanted pin groups (or single pins)
 PIN_DEL(HDMI_Pins)
 PIN_DEL(EMMC2_Pins)
-PIN_DEL(I2C1_Pins)
+'PIN_DEL(I2C1_Pins)
 PIN_DEL(I2C2_Pins)
 PIN_DEL(MCASP0_Pins)
 

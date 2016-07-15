@@ -10,20 +10,18 @@ is in here.
 
 
 ' PruIo global declarations.
-#include ONCE "pruio_globals.bi"
+#INCLUDE ONCE "pruio_globals.bi"
 ' Header for PWMSS part, containing modules QEP, CAP and PWM.
-#include ONCE "pruio_pwmss.bi"
-'' Header for TIMER part.
-'#include ONCE "pruio_timer.bi"
+#INCLUDE ONCE "pruio_pwmss.bi"
 ' driver header file
-#include ONCE "pruio.bi"
+#INCLUDE ONCE "pruio.bi"
 ' Header file with convenience macros.
-#include ONCE "pruio_pins.bi"
+#INCLUDE ONCE "pruio_pins.bi"
 
 '* The clock frequency
-#define PWMSS_CLK  100e6
+#DEFINE PWMSS_CLK  100e6
 '* The half clock frequency
-#define PWMSS_CLK_2 50e6
+#DEFINE PWMSS_CLK_2 50e6
 
 
 /'* \brief Constructor for the PWMSS subsystem configuration.
@@ -97,12 +95,6 @@ FUNCTION PwmssUdt.initialize CDECL() AS ZSTRING PTR
     NEXT
   END WITH : RETURN 0
 END FUNCTION
-
-'* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
-#DEFINE ModeCheck(_B_,_M_) (.BallConf[_B_] and &b111) <> _M_
-
-'* Macro to check a CPU ball mode.
-#DEFINE ModeSet(_B_,_M_) IF .setPin(_B_, _M_) THEN RETURN .Errr
 
 
 /'* \brief The constructor for PWM features of the PWMSS.
