@@ -14,22 +14,25 @@ IF(NOT DEFINED PASM_ASSEMBER_WORKS)
 
   IF(assembler_works EQUAL "1")
     STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
-    SET(works FALSE)
+    SET(fb_option FALSE)
     FOREACH(line IN LISTS output_lines)
       IF(line MATCHES "PRU Assembler Version")
         SET(PASM_ASSEMBER_ID ${line})
+      ELSEIF(line MATCHES "f  - Create 'FreeBasic array' binary output")
+        SET(fb_option "f")
+        BREAK()
       ELSEIF(line MATCHES "y  - Create 'FreeBasic array' binary output")
-        SET(works TRUE)
+        SET(fb_option "y")
         BREAK()
       ENDIF()
     ENDFOREACH()
 
-    IF(works)
+    IF(fb_option)
       MESSAGE(STATUS "Check for working PASM assembler OK ==> ${PASM_ASSEMBER_ID}")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the pasm assembler works passed with "
         "the following output:\n${output}\n\n")
-      SET(PASM_ASSEMBER_WORKS "${works}" CACHE FILEPATH "pasm assembler" FORCE)
+      SET(PASM_ASSEMBER_WORKS "${fb_option}" CACHE STRING "pasm assembler" FORCE)
       MARK_AS_ADVANCED(PASM_ASSEMBER_WORKS)
     ELSE()
       MESSAGE(STATUS "Wrong PASM assembler version!")
@@ -89,14 +92,14 @@ SET(SRC_BI_EXTRA
 
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Init pasm_init.p
+  COMMAND pasm ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Init pasm_init.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_init.p ${PASM_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
-  COMMAND pasm ARGS -V3 -y -CPru_Run pasm_run.p
+  COMMAND pasm ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Run pasm_run.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_run.p ${PASM_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -123,7 +126,7 @@ ELSE()
 ENDIF()
 INSTALL(FILES ${SRC_BI} ${SRC_BI_EXTRA}
   DESTINATION ${bi_dest}/freebasic/BBB
-  COMPONENT fbdev
+  COMPONENT dev
   )
 
 

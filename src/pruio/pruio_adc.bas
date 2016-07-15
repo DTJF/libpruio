@@ -1,7 +1,8 @@
 /'* \file pruio_adc.bas
 \brief The ADC component source code.
 
-Source code file containing the function bodies of the ADC component.
+Source code file containing the function bodies of the class AdcUdt
+(ADC components).
 
 \since 0.2
 '/

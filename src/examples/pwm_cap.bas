@@ -5,12 +5,12 @@ This file contains an example on how to measure the frequency and duty
 cycle of a pulse train with a eCAP module input. The program sets
 another pin as eHRPWM output to generate a pulse width modulated signal
 as source for the measurement. The output can be changed by some keys,
-the frequency and duty cycle of the input is shown continously in the
+the frequency and duty cycle of the input is shown continuously in the
 terminal output.
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 
 Compile by: `fbc -w all pwm_cap.bas`
@@ -24,7 +24,8 @@ Compile by: `fbc -w all pwm_cap.bas`
 #INCLUDE ONCE "../pruio/pruio_pins.bi"
 
 '* The pin for PWM output.
-#DEFINE P_OUT P9_21
+'#DEFINE P_OUT P9_21
+#DEFINE P_OUT P8_09
 '* The pin for CAP input.
 #DEFINE P_IN P9_42
 
@@ -91,6 +92,6 @@ END WITH
 
 DELETE(io)
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); CapMod::config(); PruIo::config(); CapMod::Value(); PwmMod::setValue(); PruIo::~PruIo();}

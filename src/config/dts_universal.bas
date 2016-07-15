@@ -41,7 +41,7 @@ information.)
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 
 Compile by:
@@ -61,18 +61,27 @@ fbc -w all dts_universal.bas
 '* The version.
 #DEFINE VERS_NAME "00A0"
 '* The folder to place the compiled overlay binary.
-VAR PATH_NAME = "/lib/firmware"
+VAR PATH_NAME = "."
 
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"
 #INCLUDE ONCE "P9.bi"
 ' ... then delete unwanted pin groups (or single pins)
-PIN_DEL(HDMI_Pins)
-PIN_DEL(EMMC2_Pins)
-'PIN_DEL(I2C1_Pins)
-PIN_DEL(I2C2_Pins)
-PIN_DEL(MCASP0_Pins)
-
+SELECT CASE COMMAND(2)
+CASE "BBW"
+  PIN_DEL(EMMC2_Pins)
+  PIN_DEL(I2C1_Pins)
+CASE "BBG"
+  PIN_DEL(EMMC2_Pins)
+  PIN_DEL(I2C1_Pins)
+CASE "BBG"
+  PIN_DEL(HDMI_Pins)
+  PIN_DEL(EMMC2_Pins)
+  PIN_DEL(I2C1_Pins)
+  'PIN_DEL(I2C2_Pins)
+  PIN_DEL(MCASP0_Pins)
+CASE ELSE ' all pins
+END SELECT
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
 
@@ -103,6 +112,6 @@ ELSE
   PRINT #fnr, ALL_END;
   CLOSE #fnr
 
-  IF LEN(COMMAND) THEN PATH_NAME = COMMAND
+  IF LEN(COMMAND(1)) THEN PATH_NAME = COMMAND
   SHELL("dtc -@ -I dts -O dtb -o " & PATH_NAME & "/" & fnam & ".dtbo " & fnam & ".dts")
 END IF

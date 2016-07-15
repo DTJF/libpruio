@@ -1,6 +1,5 @@
+libpruio (0.4) jessie; urgency=low
 
-libpruio (2015.01.05-git20141014) jessie; urgency=low
+  * First build
 
-* First build
-
--- Thomas Freiherr <Thomas.Freiherr@gmx.net>
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Tue, 12 Jul 2016 13:02:20 +0200

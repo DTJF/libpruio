@@ -1,9 +1,10 @@
 /'* \file pruio_pwmss.bas
 \brief The PWMSS component source code.
 
-Source code file containing the function bodies of the PWMSS component.
-The code for the subsystem PWMSS and its modules (eQEP, eCAP and ePWM)
-is in here.
+Source code file containing the function bodies of the PWMSS
+components. The code for the subsystem PWMSS and its modules (eQEP,
+eCAP and ePWM) is in here, containing member functions of classes
+PwmMod, CapMod and QepMod.
 
 \since 0.2
 '/
@@ -115,7 +116,7 @@ CONSTRUCTOR PwmMod(BYVAL T AS Pruio_ PTR)
 END CONSTRUCTOR
 
 
-/'* \brief Compute header pin PWM output configuration.
+/'* \brief Compute PWM output configuration.
 \param Ball The pin index.
 \param Hz A pointer to output the frequency value (or 0 for no output).
 \param Du A pointer to output the duty value (or 0 for no output).
@@ -623,11 +624,10 @@ FUNCTION CapMod.Value CDECL( _
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
-    'CASE JT_05 IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  '-> eCAP1_in_PWM1_out, JTag header input???
     CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
     'CASE P8_15: IF ModeCheck(Ball,5) THEN e = E1 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
+    'CASE JT_05 IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
     'CASE 88 : IF ModeCheck(Ball,2) THEN e = E1 ELSE m = 1
-    'CASE 93 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1
     'CASE 98 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 2
     'CASE 99 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 1
     CASE ELSE  : e = E0

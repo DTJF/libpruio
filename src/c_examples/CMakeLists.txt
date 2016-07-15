@@ -10,7 +10,7 @@ SET(C_TAR
   "stepper"
   )
 
-ADD_CUSTOM_TARGET(c_examples DEPENDS ${C_TAR})
+ADD_CUSTOM_TARGET(c_examples)
 SET_TARGET_PROPERTIES(c_examples PROPERTIES EXCLUDE_FROM_ALL 1)
 ADD_DEPENDENCIES(examples c_examples)
 

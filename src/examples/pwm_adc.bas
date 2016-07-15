@@ -9,7 +9,7 @@ AIN-2 and shown as a line graf in a graphics windows.
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 
 Compile by: `fbc -w all pwm_adc.bas`
@@ -172,6 +172,6 @@ END WITH
 
 DELETE(io)
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); PwmMod::setValue(); PruIo::config(); PruIo::~PruIo();}

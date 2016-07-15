@@ -1,7 +1,7 @@
 #
 # CMakeFbc - CMake module for FreeBASIC Language
 #
-# Copyright (C) 2014-2015, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
+# Copyright (C) 2014-2016, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
 #
 # All rights reserved.
 #
@@ -11,11 +11,9 @@
 # See http://www.cmake.org/HTML/Copyright.html for details
 #
 
+SET (CMAKE_BUILD_TYPE_INIT "None")
 SET (CMAKE_Fbc_FLAGS_INIT "")
 SET (CMAKE_Fbc_FLAGS_DEBUG_INIT "-g")
 SET (CMAKE_Fbc_FLAGS_MINSIZEREL_INIT "-O s")
 SET (CMAKE_Fbc_FLAGS_RELEASE_INIT "-O 2")
 SET (CMAKE_Fbc_FLAGS_RELWITHDEBINFO_INIT "-O 2 -g")
-#SET (CMAKE_Fbc_CREATE_PREPROCESSED_SOURCE "<CMAKE_Fbc_COMPILER> <FLAGS> -r <SOURCE>")
-#SET (CMAKE_Fbc_CREATE_ASSEMBLY_SOURCE "<CMAKE_Fbc_COMPILER> <FLAGS> -rr <SOURCE> -o <ASSEMBLY_SOURCE>")
-#SET (CMAKE_INCLUDE_SYSTEM_FLAG_FBC "")

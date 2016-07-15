@@ -5,8 +5,6 @@ Changelog & Credits {#ChaChangelog}
 
 # Further Development {#SecFurtherVev}
 
-- Add QEP features of PWMSS. ???
-- Add TIMER subsystem support.
 - More digital triggers for MM mode (ie. CAP and QEP).
 
 Feel free to send further ideas to the author (\Email).
@@ -40,6 +38,7 @@ Released in 2016, ???.
 - Tools dts_custom.bas and dts_universal.bas evaluate path command line argument.
 - Tool dts_custom.bas generates fragment@1 section (no export command required).
 - Device tree overlay: QEP input pins have no restistor now.
+- single source for all ball numbers
 
 ## Bugfixes:
 
@@ -60,7 +59,7 @@ Released in 2014 October, 26.
 
 ## New:
 
-- Ring buffer (RB) run mode (samples analog input continously).
+- Ring buffer (RB) run mode (samples analog input continuously).
 - PWM output in IO and RB mode (variable frequency and duty cycles).
 - CAP input in IO and RB mode (analyses frequency and duty cycles of a pulse train).
 - New examples *pwm_adc*, *pwm_cap*, *rb_oszi*.
@@ -147,6 +146,9 @@ Thanks go to:
 
 - Charles Steinkuehler for the universal device tree overlay and the
   config-pin tool.
+
+- Arend Lammertink for providing Debian packages and hosting them on
+  his server.
 
 - The libpruio users for testing, reporting bugs and sending ideas
   to improve it. Especially

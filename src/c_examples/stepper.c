@@ -15,7 +15,7 @@ This file contains an example on how to use libpruio to control a
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o stepper stepper.c -lpruio -lprussdrv`
 

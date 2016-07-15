@@ -6,13 +6,13 @@ PROJECT(libpruio Fbc C)
 
 # constants
 SET(PROJ_NAME "${CMAKE_PROJECT_NAME}" CACHE STRING "project name" FORCE)
-SET(PROJ_DESC "Fast and easy Input/Output driver for digital/analog lines on Beagleboard hardware" CACHE STRING "project description" FORCE)
+SET(PROJ_DESC "Fast and easy Input/Output for digital/analog on Beagleboard" CACHE STRING "project description" FORCE)
 SET(PROJ_VERS "0.4.0"   CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "DTJF"    CACHE STRING "project authors" FORCE)
 SET(PROJ_MAIL "Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net"  CACHE STRING "project mail address" FORCE)
 SET(PROJ_WEBS "https://github.com/DTJF/libpruio" CACHE STRING "project website" FORCE)
 SET(PROJ_LICE "LGPLv2.1" CACHE STRING "project licence" FORCE)
-#STRING(TIMESTAMP tmp "%Y" UTC)
+#STRING(TIMESTAMP tmp "%Y" UTC) # requires CMake 2.8.11
 #SET(PROJ_YEAR "${tmp}"             CACHE STRING "project year" FORCE)
 SET(PROJ_YEAR "2016"   CACHE STRING "project year" FORCE)
 
@@ -24,59 +24,36 @@ FIND_PACKAGE(LIBPRUSSDRV)
 ADD_SUBDIRECTORY(src/config)
 ADD_SUBDIRECTORY(src/pruio)
 
-IF(PASM_ASSEMBER_WORKS AND LIBPRUSSDRV_LIBRARY)
-  ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
-  ADD_DEPENDENCIES(pruio pruiofbcode)
-
-  #SET(CMAKE_VERBOSE_MAKEFILE 1)
-
-  ADD_CUSTOM_TARGET(examples)
-  ADD_SUBDIRECTORY(src/examples)
-  ADD_SUBDIRECTORY(src/c_examples)
-  ADD_DEPENDENCIES(examples pruio)
-  #SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
-
-  INSTALL(TARGETS pruio
-    LIBRARY DESTINATION lib
-    COMPONENT bin
-    )
-ELSE()
+IF(NOT (PASM_ASSEMBER_WORKS AND LIBPRUSSDRV_LIBRARY))
   MESSAGE(STATUS ">> no target all")
   #ADD_EXECUTABLE(dummy src/config/dts_custom.bas)
   #SET_TARGET_PROPERTIES(dummy PROPERTIES COMPILE_FLAGS "-m dts_custom")
 
   SET_TARGET_PROPERTIES(doc PROPERTIES EXCLUDE_FROM_ALL 0)
-  #RETURN()
+  RETURN()
 ENDIF()
-#IF(NOT PASM_ASSEMBER_WORKS)
-  #MESSAGE(STATUS ">> no target all")
-  ##SET_TARGET_PROPERTIES(doc PROPERTIES EXCLUDE_FROM_ALL 0)
-  #RETURN()
-#ENDIF()
-#IF(NOT LIBPRUSSDRV_LIBRARY)
-  #MESSAGE(STATUS ">> no target all")
-  ##SET_TARGET_PROPERTIES(doc PROPERTIES EXCLUDE_FROM_ALL 0)
-  #RETURN()
-#ENDIF()
 
+ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
+ADD_DEPENDENCIES(pruio pruiofbcode)
+SET_TARGET_PROPERTIES(pruio PROPERTIES
+  #LINK_FLAGS "-Wl -z,relro,-soname=${PROJ_NAME}.so.${PROJ_VERS}"
+  LINK_FLAGS "-Wl -z,relro"
+  SOVERSION "${PROJ_VERS}"
+  )
 
-#ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
+SET(CMAKE_VERBOSE_MAKEFILE 1)
 
-#ADD_DEPENDENCIES(pruio pruiofbcode)
-
-##SET(CMAKE_VERBOSE_MAKEFILE 1)
-
-#ADD_CUSTOM_TARGET(examples)
-#ADD_DEPENDENCIES(examples pruio)
+ADD_CUSTOM_TARGET(examples)
+ADD_SUBDIRECTORY(src/examples)
+ADD_SUBDIRECTORY(src/c_examples)
+ADD_DEPENDENCIES(examples pruio)
 #SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
-#ADD_SUBDIRECTORY(src/examples)
-#ADD_SUBDIRECTORY(src/c_examples)
 
-
-#INSTALL(TARGETS pruio
-  #LIBRARY DESTINATION lib
-  #COMPONENT bin
-  #)
+INSTALL(TARGETS pruio
+  #LIBRARY DESTINATION lib/${PROJ_NAME}-${PROJ_VERS}
+  LIBRARY DESTINATION lib/
+  COMPONENT bin
+  )
 
 SET(C_HEADERS
   "src/pruio/pruio.hp"
@@ -88,125 +65,64 @@ INSTALL(FILES ${C_HEADERS}
   COMPONENT dev
   )
 
-#INSTALL(FILES debian/changelog
-  #DESTINATION usr/share/doc
-  #)
 
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_PACKAGE_VERSION "${PROJ_VERS}")
+#SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}-${CPACK_DEB_PACKAGE_COMPONENT_PART_NAME}-${PROJ_VERS}")
+SET(CPACK_PACKAGE_NAME "${PROJ_NAME}")
+SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}")
+SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJ_WEBS}")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
+  "Arend Lammertink <lamare@gmail.com>") #required
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+    "${PROJ_DESC}"
+  "\n ${PROJ_NAME} is a driver to handle input and putput on"
+  "\n digital and analog lines on Beaglebone hardware."
+  "\n The driver bypasses the kernel driver and provides direct"
+  "\n access to the hardware, supported by the PRU subsystems."
+     )
 
-#ADD_CUSTOM_TARGET(deb DEPENDS pruio)
+# Generate required change log file
+EXECUTE_PROCESS(
+  COMMAND gzip -9 -c -n ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
+  )
 
-#ADD_CUSTOM_COMMAND(TARGET deb
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
-  #WORKING_DIRECTORY ${BUILD_DIR}
-  #)
+#SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
+SET(CPACK_DEB_COMPONENT_INSTALL ON)
+SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
 
-#ADD_CUSTOM_COMMAND(TARGET deb
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
-  #WORKING_DIRECTORY ${BUILD_DIR}
-  #)
+SET(CPACK_COMPONENT_DEV_DEPENDS bin)
+SET(CPACK_COMPONENT_DOC_DEPENDS bin)
 
-#ADD_CUSTOM_TARGET(deb DEPENDS pruio
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
-  ##COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebFbDev.cmake
-  #WORKING_DIRECTORY ${BUILD_DIR}
-  #)
+SET(CPACK_DEBIAN_BIN_PACKAGE_SHLIBDEPS ON)
+#SET(CPACK_DEBIAN_BIN_PACKAGE_NAME "${PROJ_NAME}") # since 3.5!
+INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}"
+                COMPONENT bin
+                )
+SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
+  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
+  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
+  )
 
+SET(CPACK_DEBIAN_DEV_PACKAGE_SECTION libdevel) # since 3.5!
+INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}-dev"
+                COMPONENT dev
+                )
+SET(CPACK_DEBIAN_DOC_PACKAGE_SECTION doc)
+INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                "${CMAKE_SOURCE_DIR}/debian/copyright"
+                DESTINATION "share/doc/${PROJ_NAME}-doc"
+                COMPONENT doc
+                )
 
+SET(CMAKE_INSTALL_RPATH /usr/local/lib)
+SET(CPACK_DEBIAN_PACKAGE_DEBUG ON)
 
-#ADD_CUSTOM_TARGET(deb_bin
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebBin.cmake
-  #WORKING_DIRECTORY ${BUILD_DIR}
-  #)
-
-#ADD_CUSTOM_TARGET(deb_dev #DEPENDS deb_bin
-  #COMMAND ${CMAKE_CPACK_COMMAND} -G DEB --config ${CMAKE_CURRENT_LIST_DIR}/CPackDebDev.cmake
-  #WORKING_DIRECTORY ${BUILD_DIR}
-  #)
-
-#ADD_CUSTOM_TARGET(deb DEPENDS pruio deb_dev deb_bin)
-#ADD_CUSTOM_TARGET(deb DEPENDS pruio deb_bin)
-
-
-
-#INSTALL(FILES debian/changelog
-  #DESTINATION include
-  #COMPONENT bin dev fbdev
-  #)
-
-
-#SET(CPACK_GENERATOR "TBZ2")
-#SET(CPACK_GENERATOR "DEB")
-
-#SET(CPACK_PACKAGE_VENDOR "TJF")
-#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_NAME} - fast and easy digital I/O and analog I for BeagleboneBlack")
-#SET(CPACK_PACKAGE_DESCRIPTION "${CMAKE_PROJECT_NAME} offers functions to operate fast and easy digital input and output and analog input on the BeagleboneBlack")
-#SET(CPACK_PACKAGE_VERSION "0.2.2")
-#SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-#SET(CPACK_PACKAGE_VERSION_MINOR "2")
-#SET(CPACK_PACKAGE_VERSION_PATCH "2")
-#SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${CMAKE_PROJECT_NAME})
-#SET(CPACK_PACKAGE_CONTACT "Thomas Freiherr <Thomas.Freiherr@gmx.net>")
-
-#SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}")
-
-#SET(CPACK_COMPONENTS_ALL
-  #bin
-  #fbdev
-  #dev
-  #)
-
-## autogenerate dependency information
-##SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-##SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Thomas Freiherr") #required
-#SET(CPACK_DEBIAN_PACKAGE_DEPENDS "am335x-pru-package")
-##set(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME OFF)
-
-##set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
-##set(CPACK_COMPONENTS_IGNORE_GROUPS IGNORE)
-##SET(CPACK_COMPONENTS_GROUPING IGNORE)
-#SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
-#SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
-
-#SET(CPACK_DEB_COMPONENT_INSTALL ON)
-#UNSET(CPACK_MONOLITHIC_INSTALL)
-
-#SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
-  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/${CMAKE_PROJECT_NAME}.postinst"
-  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/${CMAKE_PROJECT_NAME}.postrm"
-  #)
-
-#INCLUDE(CPack)
-
-#CPACK_ADD_COMPONENT(bin
-  #DISPLAY_NAME "library binary and device tree overlay"
-  #DESCRIPTION "The library binary and the device tree overlay to be used at run-time."
-  #REQUIRED
-  ##DEPENDS
-  ##GROUP
-  ##[INSTALL_TYPES type1 type2 ... ]
-  ##[DOWNLOADED]
-  ##ARCHIVE_FILE filename1
-  #)
-
-#CPACK_ADD_COMPONENT(dev
-  #DISPLAY_NAME "C headers"
-  #DESCRIPTION "The header files for development using C compiler."
-  #DISABLED
-  #DEPENDS bin
-  #GROUP ddev
-  ##[INSTALL_TYPES type1 type2 ... ]
-  ##[DOWNLOADED]
-  ##ARCHIVE_FILE filename2
-  #)
-
-#CPACK_ADD_COMPONENT(fbdev
-  #DISPLAY_NAME "FreeBASIC headers"
-  #DESCRIPTION "The header files for development using FreeBASIC compiler."
-  #DISABLED
-  #DEPENDS bin
-  #GROUP ddev
-  ##[INSTALL_TYPES type1 type2 ... ]
-  ##[DOWNLOADED]
-  ##ARCHIVE_FILE filename3
-  #)
+INCLUDE(CPack)

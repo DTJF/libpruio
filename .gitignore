@@ -1,7 +1,7 @@
 $ cat .gitignore
 
 # Can ignore specific files
-pruio.geany
+*.geany
 Makefile
 CMakeCache.txt
 cmake_install.cmake
@@ -36,9 +36,9 @@ src/config/*.dtbo
 *.deb
 CMakeCache*
 CPack*
-build/**/*
 
 # Can also ignore all directories and files in a directory.
+build/**/*
 CMakeFiles/**/*
 doxy/CMakeFiles/**/*
 doxy/html/**/*

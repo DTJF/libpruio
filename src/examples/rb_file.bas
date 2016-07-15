@@ -8,7 +8,7 @@ as raw data to some files.
 
 Licence: GPLv3
 
-Copyright 2014-2015 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all rb_file.bas`
 
@@ -45,7 +45,7 @@ WITH *io
     IF half > tInd THEN half = tInd  '        adapt size for small files
     VAR samp = (half SHL 1) \ NoStep '*< The number of samples (per step).
 
-    IF .config(samp, mask, tmr, 0) THEN _ '                configure driver
+    IF .config(samp, mask, tmr, 0) THEN _ '             configure driver
                                    ?"config failed: " & *.Errr : EXIT DO
 
     IF .rb_start() THEN _ '                       start ring buffer mode
@@ -88,6 +88,6 @@ END WITH
 
 DELETE(io)
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); AdcUddt::setStep(); PruIo::config(); PruIo::~PruIo();}

@@ -1,7 +1,8 @@
 /'* \file pruio_gpio.bas
 \brief The GPIO component source code.
 
-Source code file containing the function bodies of the GPIO component.
+Source code file containing the function bodies of the class GpioUdt
+(GPIO components).
 
 \since 0.2
 '/
@@ -132,7 +133,7 @@ FUNCTION GpioUdt.config CDECL( _
       , m = 1 SHL n           ' mask for bit
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
 
-    VAR x = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
+    VAR x = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
     IF x <> .BallConf[Ball] THEN IF .setPin(Ball, x) THEN         RETURN .Errr
     IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV       THEN         RETURN 0 ' input, we're done
 
@@ -141,6 +142,7 @@ FUNCTION GpioUdt.config CDECL( _
         .OE OR= m
         .CLEARDATAOUT AND= NOT m
         .SETDATAOUT   AND= NOT m
+        m = 0
       ELSE '                                                 output Ball
         .OE AND= NOT m
         IF BIT(Mo, 7) THEN '                                    set high

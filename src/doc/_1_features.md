@@ -215,7 +215,7 @@ default the output is 16 bit encoded (range 0 to 65520).
 
 ## Ring Buffer {#SubSecRB}
 
-In Ring Buffer mode the samples from the ADC subsystem continously get
+In Ring Buffer mode the samples from the ADC subsystem continuously get
 stored in the external memory. The calling software has to make sure
 that only valid values get read.
 

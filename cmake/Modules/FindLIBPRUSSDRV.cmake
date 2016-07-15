@@ -1,4 +1,8 @@
 # - Try to find libprussdrv
+# Copyright (C) 2014-2016, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
+#
+# All rights reserved.
+#
 # Once done this will define
 #  LIBPRUSSDRV_FOUND - System has LibPrussdrv
 #  LIBPRUSSDRV_INCLUDE_DIRS - The LibPrussdrv include directories
