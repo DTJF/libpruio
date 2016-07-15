@@ -144,6 +144,6 @@ END WITH
 
 DELETE io
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); GpioUdt::config(); AdcUdt::setStep(); PruIo::config(); AdcUdt::mm_trg_pin(); AdcUdt::mm_trg_ain(); AdcUdt::mm_trg_pre(); PruIo::~PruIo();}

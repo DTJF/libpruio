@@ -24,7 +24,8 @@ Compile by: `fbc -w all pwm_cap.bas`
 #INCLUDE ONCE "../pruio/pruio_pins.bi"
 
 '* The pin for PWM output.
-#DEFINE P_OUT P9_21
+'#DEFINE P_OUT P9_21
+#DEFINE P_OUT P8_09
 '* The pin for CAP input.
 #DEFINE P_IN P9_42
 
@@ -91,6 +92,6 @@ END WITH
 
 DELETE(io)
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); CapMod::config(); PruIo::config(); CapMod::Value(); PwmMod::setValue(); PruIo::~PruIo();}

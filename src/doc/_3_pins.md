@@ -99,7 +99,7 @@ one of up to seven alternative modes, see \ref SecPinConfig for further
 information. The matrix of the possible connections is hard-coded in
 the CPU logic. Find the subset of the Beaglebone headers described in
 the \BbbRef{7}. Or find the complete description in the CPU
-dokumentation \MpuRef{2.2} .
+documentation \MpuRef{2.2} .
 
 Before a digital header pin gets used, \Proj checks its mode. When the
 current setting matches the required feature, \Proj just continues and

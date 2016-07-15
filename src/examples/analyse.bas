@@ -57,6 +57,6 @@ END WITH
 
 DELETE io '                    reset ADC, PinMux and GPIOs, clear memory
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); PruIo::~PruIo();}

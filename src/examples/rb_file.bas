@@ -88,6 +88,6 @@ END WITH
 
 DELETE(io)
 
-'' help Doxygen to dokument the main code
+'' help Doxygen to document the main code
 '&/** The main function. */
 '&int main() {PruIo::PruIo(); AdcUddt::setStep(); PruIo::config(); PruIo::~PruIo();}
