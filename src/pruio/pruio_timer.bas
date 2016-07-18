@@ -96,16 +96,16 @@ END FUNCTION
 
 /'* \brief Configure timer output.
 \param Ball The header pin to configure.
-\param Freq The frequency to set (or -1 for no change).
-\param Mode The modus to set (defaults to 1 = one cycle positive pulse).
+\param Dut1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dut2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
 \returns Zero on success, an error string otherwise.
 
 This function sets timer output on a header pin (P8_07, P8_08, P8_09 or
-P8_10). The output pulse train can be either
+P8_10). The output can be either
 
-- a positive impulse of a given number of cycles (output starts low)
-- a toggling of the output, or
-- a negative impulse of a given number of cycles (output starts high)
+- a low state for the `Dur1` period of time, then high state fur `Dur2`, then low again endless.
+- a high state for the `Dur1` period of time, then low state fur `Dur2`, then high again endless.
 
 Parameter `Ball` specifies the header pin to use. \Proj will check it's
 configuration and adapt it, if necessary and possible. If unpossible an
@@ -114,22 +114,16 @@ error message gets returned.
 \note This function always starts a new timer period (and breaks the
       current).
 
-Parameter `Freq` specifies the frequency of the timer output in [Hz].
-Due to hardware limitations, the allowed range is 1.0914e-5 <= Freq <=
-12e6 (1 Day > period >= 83 ns).
+Parameter `Dut1` specifies the time period of the start state in
+milleseconds. Parameter `Dut2` specifies the time period of the state
+change in milleseconds.
+
+\note Due to hardware limitations, the allowed range for the summ of
+      both `Dut?` periods is 12e-6 <= Dut1 <= 45812 (12MHz > period >=
+      ~0.5 Day).
 
 \note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
       CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
-
-Parameter `Mode` specifies the form of the generated output. A positive
-value specifies a pulse train starting in low state and after the given
-period of time the output gets high for the number of cycles specified
-by `Mode` parameter, before the next period starts. A negative value
-starts output in high state and the pulse is low for the absolute value
-of the parameter `Mode` (ie. a value of -3 sets 3 cycles low state). A
-value of 0 (zero) stops the timer. Depending on the previous state, the
-output is either low when `Mode` was > 0 and high when `Mode` was < 0
-before.
 
 \note The pulse length is always a multiple of the hardware timer
       counter period. In order to get low frequencies, the counter gets
@@ -138,22 +132,28 @@ before.
       pulse is between 83 ns and 21248 ns. Find further details in
       \ArmRef{20}.
 
+Parameter `Mode` is a bitmaks that specifies the form of the generated
+output. It can either be low state with high pulse (default), or hight
+state with low pulse (bit PRUIO_TIMER_INVERS set)- Then timer pins send
+a single pulse and then returns to the initial state, endless. In
+contrast the sequence can get repeated again and again when bit
+PRUIO_TIMER_CONTINUE is set.
+
 \since 0.4
 '/
 FUNCTION TimerUdt.setValue CDECL( _
     BYVAL Ball AS UInt8 _
-  , BYVAL Freq AS Float_t _
-  , BYVAL Mode AS short = 1) AS ZSTRING PTR
+  , BYVAL Dur1 AS Float_t _
+  , BYVAL Dur2 AS Float_t = 0. _
+  , BYVAL Mode AS short = 0) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
-    f_min = TMRSS_CLK / &hFFFFFFFF00uLL _'' minimal frequency
-  , f_max = TMRSS_CLK / &h10 ''             maximal frequency
+    d_min =              &h4 / TMRSS_CLK _ '' minimal durarion
+  , d_max = &h10000000000uLL / TMRSS_CLK   '' maximal duration
   STATIC AS UInt32 _
-         pre = 0 _
-        , nr = 0 _
-         , r = 0 _
-         , m = 0 _
-  , cnt(...) = {0, 0, 0, 0}  '' initial timer periods
+     pru_cmd = 0 _
+       , pre = 0 _
+        , nr = 0
 
   WITH *Top
     SELECT CASE AS CONST Ball
@@ -167,42 +167,57 @@ FUNCTION TimerUdt.setValue CDECL( _
     IF 2 <> Conf(nr)->ClVa THEN                    .Errr = E0 : RETURN .Errr ' TIMER not enabled
     IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
-    IF Freq < 0. THEN
-      IF 0 = cnt(nr) THEN                    .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
-      pre = Conf(Nr)->TCLR AND &b111100
+    IF Dur1 <= 0. THEN ' switch off
+      Conf(nr)->TCLR = IIF(BIT(Mode, 1), TimHigh, Tim_Low)
+      pru_cmd = PRUIO_COM_TIM_PWM
     ELSE
-      IF Freq < f_min ORELSE _
-         Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
-      VAR x = CULNGINT(TMRSS_CLK / Freq)
+      VAR dur = Dur1 + Dur2
+      IF dur < d_min ORELSE _
+         dur > d_max THEN                    .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+
+      VAR x = CULNGINT(dur * TMRSS_CLK)
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
-      CASE   0        : pre = 0        : cnt(Nr) = x
-      CASE   1        : pre = &b100000 : cnt(nr) = x SHR 1
-      CASE   2 to   3 : pre = &b100100 : cnt(nr) = x SHR 2
-      CASE   4 to   7 : pre = &b101000 : cnt(nr) = x SHR 3
-      CASE   8 to  15 : pre = &b101100 : cnt(nr) = x SHR 4
-      CASE  16 to  31 : pre = &b110000 : cnt(nr) = x SHR 5
-      CASE  32 to  63 : pre = &b110100 : cnt(nr) = x SHR 6
-      CASE  64 to 127 : pre = &b111000 : cnt(nr) = x SHR 7
-      CASE 128 to 255 : pre = &b111100 : cnt(nr) = x SHR 8
+      CASE   0        : pre = 0
+      CASE   1        : pre = &b100000 : x SHR= 1
+      CASE   2 to   3 : pre = &b100100 : x SHR= 2
+      CASE   4 to   7 : pre = &b101000 : x SHR= 3
+      CASE   8 to  15 : pre = &b101100 : x SHR= 4
+      CASE  16 to  31 : pre = &b110000 : x SHR= 5
+      CASE  32 to  63 : pre = &b110100 : x SHR= 6
+      CASE  64 to 127 : pre = &b111000 : x SHR= 7
+      CASE 128 to 255 : pre = &b111100 : x SHR= 8
       CASE ELSE :                            .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
       END SELECT
-      Conf(nr)->TLDR = &hFFFFFFFFuL - cnt(nr)
+
+      IF Dur2 <= 0. THEN
+        Conf(nr)->TCLR = TimMode
+        pru_cmd = PRUIO_COM_TIM_PWM
+        Conf(nr)->TCRR = &hFFFFFFFFuL - x
+      ELSE
+        Conf(nr)->TCLR = PwmMode
+        pru_cmd = PRUIO_COM_TIM_PWM
+        Conf(nr)->TLDR = &hFFFFFFFFuL - x
+
+        var y = CULNG(x * Dur2 / dur)
+        SELECT CASE y
+        CASE IS < 2     : Conf(nr)->TMAR =   &hFFFFFFFFuL - 2
+        CASE IS > x - 1 : Conf(nr)->TMAR = Conf(nr)->TLDR + 2
+        CASE ELSE       : Conf(nr)->TMAR = Conf(nr)->TLDR + y
+        END SELECT
+        Conf(nr)->TCRR = Conf(nr)->TMAR
+      END IF
+      Conf(nr)->TCLR OR= pre _
+                      OR IIF(BIT(Mode, 0), &b10, 0) _
+                      OR IIF(BIT(Mode, 1), &b10000000, 0)
     END IF
 
-    r = PwmMode OR pre
-    SELECT CASE Mode
-    CASE 0
-      r = iif(bit(m, nr), TimHigh, Tim_Low)
-    CASE IS > 0
-      m = bitreset(m, nr)
-      Conf(nr)->TMAR = Conf(nr)->TLDR + iif(1 + Mode < cnt(nr), Mode, cnt(Nr) - 1)
-      Conf(nr)->TCRR = Conf(nr)->TMAR
-    CASE ELSE
-      m = bitset(m, nr)
-      Conf(nr)->TMAR =   &hFFFFFFFFuL - iif(1 - Mode < cnt(nr), Mode, cnt(Nr) - 1)
-      Conf(nr)->TCRR =   &hFFFFFFFFuL
-    END SELECT
-    Conf(nr)->TCLR = r
+?"2: "; _
+    , HEX(Conf(nr)->TCRR) _
+    , HEX(Conf(nr)->TMAR) _
+    , HEX(Conf(nr)->TLDR) _
+    , HEX(Conf(nr)->DeAd) _
+    , BIN(Conf(nr)->TCLR AND &hFFFFFF) _
+    , pru_cmd
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
@@ -211,7 +226,7 @@ FUNCTION TimerUdt.setValue CDECL( _
     .DRam[4] = Conf(nr)->TMAR
     .DRam[3] = Conf(nr)->TLDR
     .DRam[2] = Conf(nr)->DeAd
-    .DRam[1] = r OR (PRUIO_COM_TIM_PWM SHL 24)
+    .DRam[1] = Conf(nr)->TCLR OR (pru_cmd SHL 24)
   END WITH :                                                    RETURN 0
 END FUNCTION
 
@@ -241,7 +256,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
 
   STATIC AS CONST Float_t _
     f_min = TMRSS_CLK / &hFFFFFFFF00uLL _'' minimal frequency
-  , f_max = TMRSS_CLK / &h10 ''             maximal frequency
+  , f_max = TMRSS_CLK / &h4 ''              maximal frequency
   STATIC AS UInt32 _
          pre = 0 _
          , r = 0 _
@@ -257,17 +272,17 @@ FUNCTION TimerUdt.pwm_set CDECL( _
     ELSE
       IF Freq < f_min ORELSE _
          Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
-      VAR x = CULNGINT(TMRSS_CLK / Freq)
+      VAR x = CULNGINT(TMRSS_CLK / Freq) - 1
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
-      CASE   0        : pre = 0        : cnt(Nr) = x
-      CASE   1        : pre = &b100000 : cnt(Nr) = x SHR 1
-      CASE   2 to   3 : pre = &b100100 : cnt(Nr) = x SHR 2
-      CASE   4 to   7 : pre = &b101000 : cnt(Nr) = x SHR 3
-      CASE   8 to  15 : pre = &b101100 : cnt(Nr) = x SHR 4
-      CASE  16 to  31 : pre = &b110000 : cnt(Nr) = x SHR 5
-      CASE  32 to  63 : pre = &b110100 : cnt(Nr) = x SHR 6
-      CASE  64 to 127 : pre = &b111000 : cnt(Nr) = x SHR 7
-      CASE 128 to 255 : pre = &b111100 : cnt(Nr) = x SHR 8
+      CASE   0        : cnt(Nr) = x       : pre = 0
+      CASE   1        : cnt(Nr) = x SHR 1 : pre = &b100000
+      CASE   2 TO   3 : cnt(Nr) = x SHR 2 : pre = &b100100
+      CASE   4 TO   7 : cnt(Nr) = x SHR 3 : pre = &b101000
+      CASE   8 TO  15 : cnt(Nr) = x SHR 4 : pre = &b101100
+      CASE  16 TO  31 : cnt(Nr) = x SHR 5 : pre = &b110000
+      CASE  32 TO  63 : cnt(Nr) = x SHR 6 : pre = &b110100
+      CASE  64 TO 127 : cnt(Nr) = x SHR 7 : pre = &b111000
+      CASE 128 TO 255 : cnt(Nr) = x SHR 8 : pre = &b111100
       CASE ELSE :                            .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
       END SELECT
       Conf(Nr)->TLDR = &hFFFFFFFFuL - cnt(Nr)
@@ -275,10 +290,10 @@ FUNCTION TimerUdt.pwm_set CDECL( _
 
     r = PwmMode OR pre
     IF Duty >= 0. THEN
-      cmp(Nr) = IIF(Duty >= 1., cnt(Nr), CUINT(cnt(Nr) * Duty))
+      cmp(Nr) = IIF(Duty >= 1., cnt(Nr), CUINT(cnt(Nr) * Duty)) - 1
       SELECT CASE cmp(Nr)
-      CASE is >= cnt(Nr) - 1 : r = PwmHigh
-      CASE is <=           1 : r = Pwm_Low
+      CASE IS <=           1 : r = Pwm_Low
+      CASE IS >= cnt(Nr) - 1 : r = PwmHigh
       CASE ELSE : Conf(Nr)->TMAR = Conf(Nr)->TLDR + cmp(Nr)
       END SELECT
     END IF
@@ -325,14 +340,14 @@ FUNCTION TimerUdt.pwm_get CDECL( _
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN Top->Errr = E0   /' TIMER disabled '/ : RETURN E0
 
-    VAR cnt = &hFFFFFFFFuLL - .TLDR _
+    VAR cnt = &hFFFFFFFFuLL - .TLDR + 1 _
       , pre = (.TCLR AND &b111100) SHR 2
     SELECT CASE .TCLR
-    CASE &b000000010000011 : IF Duty THEN *Duty = 1.
-    CASE &b000000000000011 : IF Duty THEN *Duty = 0.
+    CASE PwmHigh : IF Duty THEN *Duty = 1.
+    CASE Pwm_Low : IF Duty THEN *Duty = 0.
     CASE ELSE
       IF (PwmMode AND .TCLR) <> PwmMode THEN Top->Errr = E2 :  RETURN E2 ' TIMER not in PWM output mode
-      IF Duty THEN *Duty = cnt / (&hFFFFFFFFuL - .TMAR)
+      IF Duty THEN *Duty = (.TMAR -.TLDR + 1) / cnt
     END SELECT
     IF Freq THEN *Freq = TMRSS_CLK / (cnt SHL IIF(pre, (pre AND &b111) + 1, 0))
   END WITH :                                                    RETURN 0

@@ -122,17 +122,18 @@ TimerDEnd:
 //
 // handle subsystem command in IO mode
 //
-  QBNE TimerCEnd, Comm.b3, PRUIO_COM_TIM_PWM // if no TIMER PWM command -> skip
+  QBLT TimerCEnd, Comm.b3, PRUIO_COM_TIM_PWM // if no TIMER command -> skip
+
   LBCO U2, DRam, 4*2, 4*4  // get parameters (DeAd, TLDR, TMAR, TCCR)
   SBBO U3, U2, 0x40, 4     // write TLDR
   SBBO U4, U2, 0x4C, 4     // write TMAR
 
   QBEQ TimerCSkip, Comm.w0, 0 // if no TCLR reconfiguration -> skip
-  LDI  U3, 0                  // reset value for TCLR
-  SBBO U3, U2, 0x38, 4        // write TCLR (stop timer)
-  SBBO U5, U2, 0x3C, 4        // write TCRR
-  LDI  Comm.b3, 0             // clear command byte
-  SBBO Comm, U2, 0x38, 4      // write new TCLR
+  LDI  U3, 0               // reset value for TCLR
+  SBBO U3, U2, 0x38, 4     // write TCLR (stop timer)
+  SBBO U5, U2, 0x3C, 4     // write TCRR
+  LDI  Comm.w2, 0          // clear command byte
+  SBBO Comm, U2, 0x38, 4   // write new TCLR
 
 TimerCSkip:
   JMP  IoCEnd              // finish command

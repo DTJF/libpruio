@@ -193,6 +193,7 @@ CONSTRUCTOR PruIo( _
   Cap = NEW CapMod(@THIS)
   Qep = NEW QepMod(@THIS)
   '& PwmMod::PwmMod(); CapMod::CapMod(); QepMod::QepMod();
+  Tim = TimSS
 
   prussdrv_pru_wait_event(PRUIO_EVNT)
   IF DRam[0] <> PRUIO_MSG_INIT_OK THEN _

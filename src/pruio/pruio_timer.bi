@@ -79,8 +79,9 @@ TYPE TimerUdt
   AS UInt32 _
     InitParA _            '*< Offset to read data block offset.
   , PwmMode = &b001100001000011 _ '*< Control register for PWM output mode.
-  , PwmHigh = &b000000010000011 _ '*< Control register for PWM output 100%.
-  , Pwm_Low = &b000000000000011 _ '*< Control register for PWM output 0%.
+  , PwmHigh = &b000000010000011 _ '*< Control register for PWM output high (100%).
+  , Pwm_Low = &b000000000000011 _ '*< Control register for PWM output low (0%).
+  , TimMode = &b000000000000001 _ '*< Control register for Timer mode.
   , TimHigh = &b000000010000010 _ '*< Control register for Timer high.
   , Tim_Low = &b000000000000010 _ '*< Control register for Timer low.
   , CapMode = &b010000110000000   '*< Control register for CAP input mode.
@@ -94,7 +95,8 @@ TYPE TimerUdt
   DECLARE FUNCTION setValue CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t _
-  , BYVAL AS SHORT = 1) AS ZSTRING PTR
+  , BYVAL AS Float_t = 0. _
+  , BYVAL AS SHORT = 0) AS ZSTRING PTR
   DECLARE FUNCTION pwm_set CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t _

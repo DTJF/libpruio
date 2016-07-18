@@ -121,6 +121,7 @@ TYPE PruIo
   AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
   AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
   AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
+  AS TimerUdt PTR Tim   '*< Pointer to the TimSS structure (for homogenous API).
 
   AS  UInt32 PTR DRam '*< Pointer to access PRU DRam.
   AS BallSet PTR _
