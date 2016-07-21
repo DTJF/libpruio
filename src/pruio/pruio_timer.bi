@@ -97,6 +97,12 @@ TYPE TimerUdt
   , BYVAL AS Float_t _
   , BYVAL AS Float_t = 0. _
   , BYVAL AS SHORT = 0) AS ZSTRING PTR
+  DECLARE FUNCTION Value CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS SHORT PTR = 0) AS ZSTRING PTR
+
   DECLARE FUNCTION pwm_set CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS Float_t _

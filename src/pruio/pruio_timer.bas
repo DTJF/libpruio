@@ -161,10 +161,16 @@ FUNCTION TimerUdt.setValue CDECL( _
     CASE P8_09 : nr = 1
     CASE P8_10 : nr = 2
     CASE P8_08 : nr = 3
-    CASE ELSE :                                    .Errr = E1 : RETURN .Errr ' no Timer pin
+    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+      RETURN .PwmSS->cap_tim_set(2, Dur1, Dur2, Mode)
+    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+      RETURN .PwmSS->cap_tim_set(1, Dur1, Dur2, Mode)
+    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
+      RETURN .PwmSS->cap_tim_set(0, Dur1, Dur2, Mode)
+    CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
     END SELECT
 
-    IF 2 <> Conf(nr)->ClVa THEN                    .Errr = E0 : RETURN .Errr ' TIMER not enabled
+    IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
     IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
     IF Dur1 <= 0. THEN ' switch off
@@ -173,7 +179,7 @@ FUNCTION TimerUdt.setValue CDECL( _
     ELSE
       VAR dur = Dur1 + Dur2
       IF dur < d_min ORELSE _
-         dur > d_max THEN                    .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+         dur > d_max THEN              .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
 
       VAR x = CULNGINT(dur * TMRSS_CLK)
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
@@ -186,7 +192,7 @@ FUNCTION TimerUdt.setValue CDECL( _
       CASE  32 to  63 : pre = &b110100 : x SHR= 6
       CASE  64 to 127 : pre = &b111000 : x SHR= 7
       CASE 128 to 255 : pre = &b111100 : x SHR= 8
-      CASE ELSE :                            .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+      CASE ELSE :                      .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
       END SELECT
 
       IF Dur2 <= 0. THEN
@@ -211,13 +217,13 @@ FUNCTION TimerUdt.setValue CDECL( _
                       OR IIF(BIT(Mode, 1), &b10000000, 0)
     END IF
 
-?"2: "; _
-    , HEX(Conf(nr)->TCRR) _
-    , HEX(Conf(nr)->TMAR) _
-    , HEX(Conf(nr)->TLDR) _
-    , HEX(Conf(nr)->DeAd) _
-    , BIN(Conf(nr)->TCLR AND &hFFFFFF) _
-    , pru_cmd
+'?"2: "; _
+    ', HEX(Conf(nr)->TCRR) _
+    ', HEX(Conf(nr)->TMAR) _
+    ', HEX(Conf(nr)->TLDR) _
+    ', HEX(Conf(nr)->DeAd) _
+    ', BIN(Conf(nr)->TCLR AND &hFFFFFF) _
+    ', pru_cmd
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
@@ -227,6 +233,52 @@ FUNCTION TimerUdt.setValue CDECL( _
     .DRam[3] = Conf(nr)->TLDR
     .DRam[2] = Conf(nr)->DeAd
     .DRam[1] = Conf(nr)->TCLR OR (pru_cmd SHL 24)
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+/'* \brief Compute timer output.
+\param Ball The header pin to configure.
+\param Dut1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dut2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
+\returns Zero on success, an error string otherwise.
+
+This function computes the timer output ???
+
+\since 0.4
+'/
+FUNCTION TimerUdt.Value CDECL( _
+    BYVAL Ball AS UInt8 _
+  , BYVAL Dur1 AS Float_t PTR = 0 _
+  , BYVAL Dur2 AS Float_t PTR = 0 _
+  , BYVAL Mode AS SHORT PTR = 0) AS ZSTRING PTR
+
+  dim as Uint32 nr
+  DIM AS ZSTRING PTR e
+  WITH *Top
+    SELECT CASE AS CONST Ball
+    CASE P8_07 : nr = 0
+    CASE P8_09 : nr = 1
+    CASE P8_10 : nr = 2
+    CASE P8_08 : nr = 3
+    CASE P9_28 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_tim_get(2, Dur1, Dur2, Mode))
+    CASE JT_05 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_tim_get(1, Dur1, Dur2, Mode))
+    CASE P9_42 : e = IIF(ModeCheck(Ball,0), .PwmSS->E3, .PwmSS->cap_tim_get(0, Dur1, Dur2, Mode))
+    CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
+    END SELECT
+
+    IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
+  END WITH
+
+  WITH *Conf(Nr)
+    'IF 0 = BIT(.TCLR, 9) THEN               Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
+    VAR dur = (&hFFFFFFFF - .TLDR) / TMRSS_CLK _
+      , d_2 = (&hFFFFFFFF - .TMAR) / TMRSS_CLK
+    IF Dur1 THEN *Dur1 = dur - d_2
+    IF Dur2 THEN *Dur2 = d_2
+    IF Mode THEN *Mode = iif(bit(.TCLR, 1), &b01, 0) _
+                      OR iif(bit(.TCLR, 7), &b10, 0)
   END WITH :                                                    RETURN 0
 END FUNCTION
 
@@ -264,14 +316,14 @@ FUNCTION TimerUdt.pwm_set CDECL( _
   , cmp(...) = {0, 0, 0, 0}    '' initial timer match values
 
   WITH *Top
-    IF 2 <> Conf(Nr)->ClVa THEN                    .Errr = E0 : RETURN .Errr ' TIMER not enabled
+    IF 2 <> Conf(Nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
 
     IF Freq < 0. THEN
-      IF 0 = cnt(Nr) THEN                    .Errr = .Pwm->E3 : RETURN .Errr ' set frequency first
+      IF 0 = cnt(Nr) THEN              .Errr = .PwmSS->E1 : RETURN .Errr ' set frequency first
       pre = Conf(Nr)->TCLR AND &b111100
     ELSE
       IF Freq < f_min ORELSE _
-         Freq > f_max THEN                   .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+         Freq > f_max THEN             .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
       VAR x = CULNGINT(TMRSS_CLK / Freq) - 1
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
       CASE   0        : cnt(Nr) = x       : pre = 0
@@ -283,7 +335,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
       CASE  32 TO  63 : cnt(Nr) = x SHR 6 : pre = &b110100
       CASE  64 TO 127 : cnt(Nr) = x SHR 7 : pre = &b111000
       CASE 128 TO 255 : cnt(Nr) = x SHR 8 : pre = &b111100
-      CASE ELSE :                            .Errr = .Pwm->E4 : RETURN .Errr ' frequency not supported
+      CASE ELSE :                      .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
       END SELECT
       Conf(Nr)->TLDR = &hFFFFFFFFuL - cnt(Nr)
     END IF

@@ -98,6 +98,336 @@ FUNCTION PwmssUdt.initialize CDECL() AS ZSTRING PTR
 END FUNCTION
 
 
+/'* \brief Compute PWM output configuration from an eCAP module (private).
+\param Nr The PWMSS subsystem index.
+\param Freq A pointer to output the frequency value (or 0 for no output).
+\param Duty A pointer to output the duty value (or 0 for no output).
+\returns Zero on success, an error string otherwise.
+
+This private functions computes the real PWM configuration of an eCAP
+module. It's designed to get called from function PwmMod::Value().
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.cap_pwm_get CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL Freq AS Float_t PTR = 0 _
+  , BYVAL Duty AS Float_t PTR = 0) AS ZSTRING PTR
+
+  WITH *Conf(Nr)
+    IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWM not enabled
+    IF 0 = BIT(.ECCTL2, 9) THEN               Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
+    IF Freq THEN *Freq = PWMSS_CLK / .CAP1
+    IF Duty THEN *Duty = .CAP2 / .CAP1
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+/'* \brief Configure PWM output at an eCAP module (private).
+\param Nr The PWMSS subsystem index.
+\param F The frequency to set (or -1 for no change).
+\param D The duty cycle for output A (0.0 to 1.0, or -1 for no change).
+\returns Zero on success, an error string otherwise.
+
+This functions configures an eCAP module for PWM output. It sets the
+frequency and the duty cycle. Only positive values in these parameters
+force a change. Pass a negative value to stay with the current setting.
+A duty parameters greater than 1.0 gets limited to 1.0 (= 100%).
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.cap_pwm_set CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL F AS Float_t _
+  , BYVAL D AS Float_t = 0.) AS ZSTRING PTR
+
+  STATIC AS CONST Float_t _
+    f_min = PWMSS_CLK / &hFFFFFFFFuL '' minimal frequency
+  STATIC AS UInt32 _
+    cnt(...) = {0, 0, 0} _  '' initial module periods
+  , cmp(...) = {0, 0, 0}    '' initial module compares
+
+  WITH *Top
+    VAR r = 0
+    IF 2 <> Conf(Nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' PWMSS not enabled
+    IF 0 = cnt(Nr) ANDALSO _
+      F <= 0. THEN                                .Errr = E1 : RETURN E1 ' set frequency first
+    IF F > 0. THEN
+      IF F < f_min ORELSE _
+         F > PWMSS_CLK_2 THEN                     .Errr = E2 : RETURN E2 ' frequency not supported
+     cnt(Nr) = CUINT(PWMSS_CLK / F)
+    END IF
+    IF D >= 0 THEN cmp(Nr) = IIF(D > 1., cnt(Nr), CUINT(cnt(Nr) * D))
+
+    Conf(Nr)->CAP1 = cnt(Nr)
+    Conf(Nr)->CAP2 = cmp(Nr)
+    IF Conf(Nr)->ECCTL2 <> PwmMode THEN
+      Conf(Nr)->ECCTL2 = PwmMode
+      Raw(Nr)->CMax = 0
+      r = PwmMode
+    END IF
+
+    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
+
+    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    .DRam[4] = cmp(Nr)
+    .DRam[3] = cnt(Nr)
+    .DRam[2] = .PwmSS->Conf(Nr)->DeAd + &h100
+    .DRam[1] = r OR (PRUIO_COM_CAP_PWM SHL 24)
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+/'* \brief Compute Timer output configuration from an eCAP module (private).
+\param Nr The PWMSS subsystem index.
+\param Freq A pointer to output the frequency value (or 0 for no output).
+\param Duty A pointer to output the duty value (or 0 for no output).
+\returns Zero on success, an error string otherwise.
+
+This private functions computes the real PWM configuration of an eCAP
+module. It's designed to get called from function PwmMod::Value().
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.cap_tim_get CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL Dur1 AS Float_t PTR = 0 _
+  , BYVAL Dur2 AS Float_t PTR = 0 _
+  , BYVAL Mode AS SHORT PTR = 0) AS ZSTRING PTR
+
+  WITH *Conf(Nr)
+    IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
+    IF 0 = BIT(.ECCTL2, 9) THEN               Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
+    VAR dur = .CAP1 / PWMSS_CLK _
+      , d_2 = .CAP2 / PWMSS_CLK
+    IF Dur1 THEN *Dur1 = dur - d_2
+    IF Dur2 THEN *Dur2 = d_2
+    IF Mode THEN *Mode = iif(bit(.ECCTL2, 1), 1, 0) _
+                      OR iif(bit(.ECCTL2, 7), 2, 0) '???
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+/'* \brief Configure PWM output at an eCAP module (private).
+\param Nr The PWMSS subsystem index.
+\param F The frequency to set (or -1 for no change).
+\param D The duty cycle for output A (0.0 to 1.0, or -1 for no change).
+\returns Zero on success, an error string otherwise.
+
+This functions configures an eCAP module for PWM output. It sets the
+frequency and the duty cycle. Only positive values in these parameters
+force a change. Pass a negative value to stay with the current setting.
+A duty parameters greater than 1.0 gets limited to 1.0 (= 100%).
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.cap_tim_set CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL Dur1 AS Float_t _
+  , BYVAL Dur2 AS Float_t _
+  , BYVAL Mode AS SHORT) AS ZSTRING PTR
+
+  STATIC AS CONST Float_t _
+    d_min =            &h2 / PWMSS_CLK _ '' minimal durarion
+  , d_max = &h100000000uLL / PWMSS_CLK   '' maximal duration
+
+  VAR dur = Dur1 + Dur2
+  WITH *Top
+    IF 2 <> Conf(Nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' PWMSS not enabled
+
+    IF dur < d_min ORELSE _
+       dur > d_max THEN                           .Errr = E2 : RETURN E2 ' frequency not supported
+  END WITH
+
+  WITH *Conf(Nr)
+    .CAP1 = CULNG(dur * PWMSS_CLK)
+    IF Dur1 <= 0. THEN ' switch off
+      .CAP2 = IIF(BIT(Mode, 1), .CAP1, 0)
+    ELSE
+      .CAP2 = IIF(Dur2 > 0., CULNG(Dur2 / dur * PWMSS_CLK), 1uL)
+    END IF
+
+    .ECCTL2 = PwmMode
+    Raw(Nr)->CMax = 0
+
+    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
+
+    WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
+    Top->DRam[4] = .CAP2
+    Top->DRam[3] = .CAP1
+    Top->DRam[2] = .DeAd + &h100
+    Top->DRam[1] = .ECCTL2 OR (PRUIO_COM_CAP_PWM SHL 24)
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+/'* \brief Compute PWM output configuration from an eHRPWM module (private).
+\param Nr The PWMSS subsystem index.
+\param F A pointer to output the frequency value (or 0 for no output).
+\param Du A pointer to output the duty value (or 0 for no output).
+\param Mo The output channel (0 = A, otherwise B).
+\returns Zero on success, an error string otherwise.
+
+This private functions computes the real configuration of an eHRPWM
+module. It's designed to get called from function PwmMod::Value().
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.pwm_pwm_get CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL F AS Float_t PTR = 0 _
+  , BYVAL Du AS Float_t PTR = 0  _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+
+  WITH *Conf(Nr)
+    IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
+    VAR p = CAST(UInt32, .TBPRD)
+    IF F THEN
+      VAR d1 = (.TBCTL SHR 7) AND &b111, d2 = (.TBCTL SHR 10) AND &b111
+      VAR cg = p * IIF(d1, d1 SHL 1, 1) * (1 SHL d2)
+      *F = PWMSS_CLK / IIF(BIT(.TBCTL, 1), cg SHL 1, cg + 1)
+    END IF
+    IF Du THEN
+      VAR c = CAST(UInt32, IIF(Mo, .CMPB, .CMPA))
+      IF BIT(.TBCTL, 1) THEN '                             count up-down
+        p SHL= 1
+        IF IIF(Mo, .AQCTLB, .AQCTLA) AND &b010001000000 THEN c = p - c
+      ELSE '                                                    count up
+        p += 1
+      END IF
+      *Du = c / p
+    END IF
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
+
+/'* \brief Configure PWM output at a eHRPWM module (private).
+\param Nr The PWMSS subsystem index.
+\param F The frequency to set (or -1 for no change).
+\param Da The duty cycle for output A (0.0 to 1.0, or -1 for no change).
+\param Db The duty cycle for output B (0.0 to 1.0, or -1 for no change).
+\returns Zero on success, an error string otherwise.
+
+This private function configures an eHRPWM module. It sets the common
+frequency and both output duties A and B. Only positive values in these
+parameters force a change. Pass a negative value to stay with the
+current setting. Duty parameters (*Da* and *Db*) greater than 1.0 get
+limited to 1.0 (= 100%).
+
+\note This is a private function designed for internal use. It doesn't
+      check the validity of the *Nr* parameter. Values greater than
+      PRUIO_AZ_GPIO may result in wired behaviour.
+
+\since 0.2
+'/
+FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
+    BYVAL Nr AS UInt8 _
+  , BYVAL F AS Float_t _
+  , BYVAL Da AS Float_t = 0. _
+  , BYVAL Db AS Float_t = 0.) AS ZSTRING PTR
+
+  STATIC AS CONST Float_t _
+    f_min = PWMSS_CLK_2 / &h6FFF900   '' minimal frequency (128 * 14 * 65535)
+  STATIC AS Float_t _
+   freq(...) = {0., 0., 0.} _ ' module frequencies
+  , d_a(...) = {0., 0., 0.} _ ' module duty A
+  , d_b(...) = {0., 0., 0.}   ' module duty B
+  STATIC AS UInt16 _
+    cnt(...) = {0, 0, 0} _ ' module periods
+  , c_a(...) = {0, 0, 0} _ ' module counters A
+  , c_b(...) = {0, 0, 0}   ' module counters B
+
+  VAR ctl = 0
+  WITH *Conf(Nr)
+    IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
+    IF 0 = cnt(Nr) THEN
+      IF F <= 0. THEN                         Top->Errr = E1 : RETURN E1 ' set frequency first
+    ELSE
+      IF F > 0. ANDALSO freq(Nr) <> F THEN cnt(Nr) = 0
+    END IF
+
+    IF 0 = cnt(Nr) THEN '                    calc new period (frequency)
+      VAR cycle = IIF(F > f_min ANDALSO F <= PWMSS_CLK_2, CUINT(.5 + PWMSS_CLK / F), 0uL)
+      IF 2 > cycle THEN          Top->Errr = Top->PwmSS->E2 : RETURN Top->Errr ' frequency not supported
+
+      freq(Nr) = ABS(F)
+      IF cycle <= &h10000 ANDALSO 0 = BIT(Top->Pwm->ForceUpDown, Nr) THEN ' count up mode
+        cnt(Nr) = cycle - 1
+      ELSEIF cycle < &h20000 THEN '        no divisor count up-down mode
+        cnt(Nr) = cycle SHR 1
+        ctl = 2
+      ELSE '                                  divisor count up-down mode
+        VAR fac = cycle SHR 17 _
+           , x1 = 1 + CINT(INT(LOG(fac / 14) / LOG(2)))
+        IF x1 < 0 THEN x1 = 0
+        VAR x2 = (fac SHR x1) \ 2 + 1
+        cnt(Nr) = CUINT(.5 + PWMSS_CLK_2 / F / (IIF(x2, x2 SHL 1, 1) SHL x1))
+        ctl = 2 + x2 SHL 7 + x1 SHL 10 ' clock divisor
+      END IF
+      ctl OR= (3 SHL 14) + (Top->Pwm->Cntrl(Nr) AND &b0010000001111100)
+      .TBCTL = ctl
+      .TBPRD = cnt(Nr)
+      .TBCNT = 0
+      c_a(Nr) = 0
+      c_b(Nr) = 0
+    END IF
+
+    IF Da >= 0. THEN d_a(Nr) = IIF(Da > 1., 1., Da) : c_a(Nr) = 0
+    IF 0 = c_a(Nr) THEN '                     calc new duty for A output
+      IF BIT(.TBCTL, 1) ORELSE BIT(Top->Pwm->ForceUpDown, Nr) THEN 'up-down mode
+        IF d_a(Nr) >= .5 _
+          THEN .AQCTLA = Top->Pwm->AqCtl(0, Nr, 2) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
+          ELSE .AQCTLA = Top->Pwm->AqCtl(0, Nr, 1) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
+      ELSE '                                                        up mode
+               .AQCTLA = Top->Pwm->AqCtl(0, Nr, 0) : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
+      END IF
+      .CMPA = c_a(Nr)
+    END IF
+
+    IF Db >= 0. THEN d_b(Nr) = IIF(Db > 1., 1., Db) : c_b(Nr) = 0
+    IF 0 = c_b(Nr) THEN '                     calc new duty for B output
+      IF BIT(.TBCTL, 1) ORELSE BIT(Top->Pwm->ForceUpDown, Nr) THEN ' up-down mode
+        IF d_b(Nr) >= .5 _
+          THEN .AQCTLB = Top->Pwm->AqCtl(1, Nr, 2) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
+          ELSE .AQCTLB = Top->Pwm->AqCtl(1, Nr, 1) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
+      ELSE '                                                         up mode
+               .AQCTLB = Top->Pwm->AqCtl(1, Nr, 0) : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
+      END IF
+      .CMPB = c_b(Nr)
+    END IF
+    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
+
+    WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
+    Top->DRam[5] = .TBCNT + .TBPRD SHL 16
+    Top->DRam[4] = .AQCTLA + .AQCTLB SHL 16
+    Top->DRam[3] = .CMPA + .CMPB SHL 16
+    Top->DRam[2] = .DeAd + &h200
+    Top->DRam[1] = IIF(ctl, ctl, 0) + PRUIO_COM_PWM SHL 24
+  END WITH :                                                    RETURN 0
+END FUNCTION
+
+
 /'* \brief The constructor for PWM features of the PWMSS.
 \param T A pointer of the calling PruIo structure.
 
@@ -138,27 +468,27 @@ FUNCTION PwmMod.Value CDECL( _
   WITH *Top
     DIM AS ZSTRING PTR e
     SELECT CASE AS CONST Ball
-    CASE P8_07 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(0, Hz, Du))
-    CASE P8_09 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(1, Hz, Du))
-    CASE P8_10 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(2, Hz, Du))
-    CASE P8_08 : e = IIF(ModeCheck(Ball,2), E1, .TimSS->pwm_get(3, Hz, Du))
-    CASE P8_13 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 1))
-    CASE P8_19 : e = IIF(ModeCheck(Ball,4), E1, pwm_get(2, Hz, Du, 0))
-    CASE P8_34 : e = IIF(ModeCheck(Ball,2), E1, pwm_get(1, Hz, Du, 1))
-    CASE P8_36 : e = IIF(ModeCheck(Ball,2), E1, pwm_get(1, Hz, Du, 0))
-    CASE P8_45 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(2, Hz, Du, 1))
-    CASE P8_46 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(2, Hz, Du, 0))
-    CASE P9_14 : e = IIF(ModeCheck(Ball,6), E1, pwm_get(1, Hz, Du, 0))
-    CASE P9_16 : e = IIF(ModeCheck(Ball,6), E1, pwm_get(1, Hz, Du, 1))
-    CASE P9_21 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(0, Hz, Du, 1))
-    CASE P9_22 : e = IIF(ModeCheck(Ball,3), E1, pwm_get(0, Hz, Du, 0))
-    CASE P9_29 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 1))
-    CASE P9_31 : e = IIF(ModeCheck(Ball,1), E1, pwm_get(0, Hz, Du, 0))
-    CASE P9_28 : e = IIF(ModeCheck(Ball,4), E1, cap_get(2, Hz, Du))
-    CASE JT_05 : e = IIF(ModeCheck(Ball,4), E1, cap_get(1, Hz, Du))
-    CASE P9_42 : e = IIF(ModeCheck(Ball,0), E1, cap_get(0, Hz, Du))
-    'CASE P8_15 : e = IIF(ModeCheck(Ball,5), E1, pru_cap_get(Hz, Du))
-    CASE ELSE  : e = E0
+    CASE P8_07 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(0, Hz, Du))
+    CASE P8_09 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(1, Hz, Du))
+    CASE P8_10 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(2, Hz, Du))
+    CASE P8_08 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(3, Hz, Du))
+    CASE P8_13 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 1))
+    CASE P8_19 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 0))
+    CASE P8_34 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .PwmSS->pwm_pwm_get(1, Hz, Du, 1))
+    CASE P8_36 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .PwmSS->pwm_pwm_get(1, Hz, Du, 0))
+    CASE P8_45 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 1))
+    CASE P8_46 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 0))
+    CASE P9_14 : e = IIF(ModeCheck(Ball,6), .PwmSS->E3, .PwmSS->pwm_pwm_get(1, Hz, Du, 0))
+    CASE P9_16 : e = IIF(ModeCheck(Ball,6), .PwmSS->E3, .PwmSS->pwm_pwm_get(1, Hz, Du, 1))
+    CASE P9_21 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .PwmSS->pwm_pwm_get(0, Hz, Du, 1))
+    CASE P9_22 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .PwmSS->pwm_pwm_get(0, Hz, Du, 0))
+    CASE P9_29 : e = IIF(ModeCheck(Ball,1), .PwmSS->E3, .PwmSS->pwm_pwm_get(0, Hz, Du, 1))
+    CASE P9_31 : e = IIF(ModeCheck(Ball,1), .PwmSS->E3, .PwmSS->pwm_pwm_get(0, Hz, Du, 0))
+    CASE P9_28 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_pwm_get(2, Hz, Du))
+    CASE JT_05 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_pwm_get(1, Hz, Du))
+    CASE P9_42 : e = IIF(ModeCheck(Ball,0), .PwmSS->E3, .PwmSS->cap_pwm_get(0, Hz, Du))
+    'CASE P8_15 : e = IIF(ModeCheck(Ball,5), .PwmSS->E3, pru_cap_get(Hz, Du))
+    CASE ELSE  : e = .PwmSS->E4
     END SELECT : IF e THEN .Errr = e :                      RETURN .Errr
   END WITH : RETURN 0
 END FUNCTION
@@ -220,282 +550,39 @@ FUNCTION PwmMod.setValue CDECL( _
     CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(3, Hz, Du)
     CASE P8_13 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN pwm_set(2, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(2, Hz, -1., Du)
     CASE P8_19 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN pwm_set(2, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(2, Hz, Du, -1.)
     CASE P8_34 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      RETURN pwm_set(1, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(1, Hz, -1., Du)
     CASE P8_36 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
-      RETURN pwm_set(1, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(1, Hz, Du, -1.)
     CASE P8_45 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN pwm_set(2, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(2, Hz, -1., Du)
     CASE P8_46 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN pwm_set(2, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(2, Hz, Du, -1.)
     CASE P9_14 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
-      RETURN pwm_set(1, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(1, Hz, Du, -1.)
     CASE P9_16 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
-      RETURN pwm_set(1, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(1, Hz, -1., Du)
     CASE P9_21 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN pwm_set(0, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(0, Hz, -1., Du)
     CASE P9_22 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN pwm_set(0, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(0, Hz, Du, -1.)
     CASE P9_29 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
-      RETURN pwm_set(0, Hz, -1., Du)
+      RETURN .PwmSS->pwm_pwm_set(0, Hz, -1., Du)
     CASE P9_31 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
-      RETURN pwm_set(0, Hz, Du, -1.)
+      RETURN .PwmSS->pwm_pwm_set(0, Hz, Du, -1.)
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN cap_set(2, Hz, Du)
+      RETURN .PwmSS->cap_pwm_set(2, Hz, Du)
     CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN cap_set(1, Hz, Du)
+      RETURN .PwmSS->cap_pwm_set(1, Hz, Du)
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
-      RETURN cap_set(0, Hz, Du)
+      RETURN .PwmSS->cap_pwm_set(0, Hz, Du)
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D)
       'RETURN pru_cap_set(Hz, Du)
-    END SELECT :                               .Errr = E0 : RETURN .Errr
+    END SELECT :                       .Errr = .PwmSS->E4 : RETURN .Errr ' pin has no PWM capability
   END WITH
-END FUNCTION
-
-
-/'* \brief Compute PWM output configuration from an eCAP module (private).
-\param Nr The PWMSS subsystem index.
-\param Freq A pointer to output the frequency value (or 0 for no output).
-\param Duty A pointer to output the duty value (or 0 for no output).
-\returns Zero on success, an error string otherwise.
-
-This private functions computes the real PWM configuration of an eCAP
-module. It's designed to get called from function PwmMod::Value().
-
-\note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
-      PRUIO_AZ_GPIO may result in wired behaviour.
-
-\since 0.2
-'/
-FUNCTION PwmMod.cap_get CDECL( _
-    BYVAL Nr AS UInt8 _
-  , BYVAL Freq AS Float_t PTR = 0 _
-  , BYVAL Duty AS Float_t PTR = 0) AS ZSTRING PTR
-
-  WITH *Top->PwmSS->Conf(Nr)
-    IF 2 <> .ClVa THEN Top->Errr = E2  /' PWM not enabled '/ : RETURN E2
-    IF 0 = BIT(.ECCTL2, 9) THEN RETURN @"eCAP module not in output mode"
-    IF Freq THEN *Freq = PWMSS_CLK / .CAP1
-    IF Duty THEN *Duty = .CAP2 / .CAP1
-  END WITH :                                                    RETURN 0
-END FUNCTION
-
-
-/'* \brief Configure PWM output at an eCAP module (private).
-\param Nr The PWMSS subsystem index.
-\param F The frequency to set (or -1 for no change).
-\param D The duty cycle for output A (0.0 to 1.0, or -1 for no change).
-\returns Zero on success, an error string otherwise.
-
-This functions configures an eCAP module for PWM output. It sets the
-frequency and the duty cycle. Only positive values in these parameters
-force a change. Pass a negative value to stay with the current setting.
-A duty parameters greater than 1.0 gets limited to 1.0 (= 100%).
-
-\note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
-      PRUIO_AZ_GPIO may result in wired behaviour.
-
-\since 0.2
-'/
-FUNCTION PwmMod.cap_set CDECL( _
-    BYVAL Nr AS UInt8 _
-  , BYVAL F AS Float_t _
-  , BYVAL D AS Float_t = 0.) AS ZSTRING PTR
-
-  STATIC AS CONST Float_t _
-    f_min = PWMSS_CLK / &hFFFFFFFFuL '' minimal frequency
-  'STATIC AS Float_t _
-   'freq(...) = {0., 0., 0.} '' initial module frequencies
-  STATIC AS UInt32 _
-    cnt(...) = {0, 0, 0} _  '' initial module periods
-  , cmp(...) = {0, 0, 0}    '' initial module compares
-
-  WITH *Top
-    VAR r = 0
-    IF 2 <> .PwmSS->Conf(Nr)->ClVa THEN           .Errr = E2 : RETURN E2 ' PWM not enabled
-    IF 0 = cnt(Nr) ANDALSO _
-      F <= 0. THEN                                .Errr = E3 : RETURN E3' set frequency first
-    WITH *.PwmSS
-      IF F > 0. THEN
-        IF F < f_min ORELSE _
-           F > PWMSS_CLK_2 THEN               Top->Errr = E4 : RETURN E4 ' frequency not supported
-       cnt(Nr) = CUINT(PWMSS_CLK / F)
-      END IF
-      IF D >= 0 THEN cmp(Nr) = IIF(D > 1., cnt(Nr), CUINT(cnt(Nr) * D))
-
-      .Conf(Nr)->CAP1 = cnt(Nr)
-      .Conf(Nr)->CAP2 = cmp(Nr)
-      IF .Conf(Nr)->ECCTL2 <> .PwmMode THEN
-        .Conf(Nr)->ECCTL2 = .PwmMode
-        .Raw(Nr)->CMax = 0
-        r = .PwmMode
-      END IF
-    END WITH
-
-    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
-
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
-    .DRam[4] = cmp(Nr)
-    .DRam[3] = cnt(Nr)
-    .DRam[2] = .PwmSS->Conf(Nr)->DeAd + &h100
-    .DRam[1] = r OR (PRUIO_COM_CAP_PWM SHL 24)
-  END WITH :                                                    RETURN 0
-END FUNCTION
-
-
-/'* \brief Compute PWM output configuration from an eHRPWM module (private).
-\param Nr The PWMSS subsystem index.
-\param F A pointer to output the frequency value (or 0 for no output).
-\param Du A pointer to output the duty value (or 0 for no output).
-\param Mo The output channel (0 = A, otherwise B).
-\returns Zero on success, an error string otherwise.
-
-This private functions computes the real configuration of an eHRPWM
-module. It's designed to get called from function PwmMod::Value().
-
-\note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
-      PRUIO_AZ_GPIO may result in wired behaviour.
-
-\since 0.2
-'/
-FUNCTION PwmMod.pwm_get CDECL( _
-    BYVAL Nr AS UInt8 _
-  , BYVAL F AS Float_t PTR = 0 _
-  , BYVAL Du AS Float_t PTR = 0  _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR
-
-  WITH *Top->PwmSS->Conf(Nr)
-    IF 2 <> .ClVa THEN Top->Errr = E2  /' PWM not enabled '/ : RETURN E2
-    VAR p = CAST(UInt32, .TBPRD)
-    IF F THEN
-      VAR d1 = (.TBCTL SHR 7) AND &b111, d2 = (.TBCTL SHR 10) AND &b111
-      VAR cg = p * IIF(d1, d1 SHL 1, 1) * (1 SHL d2)
-      *F = PWMSS_CLK / IIF(BIT(.TBCTL, 1), cg SHL 1, cg + 1)
-    END IF
-    IF Du THEN
-      VAR c = CAST(UInt32, IIF(Mo, .CMPB, .CMPA))
-      IF BIT(.TBCTL, 1) THEN '                             count up-down
-        p SHL= 1
-        IF IIF(Mo, .AQCTLB, .AQCTLA) AND &b010001000000 THEN c = p - c
-      ELSE '                                                    count up
-        p += 1
-      END IF
-      *Du = c / p
-    END IF
-  END WITH :                                                    RETURN 0
-END FUNCTION
-
-
-
-/'* \brief Configure PWM output at a eHRPWM module (private).
-\param Nr The PWMSS subsystem index.
-\param F The frequency to set (or -1 for no change).
-\param Da The duty cycle for output A (0.0 to 1.0, or -1 for no change).
-\param Db The duty cycle for output B (0.0 to 1.0, or -1 for no change).
-\returns Zero on success, an error string otherwise.
-
-This private function configures an eHRPWM module. It sets the common
-frequency and both output duties A and B. Only positive values in these
-parameters force a change. Pass a negative value to stay with the
-current setting. Duty parameters (*Da* and *Db*) greater than 1.0 get
-limited to 1.0 (= 100%).
-
-\note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
-      PRUIO_AZ_GPIO may result in wired behaviour.
-
-\since 0.2
-'/
-FUNCTION PwmMod.pwm_set CDECL( _
-    BYVAL Nr AS UInt8 _
-  , BYVAL F AS Float_t _
-  , BYVAL Da AS Float_t = 0. _
-  , BYVAL Db AS Float_t = 0.) AS ZSTRING PTR
-
-  STATIC AS CONST Float_t _
-    f_min = PWMSS_CLK_2 / &h6FFF900   '' minimal frequency (128 * 14 * 65535)
-  STATIC AS Float_t _
-   freq(...) = {0., 0., 0.} _ ' module frequencies
-  , d_a(...) = {0., 0., 0.} _ ' module duty A
-  , d_b(...) = {0., 0., 0.}   ' module duty B
-  STATIC AS UInt16 _
-    cnt(...) = {0, 0, 0} _ ' module periods
-  , c_a(...) = {0, 0, 0} _ ' module counters A
-  , c_b(...) = {0, 0, 0}   ' module counters B
-
-  VAR ctl = 0
-  WITH *Top->PwmSS->Conf(Nr)
-    IF 2 <> .ClVa THEN                        Top->Errr = E2 : RETURN E2 ' PWM not enabled
-    IF 0 = cnt(Nr) THEN
-      IF F <= 0. THEN                         Top->Errr = E3 : RETURN E3 ' set frequency
-    ELSE
-      IF F > 0. ANDALSO freq(Nr) <> F THEN cnt(Nr) = 0
-    END IF
-
-    IF 0 = cnt(Nr) THEN '                    calc new period (frequency)
-      VAR cycle = IIF(F > f_min ANDALSO F <= PWMSS_CLK_2, CUINT(.5 + PWMSS_CLK / F), 0uL)
-      IF 2 > cycle THEN                       Top->Errr = E4 : RETURN E4 ' frequency not supported
-
-      freq(Nr) = ABS(F)
-      IF cycle <= &h10000 ANDALSO 0 = BIT(ForceUpDown, Nr) THEN ' count up mode
-        cnt(Nr) = cycle - 1
-      ELSEIF cycle < &h20000 THEN '        no divisor count up-down mode
-        cnt(Nr) = cycle SHR 1
-        ctl = 2
-      ELSE '                                  divisor count up-down mode
-        VAR fac = cycle SHR 17 _
-           , x1 = 1 + CINT(INT(LOG(fac / 14) / LOG(2)))
-        IF x1 < 0 THEN x1 = 0
-        VAR x2 = (fac SHR x1) \ 2 + 1
-        cnt(Nr) = CUINT(.5 + PWMSS_CLK_2 / F / (IIF(x2, x2 SHL 1, 1) SHL x1))
-        ctl = 2 + x2 SHL 7 + x1 SHL 10 ' clock divisor
-      END IF
-      ctl OR= (3 SHL 14) + (Cntrl(Nr) AND &b0010000001111100)
-      .TBCTL = ctl
-      .TBPRD = cnt(Nr)
-      .TBCNT = 0
-      c_a(Nr) = 0
-      c_b(Nr) = 0
-    END IF
-
-    IF Da >= 0. THEN d_a(Nr) = IIF(Da > 1., 1., Da) : c_a(Nr) = 0
-    IF 0 = c_a(Nr) THEN '                     calc new duty for A output
-      IF BIT(.TBCTL, 1) ORELSE BIT(ForceUpDown, Nr) THEN '  up-down mode
-        IF d_a(Nr) >= .5 _
-          THEN .AQCTLA = AqCtl(0, Nr, 2) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_a(Nr))) _
-          ELSE .AQCTLA = AqCtl(0, Nr, 1) : c_a(Nr) = CUINT((cnt(Nr) SHL 1) * d_a(Nr))
-      ELSE '                                                    up mode
-               .AQCTLA = AqCtl(0, Nr, 0) : c_a(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_a(Nr))
-      END IF
-      .CMPA = c_a(Nr)
-    END IF
-
-    IF Db >= 0. THEN d_b(Nr) = IIF(Db > 1., 1., Db) : c_b(Nr) = 0
-    IF 0 = c_b(Nr) THEN '                     calc new duty for B output
-      IF BIT(.TBCTL, 1) ORELSE BIT(ForceUpDown, Nr) THEN '  up-down mode
-        IF d_b(Nr) >= .5 _
-          THEN .AQCTLB = AqCtl(1, Nr, 2) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * (1 - d_b(Nr))) _
-          ELSE .AQCTLB = AqCtl(1, Nr, 1) : c_b(Nr) = CUINT((cnt(Nr) SHL 1) * d_b(Nr))
-      ELSE '                                                    up mode
-               .AQCTLB = AqCtl(1, Nr, 0) : c_b(Nr) = CUINT(.5 + (cnt(Nr) + 1) * d_b(Nr))
-      END IF
-      .CMPB = c_b(Nr)
-    END IF
-    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
-
-    WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
-    Top->DRam[5] = .TBCNT + .TBPRD SHL 16
-    Top->DRam[4] = .AQCTLA + .AQCTLB SHL 16
-    Top->DRam[3] = .CMPA + .CMPB SHL 16
-    Top->DRam[2] = .DeAd + &h200
-    Top->DRam[1] = IIF(ctl, ctl, 0) + PRUIO_COM_PWM SHL 24
-  END WITH :                                                    RETURN 0
 END FUNCTION
 
 
@@ -565,11 +652,11 @@ FUNCTION CapMod.config CDECL( _
       'm = 2
     'CASE    99 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h23)
       'm = 1
-    CASE ELSE                                : .Errr = E0 : RETURN .Errr
+    CASE ELSE                        : .Errr = .PwmSS->E6 : RETURN .Errr ' pin has no CAP capability
     END SELECT
   END WITH
   WITH *Top->PwmSS
-    IF 2 <> .Conf(m)->ClVa THEN            Top->Errr = E2 : RETURN E2 ' CAP not enabled
+    IF 2 <> .Conf(m)->ClVa THEN               Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
     VAR cnt = &hFFFFFFFFul
     IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
       cnt = CUINT(PWMSS_CLK / FLow)
@@ -625,8 +712,8 @@ FUNCTION CapMod.Value CDECL( _
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
     CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
-    'CASE P8_15: IF ModeCheck(Ball,5) THEN e = E1 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
-    'CASE JT_05 IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
+    'CASE P8_15 : IF ModeCheck(Ball,5) THEN e = E1 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
+    'CASE JT_04 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
     'CASE 88 : IF ModeCheck(Ball,2) THEN e = E1 ELSE m = 1
     'CASE 98 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 2
     'CASE 99 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 1
@@ -647,7 +734,7 @@ FUNCTION CapMod.Value CDECL( _
     END IF
     IF Hz THEN *Hz = 0
     IF Du THEN *Du = 0
-    Top->Errr = E2                     /' CAP not enabled '/ : RETURN E2
+    Top->Errr = Top->PwmSS->E5                        : RETURN Top->Errr ' pin not in CAP mode
   END WITH
 END FUNCTION
 
@@ -747,7 +834,7 @@ FUNCTION QepMod.config CDECL( _
   STATIC AS Float_t fmin = PWMSS_CLK / (&hFFFF SHL 7) ' minimal frequency
   WITH *Top
     IF VHz < fmin ORELSE VHz > PWMSS_CLK_2 THEN _
-                          .Errr = @"frequency not supported" : RETURN .Errr
+                                          .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
     SELECT CASE AS CONST Ball
     CASE P8_11, P8_12, P8_16 : m = 2
       VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
@@ -777,11 +864,11 @@ FUNCTION QepMod.config CDECL( _
       IF ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
       IF Ball = P9_27 THEN x = 1 : EXIT SELECT
       IF ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
-    CASE ELSE :  /'  pin has no QEP capability '/ .Errr = E0 : RETURN .Errr
+    CASE ELSE :                           .Errr = .PwmSS->E8 : RETURN .Errr' pin has no QEP capability
     END SELECT
+    IF 2 <> .PwmSS->Conf(m)->ClVa THEN    .Errr = .PwmSS->E0 : RETURN .Errr' PWMSS not enabled
   END WITH
   WITH *Top->PwmSS->Conf(m)
-    IF 2 <> .ClVa THEN  /' QEP not enabled '/ Top->Errr = E2 : RETURN E2
     .QPOSCNT = 0
     .QPOSINIT = 0
     '.QPOSMAX = iif(PMax andalso x <> 2, PMax, &h7FFFFFFFuL)
@@ -873,7 +960,7 @@ FUNCTION QepMod.Value CDECL( _
     CASE P8_33, P8_35, P8_31 : m = 1
     CASE P8_41, P8_42, P8_39 : m = 2
     CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
-    CASE ELSE  :                               .Errr = E0 : RETURN .Errr
+    CASE ELSE  :                       .Errr = .PwmSS->E0 : RETURN .Errr 'PwmSS not enabled
     END SELECT
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN

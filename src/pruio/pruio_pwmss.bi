@@ -178,9 +178,48 @@ TYPE PwmssUdt
   AS CONST UInt16 _
     PwmMode = &b1011010000 _'*< Value for ECCTL2 in PWM mode.
   , CapMode = &b0011010110  '*< Value for ECCTL2 in CAP mode.
+  AS ZSTRING PTR _
+    E0 = @"PWMSS not enabled" _           '*< Common error message.
+  , E1 = @"set frequency in first call" _ '*< Common error message.
+  , E2 = @"frequency not supported" _     '*< Common error message.
+  , E3 = @"pin not in PWM mode" _         '*< Common error message.
+  , E4 = @"pin has no PWM capability" _   '*< Common error message.
+  , E5 = @"pin not in CAP mode" _         '*< Common error message.
+  , E6 = @"pin has no CAP capability" _   '*< Common error message.
+  , E7 = @"pin not in QEP mode" _         '*< Common error message.
+  , E8 = @"pin has no QEP capability" _   '*< Common error message.
+  , E9 = @"eCAP module not in output mode"  '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR
+  DECLARE FUNCTION pwm_pwm_set CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t _
+  , BYVAL AS Float_t = 0. _
+  , BYVAL AS Float_t = 0.) AS ZSTRING PTR
+  DECLARE FUNCTION cap_pwm_set CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t _
+  , BYVAL AS Float_t = 0.) AS ZSTRING PTR
+  DECLARE FUNCTION pwm_pwm_get CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS Float_t PTR = 0  _
+  , BYVAL AS UInt8) AS ZSTRING PTR
+  DECLARE FUNCTION cap_pwm_get CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS Float_t PTR = 0 ) AS ZSTRING PTR
+  DECLARE FUNCTION cap_tim_set CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t _
+  , BYVAL AS Float_t _
+  , BYVAL AS SHORT) AS ZSTRING PTR
+  DECLARE FUNCTION cap_tim_get CDECL( _
+    BYVAL AS UInt8 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS Float_t PTR = 0 _
+  , BYVAL AS SHORT PTR = 0) AS ZSTRING PTR
 END TYPE
 
 
@@ -215,12 +254,6 @@ TYPE PwmMod
 , { {&b000100000010, &b000100000010, &b010000000010} _
   , {&b000100000010, &b000100000010, &b010000000010} _
   , {&b000100000010, &b000100000010, &b010000000010} } }
-  AS ZSTRING PTR _
-    E0 = @"pin has no PWM capability" _   '*< Common error message.
-  , E1 = @"pin not in PWM mode" _         '*< Common error message.
-  , E2 = @"PWMSS not enabled" _           '*< Common error message.
-  , E3 = @"set frequency in first call" _ '*< Common error message.
-  , E4 = @"frequency not supported"       '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION Value CDECL( _
@@ -231,24 +264,6 @@ TYPE PwmMod
     BYVAL AS UInt8, _
     BYVAL AS Float_t, _
     BYVAL AS Float_t) AS ZSTRING PTR
-  DECLARE FUNCTION pwm_set CDECL( _
-    BYVAL AS UInt8 _
-  , BYVAL AS Float_t _
-  , BYVAL AS Float_t = 0. _
-  , BYVAL AS Float_t = 0.) AS ZSTRING PTR
-  DECLARE FUNCTION cap_set CDECL( _
-    BYVAL AS UInt8 _
-  , BYVAL AS Float_t _
-  , BYVAL AS Float_t = 0.) AS ZSTRING PTR
-  DECLARE FUNCTION pwm_get CDECL( _
-    BYVAL AS UInt8 _
-  , BYVAL AS Float_t PTR = 0 _
-  , BYVAL AS Float_t PTR = 0  _
-  , BYVAL AS UInt8) AS ZSTRING PTR
-  DECLARE FUNCTION cap_get CDECL( _
-    BYVAL AS UInt8 _
-  , BYVAL AS Float_t PTR = 0 _
-  , BYVAL AS Float_t PTR = 0 ) AS ZSTRING PTR
 END TYPE
 
 
@@ -288,7 +303,7 @@ See \ArmRef{15.4} for hardware details.
 
 C wrapper equivalent qepMod.
 
-\since 0.4.0
+\since 0.4
 '/
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
@@ -297,10 +312,6 @@ TYPE QepMod
   , FVl(PRUIO_AZ_PWMSS)                 '*< Factor for low velocity measurement.
   AS UInt32 _
     Prd(PRUIO_AZ_PWMSS)                 '*< Period value to switch velocity measurement.
-  AS ZSTRING PTR _
-    E0 = @"pin has no QEP capability" _ '*< Common error message.
-  , E1 = @"pin not in QEP mode" _       '*< Common error message.
-  , E2 = @"QEP not enabled"             '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _
