@@ -45,19 +45,21 @@ libpruio controls the AM33xx CPU subsystems
 - PWMSS (3x Pulse Width Modulation SubSystem, containing modules PWM,
   CAP and QEP)
 
+- TIMERSS (4x Timer and PWM features)
+
 by a sequence of these three steps
 
 -# Create a PruIo structure, read initial configuration (constructor
    PruIo::PruIo() ).
 
 -# Upload customize configuration to the subsystem registers (function
-   PruIo::config() ) and start operation (functions PruIo::rb_start()
-   or PruIo::mm_start() ).
+   PruIo::config() ) and start operation (possibly by functions
+   PruIo::rb_start() or PruIo::mm_start() ).
 
 -# When done, restore original register configuration and destroy the
    PruIo structure (destructor PruIo::~PruIo).
 
-\note Create just one PruIo structure at a time.
+\note Create and use just one PruIo structure at a time.
 
 libpruio offers a set of API functions to do simple IO task at a
 reasonable speed. They may be inefficient in case of advanced
@@ -88,18 +90,20 @@ timing of the ADC subsystem restarts:
    for the next ADC restart. This may cause some delay of up to 50 ns
    before a digital output gets set or a digital value gets in.
 
--# MM mode (accurate timing): the PRU waits for a start command and
+-# MM mode (accurate ADC timing): the PRU waits for a start command and
    performs a single measurement. It handles analog samples only (no
    digital IO available).
 
 Choose the run modus by setting parameter *Samp* in the call to
 function PruIo::config()
 
-- `Samp = 1` for IO mode, immediate start, run endless.
+- `Samp = 1` for IO mode, starting immediately, running endless.
 
-- `Samp > 1` for RB, call function PruIo::rb_start() to start, run endless.
+- `Samp > 1` for RB mode, starting by a call to function
+  PruIo::rb_start(), running endless.
 
-- `Samp > 1` for MM, each call to function PruIo::mm_start() starts a new measurement, stop after samples done.
+- `Samp > 1` for MM mode, starting by a call to function
+  PruIo::mm_start(), stoping after measurement is done.
 
 To stop an endless mode (IO or RB) call function PruIo::config() again.
 Or destroy the libpruio structure when done by calling the destructor
@@ -139,6 +143,8 @@ functions (in IO and RB mode, for all header pins).
 
 - Call function GpioUdt::setValue() to set an output state.
 
+- Call function GpioUdt::config() to specify the mode of an input pin.
+
 Furthermore, simultameous input and output can get realized by direct
 access to the PRU software (experts only).
 
@@ -174,6 +180,46 @@ same frequency) or the CAP module in auxialiary PWM output mode (single
 Furthermore advanced features of the PWMSS subsystems can be used by
 direct access to the register configuration and PRU software (experts
 only).
+
+
+# TIMER {#SecTim}
+
+Generating a pulse at an output line. The timer feature uses subsystems
+with 32 bit counters. For long time periods the TIMERSS can pre-scale
+the counter clock and reach durations up to 45812 (more than half a
+day).
+
+- Call function Timer::setValue() to set duration of period until the
+  pulse starts and the length of the pulse (and configure the pin, if
+  necessary).
+
+- Call function Timer::Value() to get the current durations (those may
+  differ from the required values).
+
+
+# QEP {#SecQep}
+
+Reading and analysing a [Quadrature Encoder Pulse
+Train](https://en.wikipedia.org/wiki/Rotary_encoder). Those encoders
+generate pulses by two light barriers, scanning a regular grid, while
+both are out of phase by 90 degrees. By analysing those signals, the
+position (angle) and the speed of the movement can get detected.
+
+- Call function QepMod::config() to configure up to three pins for
+  QEP signals.
+
+- Call function QepMod::Value() to read the current values (position
+  and speed).
+
+\Proj supports different measuremnt configurations:
+
+- single pin (speed only)
+
+- double pin (speed and position)
+
+- tripple pin (speed and position, accurate reset by index pin)
+
+The mode gets specified by the call to function QepMod::config().
 
 
 # ADC {#SecAdc}
@@ -215,17 +261,24 @@ default the output is 16 bit encoded (range 0 to 65520).
 
 ## Ring Buffer {#SubSecRB}
 
-In Ring Buffer mode the samples from the ADC subsystem continuously get
-stored in the external memory. The calling software has to make sure
-that only valid values get read.
+In Ring Buffer (RB) mode the samples from the ADC subsystem
+continuously get stored in the external memory. The calling software
+has to make sure that only valid values get read. Therefor the value of
+PruIo::DRam `[0]` contains the most recent write position (UInt32
+index).
 
-- Read PruIo::DRam `[0]` to get the most recent write position (UInt16
-  index).
+In order to run RB mode, specify the size of the ring buffer by the
+number of samples (> 1) in the call to PruIo::config() and then start
+measurement by calling function PruIo::rb_start(). Read samples as
+AdcUdt::Value[index] and make sure that index is always behind the
+counter PruIo::DRam `[0]` (at the end of the ring buffer memory, the
+index counter jumps to 0 (zero)). Find examples in rb_file.bas
+(rb_file.c) or rb_oszi.bas.
 
 
-## Triggers {#SubSecTriggers}
+## Measurement Mode and Triggers {#SubSecTriggers}
 
-In Measurement Mode (MM mode) the start of a measurement can either be
+In Measurement Mode (MM mode) the start of a measurement is either
 immediately, or the start can get triggered by up to four events. When
 the first event happens, the second trigger gets started, and so on.
 The last specified trigger starts the measurement.
@@ -252,8 +305,11 @@ Call function
 - AdcUdt::mm_trg_pre() to create a pre-trigger specification for
   an analog line.
 
-Pass the trigger specification[s] to function PruIo::mm_start()
-to activate them.
+Pass the trigger specification[s] to function PruIo::mm_start() to
+activate them. Read the samples as AdcUdt::Value[index] and make sure
+that the index doesn't leave the range specified by the number of
+samples in the call to RruIo::config(). Find am exmple in file
+triggers.bas.
 
 
 # Subsystem Control {#SecSubSysCont}

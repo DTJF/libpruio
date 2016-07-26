@@ -96,41 +96,26 @@ END FUNCTION
 
 /'* \brief Configure timer output.
 \param Ball The header pin to configure.
-\param Dut1 The duration in [ms] before state change (or 0 to stop timer).
-\param Dut2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Dur1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
 \param Mode The modus to set (defaults to 0 = one cycle positive pulse).
 \returns Zero on success, an error string otherwise.
 
-This function sets timer output on a header pin (P8_07, P8_08, P8_09 or
-P8_10). The output can be either
+This function sets timer output on a header pin. The output can be either
 
-- a low state for the `Dur1` period of time, then high state fur `Dur2`, then low again endless.
-- a high state for the `Dur1` period of time, then low state fur `Dur2`, then high again endless.
+- a low state for the `Dur1` period of time, then high state fur `Dur2`, then this sequence again endless.
+- a high state for the `Dur1` period of time, then low state fur `Dur2`, then this sequence again endless.
 
-Parameter `Ball` specifies the header pin to use. \Proj will check it's
+Parameter `Ball` specifies the header pin to use. Check section \ref
+SubSecTimer for available header pins. \Proj will check the pins
 configuration and adapt it, if necessary and possible. If unpossible an
 error message gets returned.
 
-\note This function always starts a new timer period (and breaks the
-      current).
-
-Parameter `Dut1` specifies the time period of the start state in
-milleseconds. Parameter `Dut2` specifies the time period of the state
-change in milleseconds.
-
-\note Due to hardware limitations, the allowed range for the summ of
-      both `Dut?` periods is 12e-6 <= Dut1 <= 45812 (12MHz > period >=
-      ~0.5 Day).
-
-\note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
-      CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
-
-\note The pulse length is always a multiple of the hardware timer
-      counter period. In order to get low frequencies, the counter gets
-      pre-scaled (= slowed down). That means, the smaller the
-      frequency, the longer the pulse. The time period of a one cycle
-      pulse is between 83 ns and 21248 ns. Find further details in
-      \ArmRef{20}.
+Parameter `Dur1` specifies the time period of the start state in
+seconds. Parameter `Dur2` specifies the time period of the state change
+(= pulse) in seconds. When `Dur2`is 0 (zero) then the pulse has minimal
+duration. When `Dur2`is 0 (zero) then the timer stops in its initial
+state.
 
 Parameter `Mode` is a bitmaks that specifies the form of the generated
 output. It can either be low state with high pulse (default), or hight
@@ -139,13 +124,30 @@ a single pulse and then returns to the initial state, endless. In
 contrast the sequence can get repeated again and again when bit
 PRUIO_TIMER_CONTINUE is set.
 
+\note This function always starts a new timer period (and breaks the
+      current).
+
+\note Due to hardware limitations, the allowed range for the summ of
+      both `Dur1` and `Dur2` is limited. See the table in section \ref
+      SubSecTimer for details.
+
+\note The pulse length is always a multiple of the hardware timer
+      counter period. In order to get low frequencies, the counter gets
+      pre-scaled (= slowed down). That means, the longer the `Dur1`
+      summ, the longer the minimal pulse. The time period of a minimal
+      CAP pulse is 50 ns and a minimal TIMER pulse is between 83 ns and
+      21248 ns. Find further details in \ArmRef{20}.
+
+\note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
+      CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
+
 \since 0.4
 '/
 FUNCTION TimerUdt.setValue CDECL( _
     BYVAL Ball AS UInt8 _
   , BYVAL Dur1 AS Float_t _
   , BYVAL Dur2 AS Float_t = 0. _
-  , BYVAL Mode AS short = 0) AS ZSTRING PTR
+  , BYVAL Mode AS SHORT = 0) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
     d_min =              &h4 / TMRSS_CLK _ '' minimal durarion
@@ -239,12 +241,15 @@ END FUNCTION
 
 /'* \brief Compute timer output.
 \param Ball The header pin to configure.
-\param Dut1 The duration in [ms] before state change (or 0 to stop timer).
-\param Dut2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Dur1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
 \param Mode The modus to set (defaults to 0 = one cycle positive pulse).
 \returns Zero on success, an error string otherwise.
 
-This function computes the timer output ???
+This function computes the real values of the timer output. Since
+function TimerUdt::setValue() rounds the input parameters to the best
+matching values, this function can get used to compute the current
+setting.
 
 \since 0.4
 '/

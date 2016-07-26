@@ -66,6 +66,7 @@ VAR PATH_NAME = "."
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"
 #INCLUDE ONCE "P9.bi"
+#INCLUDE ONCE "JTag.bi"
 ' ... then delete unwanted pin groups (or single pins)
 SELECT CASE COMMAND(2)
 CASE "BBW"

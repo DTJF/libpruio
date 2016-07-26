@@ -85,6 +85,8 @@ Copyright 2014-2015 by \Email
 #define P9_31  100 // mcasp0
 #define P9_41  109
 #define P9_42  89
+#define JT_04  92 // JTag header
+#define JT_05  93 // JTag header
 
 //! CPU ball numbers for all pins on header P8
 static uint8 P8_Pins[] = {

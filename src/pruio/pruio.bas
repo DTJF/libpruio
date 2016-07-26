@@ -362,7 +362,7 @@ bits 1 = AIN-0, 2 = AIN-1, ... up to 8 = AIN-7 are set, use function
 AdcUdt::setStep() to customize steps).
 
 \note Bit 0 controls the charge step (see \ArmRef{12}, ADC STEPENABLE
-register).
+      register).
 
 The highest bit 31 has a special meaning for customizing the idle step.
 By default the idle configuration is set like the configuration of the

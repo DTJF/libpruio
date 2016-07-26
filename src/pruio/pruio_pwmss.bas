@@ -186,10 +186,11 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
 END FUNCTION
 
 
-/'* \brief Compute Timer output configuration from an eCAP module (private).
+/'* \brief Compute current values of Timer output (private).
 \param Nr The PWMSS subsystem index.
-\param Freq A pointer to output the frequency value (or 0 for no output).
-\param Duty A pointer to output the duty value (or 0 for no output).
+\param Dur1 The variable to store the duration of initial state (or NULL).
+\param Dur2 The variable to store the duration of the pulse (or NULL).
+\param Mode The variable to store the mode of the timer output (or NULL).
 \returns Zero on success, an error string otherwise.
 
 This private functions computes the real PWM configuration of an eCAP
@@ -199,7 +200,7 @@ module. It's designed to get called from function PwmMod::Value().
       check the validity of the *Nr* parameter. Values greater than
       PRUIO_AZ_GPIO may result in wired behaviour.
 
-\since 0.2
+\since 0.4
 '/
 FUNCTION PwmssUdt.cap_tim_get CDECL( _
     BYVAL Nr AS UInt8 _
@@ -222,20 +223,19 @@ END FUNCTION
 
 /'* \brief Configure PWM output at an eCAP module (private).
 \param Nr The PWMSS subsystem index.
-\param F The frequency to set (or -1 for no change).
-\param D The duty cycle for output A (0.0 to 1.0, or -1 for no change).
+\param Dur1 The duration of initial state.
+\param Dur2 The duration of the pulse (0 (zero) for minimal.
+\param Mode The mode of the timer output.
 \returns Zero on success, an error string otherwise.
 
-This functions configures an eCAP module for PWM output. It sets the
-frequency and the duty cycle. Only positive values in these parameters
-force a change. Pass a negative value to stay with the current setting.
-A duty parameters greater than 1.0 gets limited to 1.0 (= 100%).
+This functions configures an eCAP module for TIMER output. It sets the
+durations for the initial state period and the pulse.
 
 \note This is a private function designed for internal use. It doesn't
       check the validity of the *Nr* parameter. Values greater than
       PRUIO_AZ_GPIO may result in wired behaviour.
 
-\since 0.2
+\since 0.4
 '/
 FUNCTION PwmssUdt.cap_tim_set CDECL( _
     BYVAL Nr AS UInt8 _
