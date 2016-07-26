@@ -150,6 +150,11 @@ all related pins as one group.
 '* CPU ball number for pin 42 on header 9
 #define P9_42 &h59 '89
 
+'* CPU ball number for pin 4 on JTag header (E15)
+#define JT_04 92
+'* CPU ball number for pin 5 on JTag header (E16)
+#define JT_05 93
+
 '* number of analog line on pin 39 on header 9
 #define P9_39 AIN0
 '* number of analog line on pin 40 on header 9
@@ -180,11 +185,6 @@ all related pins as one group.
 #define AIN6 7
 '* default step number of analog line AIN-7 (internal, no pin)
 #define AIN7 8
-
-'* CPU ball number for pin 4 on JTag header (E15)
-#define JT_04 92
-'* CPU ball number for pin 5 on JTag header (E16)
-#define JT_05 93
 
 '* Array of CPU ball numbers for all pins on header P8.
 DIM SHARED AS UInt8 P8_Pins(...) = { _

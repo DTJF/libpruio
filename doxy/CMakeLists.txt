@@ -15,13 +15,13 @@ BAS_SRC
   ${SRC_BI}
   #${PASM_SRC}
 DEPENDS
-    "../src/doc/_1_features.md"
-    "../src/doc/_2_preparation.md"
-    "../src/doc/_3_pins.md"
-    "../src/doc/_4_examples.md"
-    "../src/doc/_5_memory.md"
-    "../src/doc/_6_messages.md"
-    "../src/doc/_z_changelog.md"
+  "../src/doc/_1_features.md"
+  "../src/doc/_2_preparation.md"
+  "../src/doc/_3_pins.md"
+  "../src/doc/_4_examples.md"
+  "../src/doc/_5_memory.md"
+  "../src/doc/_6_messages.md"
+  "../src/doc/_z_changelog.md"
   ../CMakeLists.txt
   ../ReadMe.md
   Doxyfile

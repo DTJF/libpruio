@@ -22,7 +22,7 @@ different components together and provides all declarations.
 #ENDIF
 
 '* Version string.
-'#DEFINE PRUIO_VERSION "0.2.2"
+'#DEFINE PRUIO_VERSION "0.4"
 
 '* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
