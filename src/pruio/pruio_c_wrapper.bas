@@ -213,3 +213,26 @@ FUNCTION pruio_pwm_setValue CDECL ALIAS "pruio_pwm_setValue"( _
 END FUNCTION
 
 
+'* \brief Wrapper function for Timer::Value().
+FUNCTION pruio_tim_Value CDECL ALIAS "pruio_pwm_Value"( _
+    BYVAL Io AS PruIo PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Dur1 AS Float_t PTR = 0 _
+  , BYVAL Dur2 AS Float_t PTR = 0 _
+  , BYVAL Mode AS UInt16 PTR = 0) AS ZSTRING PTR EXPORT
+
+  RETURN Io->Tim->Value(Ball, Dur1, Dur2, Mode)
+END FUNCTION
+
+'* \brief Wrapper function for Timer::setValue().
+FUNCTION pruio_tim_setValue CDECL ALIAS "pruio_pwm_setValue"( _
+    BYVAL Io AS PruIo PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Dur1 AS Float_t _
+  , BYVAL Dur2 AS Float_t _
+  , BYVAL Mode AS UInt16) AS ZSTRING PTR EXPORT
+
+  RETURN Io->Tim->setValue(Ball, Dur1, Dur2, Mode)
+END FUNCTION
+
+

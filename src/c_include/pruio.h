@@ -19,6 +19,7 @@ Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
 Copyright 2014-2015 by \Email
 
+\since 0.0
 */
 
 #ifdef __cplusplus
@@ -209,61 +210,73 @@ typedef struct gpioUdt{
 
 \since 0.4
 */
-//typedef struct timerSet{
-  //uint32
-    //DeAd, //!< Subsystem address.
-    //ClAd, //!< Clock address.
-    //ClVa; //!< Clock value.
+typedef struct timerSet{
+  uint32
+    DeAd, //!< Subsystem address.
+    ClAd, //!< Clock address.
+    ClVa; //!< Clock value.
 
-  //uint32
-    //TIDR         //!< Register at offset  00h (see \ArmRef{20.1.5.1} ).
-  //, TIOCPCFG     //!< Timer OCP Configuration Register (offset 10h, see \ArmRef{20.1.5.2} ).
-  //, IRQEOI       //!< Timer IRQ End-of-Interrupt Register (offset 20h, see \ArmRef{20.1.5.3} ).
-  //, IRQSTATUSRAW //!< Timer Status Raw Register (offset 24h, see \ArmRef{20.1.5.4} ).
-  //, IRQSTATUS    //!< Timer Status Register (offset 28h, see \ArmRef{20.1.5.5} ).
-  //, IRQENABLESET //!< Timer Interrupt Enable Set Register (offset 2Ch, see \ArmRef{20.1.5.6} ).
-  //, IRQENABLECLR //!< Timer Interrupt Enable Clear Register (offset 30h, see \ArmRef{20.1.5.7} ).
-  //, IRQWAKEEN    //!< Timer IRQ Wakeup Enable Register (offset 34h, see \ArmRef{20.1.5.8} ).
-  //, TCLR   //!< Timer Control Register (offset 38h, see \ArmRef{20.1.5.9} ).
-  //, TCRR   //!< Timer Counter Register (offset 3Ch, see \ArmRef{20.1.5.10} ).
-  //, TLDR   //!< Timer Load Register (offset 40h, see \ArmRef{20.1.5.11} ).
-  //, TTGR   //!< Timer Trigger Register (offset 44h, see \ArmRef{20.1.5.12} ).
-  //, TWPS   //!< Timer Write Posting Bits Register (offset 48h, see \ArmRef{20.1.5.13} ).
-  //, TMAR   //!< Timer Match Register (offset 4Ch, see \ArmRef{20.1.5.14} ).
-  //, TCAR1  //!< Timer Capture Register (offset 50h, see \ArmRef{20.1.5.15} ).
-  //, TSICR  //!< Timer Synchronous Interface Control Register (offset 54h, see \ArmRef{20.1.5.16} ).
-  //, TCAR2; //!< Timer Capture Register (offset 58h, see \ArmRef{20.1.5.17} ).
-//} timerSet;
+  uint32
+    TIDR         //!< Register at offset  00h (see \ArmRef{20.1.5.1} ).
+  , TIOCPCFG     //!< Timer OCP Configuration Register (offset 10h, see \ArmRef{20.1.5.2} ).
+  , IRQEOI       //!< Timer IRQ End-of-Interrupt Register (offset 20h, see \ArmRef{20.1.5.3} ).
+  , IRQSTATUSRAW //!< Timer Status Raw Register (offset 24h, see \ArmRef{20.1.5.4} ).
+  , IRQSTATUS    //!< Timer Status Register (offset 28h, see \ArmRef{20.1.5.5} ).
+  , IRQENABLESET //!< Timer Interrupt Enable Set Register (offset 2Ch, see \ArmRef{20.1.5.6} ).
+  , IRQENABLECLR //!< Timer Interrupt Enable Clear Register (offset 30h, see \ArmRef{20.1.5.7} ).
+  , IRQWAKEEN    //!< Timer IRQ Wakeup Enable Register (offset 34h, see \ArmRef{20.1.5.8} ).
+  , TCLR   //!< Timer Control Register (offset 38h, see \ArmRef{20.1.5.9} ).
+  , TCRR   //!< Timer Counter Register (offset 3Ch, see \ArmRef{20.1.5.10} ).
+  , TLDR   //!< Timer Load Register (offset 40h, see \ArmRef{20.1.5.11} ).
+  , TTGR   //!< Timer Trigger Register (offset 44h, see \ArmRef{20.1.5.12} ).
+  , TWPS   //!< Timer Write Posting Bits Register (offset 48h, see \ArmRef{20.1.5.13} ).
+  , TMAR   //!< Timer Match Register (offset 4Ch, see \ArmRef{20.1.5.14} ).
+  , TCAR1  //!< Timer Capture Register (offset 50h, see \ArmRef{20.1.5.15} ).
+  , TSICR  //!< Timer Synchronous Interface Control Register (offset 54h, see \ArmRef{20.1.5.16} ).
+  , TCAR2; //!< Timer Capture Register (offset 58h, see \ArmRef{20.1.5.17} ).
+} timerSet;
 
 
 /** \brief Wrapper structure for TimerArr.
 
 \since 0.4
 */
-//typedef struct timerArr{
-  //uint32
-    //DeAd; //!< Subsystem address.
+typedef struct timerArr{
+  uint32
+    DeAd; //!< Subsystem address.
 
-  //uint32
-    //TCAR1 //!< Current value of TCAR1 register (IO, RB).
-  //, TCAR2 //!< Current value of TCAR2 register (IO, RB).
-  //, TCRR; //!< Current value of TCRR register (IO, RB).
-//} timerArr;
+  uint32
+    CMax   //!< Maximum counter value.
+  , TCAR1  //!< Current value of TCAR2 register (IO, RB).
+  , TCAR2; //!< Current value of TCRR register (IO, RB).
+} timerArr;
 
 
 /** \brief Wrapper structure for TimerUdt.
 
 \since 0.4
 */
-//typedef struct timerUdt{
-  //pruIo* Top;                 //!< Pointer to the calling PruIo instance.
-  //timerSet
-    //*Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
-    //*Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
-  //timerArr
-    //*Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
-  //uint32 InitParA;            //!< Offset to read data block offset.
-//} timerUdt;
+typedef struct timerUdt{
+  pruIo* Top;                 //!< Pointer to the calling PruIo instance.
+  timerSet
+    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    *Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
+  timerArr
+    *Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
+  uint32
+    InitParA  //!< Offset to read data block offset.
+  , PwmMode   //!< Control register for PWM output mode.
+  , PwmHigh   //!< Control register for PWM output high (100%).
+  , Pwm_Low   //!< Control register for PWM output low (0%).
+  , TimMode   //!< Control register for Timer mode.
+  , TimHigh   //!< Control register for Timer high.
+  , Tim_Low   //!< Control register for Timer low.
+  , CapMode;  //!< Control register for CAP input mode.
+  char*
+    E0  //!< Common error message.
+  , E1  //!< Common error message.
+  , E2  //!< Common error message.
+} timerUdt;
 
 
 //#include "pruio_pwm.bi"
@@ -433,7 +446,7 @@ typedef struct capMod capMod;
 
 /** \brief Wrapper structure for QepMod.
 
-\since 0.2.2
+\since 0.4
 */
 typedef struct qepMod{
   pruIo* Top;  //!< pointer to the calling PruIo instance
@@ -700,7 +713,7 @@ uint32 pruio_adc_mm_trg_pre(pruIo* Io, uint8 Stp, int32 AdcV, uint16 Samp, uint8
 \param Mo The modus to use for pinmuxing (0 or PRUIO_PIN_RESET).
 \returns Zero on success (otherwise a string with an error message).
 
-\since 0.2.2
+\since 0.4
 */
 char* pruio_qep_config(pruIo* Io, uint8 Ball, uint32 PMax, float_t VHz, float_t Scale, uint8 Mo);
 
@@ -711,7 +724,7 @@ char* pruio_qep_config(pruIo* Io, uint8 Ball, uint32 PMax, float_t VHz, float_t 
 \param Velo A pointer to store the valocity value (or NULL).
 \returns Zero on success (otherwise a string with an error message).
 
-\since 0.2.2
+\since 0.4
 */
 char* pruio_qep_Value(pruIo* Io, uint8 Ball, uint32* Posi, float_t* Velo);
 
@@ -759,6 +772,30 @@ char* pruio_pwm_Value(pruIo* Io, uint8 Ball, float_t* Hz, float_t* Du);
 \since 0.2
 */
 char* pruio_pwm_setValue(pruIo* Io, uint8 Ball, float_t Hz, float_t Du);
+
+/** \brief Wrapper function for Timer::Value().
+\param Io The pointer of the  PruIo instance.
+\param Ball The header pin to configure.
+\param Dur1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
+\returns Zero on success, an error string otherwise.
+
+\since 0.4
+*/
+char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2, uint16* Mode);
+
+/** \brief Wrapper function for Timer::setValue().
+\param Io The pointer of the PruIo instance.
+\param Ball The header pin to configure.
+\param Dur1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
+\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
+\returns Zero on success, an error string otherwise.
+
+\since 0.4
+*/
+char* pruio_tim_setValue(pruIo* Io, uint8 Ball, float_t Dur1, float_t Dur2, uint16 Mode);
 
 #ifdef __cplusplus
  }
