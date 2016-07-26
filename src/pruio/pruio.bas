@@ -464,7 +464,7 @@ FUNCTION PruIo.Pin CDECL( _
 
   VAR x = nameBall(Ball)
   IF x THEN
-    t = *x
+    t = *x & " (CPU " & RIGHT("00" & Ball, 3) & ")"
   ELSE
     IF Ball > PRUIO_AZ_BALL THEN _
                               Errr = @"unknown pin number" : RETURN Errr
