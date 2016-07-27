@@ -27,9 +27,17 @@ When done,
 The overlay source remains in the current folder (file
 pruio_custom-00A0.dts). Load the overlay by
 
-~~~{.sh}
+~~~{.txt}
 sudo su
 echo pruio_custom > /sys/devices/bone_capemgr.*/slots
+exit
+~~~
+
+or on kernel versions > 3.8
+
+~~~{.txt}
+sudo su
+echo libpruio > /sys/devices/platform/bone_capemgr.*/slots
 exit
 ~~~
 

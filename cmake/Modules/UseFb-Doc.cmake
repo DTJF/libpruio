@@ -8,18 +8,15 @@
 #
 # See ReadMe.md for details.
 
-# check for parser macro
-IF(NOT COMMAND CMAKE_PARSE_ARGUMENTS)
-  INCLUDE(CMakeParseArguments)
-ENDIF()
+SET(logfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log)
 
-  # check for fb-doc tool
+# check for fb-doc tool
 IF(NOT FbDoc_WORKS)
   INCLUDE(FindFb-Doc)
   IF(NOT FbDoc_WORKS)
-    SET(msg "fb-doc tool not found ==> doc targets not available!")
+    SET(msg ">> no doc targets!")
     MESSAGE(STATUS ${msg})
-    FILE(APPEND ${errfile} "${msg}\n\n")
+    FILE(APPEND ${logfile} "${msg}\n\n")
     RETURN()
   ENDIF()
 ENDIF()
@@ -28,16 +25,19 @@ ENDIF()
 IF(NOT DOXYGEN_FOUND)
   INCLUDE(FindDoxygen)
   IF(NOT DOXYGEN_FOUND)
-    SET(msg "Doxygen not found ==> doc targets not available!")
+    SET(msg ">> no doc targets!")
     MESSAGE(STATUS ${msg})
-    FILE(APPEND ${errfile} "${msg}\n\n")
+    FILE(APPEND ${logfile} "${msg}\n\n")
     RETURN()
   ENDIF()
 ENDIF()
 
+# check for parser macro
+IF(NOT COMMAND CMAKE_PARSE_ARGUMENTS)
+  INCLUDE(CMakeParseArguments)
+ENDIF()
+
 FUNCTION(FB_DOCUMENTATION)
-  SET(logfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log)
-  SET(errfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log)
 
   CMAKE_PARSE_ARGUMENTS(ARG
     "NO_LFN;NO_PROJDATA;NO_HTM;NO_PDF;NO_WWW;NO_SELFDEP;NO_SYNTAX"
@@ -48,7 +48,7 @@ FUNCTION(FB_DOCUMENTATION)
   IF(ARG_NO_HTM AND ARG_NO_PDF AND ARG_NO_WWW)
     SET(msg "FB_DOCUMENTATION error: all output blocked ==> doc targets not available!")
     MESSAGE(STATUS ${msg})
-    FILE(APPEND ${errfile} "${msg}\n\n")
+    FILE(APPEND ${logfile} "${msg}\n\n")
     RETURN()
   ENDIF()
   SET(msg "")
@@ -125,6 +125,7 @@ GENERATE_RTF     = NO
     SET(wwwfile ${CMAKE_CURRENT_BINARY_DIR}/DocWWW.time)
     ADD_CUSTOM_COMMAND(OUTPUT ${wwwfile}
       COMMAND ${ARG_MIRROR_CMD}
+      COMMAND ${CMAKE_COMMAND} -E touch ${wwwfile}
       )
     ADD_CUSTOM_TARGET(doc_www DEPENDS ${wwwfile})
     ADD_DEPENDENCIES(doc_www doc_htm)
@@ -178,7 +179,6 @@ LATEX_OUTPUT     = latex
     ADD_DEPENDENCIES(doc doc_pdf)
     LIST(APPEND targets "doc_pdf")
   ENDIF()
-  MESSAGE(STATUS "found ${DOXYGEN_EXECUTABLE}-${DOXYGEN_VERSION}")
   MESSAGE(STATUS "FB_DOCUMENTATION configured: ${msg} targets ${targets}")
 ENDFUNCTION(FB_DOCUMENTATION)
 
