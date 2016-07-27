@@ -17,7 +17,7 @@ also file pruio_pins.h for a convenient way to declare header pins.
 
 Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
-Copyright 2014-2015 by \Email
+Copyright 2014-\Year by \Email
 
 \since 0.0
 */
@@ -26,11 +26,12 @@ Copyright 2014-2015 by \Email
  extern "C" {
 #endif /* __cplusplus */
 
+// common declarations
 #include "pruio.hp"
 
 //#include "../pruio/pruio.bi" (transformed)
 //! version string
-#define PRUIO_VERSION "0.2"
+#define PRUIO_VERSION "0.4"
 
 typedef signed char int8;      //!< 8 bit signed integer data type.
 typedef short int16;           //!< 16 bit signed integer data type.
@@ -462,9 +463,9 @@ typedef struct qepMod{
 } qepMod;
 
 
-//! the PRUSS driver library
+// the PRUSS driver library
 #include "prussdrv.h"
-//! PRUSS driver interrupt settings
+// PRUSS driver interrupt settings
 #include "pruss_intc_mapping.h"
 
 /** \brief Wrapper enumerators for PinMuxing.
@@ -773,7 +774,7 @@ char* pruio_pwm_Value(pruIo* Io, uint8 Ball, float_t* Hz, float_t* Du);
 */
 char* pruio_pwm_setValue(pruIo* Io, uint8 Ball, float_t Hz, float_t Du);
 
-/** \brief Wrapper function for Timer::Value().
+/** \brief Wrapper function for TimerUdt::Value().
 \param Io The pointer of the  PruIo instance.
 \param Ball The header pin to configure.
 \param Dur1 The duration in [ms] before state change (or 0 to stop timer).
@@ -785,7 +786,7 @@ char* pruio_pwm_setValue(pruIo* Io, uint8 Ball, float_t Hz, float_t Du);
 */
 char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2, uint16* Mode);
 
-/** \brief Wrapper function for Timer::setValue().
+/** \brief Wrapper function for TimerUdt::setValue().
 \param Io The pointer of the PruIo instance.
 \param Ball The header pin to configure.
 \param Dur1 The duration in [ms] before state change (or 0 to stop timer).

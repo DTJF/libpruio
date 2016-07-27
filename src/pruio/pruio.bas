@@ -464,7 +464,7 @@ FUNCTION PruIo.Pin CDECL( _
 
   VAR x = nameBall(Ball)
   IF x THEN
-    t = *x & " (CPU " & RIGHT("00" & Ball, 3) & ")"
+    t = *x
   ELSE
     IF Ball > PRUIO_AZ_BALL THEN _
                               Errr = @"unknown pin number" : RETURN Errr
@@ -543,32 +543,18 @@ FUNCTION PruIo.setPin CDECL( _
   VAR m = IIF(Mo = PRUIO_PIN_RESET, BallInit[Ball], Mo)
   IF BallConf[Ball] = m THEN                                    RETURN 0 ' nothing to do
 
-  'IF 0 = LEN(MuxAcc) THEN          Errr = @"no ocp access" : RETURN Errr
-
-  'VAR p = DIR(MuxAcc & "/" & PMUX_NAME & HEX(Ball, 2) & ".*", fbDirectory)
-  'VAR p = DIR(MuxAcc & PMUX_NAME & HEX(Ball, 2), fbDirectory)
-  'IF 0 = LEN(p) THEN              Errr = @"no pin control" : RETURN Errr
-
-  'VAR h = HEX(m, 2) _
-    ', r = SHELL("echo x"  & h & " > " & MuxAcc & p & "/state")
-
-  'VAR p = MuxAcc & PMUX_NAME & HEX(Ball, 2) _
-    ', r = SHELL("echo x"  & HEX(m, 2) & " > " & p & "/state")
-  'IF 0 = r THEN BallConf[Ball] = m :                            RETURN 0
-
   VAR fnam = MuxAcc & PMUX_NAME & HEX(Ball, 2)
-
   SELECT CASE AS CONST LEN(MuxAcc)
   CASE 0 :                         Errr = @"no ocp access" : RETURN Errr
   CASE 30 '   kernel 4.x
   CASE ELSE ' kernel 3.8
     VAR p = DIR(fnam & ".*", fbDirectory)
-    fnam &= mid(p, instr(p, "."))
+    fnam &= MID(p, INSTR(p, "."))
   END SELECT
 
   VAR fnr = FREEFILE
   IF 0 = OPEN(fnam & "/state" FOR OUTPUT AS fnr) THEN
-    print #fnr, "x" & HEX(m, 2)
+    PRINT #fnr, "x" & HEX(m, 2)
     CLOSE #fnr : BallConf[Ball] = m :                           RETURN 0
   END IF
 

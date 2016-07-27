@@ -27,6 +27,7 @@ DEPENDS
   Doxyfile
   libpruio.css
   libpruio.xml
+  ${C_HEADERS}
   )
 
 #INSTALL(
