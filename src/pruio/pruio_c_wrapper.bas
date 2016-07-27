@@ -214,7 +214,7 @@ END FUNCTION
 
 
 '* \brief Wrapper function for Timer::Value().
-FUNCTION pruio_tim_Value CDECL ALIAS "pruio_pwm_Value"( _
+FUNCTION pruio_tim_Value CDECL ALIAS "pruio_tim_Value"( _
     BYVAL Io AS PruIo PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Dur1 AS Float_t PTR = 0 _
@@ -225,7 +225,7 @@ FUNCTION pruio_tim_Value CDECL ALIAS "pruio_pwm_Value"( _
 END FUNCTION
 
 '* \brief Wrapper function for Timer::setValue().
-FUNCTION pruio_tim_setValue CDECL ALIAS "pruio_pwm_setValue"( _
+FUNCTION pruio_tim_setValue CDECL ALIAS "pruio_tim_setValue"( _
     BYVAL Io AS PruIo PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Dur1 AS Float_t _

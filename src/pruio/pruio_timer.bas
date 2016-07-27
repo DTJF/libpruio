@@ -259,17 +259,17 @@ FUNCTION TimerUdt.Value CDECL( _
     CASE P8_09 : nr = 1
     CASE P8_10 : nr = 2
     CASE P8_08 : nr = 3
-    CASE P9_28 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_tim_get(2, Dur1, Dur2, Mode))
-    CASE JT_05 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->cap_tim_get(1, Dur1, Dur2, Mode))
-    CASE P9_42 : e = IIF(ModeCheck(Ball,0), .PwmSS->E3, .PwmSS->cap_tim_get(0, Dur1, Dur2, Mode))
+    CASE P9_28 : e = IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(2, Dur1, Dur2, Mode))
+    CASE JT_05 : e = IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(1, Dur1, Dur2, Mode))
+    CASE P9_42 : e = IIF(ModeCheck(Ball,0), E2, .PwmSS->cap_tim_get(0, Dur1, Dur2, Mode))
     CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
     END SELECT
 
     IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
+    IF Conf(nr)->TCLR <> PwmMode THEN             .Errr = E2 : RETURN E2 ' TIMER module not in output mode
   END WITH
 
   WITH *Conf(Nr)
-    IF Conf(nr)->TCLR <> PwmMode THEN             .Errr = E2 : RETURN E2 ' TIMER module not in output mode
     VAR dur = (&hFFFFFFFF - .TLDR) / TMRSS_CLK _
       , d_2 = (&hFFFFFFFF - .TMAR) / TMRSS_CLK
     IF Dur1 THEN *Dur1 = dur - d_2
