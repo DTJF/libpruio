@@ -43,7 +43,7 @@ IF(NOT DEFINED DTC_COMPILER_WORKS)
   ENDIF()
 ENDIF()
 IF(NOT DTC_COMPILER_WORKS)
-  MESSAGE(STATUS "  --> no target init!")
+  MESSAGE(STATUS ">> no target init!")
   RETURN()
 ENDIF()
 

@@ -1,4 +1,4 @@
-SET(C_TAR
+SET(c_tar
   "1"
   "button"
   "io_input"
@@ -14,7 +14,7 @@ ADD_CUSTOM_TARGET(c_examples)
 SET_TARGET_PROPERTIES(c_examples PROPERTIES EXCLUDE_FROM_ALL 1)
 ADD_DEPENDENCIES(examples c_examples)
 
-FOREACH(tar ${C_TAR})
+FOREACH(tar ${c_tar})
   ADD_EXECUTABLE(${tar}_c EXCLUDE_FROM_ALL ${tar}.c)
   TARGET_LINK_LIBRARIES(${tar}_c pruio prussdrv)
   ADD_DEPENDENCIES(c_examples ${tar}_c)

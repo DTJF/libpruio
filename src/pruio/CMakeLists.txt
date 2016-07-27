@@ -1,7 +1,40 @@
-# Check the PRU assembler pasm (presence and version):
-#IF(NOT PASM_ASSEMBER_WORKS)
-  #RETURN()
-#ENDIF()
+SET(PASM_SRC
+  "pruio.hp"
+  "pruio_ball.p"
+  "pruio_adc.p"
+  "pruio_gpio.p"
+  "pruio_pwmss.p"
+  "pruio_timer.p"
+  CACHE FILEPATH "ASM source files" FORCE
+  )
+
+SET(SRC_BAS
+  "pruio.bas"
+  "pruio_adc.bas"
+  "pruio_gpio.bas"
+  "pruio_pwmss.bas"
+  "pruio_timer.bas"
+  "pruio_c_wrapper.bas"
+  CACHE FILEPATH "BASIC source files" FORCE
+  )
+
+SET(SRC_BI
+  "pruio.hp"
+  "pruio.bi"
+  "pruio_globals.bi"
+  "pruio_pins.bi"
+  "pruio_adc.bi"
+  "pruio_gpio.bi"
+  "pruio_pwmss.bi"
+  "pruio_timer.bi"
+  CACHE FILEPATH "BASIC header files" FORCE
+  )
+
+SET(SRC_BI_EXTRA
+    "pruio_out.bi"
+  )
+
+FIND_PACKAGE(LIBPRUSSDRV)
 
 # Check the PRU assembler pasm (presence and version):
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)
@@ -47,48 +80,10 @@ IF(NOT DEFINED PASM_ASSEMBER_WORKS)
   ENDIF()
 ENDIF()
 
-IF(NOT PASM_ASSEMBER_WORKS)
+IF(NOT (LIBPRUSSDRV_FOUND AND PASM_ASSEMBER_WORKS AND CMAKE_Fbc_COMPILER_WORKS))
+  MESSAGE(STATUS ">> no target all!")
   RETURN()
 ENDIF()
-
-FIND_PACKAGE(LIBPRUSSDRV)
-
-
-SET(PASM_SRC
-    "pruio.hp"
-    "pruio_ball.p"
-    "pruio_adc.p"
-    "pruio_gpio.p"
-    "pruio_pwmss.p"
-    "pruio_timer.p"
-  CACHE FILEPATH "ASM source files" FORCE
-  )
-
-SET(SRC_BAS
-    "pruio.bas"
-    "pruio_adc.bas"
-    "pruio_gpio.bas"
-    "pruio_pwmss.bas"
-    "pruio_timer.bas"
-    "pruio_c_wrapper.bas"
-  CACHE FILEPATH "BASIC source files" FORCE
-  )
-
-SET(SRC_BI
-    "pruio.hp"
-    "pruio.bi"
-    "pruio_globals.bi"
-    "pruio_pins.bi"
-    "pruio_adc.bi"
-    "pruio_gpio.bi"
-    "pruio_pwmss.bi"
-    "pruio_timer.bi"
-  CACHE FILEPATH "header files" FORCE
-  )
-
-SET(SRC_BI_EXTRA
-    "pruio_out.bi"
-  )
 
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi

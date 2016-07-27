@@ -187,13 +187,13 @@ FUNCTION TimerUdt.setValue CDECL( _
       SELECT CASE AS CONST x SHR 32 '' faster than LOG
       CASE   0        : pre = 0
       CASE   1        : pre = &b100000 : x SHR= 1
-      CASE   2 to   3 : pre = &b100100 : x SHR= 2
-      CASE   4 to   7 : pre = &b101000 : x SHR= 3
-      CASE   8 to  15 : pre = &b101100 : x SHR= 4
-      CASE  16 to  31 : pre = &b110000 : x SHR= 5
-      CASE  32 to  63 : pre = &b110100 : x SHR= 6
-      CASE  64 to 127 : pre = &b111000 : x SHR= 7
-      CASE 128 to 255 : pre = &b111100 : x SHR= 8
+      CASE   2 TO   3 : pre = &b100100 : x SHR= 2
+      CASE   4 TO   7 : pre = &b101000 : x SHR= 3
+      CASE   8 TO  15 : pre = &b101100 : x SHR= 4
+      CASE  16 TO  31 : pre = &b110000 : x SHR= 5
+      CASE  32 TO  63 : pre = &b110100 : x SHR= 6
+      CASE  64 TO 127 : pre = &b111000 : x SHR= 7
+      CASE 128 TO 255 : pre = &b111100 : x SHR= 8
       CASE ELSE :                      .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
       END SELECT
 
@@ -206,7 +206,7 @@ FUNCTION TimerUdt.setValue CDECL( _
         pru_cmd = PRUIO_COM_TIM_PWM
         Conf(nr)->TLDR = &hFFFFFFFFuL - x
 
-        var y = CULNG(x * Dur2 / dur)
+        VAR y = CULNG(x * Dur2 / dur)
         SELECT CASE y
         CASE IS < 2     : Conf(nr)->TMAR =   &hFFFFFFFFuL - 2
         CASE IS > x - 1 : Conf(nr)->TMAR = Conf(nr)->TLDR + 2
@@ -218,14 +218,6 @@ FUNCTION TimerUdt.setValue CDECL( _
                       OR IIF(BIT(Mode, 0), &b10, 0) _
                       OR IIF(BIT(Mode, 1), &b10000000, 0)
     END IF
-
-'?"2: "; _
-    ', HEX(Conf(nr)->TCRR) _
-    ', HEX(Conf(nr)->TMAR) _
-    ', HEX(Conf(nr)->TLDR) _
-    ', HEX(Conf(nr)->DeAd) _
-    ', BIN(Conf(nr)->TCLR AND &hFFFFFF) _
-    ', pru_cmd
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
@@ -259,7 +251,7 @@ FUNCTION TimerUdt.Value CDECL( _
   , BYVAL Dur2 AS Float_t PTR = 0 _
   , BYVAL Mode AS SHORT PTR = 0) AS ZSTRING PTR
 
-  dim as Uint32 nr
+  DIM AS Uint32 nr
   DIM AS ZSTRING PTR e
   WITH *Top
     SELECT CASE AS CONST Ball
@@ -277,13 +269,13 @@ FUNCTION TimerUdt.Value CDECL( _
   END WITH
 
   WITH *Conf(Nr)
-    'IF 0 = BIT(.TCLR, 9) THEN               Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
+    IF Conf(nr)->TCLR <> PwmMode THEN             .Errr = E2 : RETURN E2 ' TIMER module not in output mode
     VAR dur = (&hFFFFFFFF - .TLDR) / TMRSS_CLK _
       , d_2 = (&hFFFFFFFF - .TMAR) / TMRSS_CLK
     IF Dur1 THEN *Dur1 = dur - d_2
     IF Dur2 THEN *Dur2 = d_2
-    IF Mode THEN *Mode = iif(bit(.TCLR, 1), &b01, 0) _
-                      OR iif(bit(.TCLR, 7), &b10, 0)
+    IF Mode THEN *Mode = IIF(BIT(.TCLR, 1), &b01, 0) _
+                      OR IIF(BIT(.TCLR, 7), &b10, 0)
   END WITH :                                                    RETURN 0
 END FUNCTION
 

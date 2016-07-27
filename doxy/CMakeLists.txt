@@ -5,15 +5,25 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 IF(NOT COMMAND FB_DOCUMENTATION)
   INCLUDE(UseFb-Doc)
   IF(NOT COMMAND FB_DOCUMENTATION)
+    MESSAGE(STATUS ">> no target doc!")
     RETURN()
   ENDIF()
 ENDIF()
 
+SET(basdep)
+FOREACH(bas ${SRC_BAS})
+  LIST(APPEND basdeb ../src/pruio/${bas})
+ENDFOREACH()
+SET(bidep)
+FOREACH(bi ${SRC_BI})
+  LIST(APPEND bideb ../src/pruio/${bi})
+ENDFOREACH()
+
+
 FB_DOCUMENTATION(
 BAS_SRC
-  ${SRC_BAS}
-  ${SRC_BI}
-  #${PASM_SRC}
+  ${basdeb}
+  ${bideb}
 DEPENDS
   "../src/doc/_1_features.md"
   "../src/doc/_2_preparation.md"

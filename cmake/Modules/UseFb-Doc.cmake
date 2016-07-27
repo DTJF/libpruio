@@ -13,11 +13,8 @@ IF(NOT COMMAND CMAKE_PARSE_ARGUMENTS)
   INCLUDE(CMakeParseArguments)
 ENDIF()
 
-FUNCTION(FB_DOCUMENTATION)
-  SET(logfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log)
-  SET(errfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log)
-
   # check for fb-doc tool
+IF(NOT FbDoc_WORKS)
   INCLUDE(FindFb-Doc)
   IF(NOT FbDoc_WORKS)
     SET(msg "fb-doc tool not found ==> doc targets not available!")
@@ -25,8 +22,10 @@ FUNCTION(FB_DOCUMENTATION)
     FILE(APPEND ${errfile} "${msg}\n\n")
     RETURN()
   ENDIF()
+ENDIF()
 
   # check for Doxygen
+IF(NOT DOXYGEN_FOUND)
   INCLUDE(FindDoxygen)
   IF(NOT DOXYGEN_FOUND)
     SET(msg "Doxygen not found ==> doc targets not available!")
@@ -34,6 +33,11 @@ FUNCTION(FB_DOCUMENTATION)
     FILE(APPEND ${errfile} "${msg}\n\n")
     RETURN()
   ENDIF()
+ENDIF()
+
+FUNCTION(FB_DOCUMENTATION)
+  SET(logfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log)
+  SET(errfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log)
 
   CMAKE_PARSE_ARGUMENTS(ARG
     "NO_LFN;NO_PROJDATA;NO_HTM;NO_PDF;NO_WWW;NO_SELFDEP;NO_SYNTAX"

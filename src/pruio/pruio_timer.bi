@@ -86,9 +86,9 @@ TYPE TimerUdt
   , Tim_Low = &b000000000000010 _ '*< Control register for Timer low.
   , CapMode = &b010000110000000   '*< Control register for CAP input mode.
   AS ZSTRING PTR _
-    E0 = @"TIMER subsystem not enabled" _ '*< Common error message.
-  , E1 = @"pin has no TIMER capability" _ '*< Common error message.
-  , E2 = @"TIMER not in PWM output mode"  '*< Common error message.
+    E0 = @"TIMER subsystem not enabled" _      '*< Common error message.
+  , E1 = @"pin has no TIMER capability" _      '*< Common error message.
+  , E2 = @"TIMER subsystem not in output mode" '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR

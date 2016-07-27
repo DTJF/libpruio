@@ -18,6 +18,8 @@ pruio_qep_config
 pruio_qep_Value
 pruio_pwm_Value
 pruio_pwm_setValue
+pruio_tim_Value
+pruio_tim_setValue
 PwmssUdt.PwmssUdt
 PwmssUdt.initialize
 PwmssUdt.cap_pwm_get
