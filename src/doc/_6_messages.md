@@ -15,7 +15,7 @@ feature, except when using RB mode.
 
 Instead the user communicates with the functions of the API from the
 host software. Most of this functions are designed to return 0 (zero)
-on success or an error text (`ZSTRING PTR` in FB, `*gchar` in C) in
+on success or an error text (`ZSTRING PTR` in FB, `char*` in C) in
 case of an error. Additionaly the member variable PruIo::Errr gets
 set to the same message text. You can use either of them to handle the
 error message. The texts are always internal strings owned by libpruio
@@ -37,7 +37,7 @@ variable PruIo::Errr.
 
 In all cases, libpruio just sets the pointer PruIo::Errr. The
 calling code may or may not handle the error message. When the code
-tires to continue, it should reset the pointer to 0 (zero) to avoid
+tries to continue, it should reset the pointer to 0 (zero) to avoid
 blocking further function calls due to former errors.
 
 There's a last exception: The main destructor PruIo::~PruIo cannot use
@@ -350,8 +350,9 @@ pin configuration to GPIO out mode.
 
 ## setValue {#SubSecErrPwmSetValue}
 
-\Item{"unknown PWM pin number"} The specified ball number is too big. ->
-Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
+\Item{"pin has no PWM capability"} The specified ball number has no
+TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
+pins listed in section \ref SubSecTimer.
 
 \Item{"pin not in PWM mode"} Setting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode.
@@ -376,17 +377,17 @@ to generate output at the required frequency. -> Check the parameter
 *Hz* and set an appropriate value (CAP and PWM modules have different
 frequency ranges).
 
-
 ## Value {#SubSecErrPwmValue}
 
-\Item{"unknown PWM pin number"} The specified ball number is too big. ->
-Make sure that parameter *Ball* is less or equal \ref PRUIO_AZ_BALL.
+\Item{"pin has no PWM capability"} The specified ball number has no
+TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
+pins listed in section \ref SubSecTimer.
 
 \Item{"pin not in PWM mode"} Getting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode. ->
-Call function PwmMod::Value() to configure then header pin, first.
+Call function PwmMod::setValue() to configure then header pin, first.
 
-\Item{"PWMSS not enabled"} Getting the values of a PWM input is
+\Item{"PWMSS not enabled"} Getting the values of a PWM output is
 required, but the related PWMSS subsystem isn't enabled. -> Set
 `PruIo->PwmSS->Conf(n)->ClVa = 2` (n is the number of the PWMSS
 connected to that ball number) and call function PruIo::config(),
@@ -395,6 +396,48 @@ first.
 \Item{"eCAP module not in output mode"} Getting the values of a PWM
 output of a CAP module in a PWMSS is required, but the module is in
 input mode. -> Check the previous configuration of that pin.
+
+
+# TIMER {#SecErrTim}
+
+## setValue {#SubSecErrTimSetValue}
+
+\Item{"pin has no TIMER capability"} The specified ball number has no
+TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
+pins listed in section \ref SubSecTimer.
+
+\Item{"TIMER subsystem not enabled"} Setting a TIMER output is
+required, but the related TIMERSS subsystem isn't enabled. -> Set
+`PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
+connected to that ball number) and call function PruIo::config(),
+first.
+
+\Item{"frequency not supported"} The module (TIMER or CAP) isn't
+capable to generate output at the required time periods. -> Check the
+parameters *Dur1* and *Dur2*, and set an appropriate value (TIMER and
+CAP modules have different ranges).
+
+\note When the pin (CPU ball) is not in the matching mode, libpruio
+      tries to configure it. In that case you also may get error
+      messages as described in \ref SubSecPruIoSetPin.
+
+
+## Value {#SubSecErrTimValue}
+
+\Item{"pin has no TIMER capability"} The specified ball number has no
+TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
+pins listed in section \ref SubSecTimer.
+
+\Item{"TIMER subsystem not enabled"} Getting the values of a TIMER
+output is required, but the related TIMER subsystem isn't enabled. ->
+Set `PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
+connected to that ball number) and call function PruIo::config(),
+first.
+
+\Item{"TIMER subsystem not in output mode"} Getting the values of a
+TIMER output is required, but the module is not in output mode, and
+therefor cannot generate TIMER pulses. -> Check the (previous)
+configuration of that pin.
 
 
 # CAP {#SecErrCap}
