@@ -24,26 +24,18 @@ IF(NOT DEFINED DTC_COMPILER_WORKS)
     ENDFOREACH()
 
     IF(DTC_COMPILER_WORKS)
-      MESSAGE(STATUS "Check for working DTC compiler OK ==> ${DTC_COMPILER_ID}")
-      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-        "Determining if the dtc compiler works passed with "
-        "the following output:\n${DTC_COMPILER_ID}\n\n")
+      MSG_LOG("Check for working DTC compiler OK ==> ${DTC_COMPILER_ID}")
       SET(DTC_COMPILER_WORKS "${DTC_COMPILER_WORKS}" CACHE FILEPATH "dtc compiler" FORCE)
       MARK_AS_ADVANCED(DTC_COMPILER_WORKS)
     ELSE()
-      MESSAGE(STATUS "Wrong DTC compiler (${DTC_COMPILER_ID}, no option -@)!")
-      FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-        "Determining if the dtc compiler works failed with "
-        "the following output:\n${DTC_COMPILER_ID}, no option -@\n\n")
+      MSG_LOG("Wrong DTC compiler (${DTC_COMPILER_ID}, no option -@)!")
     ENDIF()
   ELSE()
-    MESSAGE(STATUS "DTC compiler not found (command dtc)!")
-    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-      "Finding the dtc compiler failed!")
+    MSG_LOG("DTC compiler not found (command dtc)!")
   ENDIF()
 ENDIF()
 IF(NOT DTC_COMPILER_WORKS)
-  MESSAGE(STATUS ">> no target init!")
+  MSG_LOG(">> no target init!")
   RETURN()
 ENDIF()
 
