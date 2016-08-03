@@ -141,6 +141,8 @@ PRUIO_TIMER_CONTINUE is set.
 \note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
       CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
 
+C-wrapper function: pruio_tim_setValue().
+
 \since 0.4
 '/
 FUNCTION TimerUdt.setValue CDECL( _
@@ -150,7 +152,7 @@ FUNCTION TimerUdt.setValue CDECL( _
   , BYVAL Mode AS SHORT = 0) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
-    d_min =              &h4 / TMRSS_CLK _ '' minimal durarion
+    d_min =              &h4 / TMRSS_CLK _ '' minimal duration
   , d_max = &h10000000000uLL / TMRSS_CLK   '' maximal duration
   STATIC AS UInt32 _
      pru_cmd = 0 _
@@ -243,6 +245,8 @@ function TimerUdt::setValue() rounds the input parameters to the best
 matching values, this function can get used to compute the current
 setting.
 
+C-wrapper function: pruio_tim_Value().
+
 \since 0.4
 '/
 FUNCTION TimerUdt.Value CDECL( _
@@ -293,7 +297,7 @@ stay with the current setting. A `Duty` parameter greater than 1.0 gets
 limited to 1.0 (= 100%).
 
 \note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
+      check the validity of the `Nr` parameter. Values greater than
       PRUIO_AZ_TIMER may result in wired behaviour.
 
 \since 0.4
@@ -376,7 +380,7 @@ This private functions computes the real PWM configuration of a TIMER
 subsystem. It's designed to get called from function PwmMod::Value().
 
 \note This is a private function designed for internal use. It doesn't
-      check the validity of the *Nr* parameter. Values greater than
+      check the validity of the `Nr` parameter. Values greater than
       PRUIO_AZ_GPIO may result in wired behaviour.
 
 \since 0.4

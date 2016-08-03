@@ -1,11 +1,11 @@
 /'* \file pwm_adc.bas
 \brief Example: generate PWM outputs and fetch them as ADC samples, draw graf.
 
-This file contains an example on how to use libpruio to generate pulse
-width modulated (PWM) output. Here the two channels (A + B) of an
-eHRPWM module and a eCAP module (in PWM) mode generate the PWM signal.
-The output can get measured by the ADC subsystem at channels AIN-0 to
-AIN-2 and shown as a line graf in a graphics windows.
+This file contains an example on how to use libpruio to generate Pulse
+Width Modulated (PWM) output. Here the two channels (A + B) of an
+eHRPWM module and an eCAP module (in PWM) mode generate the PWM
+signals. The output gets measured by the ADC subsystem at channels
+AIN-0 to AIN-2, and shown as a line graf in a graphics windows.
 
 Licence: GPLv3
 
@@ -14,7 +14,7 @@ Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all pwm_adc.bas`
 
-\since 0.0.0
+\since 0.0
 '/
 
 ' include libpruio

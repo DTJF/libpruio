@@ -11,7 +11,7 @@ Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all io_input.bas`
 
-\since 0.0.0
+\since 0.0
 '/
 
 ' include libpruio

@@ -129,10 +129,10 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 ~~~
   First, all header pin configurations are shown. Then the registers of
   the GPIO subsystems (0 to 3) get listed, followed by the ADC
-  subsystem registers and the registers of the PWMSS subsystems (0 to
-  2). It's the context of the xyzSet strctures (BallSet, GpioSet,
-  AdcSet and PwmssSet). The code may be helpful for debugging in your
-  projects.
+  subsystem registers, the registers of the PWMSS subsystems (0 to 2)
+  and the TIMER subsystems (4 to 7). It's the context of the structures
+  named `???Set` (ie. BallSet, GpioSet, AdcSet, PwmssSet and TimerSet).
+  The output may be helpful for debugging purposes in your projects.
 
 \Item{Source Code}
 
@@ -146,14 +146,14 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 \Item{Description}
 
   This example shows how to get input from a digital line. It creates a
-  new PruIo instance cinfigured in IO mode and continuously prints out
-  the state of a single digital lines.
+  new PruIo instance cinfigured in IO mode, which continuously prints
+  out the state of a single digital line.
 
 \Item{Preparation}
 
-  The code uses header pin P8_07 which is configured as GPIO input with
-  pullup resistor by default. We use this standard configuration (no
-  pinmuxing required) and ground the pin by a button to see some
+  The code uses header pin P8_07, which is configured as GPIO input
+  with pullup resistor by default. We use this standard configuration
+  (no pinmuxing required) and ground the pin by a button to see some
   changes. Here's the wiring diagram
 
   ![Wiring diagram for button example](button_circuit.png)
@@ -163,7 +163,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
   Start the program by executing `./button` and you'll see a new line
   containing a continuously updated single number. `1` gets shown when
   the button is open and `0` (zero) when the button is closed. Press
-  any key om your keyboard to end the program.
+  any key on your keyboard to end the program.
 
 \Item{Source Code}
 
@@ -186,7 +186,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 
   No preparation is required. Optionaly you can connect the analog
   ground P9_34 (AGND) and some of the analog input lines AIN-0 to AIN-6
-  to a source voltage in the range of 0 to 1V8 (ie. from a battery).
+  to a voltage source in the range of 0 to 1V8 (ie. from a battery).
 
 \Item{Operation}
 
@@ -200,20 +200,20 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 00000000000001000000000000000000
 EEA0 E7D0 E630 DA00  0C80 1510 24A0 EE60
 ~~~
-  The first line is a scale to support identifying the bit positions.
-  The next four lines show the state of the GPIO subsystems 0 to 3 (1 =
-  high, 0 = low). The last line is the sampled ADC data form AIN 0 to 7
-  as hexadecimal values in 16 bit encoding.
+  The first line is a scale (or rule) to support identifying the bit
+  positions. The next four lines show the state of the GPIO subsystems
+  0 to 3 (1 = high, 0 = low). The last line is the sampled ADC data
+  form AIN 0 to 7 as hexadecimal values in 16 bit encoding.
 
   You can watch the heartbeat (user LED 0) in the third line (GPIO-1,
   bit 21). The last analog value (AIN-7) is the measured voltage on the
-  board (it should be the half of 3V3: `&hEE60 / &hFFF0 * 1V8 =
-  1V676`).
+  board (it should be the half of 3V3. here we have `&hEE60 / &hFFF0 *
+  1V8 = 1V676`).
 
   To end the program press any key.
 
-  The C version outputs all in one line (make sure to use a wide
-  console window) like
+  The C version outputs all in one line like (make sure to use a wide
+  console window)
 ~~~{.txt}
 C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
 ~~~
@@ -671,8 +671,8 @@ Pins            Key        Direction        Sleep
 # Grafic {#SecExaGrafic}
 
 The examples in this section produce grafic output. The source code is
-available only in FreeBASIC (folder src/examples) syntax, since C has
-no native grafic.
+available only in FreeBASIC syntax (folder src/examples), since C has
+no support for native grafics.
 
 ## pwm_adc {#SubSecExaPwmAdc}
 
@@ -684,9 +684,9 @@ no native grafic.
   instance in IO mode for drawing continuously the sampled analog data
   from channels AIN-0 to AIN-2 (step 1 to 3) as line grafic with
   colored lines. By default it creates a full screen window without a
-  frame. You can customize the window by setting the size as command
-  line option (ie like `./pwm_io 640x100` for width = 640 and hight =
-  100).
+  frame. You can customize the window size by setting the size as
+  command line option (ie. like `./pwm_io 640x100` for width = 640 and
+  hight = 100).
 
   You can manipulate the frequency and duty cycles of the signals and
   choose between drawing all inputs or just the manipulated one.
@@ -695,13 +695,14 @@ no native grafic.
 
   It needs some wiring to execute this example. The digital signals
   from the PWM pins (P9_14, P9_16 and P9_42) have to be connected to
-  the analog inputs. Since digital output is 3V3 and analog inputs are
+  some analog inputs. Since PWM output is 3V3 and analog inputs are
   maximum 1V8, we need to transform the signals by voltage dividers. We
   use potentiometers (RV0, RV1 and RV2) for that purpose. The divider
   outputs get connected to the analog input pins (AIN-0 = P9_39, AIN-1
   = P9_40 and AIN-2 = P9_37). The potentionmeters should be liniear and
   at least 1 k (47 k recommended). Make sure that the wipers are placed
-  in a middle position before you connect the cables.
+  in a middle position before you connect the cables and switch on
+  power.
 
   ![Wiring diagram for pwm_adc example](pwm_adc_circuit.png)
 
@@ -799,9 +800,9 @@ sudo ./pwm_adc 640x150
   of the analog lines AIN-0 to AIN-7. The graph gets updated column by
   column by the currently sampled values. You can switch channels on or
   off to watch just a subset. By default it creates a full screen
-  window without a frame. You can customize the window by setting the
-  size as command line option (ie like `./oszi 640x400` for width = 640
-  and hight = 400).
+  window without a frame. You can customize the window size by setting
+  the size as command line option (ie. like `./oszi 640x400` for width
+  = 640 and hight = 400).
 
 \Item{Preparation}
 
@@ -840,9 +841,9 @@ sudo ./pwm_adc 640x150
   configures a PruIo instance and draws a continuously updated graph of
   the analog lines AIN-4 and AIN-7. The graph gets updated in one step
   when one half of the ring buffer is filled. By default it creates a
-  full screen window without a frame. You can customize the window by
-  setting the size as command line option (ie like `./rb_oszi 640x400`
-  for width = 640 and hight = 400).
+  full screen window without a frame. You can customize the window size
+  by setting the size as command line option (ie. like `./rb_oszi
+  640x400` for width = 640 and hight = 400).
 
 \Item{Preparation}
 
@@ -873,8 +874,8 @@ sudo ./pwm_adc 640x150
   mode and how to customize an ADC step (for the analog trigger 2). It
   opens a grafic window and creates a new PruIo instance for MM. By
   default it creates a full screen window without a frame. You can
-  customize the window by setting the size as command line option (ie
-  like `./triggers 640x400` for width = 640 and hight = 400).
+  customize the window size by setting the size as command line option
+  (ie. like `./triggers 640x400` for width = 640 and hight = 400).
 
   The example offers to choose one of four different trigger types:
   - no trigger, or

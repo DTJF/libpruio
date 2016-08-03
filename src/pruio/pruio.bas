@@ -64,7 +64,7 @@ case).
 
 Otherwise (PruIo::Errr = 0) the constructor tries to enable the
 subsystems and read their configurations. This gets done for the active
-subsystems only. Use parameter *Act* to specify active systems and the
+subsystems only. Use parameter `Act` to specify active systems and the
 PRU number to run the software:
 
 | Bit | Function                         |
@@ -96,22 +96,22 @@ that PRU-0 is free for other software.
       should use ARM_PRU0_INTERRUPT on channel PRU_EVTOUT_0 to notify
       this code, and test for R31.t30.
 
-The other parameters *Av*, *OpD* and *SaD* are used to create a default
+The other parameters `Av`, `OpD` and `SaD` are used to create a default
 step configuration for analog input. They get passed to function
 AdcUdt::initialize() to generate default step configuration data for
 all analog lines (AIN-0 to AIN-7) in the steps 1 to 8. For these steps,
 the default values can get customized using the (optional) parameter
 list:
 
-- parameter *Av* sets avaraging in a certain number of steps. Options
+- parameter `Av` sets avaraging in a certain number of steps. Options
   are 1, 2, 4, 8 or 16. (A non-matching parameter get increased either
   to the next higher or to the last option.)
 
-- parameter *OpD* sets the open delay, which is the number of clock
+- parameter `OpD` sets the open delay, which is the number of clock
   cycles the ADC waits between setting the step configuration and
   sending the start of conversion signal.
 
-- parameter *SaD* sets the sample delay, which is the number of clock
+- parameter `SaD` sets the sample delay, which is the number of clock
   cycles the ADC waits before starting (the width of the start of
   conversion signal). It specifies the number of clock cycles between
   the single conversion processes.
@@ -298,12 +298,12 @@ re-initialized.
 In case of an error the PRU will be disabled after this call. Otherwise
 it
 
-- is running and waits for a call to PruIo::mm_start() or PruIo::rb_start() (in case of *Samp* > 1), or
-- it starts sampling immediately and feads values to AdcUdt::Value otherwise (*Samp* = 1).
-- it halts after loading the local configuration to the subsystem registers (*Samp* = 0).
+- is running and waits for a call to PruIo::mm_start() or PruIo::rb_start() (in case of `Samp > 1`), or
+- it starts sampling immediately and feads values to AdcUdt::Value otherwise (`Samp = 1`).
+- it halts after loading the local configuration to the subsystem registers (`Samp = 0`).
 
-The *Samp* parameter specifies the run mode (IO, RB or MM) and the
-number of samples to convert for each step. In IO mode (*Samp* = 1,
+The `Samp` parameter specifies the run mode (IO, RB or MM) and the
+number of samples to convert for each step. In IO mode (`Samp = 1`,
 default) sampling starts immediately and the index in the array
 AdcUdt::Value[] is equal to the step number. Inactive steps return 0
 (zero) in this case.
@@ -319,10 +319,10 @@ AdcUdt::Value[] is equal to the step number. Inactive steps return 0
 | ...       | ...         | ...           |
 | Value[16] | step 16     | undefined     |
 
-In MM (*Samp* > 1) the array AdcUdt::Value[] contains no zero values.
+In MM (`Samp` > 1) the array AdcUdt::Value[] contains no zero values.
 Instead only values from active steps get collected. The charge step
 (step 0) returns no value. So when 3 steps are active in the Mask and
-*Samp* is set to 5, a total of 3 times 5 = 15 values get available in the
+`Samp` is set to 5, a total of 3 times 5 = 15 values get available in the
 array AdcUdt::Value[] (after the call to function PruIo::mm_start() ).
 The array contains the active steps, so when ie. steps 3, 6 and 7 are
 active in the Mask, the array contains:
@@ -356,7 +356,7 @@ this memory block.
 |                      8 | 16384        |
 |                    ... |   ...        |
 
-The *Mask* parameter specifies the active steps. Setting a bit in the
+The `Mask` parameter specifies the active steps. Setting a bit in the
 Mask activates a step defined by the step configuration (by default
 bits 1 = AIN-0, 2 = AIN-1, ... up to 8 = AIN-7 are set, use function
 AdcUdt::setStep() to customize steps).
@@ -371,7 +371,7 @@ reduced to a minimum for that step (if there's enough time left before
 restarting the ADC). By setting bit 31 the configuration from
 AdcUdt::Conf->St_p`[0]` is used instead.
 
-The *Tmr* parameter specifies the sampling rate. It's the number of
+The `Tmr` parameter specifies the sampling rate. It's the number of
 nano seconds between the starts of the ADC sampling process. The IEP
 timer gets used. It is configured to increase by steps of 5 (it counts
 in GHz, but runs at 200 MHz), so values like 22676 or 22679 results to
@@ -383,9 +383,9 @@ the same frequency. Some examples
 | 1e6      | 1000               |
 | 22675    | ~44100             |
 
-\note This value has no effect in IO mode (when *Samp* = 1).
+\note This value has no effect in IO mode (when `Samp` = 1).
 
-The *Mds* parameter specifies the bit encoding (range) of the samples.
+The `Mds` parameter specifies the bit encoding (range) of the samples.
 By default (Mds = 4) the samples from the ADC (12 bit) get left shifted
 by 4, so that they actually are 16 bit values and can get compared with
 samples from other ADC devices (like 16 bit audio data). Examples

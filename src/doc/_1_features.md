@@ -184,26 +184,25 @@ only).
 
 # TIMER {#SecTim}
 
-Generating a pulse at an output line. The timer feature uses subsystems
-with 32 bit counters. For long time periods the TIMERSS can pre-scale
-the counter clock and reach durations up to 45812 (more than half a
-day).
+Generating a pulse at an output line. The time period until the pulse
+starts and its duration gets specified. See section \ref SubSecTim for
+details.
 
-- Call function Timer::setValue() to set duration of period until the
-  pulse starts and the length of the pulse (and configure the pin, if
-  necessary).
+- Call function TimerUdt::setValue() to set the durations or stop a
+  running TIMER (and configure the pin, if necessary).
 
-- Call function Timer::Value() to get the current durations (those may
-  differ from the required values).
+- Call function TimerUdt::Value() to get the current durations (those
+  may differ from the required values).
 
 
 # QEP {#SecQep}
 
-Reading and analysing a [Quadrature Encoder Pulse
-Train](https://en.wikipedia.org/wiki/Rotary_encoder). Those encoders
-generate pulses by two light barriers, scanning a regular grid, while
-both are out of phase by 90 degrees. By analysing those signals, the
-position (angle) and the speed of the movement can get detected.
+Reading and analysing signals from incremental [Quadrature Encoder
+Pulse Trains](https://en.wikipedia.org/wiki/Rotary_encoder). Those
+encoders generate pulses by two (mostly light barriers) sensors,
+scanning a regular grid (bar code), while both sensors are out of phase
+by 90 degrees. By analysing those signals, the position (angle) and the
+speed of the movement can get detected.
 
 - Call function QepMod::config() to configure up to three pins for
   QEP signals.

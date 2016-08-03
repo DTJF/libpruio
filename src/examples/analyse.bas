@@ -14,7 +14,7 @@ Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all analyse.bas`
 
-\since 0.0.0
+\since 0.0
 '/
 
 ' include libpruio

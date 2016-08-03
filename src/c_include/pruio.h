@@ -595,7 +595,7 @@ void pruio_destroy(pruIo* Io);
 */
 char* pruio_config(pruIo* Io, uint32 Samp, uint32 Mask, uint32 Tmr, uint16 Mds);
 
-/** \brief Wrapper function for PruIo::get_config().
+/** \brief Wrapper function for PruIo::Pin().
 \param Io The pointer of the  PruIo instance.
 \param Ball The CPU ball number to describe.
 \returns A human-readable text string (internal string, never free it).

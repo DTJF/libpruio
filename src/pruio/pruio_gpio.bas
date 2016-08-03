@@ -97,14 +97,14 @@ END FUNCTION
 
 This function is used to configure a digital pin for GPIO. Use the
 macros defined in pruio.bi to specify the pin number in parameter
-*Ball* for a pin on the Beaglebone headers (ie P8_03 selects pin 3 on
+`Ball` for a pin on the Beaglebone headers (ie P8_03 selects pin 3 on
 header P8).
 
 Its not possible to set the state of a CPU ball (not connected to a
 header), because only header pins are prepared for pinmuxing in the
 libpruio device tree overlay.
 
-Parameter *Modus* specifies the pinmux mode for the ARM control module
+Parameter `Modus` specifies the pinmux mode for the ARM control module
 (see \ArmRef{9} for details). By default the pin gets configured as input pin
 with pulldown resistor. Other configurations are prepared
 as enumerators PruIo::PinMuxing :
@@ -172,10 +172,10 @@ END FUNCTION
 \returns Zero on success (otherwise a pointer to an error message).
 
 This function is used to set the state of an output GPIO. Set parameter
-*Ball* to the required header pin (=CPU ball) by using the convenience
+`Ball` to the required header pin (=CPU ball) by using the convenience
 macros defined in pruio_pins.bi (ie. P8_03 selects pin 3 on header P8).
 
-Parameter *Mo* specifies either the state to set (0 or 1). Or it
+Parameter `Mo` specifies either the state to set (0 or 1). Or it
 specifies the pinmux mode to test and the state in the MSB.
 
 C-wrapper function: pruio_gpio_setValue().
@@ -227,12 +227,12 @@ END FUNCTION
 
 This function is used to get the state of a digital pin (GPIO). Use the
 macros defined in pruio.bi to specify the pin number in parameter
-*Ball* for a pin on the Beaglebone headers (ie P8_03 selects pin 3 on
+`Ball` for a pin on the Beaglebone headers (ie P8_03 selects pin 3 on
 header P8).
 
 It's possible to get the state of a CPU ball (not connected to a
 header), also. In this case you need to find the matching CPU ball
-number and pass it in as the parameter *Ball*.
+number and pass it in as the parameter `Ball`.
 
 The function returns the state of input and output pins. Return values
 are

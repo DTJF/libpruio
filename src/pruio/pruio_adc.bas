@@ -236,7 +236,7 @@ function PruIo::config() ).
 This trigger is a fast trigger. The ADC subsystem is waiting in idle
 mode while the GPIO gets checked.
 
-\note When the CPU ball number (parameter *Ball*) is on a GPIO
+\note When the CPU ball number (parameter `Ball`) is on a GPIO
        subsystem that is not enabled, an error gets reported (return
        value = zero). When you switch off the subsystem after creating
        the trigger specification, the trigger has no effect (it gets
@@ -284,12 +284,12 @@ trigger. Pass the returned value as parameter to function
 PruIo::mm_start(). The measurement (or the next trigger) will start
 when the specified analog input (AIN) gets in to the declared state.
 
-The parameter *Stp* specifies the step number to use for the trigger.
+The parameter `Stp` specifies the step number to use for the trigger.
 This may be an active step (enabled in the PruIo::config() call).
 Or it can be a further step with customized settings only for trigger
 purposes (see trigger.bas for an example).
 
-The parameter *AdcV* specifies the value to compare with. A positive
+The parameter `AdcV` specifies the value to compare with. A positive
 value starts when the input is greater than AdcV. A negative value
 starts when the input is less than AdcV.
 
@@ -298,7 +298,7 @@ PruIo::config() requires 16 bit samples (Mds = 4), AdcV has to be
 specified as 16 bit value as well.
 
 AdcV can either be an absolute value or a relative value. For the later
-case set parameter *Rela* to any value <> zero. The driver will
+case set parameter `Rela` to any value <> zero. The driver will
 fetch the current analog input value when the trigger gets active and
 adds AdcV to calculate the absolute trigger value.
 
@@ -306,7 +306,7 @@ This trigger value gets auto-limited to a certain range (ie &hF0 to
 &hFF00, in case of default 16 bit setting), to avoid trigger values
 that never can be reached.
 
-The parameter *Skip* can be used to hold up the start for a certain
+The parameter `Skip` can be used to hold up the start for a certain
 time (previously defined by the Tmr parameter in the last call to
 function PruIo::config() ). Example:
 

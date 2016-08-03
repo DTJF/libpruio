@@ -351,8 +351,8 @@ pin configuration to GPIO out mode.
 ## setValue {#SubSecErrPwmSetValue}
 
 \Item{"pin has no PWM capability"} The specified ball number has no
-TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
-pins listed in section \ref SubSecTimer.
+TIMER capability. -> Make sure that parameter *Ball* is one of the PWM
+pins listed in section \ref SubSecPwm.
 
 \Item{"pin not in PWM mode"} Setting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode.
@@ -380,8 +380,8 @@ frequency ranges).
 ## Value {#SubSecErrPwmValue}
 
 \Item{"pin has no PWM capability"} The specified ball number has no
-TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
-pins listed in section \ref SubSecTimer.
+TIMER capability. -> Make sure that parameter *Ball* is one of the PWM
+pins listed in section \ref SubSecPwm.
 
 \Item{"pin not in PWM mode"} Getting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode. ->
@@ -403,8 +403,8 @@ input mode. -> Check the previous configuration of that pin.
 ## setValue {#SubSecErrTimSetValue}
 
 \Item{"pin has no TIMER capability"} The specified ball number has no
-TIMER capability. -> Make sure that parameter *Ball* is on of the TIMER
-pins listed in section \ref SubSecTimer.
+TIMER capability. -> Make sure that parameter *Ball* is one of the
+TIMER pins listed in section \ref SubSecTimer.
 
 \Item{"TIMER subsystem not enabled"} Setting a TIMER output is
 required, but the related TIMERSS subsystem isn't enabled. -> Set
