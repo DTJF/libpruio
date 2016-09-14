@@ -83,48 +83,48 @@ constructor PruIo::PruIo() )
    samples (*Samp* > 1) and the measurement frequency (*Tmr*) in this
    call.
 
--# Only for IO or MM mode (when *Samp* > 1): start the sampling by
+-# Only for RB or MM mode (when *Samp* > 1): start the sampling by
    calling either PruIo::rb_start() or PruIo::mm_start().
 
 -# Get the samples in array AdcUdt::Value.
 
 Find further details on analog lines and the ADC subsystem
-configurations in \ArmRef{12}.
+configurations in \ArmRef{12}. Find example code in io_input.bas,
+oszi.bas, rb_file.bas, rb_oszi.bas and trigger.bas.
 
 
 # Digital {#SecDigital}
 
 Each digital header pin can get configured either in GPIO mode or in
-one of up to seven alternative modes, see \ref SecPinConfig for further
-information. The matrix of the possible connections is hard-coded in
-the CPU logic. Find the subset of the Beaglebone headers described in
-the \BbbRef{7}. Or find the complete description in the CPU
-documentation \MpuRef{2.2} .
+one of up to seven alternative modes. The matrix of the possible
+connections is hard-coded in the CPU logic. Find the subset of the
+Beaglebone headers described in the \BbbRef{7}. Or find the complete
+description in the CPU documentation \MpuRef{2.2} .
 
 Before a digital header pin gets used, \Proj checks its mode. When the
 current setting matches the required feature, \Proj just continues and
 operates the pin. Otherwise it tries to change the pinmuxing
 appropriately, first. This needs the libpruio-00A0.dtbo device tree
-overlay loaded and the program has to be executed with admin privileges
-for write access to the pinmuxing folders in
+overlay loaded, and the program has to be executed with admin
+privileges for write access to the pinmuxing folders in
 
 - `/sys/devices/ocp.?/pruio-??.*` (kernel 3.8)
 - `/sys/devices/platform/ocp/ocp:pruio-??` (kernel >3.8)
 
 The overlay contains pre-defined modes for a certain set of CPU balls.
-By default the overlay claims the free pins on the BBB headers. Those
-are the orange and blue pins in the above image. When you're using a
-Beaglebone White or when you free further pins on the BBB, ie. by
-disabling HDMI or other features on the board, you can easily create an
-universal overlay with adapted pin claiming by using the tool
-dts_universal.bas.
+By default the overlay claims all the free pins on the BBB headers.
+Those are the orange and blue pins in the above image. When you're
+using a Beaglebone White or Green, or when you free further pins on the
+BBB, ie. by disabling HDMI or other features on the board, you can
+create an universal overlay with adapted pin claiming. This can get
+easily done by using the tool dts_universal.bas.
 
 If you don't want to execute the program under admin privileges, you've
 to ensure that all used digital header pins are in the appropriate mode
 before you start the program (so that the initial checks succeed). This
 can get achieved by loading a customized overlay. In contrast to the
 universal overlay, the customized contains only one configuration for
-the used header pins and \Proj cannot change the mode at run-time. You
+each used header pin and \Proj cannot change the mode at run-time. You
 can easily create a customized overlay with fixed pinmuxing by using
 the tool dts_custom.bas.
 
@@ -151,6 +151,26 @@ accordingly.
 Some pins are used to control the boot sequence and mustn't be
 connected at boot-time.
 
+Depending on the pin mode the pin can act either as input or output
+pin. Here's the strategy to fetch digital input (after calling the
+constructor PruIo::PruIo() )
+
+- configure the pin by the related function (GpioUdt::config(),
+  CapUdt::config() or QepUdt::config() ).
+
+- start the main loop by calling PruIo::config()
+
+- read the current pin state by calling the related function
+  (GpioUdt::Value(), CapUdt::Value() or QepUdt::Value() ).
+
+And here's the strategy to set digital output (after calling the
+constructor PruIo::PruIo() )
+
+- start the main loop by calling PruIo::config()
+
+- set the required pin state by calling the related function
+  (GpioUdt::setValue() or PwmUdt::setValue() ).
+
 
 ##GPIO  {#SubSecGpio}
 
@@ -172,23 +192,25 @@ with admin privileges.) Find details on GPIO hardware in \ArmRef{25}.
 
 An input pin can get configured with pullup or pulldown resistor, or
 none of them. Those resistors (about 10 k) are incorporated in the CPU.
-In contrast, \Proj configures an output pin always with no CPU resistor
-connection (to minimize power consumption). So the first two modes
-(PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
+In contrast, output pins get always configured with no CPU resistor
+connection by \Proj (to minimize power consumption). So the first two
+modes (PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
+Those modes are predefined in the universal overlay libpruio-00A0.dtbo
+for each claimed header pin.
 
-Those modes are predefined in the universal overlay libpruio-00A0.dtbo for each claimed header pin.
+In order to set a GPIO output just set its state by calling function
+Gpio::setValue() (after calling the constructor PruIo::PruIo() ). When
+you do this after the call to PruIo::config(), the state will change
+immediately. Otherwise it changes after the PruIo::config() call.
 
+In order to get a GPIO input configure the pin first by
+calling function GpioUdt::config() (after calling the constructor
+PruIo::PruIo() and before the call to PruIo::config()). Then check its
+state by calling function GpioUdt::Value() (after the call to
+PruIo::config() ).
 
- and the initial state must
-get specified at configuration time.
-
-Here're the GPIO pin configurations supported by the universal device
-tree overlay libpruio-00A0.dtbo
-
-In some cases it may be reasonable to use an output pin with pullup
-resistor, which isn't supported by default. This either needs pinmuxing
-by a customized device tree overlay or it can be achieved by adding
-this new mode to the universal device tree overlay libpruio-00A0.dtbo.
+Find example code in button.bas (input) or sos.bas and stepper.bas
+(output).
 
 
 ## TIMER  {#SubSecTimer}
@@ -220,8 +242,8 @@ is 32 bit and the duration range in [s] vary between the pins.
 | P9_42 | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
 | JT_05 | PWMSS-1, PRUCAP | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
 
-The output gets specified by calling function TimerUdt::setValue(). Since
-the output timing may vary from the specified parameters due to
+The output gets specified by calling function TimerUdt::setValue().
+Since the output timing may vary from the specified parameters due to
 resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
@@ -300,6 +322,8 @@ the output frequency may vary from the specified parameters due to
 resolution issues, the real values can get computed by calling function
 PwmMod::Value().
 
+Find example code in pwm_adc.bas or pwm_cap.bas.
+
 
 ##CAP  {#SubSecCap}
 
@@ -327,6 +351,8 @@ range vary between the pins.
 The measurement results get available by calling function
 CapMod::Value(). Before, you have to configure the pin for CAP input by
 calling function CapMod::config() once.
+
+Find example code in pwm_cap.bas.
 
 
 ##QEP  {#SubSecQep}
@@ -439,3 +465,5 @@ counting in downward direction.
 The measurement results get available by calling function
 QepMod::Value(). Before, you have to configure the pin(s) for QEP input
 by calling function QepMod::config() once.
+
+Find example code in qep.bas.

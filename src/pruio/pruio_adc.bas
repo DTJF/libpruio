@@ -1,8 +1,8 @@
 /'* \file pruio_adc.bas
 \brief The ADC component source code.
 
-Source code file containing the function bodies of the class AdcUdt
-(ADC components).
+Source code file containing the function bodies to control the TSC_ADC
+subsystem. See class AdcUdt for details.
 
 \since 0.2
 '/

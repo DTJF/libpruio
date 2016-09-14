@@ -1,8 +1,8 @@
 /'* \file pruio_gpio.bas
 \brief The GPIO component source code.
 
-Source code file containing the function bodies of the class GpioUdt
-(GPIO components).
+Source code file containing the function bodies to control the GPIO
+subsystems. See class GpioUdt for details.
 
 \since 0.2
 '/

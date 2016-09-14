@@ -1,7 +1,8 @@
 /'* \file pruio_timer.bas
 \brief The TIMER component source code.
 
-Source code file containing the function bodies of the TIMER component.
+Source code file containing the function bodies to control the TIMER
+subsystem. See classes TimerUdt and PwmUdt for details.
 
 \since 0.4
 '/
@@ -98,31 +99,33 @@ END FUNCTION
 \param Ball The header pin to configure.
 \param Dur1 The duration in [ms] before state change (or 0 to stop timer).
 \param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
-\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
+\param Mode The output modus (defaults to 0).
 \returns Zero on success, an error string otherwise.
 
 This function sets timer output on a header pin. The output can be either
 
-- a low state for the `Dur1` period of time, then high state fur `Dur2`, then this sequence again endless.
-- a high state for the `Dur1` period of time, then low state fur `Dur2`, then this sequence again endless.
+- a low state for the `Dur1` period of time, then high state for `Dur2`, then this sequence again endless.
+- a high state for the `Dur1` period of time, then low state for `Dur2`, then this sequence again endless.
 
 Parameter `Ball` specifies the header pin to use. Check section \ref
 SubSecTimer for available header pins. \Proj will check the pins
 configuration and adapt it, if necessary and possible. If unpossible an
 error message gets returned.
 
-Parameter `Dur1` specifies the time period of the start state in
+Parameter `Dur1` specifies the time period of the starting state in
 seconds. Parameter `Dur2` specifies the time period of the state change
-(= pulse) in seconds. When `Dur2`is 0 (zero) then the pulse has minimal
-duration. When `Dur2`is 0 (zero) then the timer stops in its initial
-state.
+(= pulse) in seconds.
 
-Parameter `Mode` is a bitmaks that specifies the form of the generated
-output. It can either be low state with high pulse (default), or hight
-state with low pulse (bit PRUIO_TIMER_INVERS set)- Then timer pins send
-a single pulse and then returns to the initial state, endless. In
-contrast the sequence can get repeated again and again when bit
-PRUIO_TIMER_CONTINUE is set.
+If `Dur1` or `Dur2` is smaller than 0 (zero), the timer gets stopped
+(when running in continuous mode) in the state specified by parameter
+`Mode`. When `Dur1` is 0 (zero) then a pulse with time period `Dur2`
+starts immediatelly and the timer stops after that single pulse. When
+`Dur2` is 0 (zero) then the pulse has minimal duration and the timer
+stops in its initial state after that pulse.
+
+Parameter `Mode` specifies the output modus. By default the signal
+starts in low state and sends a positive pulse (high). When `Mode` is
+not 0 (zero), the signal gets inverted.
 
 \note This function always starts a new timer period (and breaks the
       current).
@@ -135,8 +138,8 @@ PRUIO_TIMER_CONTINUE is set.
       counter period. In order to get low frequencies, the counter gets
       pre-scaled (= slowed down). That means, the longer the `Dur1`
       summ, the longer the minimal pulse. The time period of a minimal
-      CAP pulse is 50 ns and a minimal TIMER pulse is between 83 ns and
-      21248 ns. Find further details in \ArmRef{20}.
+      pulse from an eCAP module is 50 ns and from a TIMER subsystem is
+      between 83 ns and 21248 ns. Find further details in \ArmRef{20}.
 
 \note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
       CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
@@ -154,10 +157,9 @@ FUNCTION TimerUdt.setValue CDECL( _
   STATIC AS CONST Float_t _
     d_min =              &h4 / TMRSS_CLK _ '' minimal duration
   , d_max = &h10000000000uLL / TMRSS_CLK   '' maximal duration
-  STATIC AS UInt32 _
-     pru_cmd = 0 _
-       , pre = 0 _
-        , nr = 0
+  DIM AS UInt32 _
+    pre = 0 _
+   , nr = 0
 
   WITH *Top
     SELECT CASE AS CONST Ball
@@ -177,9 +179,8 @@ FUNCTION TimerUdt.setValue CDECL( _
     IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
     IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
-    IF Dur1 <= 0. THEN ' switch off
+    IF Dur1 < 0. ORELSE Dur2 < 0. THEN ' switch off
       Conf(nr)->TCLR = IIF(BIT(Mode, 1), TimHigh, Tim_Low)
-      pru_cmd = PRUIO_COM_TIM_PWM
     ELSE
       VAR dur = Dur1 + Dur2
       IF dur < d_min ORELSE _
@@ -199,26 +200,36 @@ FUNCTION TimerUdt.setValue CDECL( _
       CASE ELSE :                      .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
       END SELECT
 
-      IF Dur2 <= 0. THEN
-        Conf(nr)->TCLR = TimMode
-        pru_cmd = PRUIO_COM_TIM_PWM
-        Conf(nr)->TCRR = &hFFFFFFFFuL - x
-      ELSE
-        Conf(nr)->TCLR = PwmMode
-        pru_cmd = PRUIO_COM_TIM_PWM
-        Conf(nr)->TLDR = &hFFFFFFFFuL - x
+      WITH *Conf(nr)
+        IF Dur1 = 0. THEN
+          .TMAR = &hFFFFFFFFuL - x
+          IF .TMAR >= 2 THEN
+            .TCRR = .TMAR - 2
+          ELSE
+            .TMAR = 2
+            .TCRR = 0
+          END IF
+        ELSE
+          IF Dur2 = 0. THEN
+            .TMAR = &hFFFFFFFFuL - x
+            .TCRR = .TMAR - 2
+          ELSE
+            .TLDR = &hFFFFFFFFuL - x
 
-        VAR y = CULNG(x * Dur2 / dur)
-        SELECT CASE y
-        CASE IS < 2     : Conf(nr)->TMAR =   &hFFFFFFFFuL - 2
-        CASE IS > x - 1 : Conf(nr)->TMAR = Conf(nr)->TLDR + 2
-        CASE ELSE       : Conf(nr)->TMAR = Conf(nr)->TLDR + y
-        END SELECT
-        Conf(nr)->TCRR = Conf(nr)->TMAR
-      END IF
-      Conf(nr)->TCLR OR= pre _
-                      OR IIF(BIT(Mode, 0), &b10, 0) _
-                      OR IIF(BIT(Mode, 1), &b10000000, 0)
+            VAR y = CULNG(x * Dur2 / dur)
+            SELECT CASE y
+            CASE IS < 2     : .TMAR = &hFFFFFFFFuL - 2
+            CASE IS > x - 1 : .TMAR = .TLDR + 2
+            CASE ELSE       : .TMAR = .TLDR + y
+            END SELECT
+            .TCRR = .TMAR
+          END IF
+        END IF
+        .TCLR = TimMode _
+             OR pre _                            ' pre-scaler
+             OR IIF(BIT(Mode, 0), &b10, 0) _     ' continuous
+             OR IIF(BIT(Mode, 1), &b10000000, 0) ' invers
+      END WITH
     END IF
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
@@ -228,7 +239,7 @@ FUNCTION TimerUdt.setValue CDECL( _
     .DRam[4] = Conf(nr)->TMAR
     .DRam[3] = Conf(nr)->TLDR
     .DRam[2] = Conf(nr)->DeAd
-    .DRam[1] = Conf(nr)->TCLR OR (pru_cmd SHL 24)
+    .DRam[1] = Conf(nr)->TCLR OR (PRUIO_COM_TIM_PWM SHL 24)
   END WITH :                                                    RETURN 0
 END FUNCTION
 

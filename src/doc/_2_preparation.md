@@ -5,10 +5,12 @@ Preparation {#ChaPreparation}
 This chapter describes how to get libpruio working on your system. The
 easy way is to install the Debian packages. They're not in mainline,
 yet. So you have to add a PPA (Personal Package Archive) to your
-package manament sources:
+package management sources:
 
 ~~~{.txt}
-sudo apt-get install ???
+sudo add-apt-repository "deb http://beagle.tuks.nl/debian unstable main"
+sudo add-apt-repository "deb-src http://beagle.tuks.nl/debian unstable main"
+wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
 ~~~
 
 Once prepared, you can download the library, the header files and the

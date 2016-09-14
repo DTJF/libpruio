@@ -52,11 +52,11 @@ subsystems in IO and RB mode.
 '/
 TYPE TimerArr
   AS UInt32 _
-    DeAd      '*< Base address of TIMER subsystem
+    DeAd    '*< Base address of TIMER subsystem
   AS UInt32 _
-    CMax _ '*< Maximum counter value.
-  , TCAR1 _   '*< Current value of TCAR1 register (IO, RB).
-  , TCAR2     '*< Current value of TCAR2 register (IO, RB).
+    CMax _  '*< Maximum counter value.
+  , TCAR1 _ '*< Current value of TCAR1 register (IO, RB).
+  , TCAR2   '*< Current value of TCAR2 register (IO, RB).
 END TYPE
 
 
@@ -77,13 +77,13 @@ TYPE TimerUdt
   AS TimerArr PTR _
     Raw(PRUIO_AZ_TIMER)   '*< Pointer to current raw subsystem data (IO), all 32 bits.
   AS UInt32 _
-    InitParA _            '*< Offset to read data block offset.
+    InitParA _            '*< Offset to read data block.
   , PwmMode = &b001100001000011 _ '*< Control register for PWM output mode.
   , PwmHigh = &b000000010000011 _ '*< Control register for PWM output high (100%).
   , Pwm_Low = &b000000000000011 _ '*< Control register for PWM output low (0%).
-  , TimMode = &b000000000000001 _ '*< Control register for Timer mode.
-  , TimHigh = &b000000010000010 _ '*< Control register for Timer high.
-  , Tim_Low = &b000000000000010 _ '*< Control register for Timer low.
+  , TimMode = &b001100001000001 _ '*< Control register for Timer mode.
+  , TimHigh = &b000000010000010 _ '*< Control register for stopped Timer high.
+  , Tim_Low = &b000000000000010 _ '*< Control register for stopped Timer low.
   , CapMode = &b010000110000000   '*< Control register for CAP input mode.
   AS ZSTRING PTR _
     E0 = @"TIMER subsystem not enabled" _      '*< Common error message.

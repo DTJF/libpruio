@@ -1,10 +1,10 @@
 /'* \file pruio_pwmss.bas
 \brief The PWMSS component source code.
 
-Source code file containing the function bodies of the PWMSS
-components. The code for the subsystem PWMSS and its modules (eQEP,
-eCAP and ePWM) is in here, containing member functions of classes
-PwmMod, CapMod and QepMod.
+Source code file containing the function bodies to control the PWM
+subsystems. This code controlls the modules of the PWMSS (eQEP, eCAP
+and ePWM), containing member functions of classes PwmMod, CapMod and
+QepMod and also TimerUdt.
 
 \since 0.2
 '/
@@ -257,7 +257,7 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
 
   WITH *Conf(Nr)
     .CAP1 = CULNG(dur * PWMSS_CLK)
-    IF Dur1 <= 0. THEN ' switch off
+    IF Dur1 < 0. ORELSE Dur2 < 0. THEN ' switch off
       .CAP2 = IIF(BIT(Mode, 1), .CAP1, 0)
     ELSE
       .CAP2 = IIF(Dur2 > 0., CULNG(Dur2 / dur * PWMSS_CLK), 1uL)
@@ -806,7 +806,7 @@ or underflow.
 Parameter `VHz` is the frequency to update velocity computation. The
 capture unit of the QEP module is used to generate velocity input and
 to latch the input values at the given frequency. The minimal frequency
-is less than 12 Hz and the maximum frquency is 50 GHz. The higher the
+is less than 12 Hz and the maximum ferquency is 50 GHz. The higher the
 frequency, the less is the resolution of the speed measurement. So it's
 recommended to use the lowest possible frequency. The default value is
 25 Hz.
@@ -826,7 +826,7 @@ C-wrapper function: pruio_qep_config().
 '/
 FUNCTION QepMod.config CDECL( _
     BYVAL Ball AS UInt8 _
-  , BYVAL PMax AS UInt32 = 0 _
+  , BYVAL PMax AS UInt32 = &h7FFFFFFFul _
   , BYVAL VHz AS Float_t = 25. _
   , BYVAL Scale AS Float_t = 1. _
   , BYVAL Mo AS UInt8 = 0) AS ZSTRING PTR
@@ -872,7 +872,7 @@ FUNCTION QepMod.config CDECL( _
   WITH *Top->PwmSS->Conf(m)
     .QPOSCNT = 0
     .QPOSINIT = 0
-    '.QPOSMAX = iif(PMax andalso x <> 2, PMax, &h7FFFFFFFuL)
+    .QPOSMAX = PMax
     .QPOSLAT = 0
     .QUTMR = 0
     .QUPRD = cuint(PWMSS_CLK / VHz)
@@ -881,17 +881,14 @@ FUNCTION QepMod.config CDECL( _
     IF ccps > 1 THEN ccps = 1 + INT(LOG(ccps) / LOG(2))
     SELECT CASE AS CONST x
     CASE 2 '                                               up count mode
-      .QPOSMAX = &h7FFFFFFFuL
       .QDECCTL = &b1000000000000000
       .QEPCTL  = &b0001000010001110
       .QCAPCTL = &b1000000000000000 or (ccps shl 4)
     CASE 1 '                                        direction count mode
-      .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
       .QDECCTL = &b0000000000000000
       .QEPCTL  = &b0001000010001110
       .QCAPCTL = &b1000000000000010 or (ccps shl 4)
     CASE ELSE '                          direction count mode with index
-      .QPOSMAX = iif(PMax, PMax, &h7FFFFFFFuL)
       .QDECCTL = &b0000000000000000
       .QEPCTL  = &b0000001010001110
       .QCAPCTL = &b1000000000000010 or (ccps shl 4)
@@ -971,15 +968,14 @@ FUNCTION QepMod.Value CDECL( _
     END IF
   END WITH
   WITH *Top->PwmSS->Raw(m)
-  IF Velo THEN
-    VAR dx = CINT(.NPos - .OPos)
-    IF .PLat > Prd(m) THEN
-      *Velo = dx * FVh(m)
-    ELSE
-      *Velo = IIF(HIWORD(.PLat), SGN(dx) * FVl(m) / HIWORD(.PLat), 0.)
+    IF Velo THEN
+      VAR dx = CINT(.NPos - .OPos)
+      IF .PLat > Prd(m) THEN
+        *Velo = dx * FVh(m)
+      ELSE
+        *Velo = IIF(HIWORD(.PLat), SGN(dx) * FVl(m) / HIWORD(.PLat), 0.)
+      END IF
     END IF
-  END IF
-  IF Posi THEN *Posi = .QPos
-
+    IF Posi THEN *Posi = .QPos
   END WITH :                                                    RETURN 0
 END FUNCTION

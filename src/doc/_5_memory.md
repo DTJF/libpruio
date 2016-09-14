@@ -8,13 +8,17 @@ libpruio uses three blocks of memory to organize its data
   libpruio, containing the data arrays PruIo::Init and PruIo::Conf.
 
 - PruIo::DRam : A memory block of 2 x 8 kB, allocated by the kernel
-  driver uio_pruss.
+  driver uio_pruss and mapped to the PRUSS DRam.
 
-- PruIo::ERam : A memory block variable size (up to 8 MB), allocated by
-  the kernel driver uio_pruss.
+- PruIo::ERam : A memory block of variable size (up to 8 MB), allocated
+  by the kernel driver uio_pruss.
 
-These blocks are available after the constructor PruIo::PruIo() call
-and get destroyed in the destructor PruIo::~PruIo().
+These blocks are available after the constructor call PruIo::PruIo()
+and get destroyed in the destructor PruIo::~PruIo(). The constructor
+reads the initial configuration of the CPU subsystems and stores the
+values in PruIo::Init. Those values are used to restore the subsystems
+in the destructor. PruIo::Conf contains the current configurations,
+adapted by the user code.
 
 
 # DInit {#SecDInit}
@@ -27,6 +31,7 @@ size is twice the size of all register sets. This is
 - 4 x GpioSet
 - 1 x BallSet
 - 3 x PwmssSet
+- 4 x TimerSet
 
 The pasm_init.p instructions prepares these structures for each
 subsystem and sets the member variables by the values read from the
@@ -35,7 +40,7 @@ stored in DRam. The constructor allocates memory and makes one copy of
 the block starting at adress PruIo::DInit and a second copy starting at
 adress PruIo:DConf.
 
-The first copy is used by the destructor PruIo::~PruIo to restore the
+The first copy is used by the destructor PruIo::~PruIo() to restore the
 original configuration. The second block is used for customized
 configurations and gets transfered back to the subsystem registers in
 the call to function PruIo::config(). The initialize member function of

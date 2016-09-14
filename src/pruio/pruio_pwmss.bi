@@ -316,7 +316,7 @@ TYPE QepMod
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS UInt32 = 0 _
+  , BYVAL AS UInt32 = &h7FFFFFFFul _
   , BYVAL AS Float_t = 25. _
   , BYVAL AS Float_t = 1. _
   , BYVAL AS UInt8 = 0) AS ZSTRING PTR
