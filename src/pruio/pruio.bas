@@ -64,8 +64,8 @@ case).
 
 Otherwise (PruIo::Errr = 0) the constructor tries to enable the
 subsystems and read their configurations. This gets done for the active
-subsystems only. Use parameter `Act` to specify active systems and the
-PRU number to run the software:
+subsystems only. Use bitmask parameter `Act` to specify active systems
+and the PRU number to run the software:
 
 | Bit | Function                         |
 | --: | :------------------------------- |
