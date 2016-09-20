@@ -267,8 +267,6 @@ typedef struct timerUdt{
   uint32
     InitParA  //!< Offset to read data block offset.
   , PwmMode   //!< Control register for PWM output mode.
-  , PwmHigh   //!< Control register for PWM output high (100%).
-  , Pwm_Low   //!< Control register for PWM output low (0%).
   , TimMode   //!< Control register for Timer mode.
   , TimHigh   //!< Control register for Timer high.
   , Tim_Low   //!< Control register for Timer low.

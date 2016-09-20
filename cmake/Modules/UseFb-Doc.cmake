@@ -8,28 +8,18 @@
 #
 # See ReadMe.md for details.
 
-SET(logfile ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log)
-
 # check for fb-doc tool
 IF(NOT FbDoc_WORKS)
   INCLUDE(FindFb-Doc)
-  IF(NOT FbDoc_WORKS)
-    SET(msg ">> no doc targets!")
-    MESSAGE(STATUS ${msg})
-    FILE(APPEND ${logfile} "${msg}\n\n")
-    RETURN()
-  ENDIF()
 ENDIF()
 
-  # check for Doxygen
+# check for Doxygen
 IF(NOT DOXYGEN_FOUND)
   INCLUDE(FindDoxygen)
-  IF(NOT DOXYGEN_FOUND)
-    SET(msg ">> no doc targets!")
-    MESSAGE(STATUS ${msg})
-    FILE(APPEND ${logfile} "${msg}\n\n")
-    RETURN()
-  ENDIF()
+ENDIF()
+
+IF(NOT (FbDoc_WORKS AND DOXYGEN_FOUND))
+  RETURN()
 ENDIF()
 
 # check for parser macro
@@ -37,6 +27,8 @@ IF(NOT COMMAND CMAKE_PARSE_ARGUMENTS)
   INCLUDE(CMakeParseArguments)
 ENDIF()
 
+
+# define function for doc targets
 FUNCTION(FB_DOCUMENTATION)
 
   CMAKE_PARSE_ARGUMENTS(ARG
@@ -48,7 +40,7 @@ FUNCTION(FB_DOCUMENTATION)
   IF(ARG_NO_HTM AND ARG_NO_PDF AND ARG_NO_WWW)
     SET(msg "FB_DOCUMENTATION error: all output blocked ==> doc targets not available!")
     MESSAGE(STATUS ${msg})
-    FILE(APPEND ${logfile} "${msg}\n\n")
+    FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log "${msg}\n\n")
     RETURN()
   ENDIF()
   SET(msg "")

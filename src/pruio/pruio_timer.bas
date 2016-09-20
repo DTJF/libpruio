@@ -157,9 +157,7 @@ FUNCTION TimerUdt.setValue CDECL( _
   STATIC AS CONST Float_t _
     d_min =              &h4 / TMRSS_CLK _ '' minimal duration
   , d_max = &h10000000000uLL / TMRSS_CLK   '' maximal duration
-  DIM AS UInt32 _
-    pre = 0 _
-   , nr = 0
+  DIM AS UInt32 nr = 0
 
   WITH *Top
     SELECT CASE AS CONST Ball
@@ -180,55 +178,49 @@ FUNCTION TimerUdt.setValue CDECL( _
     IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
     IF Dur1 < 0. ORELSE Dur2 < 0. THEN ' switch off
-      Conf(nr)->TCLR = IIF(BIT(Mode, 1), TimHigh, Tim_Low)
+      Conf(nr)->TCLR = IIF(Mode AND &b01, TimHigh, Tim_Low)
     ELSE
       VAR dur = Dur1 + Dur2
       IF dur < d_min ORELSE _
          dur > d_max THEN              .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
 
       VAR x = CULNGINT(dur * TMRSS_CLK)
-      SELECT CASE AS CONST x SHR 32 '' faster than LOG
-      CASE   0        : pre = 0
-      CASE   1        : pre = &b100000 : x SHR= 1
-      CASE   2 TO   3 : pre = &b100100 : x SHR= 2
-      CASE   4 TO   7 : pre = &b101000 : x SHR= 3
-      CASE   8 TO  15 : pre = &b101100 : x SHR= 4
-      CASE  16 TO  31 : pre = &b110000 : x SHR= 5
-      CASE  32 TO  63 : pre = &b110100 : x SHR= 6
-      CASE  64 TO 127 : pre = &b111000 : x SHR= 7
-      CASE 128 TO 255 : pre = &b111100 : x SHR= 8
-      CASE ELSE :                      .Errr = .PwmSS->E2 : RETURN .Errr ' frequency not supported
-      END SELECT
-
       WITH *Conf(nr)
-        IF Dur1 = 0. THEN
-          .TMAR = &hFFFFFFFFuL - x
-          IF .TMAR >= 2 THEN
-            .TCRR = .TMAR - 2
-          ELSE
-            .TMAR = 2
-            .TCRR = 0
-          END IF
-        ELSE
-          IF Dur2 = 0. THEN
-            .TMAR = &hFFFFFFFFuL - x
-            .TCRR = .TMAR - 2
-          ELSE
-            .TLDR = &hFFFFFFFFuL - x
+        SELECT CASE AS CONST x SHR 32 '' faster than LOG
+        CASE   0        : .TCLR = 0
+        CASE   1        : .TCLR = &b100000 : x SHR= 1
+        CASE   2 TO   3 : .TCLR = &b100100 : x SHR= 2
+        CASE   4 TO   7 : .TCLR = &b101000 : x SHR= 3
+        CASE   8 TO  15 : .TCLR = &b101100 : x SHR= 4
+        CASE  16 TO  31 : .TCLR = &b110000 : x SHR= 5
+        CASE  32 TO  63 : .TCLR = &b110100 : x SHR= 6
+        CASE  64 TO 127 : .TCLR = &b111000 : x SHR= 7
+        CASE 128 TO 255 : .TCLR = &b111100 : x SHR= 8
+        CASE ELSE :        Top->Errr = Top->PwmSS->E2 : RETURN Top->Errr ' frequency not supported
+        END SELECT
+        IF Mode AND &b01 THEN .TCLR OR= &b0000010000000 ' invers
 
-            VAR y = CULNG(x * Dur2 / dur)
-            SELECT CASE y
-            CASE IS < 2     : .TMAR = &hFFFFFFFFuL - 2
-            CASE IS > x - 1 : .TMAR = .TLDR + 2
-            CASE ELSE       : .TMAR = .TLDR + y
-            END SELECT
-            .TCRR = .TMAR
-          END IF
+        IF Dur2 = 0. THEN
+          .TCRR = &hFFFFFFFFuL - x
+          .TCLR OR= TimMode
+          IF Mode AND &b10 THEN .TCLR OR= &b1000000000000 ' toggle
+          .TLDR = .TCRR
+          .TMAR = 0
+          '.TCLR OR= &b10
+        ELSE
+          .TLDR = &hFFFFFFFFuL - x
+
+          VAR y = CULNG(x * Dur2 / dur)
+          SELECT CASE y
+          CASE IS < 2     : .TMAR = &hFFFFFFFFuL - 2
+          CASE IS > x - 1 : .TMAR = .TLDR + 2
+          CASE ELSE       : .TMAR = .TLDR + y
+          END SELECT
+          .TCRR = .TMAR
+          .TCLR OR= PwmMode
         END IF
-        .TCLR = TimMode _
-             OR pre _                            ' pre-scaler
-             OR IIF(BIT(Mode, 0), &b10, 0) _     ' continuous
-             OR IIF(BIT(Mode, 1), &b10000000, 0) ' invers
+
+?"HIER: ";bin(.TCLR, 16)
       END WITH
     END IF
 
@@ -356,8 +348,8 @@ FUNCTION TimerUdt.pwm_set CDECL( _
     IF Duty >= 0. THEN
       cmp(Nr) = IIF(Duty >= 1., cnt(Nr), CUINT(cnt(Nr) * Duty)) - 1
       SELECT CASE cmp(Nr)
-      CASE IS <=           1 : r = Pwm_Low
-      CASE IS >= cnt(Nr) - 1 : r = PwmHigh
+      CASE IS <=           1 : r = Tim_Low
+      CASE IS >= cnt(Nr) - 1 : r = TimHigh
       CASE ELSE : Conf(Nr)->TMAR = Conf(Nr)->TLDR + cmp(Nr)
       END SELECT
     END IF
@@ -407,8 +399,8 @@ FUNCTION TimerUdt.pwm_get CDECL( _
     VAR cnt = &hFFFFFFFFuLL - .TLDR + 1 _
       , pre = (.TCLR AND &b111100) SHR 2
     SELECT CASE .TCLR
-    CASE PwmHigh : IF Duty THEN *Duty = 1.
-    CASE Pwm_Low : IF Duty THEN *Duty = 0.
+    CASE TimHigh : IF Duty THEN *Duty = 1.
+    CASE Tim_Low : IF Duty THEN *Duty = 0.
     CASE ELSE
       IF (PwmMode AND .TCLR) <> PwmMode THEN Top->Errr = E2 :  RETURN E2 ' TIMER not in PWM output mode
       IF Duty THEN *Duty = (.TMAR -.TLDR + 1) / cnt

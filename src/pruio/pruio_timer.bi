@@ -79,9 +79,7 @@ TYPE TimerUdt
   AS UInt32 _
     InitParA _            '*< Offset to read data block.
   , PwmMode = &b001100001000011 _ '*< Control register for PWM output mode.
-  , PwmHigh = &b000000010000011 _ '*< Control register for PWM output high (100%).
-  , Pwm_Low = &b000000000000011 _ '*< Control register for PWM output low (0%).
-  , TimMode = &b001100001000001 _ '*< Control register for Timer mode.
+  , TimMode = &b000010001000001 _ '*< Control register for Timer mode.
   , TimHigh = &b000000010000010 _ '*< Control register for stopped Timer high.
   , Tim_Low = &b000000000000010 _ '*< Control register for stopped Timer low.
   , CapMode = &b010000110000000   '*< Control register for CAP input mode.
