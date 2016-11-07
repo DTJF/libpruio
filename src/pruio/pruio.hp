@@ -104,6 +104,8 @@ pruio.bi in case of any change here.
 #define PRUIO_AZ_PWMSS 2
 #define PRUIO_AZ_TIMER 3
 
+#define PRUIO_COM_POKE 10
+#define PRUIO_COM_PEEK 9
 #define PRUIO_COM_GPIO_CONF 20
 #define PRUIO_COM_GPIO_OUT  19
 #define PRUIO_COM_PWM       30

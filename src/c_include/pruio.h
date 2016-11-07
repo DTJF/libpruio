@@ -274,7 +274,7 @@ typedef struct timerUdt{
   char*
     E0  //!< Common error message.
   , E1  //!< Common error message.
-  , E2  //!< Common error message.
+  , E2; //!< Common error message.
 } timerUdt;
 
 
@@ -501,7 +501,7 @@ enum activateDevice{
 , PRUIO_ACT_TIM5  = 1 << 10  //!< Activate TIMER-5.
 , PRUIO_ACT_TIM6  = 1 << 11  //!< Activate TIMER-6.
 , PRUIO_ACT_TIM7  = 1 << 12  //!< Activate TIMER-7.
-, PRUIO_DEF_ACTIVE = 0xFFFFF //!< Activate all subsystems.
+, PRUIO_DEF_ACTIVE = 0xFFFF  //!< Activate all subsystems.
 };
 
 

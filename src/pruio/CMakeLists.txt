@@ -34,7 +34,9 @@ SET(SRC_BI_EXTRA
     "pruio_out.bi"
   )
 
-FIND_PACKAGE(LIBPRUSSDRV)
+IF(NOT LIBPRUSSDRV_FOUND)
+  FIND_PACKAGE(LIBPRUSSDRV)
+ENDIF()
 
 # Check the PRU assembler pasm (presence and version):
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)

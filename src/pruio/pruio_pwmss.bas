@@ -85,6 +85,7 @@ FUNCTION PwmssUdt.initialize CDECL() AS ZSTRING PTR
         ' ePWM registers
         .TBPHS = 0
         .TBSTS = &b110
+        .CMPCTL = 0
         ' eCAP registers
         .TSCTR = 0            ' reset counter
         .CTRPHS = 0
@@ -180,13 +181,13 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
     WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
     .DRam[4] = cmp(Nr)
     .DRam[3] = cnt(Nr)
-    .DRam[2] = .PwmSS->Conf(Nr)->DeAd + &h100
+    .DRam[2] = Conf(Nr)->DeAd + &h100
     .DRam[1] = r OR (PRUIO_COM_CAP_PWM SHL 24)
   END WITH :                                                    RETURN 0
 END FUNCTION
 
 
-/'* \brief Compute current values of Timer output (private).
+/'* \brief Compute current values of eCAP Timer output (private).
 \param Nr The PWMSS subsystem index.
 \param Dur1 The variable to store the duration of initial state (or NULL).
 \param Dur2 The variable to store the duration of the pulse (or NULL).
@@ -221,7 +222,7 @@ FUNCTION PwmssUdt.cap_tim_get CDECL( _
 END FUNCTION
 
 
-/'* \brief Configure PWM output at an eCAP module (private).
+/'* \brief Configure Timer output from an eCAP module (private).
 \param Nr The PWMSS subsystem index.
 \param Dur1 The duration of initial state.
 \param Dur2 The duration of the pulse (0 (zero) for minimal.
@@ -369,7 +370,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
 
     IF 0 = cnt(Nr) THEN '                    calc new period (frequency)
       VAR cycle = IIF(F > f_min ANDALSO F <= PWMSS_CLK_2, CUINT(.5 + PWMSS_CLK / F), 0uL)
-      IF 2 > cycle THEN          Top->Errr = Top->PwmSS->E2 : RETURN Top->Errr ' frequency not supported
+      IF 2 > cycle THEN                       Top->Errr = E2 : RETURN E2 ' frequency not supported
 
       freq(Nr) = ABS(F)
       IF cycle <= &h10000 ANDALSO 0 = BIT(Top->Pwm->ForceUpDown, Nr) THEN ' count up mode
@@ -416,6 +417,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
       END IF
       .CMPB = c_b(Nr)
     END IF
+
     IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
 
     WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
@@ -655,9 +657,9 @@ FUNCTION CapMod.config CDECL( _
       'm = 1
     CASE ELSE                        : .Errr = .PwmSS->E6 : RETURN .Errr ' pin has no CAP capability
     END SELECT
+    IF 2 <> .PwmSS->Conf(m)->ClVa THEN .Errr = .PwmSS->E0 : RETURN .Errr ' PWMSS not enabled
   END WITH
   WITH *Top->PwmSS
-    IF 2 <> .Conf(m)->ClVa THEN               Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
     VAR cnt = &hFFFFFFFFul
     IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
       cnt = CUINT(PWMSS_CLK / FLow)
@@ -710,16 +712,20 @@ FUNCTION CapMod.Value CDECL( _
   VAR m = 0
   WITH *Top
     DIM AS ZSTRING PTR e
-    SELECT CASE AS CONST Ball
-    CASE P9_28 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 2
-    CASE P9_42 : IF ModeCheck(Ball,0) THEN e = E1
-    'CASE P8_15 : IF ModeCheck(Ball,5) THEN e = E1 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
-    'CASE JT_04 : IF ModeCheck(Ball,4) THEN e = E1 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
-    'CASE 88 : IF ModeCheck(Ball,2) THEN e = E1 ELSE m = 1
-    'CASE 98 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 2
-    'CASE 99 : IF ModeCheck(Ball,3) THEN e = E1 ELSE m = 1
-    CASE ELSE  : e = E0
-    END SELECT : IF e THEN .Errr = e                      : RETURN .Errr
+    IF 2 <> .PwmSS->Conf(m)->ClVa THEN
+      e = .PwmSS->E0 ' PWMSS not enabled
+    else
+      SELECT CASE AS CONST Ball
+      CASE P9_28 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 2
+      CASE P9_42 : IF ModeCheck(Ball,0) THEN e = .PwmSS->E5 ' pin not in CAP mode
+      'CASE P8_15 : IF ModeCheck(Ball,5) THEN e = .PwmSS->E5 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
+      'CASE JT_04 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
+      'CASE 88 : IF ModeCheck(Ball,2) THEN e = .PwmSS->E5 ELSE m = 1
+      'CASE 98 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 2
+      'CASE 99 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 1
+      CASE ELSE  : e = .PwmSS->E6 ' pin has no CAP capability
+      END SELECT
+    END IF : IF e THEN .Errr = e                          : RETURN .Errr
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN
       IF Hz THEN *Hz = 0

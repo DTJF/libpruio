@@ -225,17 +225,21 @@ END TYPE
 
 /'* \brief UDT for PWM modules, containing the functions to drive the hardware.
 
-Pulse width modulated (PWM) output can get generated in two ways. The
-PWM subsystems (PWMSS) contain a ePWM module, which can generate two
-PWM outputs at the same frequency (up to 17 bit resolution). And the
-PWMSS contains a eCAP module, which can generate a single PWM output
-(up to 32 bit resolution). All PWM generators (ePWM-1/2 and eCAP) are
-controlled by the member functions of this structure (UDT). See
-\ArmRef{15} for hardware details.
+Pulse width modulated (PWM) output can get generated in three ways.
 
-To use a header pins as PWM output, the pin must be in *pwm* mode
-before starting your code. Then just set the desired period (frequency)
-and duty cycle (load) by a call to function PwmMod::setValue().
+-# The PWM subsystems (PWMSS) contain a ePWM module, which can generate two
+   PWM outputs at the same frequency (up to 17 bit resolution at up to
+   100 MHz).
+
+-# The PWMSS also contains a eCAP module, which can generate a
+   single PWM output with 32 bit resolution at 100 MHz.
+
+-# The TimerSS can also be used to generate PWM output with 32 bit
+   resolution at up to 25 MHz.
+
+All PWM generators (ePWM-1/2, eCAP and Timer) are controlled by the
+member functions of this structure (UDT). See \ArmRef{15} for hardware
+details.
 
 C wrapper equivalent pwmMod.
 
@@ -278,10 +282,10 @@ See \ArmRef{15.3} for hardware details.
 '/
 TYPE CapMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  AS ZSTRING PTR _
-    E0 = @"pin has no CAP capability" _ '*< Common error message.
-  , E1 = @"pin not in CAP mode" _       '*< Common error message.
-  , E2 = @"CAP not enabled"             '*< Common error message.
+  'AS ZSTRING PTR _
+    'E0 = @"pin has no CAP capability" _ '*< Common error message.
+  ', E1 = @"pin not in CAP mode" _       '*< Common error message.
+  ', E2 = @"CAP not enabled"             '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION config CDECL( _

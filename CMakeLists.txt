@@ -2,10 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-PROJECT(libpruio Fbc C)
-
 # constants
-SET(PROJ_NAME "${CMAKE_PROJECT_NAME}" CACHE STRING "project name" FORCE)
+SET(PROJ_NAME "libpruio" CACHE STRING "project name" FORCE)
 SET(PROJ_DESC "Fast and easy Input/Output for digital/analog on Beagleboard" CACHE STRING "project description" FORCE)
 SET(PROJ_VERS "0.4.0"   CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "DTJF"    CACHE STRING "project authors" FORCE)
@@ -15,6 +13,8 @@ SET(PROJ_LICE "LGPLv2.1" CACHE STRING "project licence" FORCE)
 #STRING(TIMESTAMP tmp "%Y" UTC) # requires CMake 2.8.11
 #SET(PROJ_YEAR "${tmp}"             CACHE STRING "project year" FORCE)
 SET(PROJ_YEAR "2016"   CACHE STRING "project year" FORCE)
+
+PROJECT(${PROJ_NAME} Fbc C)
 
 FUNCTION(MSG_LOG Txt)
   FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log "${Txt}\n\n")
