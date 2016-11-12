@@ -49,6 +49,8 @@ WITH *io
     FOR i AS LONG = 0 TO UBOUND(P9_Pins)
       ?"  " & *.Pin(P9_Pins(i))
     NEXT
+    ?"  " & *.Pin(JT_04)
+    ?"  " & *.Pin(JT_05)
 #ENDIF
 
     GPIO_OUT(OUT_TYPE)

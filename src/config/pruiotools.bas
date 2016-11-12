@@ -26,7 +26,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n/plugin/;" _
   !"\n" _
   !"\n/ {" _
-  !"\n    compatible = ""ti,beaglebone"", ""ti,beaglebone-black"", ""ti,beaglebone-green"";" _
+  !"\n    compatible = " & COMPATIBL & """ti,beaglebone""" _
   !"\n" _
   !"\n    // identification" _
   !"\n    board-name = """ & FILE_NAME & """;" _
@@ -48,6 +48,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n          status = ""okay"";"_
   !"\n      };" _
   !"\n    };" _
+  USER_ADD_ON _
   !"\n  };"
 
 
@@ -76,9 +77,44 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n      };" _
   !"\n    };"
 
+'* Macro creating the files.
+#MACRO CREATE()
+  IF LEN(COMPATIBL) THEN COMPATIBL = """" & COMPATIBL & """, "
+  VAR fnam = FILE_NAME & "-" & VERS_NAME, _ '*< The file name (without path / suffix)
+       fnr = FREEFILE                       '*< The file number.
+  'IF OPEN CONS(FOR OUTPUT AS #fnr) THEN '' alternative for console output
+    '?"failed openig console"
+  IF OPEN(fnam & ".dts" FOR OUTPUT AS fnr) THEN
+    ?"failed writing file: " & fnam & ".dts"
+  ELSE
+    PRINT #fnr, ALL_START;
+    FOR i AS LONG = 0 TO UBOUND(M)
+      VAR x = IIF(LEN(M(i)), nameBall(i), 0) '*< The header pin name.
+      IF x THEN PRINT #fnr, ENTRY_EXCL(*x);
+    NEXT
+
+    PRINT #fnr, FRAG0_START;
+    FOR i AS LONG = 0 TO UBOUND(M)
+      IF LEN(M(i)) THEN PRINT #fnr, f0entry(i);
+    NEXT
+    PRINT #fnr, FRAG0_END;
+
+    PRINT #fnr, FRAG1_START;
+    FOR i AS LONG = 0 TO UBOUND(M)
+      IF LEN(M(i)) THEN PRINT #fnr, f1entry(i);
+    NEXT
+    PRINT #fnr, FRAG1_END;
+    PRINT #fnr, ALL_END;
+    CLOSE #fnr
+
+    IF LEN(COMMAND(1)) THEN TARG_PATH = COMMAND(1)
+    IF RIGHT(TARG_PATH, 1) <> "/" THEN TARG_PATH &= "/"
+    SHELL("dtc -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts")
+  END IF
+#ENDMACRO
 
 '* Enumerators for pin modes.
-ENUM
+ENUM PinModes
   NP = &b001000 '*< no resistor connected
   PU = &b010000 '*< pullup resistor connected
   PD = &b000000 '*< pulldown resistor connected
@@ -112,13 +148,21 @@ END ENUM
 
 '* The array to be filled with modus settings for all pins.
 DIM SHARED AS STRING M(109)
+'* A variable to add user fragments (starting at fragment@3 {}), in order to enable subsystems.
+DIM SHARED AS STRING USER_ADD_ON
 
 
-/'* \brief Create lines for fragment0 for all settings of a pin.
+/'* \brief Create lines for `fragment@0` with all settings of a pin.
 \param I The index (ball number) of the pin in global array M.
 \returns A string containing several lines with pin settings for fragment0.
 
-FIXME
+This function creates a buch of lines used in `fragment@0`, declaring
+the DT-nodes for all the defined pinmux modes in array M(). In this
+fragment the pinmux modes get declared. Each nodes is named (and
+labeled) by the letter `B` and two hexadecimal numbers, concatenated by
+an underscore. The first number is the CPU ball number and the second
+is the pinmux mode. Ie. `B6B_2F` stands for CPU ball `6B` (= P9_25) in
+modus `2F` (= GPIO input, no resistor).
 
 '/
 FUNCTION f0entry(BYVAL I AS UBYTE) AS STRING
@@ -143,11 +187,16 @@ FUNCTION f0entry(BYVAL I AS UBYTE) AS STRING
 END FUNCTION
 
 
-/'* \brief Create lines for fragment1 for all settings of a pin.
+/'* \brief Create lines for `fragment@0` with all settings of a pin.
 \param I The index (ball number) of the pin in global array M.
 \returns A string containing an entry with pin settings for fragment1.
 
-FIXME
+This function creates a buch of lines used in `fragment@1`, declaring
+the DT-nodes for all the defined pinmux modes in array M(). In this
+fragment the name entries for the status files in the sysfs get
+declared. Each pinmux mode is named by a hexadecimal number. The number
+represents the pinmux mode. Ie. `x2F` stands for modus `2F` (= GPIO
+input, no resistor).
 
 '/
 FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING
@@ -191,72 +240,74 @@ returns 0 (zero).
 '/
 FUNCTION nameBall CDECL(BYVAL Ball AS UBYTE) AS ZSTRING PTR
   SELECT CASE AS CONST Ball '                                  find name
-  CASE   6 : RETURN @"P8.03"
-  CASE   7 : RETURN @"P8.04"
-  CASE   2 : RETURN @"P8.05"
-  CASE   3 : RETURN @"P8.06"
-  CASE  36 : RETURN @"P8.07"
-  CASE  37 : RETURN @"P8.08"
-  CASE  39 : RETURN @"P8.09"
-  CASE  38 : RETURN @"P8.10"
-  CASE  13 : RETURN @"P8.11"
-  CASE  12 : RETURN @"P8.12"
-  CASE   9 : RETURN @"P8.13"
-  CASE  10 : RETURN @"P8.14"
-  CASE  15 : RETURN @"P8.15"
-  CASE  14 : RETURN @"P8.16"
-  CASE  11 : RETURN @"P8.17"
-  CASE  35 : RETURN @"P8.18"
-  CASE   8 : RETURN @"P8.19"
-  CASE  33 : RETURN @"P8.20"
-  CASE  32 : RETURN @"P8.21"
-  CASE   5 : RETURN @"P8.22"
-  CASE   4 : RETURN @"P8.23"
-  CASE   1 : RETURN @"P8.24"
-  CASE   0 : RETURN @"P8.25"
-  CASE  31 : RETURN @"P8.26"
-  CASE  56 : RETURN @"P8.27"
-  CASE  58 : RETURN @"P8.28"
-  CASE  57 : RETURN @"P8.29"
-  CASE  59 : RETURN @"P8.30"
-  CASE  54 : RETURN @"P8.31"
-  CASE  55 : RETURN @"P8.32"
-  CASE  53 : RETURN @"P8.33"
-  CASE  51 : RETURN @"P8.34"
-  CASE  52 : RETURN @"P8.35"
-  CASE  50 : RETURN @"P8.36"
-  CASE  48 : RETURN @"P8.37"
-  CASE  49 : RETURN @"P8.38"
-  CASE  46 : RETURN @"P8.39"
-  CASE  47 : RETURN @"P8.40"
-  CASE  44 : RETURN @"P8.41"
-  CASE  45 : RETURN @"P8.42"
-  CASE  42 : RETURN @"P8.43"
-  CASE  43 : RETURN @"P8.44"
-  CASE  40 : RETURN @"P8.45"
-  CASE  41 : RETURN @"P8.46"
-  CASE  28 : RETURN @"P9.11"
-  CASE  30 : RETURN @"P9.12"
-  CASE  29 : RETURN @"P9.13"
-  CASE  18 : RETURN @"P9.14"
-  CASE  16 : RETURN @"P9.15"
-  CASE  19 : RETURN @"P9.16"
-  CASE  87 : RETURN @"P9.17"
-  CASE  86 : RETURN @"P9.18"
-  CASE  95 : RETURN @"P9.19"
-  CASE  94 : RETURN @"P9.20"
-  CASE  85 : RETURN @"P9.21"
-  CASE  84 : RETURN @"P9.22"
-  CASE  17 : RETURN @"P9.23"
-  CASE  97 : RETURN @"P9.24"
-  CASE 107 : RETURN @"P9.25"
-  CASE  96 : RETURN @"P9.26"
-  CASE 105 : RETURN @"P9.27"
-  CASE 103 : RETURN @"P9.28"
-  CASE 101 : RETURN @"P9.29"
-  CASE 102 : RETURN @"P9.30"
-  CASE 100 : RETURN @"P9.31"
-  CASE 109 : RETURN @"P9.41"
-  CASE  89 : RETURN @"P9.42"
+  CASE P8_03 : RETURN @"P8.03"
+  CASE P8_04 : RETURN @"P8.04"
+  CASE P8_05 : RETURN @"P8.05"
+  CASE P8_06 : RETURN @"P8.06"
+  CASE P8_07 : RETURN @"P8.07"
+  CASE P8_08 : RETURN @"P8.08"
+  CASE P8_09 : RETURN @"P8.09"
+  CASE P8_10 : RETURN @"P8.10"
+  CASE P8_11 : RETURN @"P8.11"
+  CASE P8_12 : RETURN @"P8.12"
+  CASE P8_13 : RETURN @"P8.13"
+  CASE P8_14 : RETURN @"P8.14"
+  CASE P8_15 : RETURN @"P8.15"
+  CASE P8_16 : RETURN @"P8.16"
+  CASE P8_17 : RETURN @"P8.17"
+  CASE P8_18 : RETURN @"P8.18"
+  CASE P8_19 : RETURN @"P8.19"
+  CASE P8_20 : RETURN @"P8.20"
+  CASE P8_21 : RETURN @"P8.21"
+  CASE P8_22 : RETURN @"P8.22"
+  CASE P8_23 : RETURN @"P8.23"
+  CASE P8_24 : RETURN @"P8.24"
+  CASE P8_25 : RETURN @"P8.25"
+  CASE P8_26 : RETURN @"P8.26"
+  CASE P8_27 : RETURN @"P8.27"
+  CASE P8_28 : RETURN @"P8.28"
+  CASE P8_29 : RETURN @"P8.29"
+  CASE P8_30 : RETURN @"P8.30"
+  CASE P8_31 : RETURN @"P8.31"
+  CASE P8_32 : RETURN @"P8.32"
+  CASE P8_33 : RETURN @"P8.33"
+  CASE P8_34 : RETURN @"P8.34"
+  CASE P8_35 : RETURN @"P8.35"
+  CASE P8_36 : RETURN @"P8.36"
+  CASE P8_37 : RETURN @"P8.37"
+  CASE P8_38 : RETURN @"P8.38"
+  CASE P8_39 : RETURN @"P8.39"
+  CASE P8_40 : RETURN @"P8.40"
+  CASE P8_41 : RETURN @"P8.41"
+  CASE P8_42 : RETURN @"P8.42"
+  CASE P8_43 : RETURN @"P8.43"
+  CASE P8_44 : RETURN @"P8.44"
+  CASE P8_45 : RETURN @"P8.45"
+  CASE P8_46 : RETURN @"P8.46"
+  CASE P9_11 : RETURN @"P9.11"
+  CASE P9_12 : RETURN @"P9.12"
+  CASE P9_13 : RETURN @"P9.13"
+  CASE P9_14 : RETURN @"P9.14"
+  CASE P9_15 : RETURN @"P9.15"
+  CASE P9_16 : RETURN @"P9.16"
+  CASE P9_17 : RETURN @"P9.17"
+  CASE P9_18 : RETURN @"P9.18"
+  CASE P9_19 : RETURN @"P9.19"
+  CASE P9_20 : RETURN @"P9.20"
+  CASE P9_21 : RETURN @"P9.21"
+  CASE P9_22 : RETURN @"P9.22"
+  CASE P9_23 : RETURN @"P9.23"
+  CASE P9_24 : RETURN @"P9.24"
+  CASE P9_25 : RETURN @"P9.25"
+  CASE P9_26 : RETURN @"P9.26"
+  CASE P9_27 : RETURN @"P9.27"
+  CASE P9_28 : RETURN @"P9.28"
+  CASE P9_29 : RETURN @"P9.29"
+  CASE P9_30 : RETURN @"P9.30"
+  CASE P9_31 : RETURN @"P9.31"
+  CASE P9_41 : RETURN @"P9.41"
+  CASE P9_42 : RETURN @"P9.42"
+  CASE JT_04 : RETURN @"JT.04"
+  CASE JT_05 : RETURN @"JT.05"
   END SELECT : RETURN 0
 END FUNCTION
