@@ -1,31 +1,58 @@
 /'* \file dts_custom.bas
-\brief Tool to create, compile and install a customized device tree overlay for libpruio.
+\brief Tool for creating a customized device tree overlay.
 
-This is a helper tool for an customized device tree overlay with fixed
-pin configurations. Adapt this FB source code, compile it and run the
-executable. This will create a device tree overlay source file in the
-current directory, and, if you execute the binary with root privileges,
-this overlay gets compiled and installed in /lib/firmware.
+This file contains the FB source code for a helper tool creating a
+customized device tree overlay. Adapt this code for your needs, compile
+it and run the executable. Unlike the dts_universal.bas tool, this code
+declares (and claims) only the pins which get specified in the code.
+The tool will create a device tree overlay source file in the current
+directory, and, if you execute the binary with root privileges, this
+overlay gets compiled and installed in the specified directory (usually
+/lib/firmware).
 
-The customized overlay provides fixed pinmuxing configurations. The
-libpruio code can get executed as normal user (no root privileges are
-required). It claims only the configured header pins.
+The created customized overlay sets the pinmuxing in a fixed manner.
+Your code can run in user space (without root privileges). (But the
+overlay can also provide pinmuxing capability at run-time, if you
+specify more than one mode for a header pin. Root privileges are
+required to change the mode.)
 
-- to include a pin add a line like `M(P9_42) = CHR(0 + _I_)` (which
-  configures pin 42 at header P9 in mode 0 as input pin)
+In order to create a customized overlays, first add your pin
+configurations to the source code (explained later). Then compile the
+code by executing
 
-When done,
+    fbc -w all dts_custom.bas
 
--# Compile the tool by `fbc -w all dts_custom.bas`.
+and run the executable
 
--# Execute the binary without root privileges by `./dts_custom` to
-   control the generated source pruio_custom-00A0.dts, or
+    ./dts_custom
 
--# execute the binary with root privileges by `sudo ./dts_custom` to
-   install the compiled overlay in /lib/firmware.
+This will create your customized overlay source file named
+`pruio_custom-00A0.dts` in the current directory.
 
-The overlay source remains in the current folder (file
-pruio_custom-00A0.dts). Load the overlay by
+In order to create and install that overlay, execute with root
+privileges and add the destination path as parameter
+
+    sudo ./dts_custom /lib/firmware
+
+In order to add your pin configurations, first you should know that the
+code defines a global array (type STRING) to hold the pin modes, which
+is called M(). This array contains an entry for each CPU ball, 110
+entries in total, all empty at startup. To claim a header pin, fill its
+array entry with the desired mode by a line like
+
+    M(P9_41) = CHR(7 + PU + RX)
+
+This line will define header pin P9_41 in mode 7 (GPIO) with pull-up
+recistor (PU) and receiver enabled (RX). This example uses enumerators
+PinModes from file pruiotools.bas for better readability. Find further
+examples for pin configurations in files P8.bi, `P9.bi and JTag.bi.
+
+Once you adapted the code to your needs, compile and run it by
+
+    fbc -w all dts_custom.bas
+    sudo ./dts_custom /lib/firmware
+
+Then load the overlay by (kernel <= 3.8)
 
 ~~~{.txt}
 sudo su
@@ -37,22 +64,17 @@ or on kernel versions > 3.8
 
 ~~~{.txt}
 sudo su
-echo libpruio > /sys/devices/platform/bone_capemgr.*/slots
+echo pruio_custom > /sys/devices/platform/bone_capemgr/slots
 exit
 ~~~
 
-(Or execute the `echo ...` command in your boot sequence. Or use
+(Or execute this `echo ...` command in your boot sequence. Or use
 capemgr to load the overlay. See \ref SecPreconditions for further
 information.)
 
 Licence: GPLv3
 
 Copyright 2014-\Year by \Mail
-
-
-Compile by:
-
-fbc -w all dts_custom.bas
 
 \since 0.2
 '/
@@ -66,42 +88,14 @@ fbc -w all dts_custom.bas
 #DEFINE FILE_NAME "pruio_custom"
 '* The version.
 #DEFINE VERS_NAME "00A0"
-'* The folder to place the compiled overlay binary.
-VAR PATH_NAME = "/lib/firmware"
+'* The folder where to place the compiled overlay binary.
+VAR TARG_PATH = "/lib/firmware"
+'* The BB model.
+VAR COMPATIBL = "ti,beaglebone-black"
 
-' create settings for all required pins here
+''''''''''''''''''''''''''''' create settings for all required pins here
 M(P8_09) = CHR(7 + _I_)  ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
 M(P9_42) = CHR(0 + _O_)  ' example: pin 42 at header P9 in mode 0 (eCAP) as output (no resistor)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
-
-VAR fnam = FILE_NAME & "-" & VERS_NAME, _ '*< The file name (without path / suffix)
-     fnr = FREEFILE                       '*< The file number.
-IF OPEN(fnam & ".dts" FOR OUTPUT AS fnr) THEN
-'IF OPEN CONS(FOR OUTPUT AS #fnr) THEN
-  '?"failed openig console"
-  ?"failed writing file: " & fnam & ".dts"
-ELSE
-  PRINT #fnr, ALL_START;
-  FOR i AS LONG = 0 TO UBOUND(M)
-    VAR x = IIF(LEN(M(i)), nameBall(i), 0) '*< The header pin name.
-    IF x THEN PRINT #fnr, ENTRY_EXCL(*x);
-  NEXT
-
-  PRINT #fnr, FRAG0_START;
-  FOR i AS LONG = 0 TO UBOUND(M)
-    IF LEN(M(i)) THEN PRINT #fnr, f0entry(i);
-  NEXT
-  PRINT #fnr, FRAG0_END;
-
-  PRINT #fnr, FRAG1_START;
-  FOR i AS LONG = 0 TO UBOUND(M)
-    IF LEN(M(i)) THEN PRINT #fnr, f1entry(i);
-  NEXT
-  PRINT #fnr, FRAG1_END;
-  PRINT #fnr, ALL_END;
-  CLOSE #fnr
-
-  IF LEN(COMMAND) THEN PATH_NAME = COMMAND
-  SHELL("dtc -@ -I dts -O dtb -o " & PATH_NAME & "/" & fnam & ".dtbo " & fnam & ".dts")
-END IF
+CREATE()
