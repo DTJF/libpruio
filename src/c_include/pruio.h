@@ -525,10 +525,11 @@ typedef struct pruIo{
   adcUdt* Adc;     //!< Pointer to ADC subsystem structure.
   gpioUdt* Gpio;   //!< Pointer to GPIO subsystem structure.
   pwmssUdt* PwmSS; //!< Pointer to PWMSS subsystem structure.
-  //timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
+  timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
   pwmMod* Pwm;     //!< Pointer to ePWM module structure (in PWMSS subsystem).
   capMod* Cap;     //!< Pointer to eCAP module structure (in PWMSS subsystem).
   qepMod* Qep;     //!< pointer to eQEP module structure (in PWMSS subsystem)
+  timerUdt* Tim;   //!< Pointer to the TimSS structure (for homogenous API).
 
   uint32* DRam;    //!< Pointer to access PRU DRam.
   ballSet
