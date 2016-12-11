@@ -4,7 +4,9 @@
 This file contains an example on measuring the execution speed of
 different controllers that toggles a GPIO output. It measures the
 frequency of the toggled output from open and closed loop controllers
-and computes their mimimum, avarage and maximum execution speed
+and computes their mimimum, avarage and maximum execution speed. Find a
+description on the setup and the output in section [Examples ->
+performance](ChaExamples.html#SSecExaPerformance).
 
 The code performs 50 tests of each controller version and outputs the
 toggling frequencies in Hz at the end. The controllers are classified

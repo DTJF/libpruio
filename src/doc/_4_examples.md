@@ -28,7 +28,7 @@ code is available in FreeBASIC (folder src/examples) and C syntax
 bit, in order to keep the examples informative, but the C example code
 simple.
 
-## Simple (1) {#SubSecExaSimple}
+## Simple (1) {#SSecExaSimple}
 
 \Item{Description}
 
@@ -77,7 +77,7 @@ E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
   src/c_examples/1.c
 
 
-## analyse {#SubSecExaAnalyse}
+## analyse {#SSecExaAnalyse}
 
 \Item{Description}
 
@@ -141,7 +141,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
   No C source available
 
 
-## button {#SubSecExaButton}
+## button {#SSecExaButton}
 
 \Item{Description}
 
@@ -172,7 +172,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
   src/c_examples/button.c
 
 
-## io_input {#SubSecExaIoInput}
+## io_input {#SSecExaIoInput}
 
 \Item{Description}
 
@@ -228,7 +228,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   src/c_examples/io_input.c
 
 
-## performance {#SubSecExaPerformance}
+## performance {#SSecExaPerformance}
 
 \Item{Description}
 
@@ -327,7 +327,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/performance.c
 
 
-## pwm_cap {#SubSecExaPwmCap}
+## pwm_cap {#SSecExaPwmCap}
 
 \Item{Description}
 
@@ -419,7 +419,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/pwm_cap.c
 
 
-## qep {#SubSecExaQep}
+## qep {#SSecExaQep}
 
 \Item{Description}
 
@@ -513,7 +513,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/qep.c
 
 
-## rb_file {#SubSecExaRbFile}
+## rb_file {#SSecExaRbFile}
 
 \Item{Description}
 
@@ -561,7 +561,7 @@ Finished file output.1
   src/c_examples/rb_file.c
 
 
-## sos {#SubSecExaSos}
+## sos {#SSecExaSos}
 
 \Item{Description}
 
@@ -601,7 +601,7 @@ press any key to quit
   src/c_examples/sos.c
 
 
-## stepper {#SubSecExaStepper}
+## stepper {#SSecExaStepper}
 
 \Item{Description}
 
@@ -674,7 +674,7 @@ The examples in this section produce grafic output. The source code is
 available only in FreeBASIC syntax (folder src/examples), since C has
 no support for native grafics.
 
-## pwm_adc {#SubSecExaPwmAdc}
+## pwm_adc {#SSecExaPwmAdc}
 
 \Item{Description}
 
@@ -791,7 +791,7 @@ sudo ./pwm_adc 640x150
   src/examples/pwm_adc.bas
 
 
-## oszi {#SubSecExaOszi}
+## oszi {#SSecExaOszi}
 
 \Item{Description}
 
@@ -833,7 +833,7 @@ sudo ./pwm_adc 640x150
   src/examples/oszi.bas
 
 
-## rb_oszi {#SubSecExaRbOszi}
+## rb_oszi {#SSecExaRbOszi}
 
 \Item{Description}
 
@@ -866,7 +866,7 @@ sudo ./pwm_adc 640x150
   src/examples/rb_oszi.bas
 
 
-## triggers {#SubSecExaTriggers}
+## triggers {#SSecExaTriggers}
 
 \Item{Description}
 

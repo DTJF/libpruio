@@ -3,7 +3,9 @@
 
 This file contains an example on how to use libpruio to measure analog
 input and draw a graph of the sampled data. Triggering of measurement
-can be done by different events.
+can be done by different events. Find a description on the setup and
+the output in section [Examples ->
+triggers](ChaExamples.html#SSecExaTriggers).
 
 Licence: GPLv3
 

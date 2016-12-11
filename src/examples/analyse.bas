@@ -4,8 +4,9 @@
 This file contains an example on how to use libpruio to read the
 configurations of the subsystems (initial and corrent). It creates a
 PruIo structure containing the data and then prints out in a
-human-readable form. You may 'borrow' some code for debugging purposes
-in your code.
+human-readable form. Feel free to 'borrow' some code for debugging
+purposes for your code. Find a description on the output in
+section [Examples -> analyse](ChaExamples.html#SSecExaAnalyse).
 
 Licence: GPLv3
 

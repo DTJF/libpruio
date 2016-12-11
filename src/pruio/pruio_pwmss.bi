@@ -188,7 +188,8 @@ TYPE PwmssUdt
   , E6 = @"pin has no CAP capability" _   '*< Common error message.
   , E7 = @"pin not in QEP mode" _         '*< Common error message.
   , E8 = @"pin has no QEP capability" _   '*< Common error message.
-  , E9 = @"eCAP module not in output mode"  '*< Common error message.
+  , E9 = @"eCAP module not in output mode" _ '*< Common error message.
+  , EA = @"no PWM pin (fix initrd)"       '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR
@@ -246,7 +247,8 @@ C wrapper equivalent pwmMod.
 \since 0.2
 '/
 TYPE PwmMod
-  AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
+  AS Pruio_ PTR Top  '*< pointer to the calling PruIo instance
+  AS LONG Pwmss_Ctrl
   AS UInt16 _
     ForceUpDown = 0 _               '*< Switch to force up-down counter for ePWM modules.
   , Cntrl(PRUIO_AZ_PWMSS) = _       '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).

@@ -21,53 +21,61 @@ Copyright 2014-\Year by \Mail
 M(P8_03) = CHR( _
     0 + I_O _ ' gpmc_ad6
   , 1 + I_O _ ' mmc1_dat6
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T9 (emmc)
 M(P8_04) = CHR( _
     0 + I_O _ ' gpmc_ad7
   , 1 + I_O _ ' mmc1_dat7
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R8 (emmc)
 M(P8_05) = CHR( _
     0 + I_O _ ' gpmc_ad2
   , 1 + I_O _ ' mmc1_dat2
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T8 (emmc)
 M(P8_06) = CHR( _
     0 + I_O _ ' gpmc_ad3
   , 1 + I_O _ ' mmc1_dat3
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R7
 M(P8_07) = CHR( _
     0 + _O_ _ ' gpmc_advn_ale
   , 2 + TMRi _ ' timer4_in
   , 2 + TMRo _ ' timer4_pwm_out
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T7
 M(P8_08) = CHR( _
     0 + _O_ _ ' gpmc_oen_ren
   , 2 + TMRi _ ' timer7_in
   , 2 + TMRo _ ' timer7_pwm_out
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T6
 M(P8_09) = CHR( _
     0 + _O_ _ ' gpmc_be0n_cle
   , 2 + TMRi _ ' timer5_in
   , 2 + TMRo _ ' timer5_pwm_out
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U6
 M(P8_10) = CHR( _
     0 + _O_ _ ' gpmc_wen
   , 2 + TMRi _ ' timer6_in
   , 2 + TMRo _ ' timer6_pwm_out
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R12
 M(P8_11) = CHR( _
@@ -78,7 +86,8 @@ M(P8_11) = CHR( _
   , 4 + QEPi _' eQEP2B_in
   , 5 + _O_ _ ' pr1_mii0_txd1
   , 6 + _O_ _ ' pr1_pru0_pru_r30_15
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T12
 M(P8_12) = CHR( _
@@ -89,7 +98,8 @@ M(P8_12) = CHR( _
   , 4 + QEPi _' eQEP2A_in
   , 5 + _O_ _ ' pr1_mii0_txd2
   , 6 + _O_ _ ' pr1_pru0_pru_r30_14
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T10
 M(P8_13) = CHR( _
@@ -99,7 +109,8 @@ M(P8_13) = CHR( _
   , 3 + I_O _ ' mmc2_dat5
   , 4 + _O_ _ ' ehrpwm2B
   , 5 + _I_ _ ' pr1_mii0_col
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T11
 M(P8_14) = CHR( _
@@ -109,7 +120,8 @@ M(P8_14) = CHR( _
   , 3 + I_O _ ' mmc2_dat6
   , 4 + _I_ _ ' ehrpwm2_tripzone_input
   , 5 + _O_ _ ' pr1_mii0_txen
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U13
 M(P8_15) = CHR( _
@@ -121,8 +133,9 @@ M(P8_15) = CHR( _
   , 4 + QEPo _ ' eQEP2_strobe_out
   , 5 + CAPi _ ' pr1_ecap0_ecap_capin
   , 5 + CAPo _ ' pr1_ecap0_ecap_apwm_o
-  , 6 + _I_ _ ' pr1_pru0_pru_r31_15
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru0_pru_r31_15
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V13
 M(P8_16) = CHR( _
@@ -133,8 +146,9 @@ M(P8_16) = CHR( _
   , 4 + QEPi _ ' eQEP2_index_in
   , 4 + QEPo _ ' eQEP2_index_out
   , 5 + _O_ _ ' pr1_mii0_txd0
-  , 6 + _I_ _ ' pr1_pru0_pru_r31_14
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru0_pru_r31_14
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U12
 M(P8_17) = CHR( _
@@ -144,7 +158,8 @@ M(P8_17) = CHR( _
   , 3 + I_O _ ' mmc2_dat7
   , 4 + _O_ _ ' ehrpwm0_synco
   , 5 + _O_ _ ' pr1_mii0_txd3
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V12
 M(P8_18) = CHR( _
@@ -155,7 +170,8 @@ M(P8_18) = CHR( _
   , 4 + _I_ _ ' pr1_mii1_crs
   , 5 + _O_ _ ' pr1_mdio_mdclk
   , 6 + I_O _ ' mcasp0_fsr
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U10
 M(P8_19) = CHR( _
@@ -165,7 +181,8 @@ M(P8_19) = CHR( _
   , 3 + I_O _ ' mmc2_dat4
   , 4 + _O_ _ ' ehrpwm2A
   , 5 + _I_ _ ' pr1_mii_mt0_clk
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V9 (emmc)
 M(P8_20) = CHR( _
@@ -175,8 +192,9 @@ M(P8_20) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in7
   , 4 + _O_ _ ' pr1_edio_data_out7
   , 5 + _O_ _ ' pr1_pru1_pru_r30_13
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_13
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_13
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U9 (emmc)
 M(P8_21) = CHR( _
@@ -186,37 +204,43 @@ M(P8_21) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in6
   , 4 + _O_ _ ' pr1_edio_data_out6
   , 5 + _O_ _ ' pr1_pru1_pru_r30_12
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_12
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_12
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V8 (emmc)
 M(P8_22) = CHR( _
     0 + I_O _ ' gpmc_ad5
   , 1 + I_O _ ' mmc1_dat5
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U8 (emmc)
 M(P8_23) = CHR( _
     0 + I_O _ ' gpmc_ad4
   , 1 + I_O _ ' mmc1_dat4
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V7 (emmc)
 M(P8_24) = CHR( _
     0 + I_O _ ' gpmc_ad1
   , 1 + I_O _ ' mmc1_dat1
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U7 (emmc)
 M(P8_25) = CHR( _
     0 + I_O _ ' gpmc_ad0
   , 1 + I_O _ ' mmc1_dat0
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V6
 M(P8_26) = CHR( _
     0 + _O_ _ ' gpmc_csn0
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U5 (hdmi)
 M(P8_27) = CHR( _
@@ -226,8 +250,9 @@ M(P8_27) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in2
   , 4 + _O_ _ ' pr1_edio_data_out2
   , 5 + _O_ _ ' pr1_pru1_pru_r30_8
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_8
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_8
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V5 (hdmi)
 M(P8_28) = CHR( _
@@ -237,8 +262,9 @@ M(P8_28) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in4
   , 4 + _O_ _ ' pr1_edio_data_out4
   , 5 + _O_ _ ' pr1_pru1_pru_r30_10
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_10
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_10
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R5
 M(P8_29) = CHR( _
@@ -248,8 +274,9 @@ M(P8_29) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in3
   , 4 + _O_ _ ' pr1_edio_data_out3
   , 5 + _O_ _ ' pr1_pru1_pru_r30_9
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_9
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_9
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R6 (hdmi)
 M(P8_30) = CHR( _
@@ -259,8 +286,9 @@ M(P8_30) = CHR( _
   , 3 + _I_ _ ' pr1_edio_data_in5
   , 4 + _O_ _ ' pr1_edio_data_out5
   , 5 + _O_ _ ' pr1_pru1_pru_r30_11
-  , 6 + _I_ _ ' pr1_pru1_pru_r30_11
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_11
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V4 (hdmi)
 M(P8_31) = CHR( _
@@ -272,7 +300,8 @@ M(P8_31) = CHR( _
   , 4 + _I_ _ ' uart5_rxd
   , 5 + _I_ _ ' pr1_mii_mr0_clk
   , 6 + _I_ _ ' uart5_ctsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T5 (hdmi)
 M(P8_32) = CHR( _
@@ -284,7 +313,8 @@ M(P8_32) = CHR( _
   , 4 + I_O _ ' mcasp0_axr3
   , 5 + _I_ _ ' pr1_mii0_rxdv
   , 6 + _O_ _ ' uart5_rtsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V3 (hdmi)
 M(P8_33) = CHR( _
@@ -295,7 +325,8 @@ M(P8_33) = CHR( _
   , 4 + I_O _ ' mcasp0_axr3
   , 5 + _I_ _ ' pr1_mii0_rxer
   , 6 + _O_ _ ' uart4_rtsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U4 (hdmi)
 M(P8_34) = CHR( _
@@ -306,7 +337,8 @@ M(P8_34) = CHR( _
   , 4 + I_O _ ' mcasp0_axr2
   , 5 + _I_ _ ' pr1_mii0_rxd0
   , 6 + _O_ _ ' uart3_rtsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball V2 (hdmi)
 M(P8_35) = CHR( _
@@ -317,7 +349,8 @@ M(P8_35) = CHR( _
   , 4 + I_O _ ' mcasp0_axr2
   , 5 + _I_ _ ' pr1_mii0_rxlink
   , 6 + _I_ _ ' uart4_ctsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U3 (hdmi)
 M(P8_36) = CHR( _
@@ -327,7 +360,8 @@ M(P8_36) = CHR( _
   , 3 + I_O _ ' mcasp0_axr0
   , 5 + _I_ _ ' pr1_mii0_rxd1
   , 6 + _I_ _ ' uart3_ctsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U1 (hdmi)
 M(P8_37) = CHR( _
@@ -338,7 +372,8 @@ M(P8_37) = CHR( _
   , 4 + _O_ _ ' uart5_txd
   , 5 + _I_ _ ' pr1_mii0_rxd3
   , 6 + _I_ _ ' uart2_ctsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball U2 (hdmi)
 M(P8_38) = CHR( _
@@ -349,7 +384,8 @@ M(P8_38) = CHR( _
   , 4 + _I_ _ ' uart5_rxd
   , 5 + _I_ _ ' pr1_mii0_rxd2
   , 6 + _O_ _ ' uart2_rtsn
-  ) & GPIO_DEF
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T3 (hdmi)
 M(P8_39) = CHR( _
@@ -360,8 +396,9 @@ M(P8_39) = CHR( _
   , 3 + QEPo _ ' eQEP2_index_out
   , 4 + _O_ _ ' pr1_edio_data_out6
   , 5 + _O_ _ ' pr1_pru1_pru_r30_6
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_6
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_6
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T4 (hdmi)
 M(P8_40) = CHR( _
@@ -372,8 +409,9 @@ M(P8_40) = CHR( _
   , 3 + QEPo _ ' eQEP2_strobe_out
   , 4 + _O_ _ ' pr1_edio_data_out7
   , 5 + _O_ _ ' pr1_pru1_pru_r30_7
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_7
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_7
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T1 (hdmi)
 M(P8_41) = CHR( _
@@ -382,8 +420,9 @@ M(P8_41) = CHR( _
   , 2 + _O_ _ ' pr1_mii0_txd1
   , 3 + QEPi _' eQEP2A_in
   , 5 + _O_ _ ' pr1_pru1_pru_r30_4
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_4
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_4
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball T2 (hdmi)
 M(P8_42) = CHR( _
@@ -392,8 +431,9 @@ M(P8_42) = CHR( _
   , 2 + _O_ _ ' pr1_mii0_txd0
   , 3 + QEPi _' eQEP2B_in
   , 5 + _O_ _ ' pr1_pru1_pru_r30_5
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_5
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_5
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R3 (hdmi)
 M(P8_43) = CHR( _
@@ -402,8 +442,9 @@ M(P8_43) = CHR( _
   , 2 + _O_ _ ' pr1_mii0_txd3
   , 3 + _I_ _ ' ehrpwm2_tripzone_input
   , 5 + _O_ _ ' pr1_pru1_pru_r30_2
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_2
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_2
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R4 (hdmi)
 M(P8_44) = CHR( _
@@ -412,8 +453,9 @@ M(P8_44) = CHR( _
   , 2 + _O_ _ ' pr1_mii0_txd2
   , 3 + _O_ _ ' ehrpwm0_synco
   , 5 + _O_ _ ' pr1_pru1_pru_r30_3
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_3
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_3
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R1 (hdmi)
 M(P8_45) = CHR( _
@@ -422,8 +464,9 @@ M(P8_45) = CHR( _
   , 2 + _I_ _ ' pr1_mii_mt0_clk
   , 3 + _O_ _ ' ehrpwm2A
   , 5 + _O_ _ ' pr1_pru1_pru_r30_0
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_0
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_0
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball R2 (hdmi)
 M(P8_46) = CHR( _
@@ -432,6 +475,7 @@ M(P8_46) = CHR( _
   , 2 + _O_ _ ' pr1_mii0_txen
   , 3 + _O_ _ ' ehrpwm2B
   , 5 + _O_ _ ' pr1_pru1_pru_r30_1
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_1
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_1
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 

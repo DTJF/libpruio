@@ -2,7 +2,7 @@
 \brief Example: control a stepper motor.
 
 This file contains an example on how to use libpruio to control a
-4-wire stepper motor:
+4-wire stepper motor (unipolar):
 
 - configure 4 pins as output
 - receive user action in loop
@@ -12,6 +12,9 @@ This file contains an example on how to use libpruio to control a
 - stop holded or in power off mode
 - move a single step (in holded mode)
 - quit
+
+Find a description on the setup and the output in section [Examples ->
+stepper](ChaExamples.html#SSecExaStepper).
 
 Licence: GPLv3
 

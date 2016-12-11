@@ -9,7 +9,11 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-export PREFIX:=/usr
+override_dh_auto_configure:
+	cmake . -DCMAKE_MODULE_PATH=$(CURDIR)/cmake/Modules -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON
+
+override_dh_auto_build:
+	make && make doc_htm
 
 %:
 	dh $@ 

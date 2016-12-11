@@ -359,6 +359,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
   , c_a(...) = {0, 0, 0} _ ' module counters A
   , c_b(...) = {0, 0, 0}   ' module counters B
 
+  IF Top->Pwm->Pwmss_Ctrl AND (1 SHL Nr) THEN Top->Errr = E0 : RETURN E0 ' PWMSS not ready (kernel 4)
   VAR ctl = 0
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
@@ -439,12 +440,18 @@ from the user point of view, the functions to control the modules are
 separated to extra classes. This UDT contains functions to control the
 PWM module.
 
-The constructor just copies a pointer to the calling main UDT PruIo.
+The constructor copies a pointer to the calling main UDT PruIo and
+reads the Control Module register pwmss_ctrl setting.
 
 \since 0.2
 '/
 CONSTRUCTOR PwmMod(BYVAL T AS Pruio_ PTR)
   Top = T
+  WHILE .DRam[1] : WEND
+  .DRam[2] = &h44E10664uL
+  .DRam[1] = 4 OR (PRUIO_COM_PEEK SHL 24)
+  WHILE .DRam[1] : WEND
+  Pwmss_Ctrl = DRam[3]
 END CONSTRUCTOR
 
 
@@ -643,8 +650,8 @@ FUNCTION CapMod.config CDECL( _
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
-    'CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24) ' input???
-      'm = 1
+    CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
+      m = 1
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h25) ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
     'CASE    88 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h22)
@@ -719,7 +726,7 @@ FUNCTION CapMod.Value CDECL( _
       CASE P9_28 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 2
       CASE P9_42 : IF ModeCheck(Ball,0) THEN e = .PwmSS->E5 ' pin not in CAP mode
       'CASE P8_15 : IF ModeCheck(Ball,5) THEN e = .PwmSS->E5 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
-      'CASE JT_04 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 1  ' input??? -> eCAP1_in_PWM1_out, JTag header
+      CASE JT_04 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 1
       'CASE 88 : IF ModeCheck(Ball,2) THEN e = .PwmSS->E5 ELSE m = 1
       'CASE 98 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 2
       'CASE 99 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 1

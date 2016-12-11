@@ -3,41 +3,49 @@ Pins  {#ChaPins}
 \tableofcontents
 
 The Beaglebone hardware contains two header connectors, each with 46
-pins. That is 92 pins in total. Most of them have input / output
-capabilities, while just a few are related to other features (such as
-RESET, GND or power supply lines). Input / output pins are either
-analog or digital lines, free or unfree (used by the system in default
-configuration). All can get controled by \Proj.
+pins. Those 92 pins are your gateway to the Beaglebone hardware. While
+just a few are related to other features (such as RESET, GND or power
+supply lines), most of them have input / output capabilities, either
+for analog or digital signals. Some of them are unfree, used for system
+features. Others may be used by additional capes, stacked on the
+headers. And some are free for your next project. Anyway, \Proj can
+control all of them, if you like.
 
 Analog lines always operate as input. In contrast, digital lines can
 either operate as input or output. Some digital lines have several
 features at the same pin and need to get configured to the matching
-mode before usage (pinmuxing). In addition, some lines are used to
-control the boot sequence and mustn't be connected at boot-time. Others
-are reserved to be used by the system (e. g. for HDMI or MCASP), but
-they can get freed by massive re-configuration of the boot sequence, so
+mode before usage, which is called pinmuxing. In addition, some lines
+are used to control the boot sequence and mustn't be connected at
+boot-time. Others are reserved to be used by the system (ie. for HDMI
+or MCASP), but they can get freed by adapting the boot sequence, so
 that you can use them. Some header pins are connected to two CPU balls
 (and both CPU balls must not be set in contrary output states, in order
 to avoid hardware damages).
 
 Here's an overview of the Beaglebone Black default configuration (the
-Beaglebone White setting is different). \Proj can operate on all
-colored pins
+settings of other Beaglebone models is different). \Proj can operate on
+all colored pins
 
 ![Header pins controllable by libpruio](pins.png)
 
+The brown colored pins are reserved for board features and claimed by
+the operating system, but [can get freed](ChaPins.html#SSecFreePins).
+All green, orange or blue pins are free, either for your project or for
+additional capes.
 
-# Pin Functions
 
-This section explains the different functions the header pins can work
-in and gives detailed information about the limits.
+# Functions  {#SecPinFunctions}
+
+This section explains the different header pin functions and gives
+detailed information about the limits. Start reading here when you
+intend to implement a certain feature for your project.
 
 
-## Analog {#SecAnalog}
+## Analog  {#SecAnalog}
 
-Analog lines work always as input line. Analog output isn't supported
-by the Beaglebone hardware (but can get achieved by a combination of a
-PWM output and a hardware filter).
+Analog lines operate always in input mode. Analog output isn't
+supported by the Beaglebone hardware (but can get achieved by a
+combination of a PWM output and a hardware filter).
 
 Analog inputs operate in the range of 0 to 1V8. The header pins are
 directly connected to the CPU connectors. There's no overvoltage
@@ -50,15 +58,15 @@ line, which is internal connected to the board power line (3V3) by a
 50/50 voltage divider. This may be useful to measure the on board
 voltage, in oder to control the power supply.
 
-| Ball  | Description                            |
-| ----- | :------------------------------------- |
-| P9_39 | AIN-0 (default configuration in step 1 |
-| P9_40 | AIN-1 (default configuration in step 2 |
-| P9_37 | AIN-2 (default configuration in step 3 |
-| P9_38 | AIN-3 (default configuration in step 4 |
-| P9_33 | AIN-4 (default configuration in step 5 |
-| P9_36 | AIN-5 (default configuration in step 6 |
-| P9_35 | AIN-6 (default configuration in step 7 |
+| Ball  | Description                             |
+| ----- | :-------------------------------------- |
+| P9_39 | AIN-0 (default configuration in step 1) |
+| P9_40 | AIN-1 (default configuration in step 2) |
+| P9_37 | AIN-2 (default configuration in step 3) |
+| P9_38 | AIN-3 (default configuration in step 4) |
+| P9_33 | AIN-4 (default configuration in step 5) |
+| P9_36 | AIN-5 (default configuration in step 6) |
+| P9_35 | AIN-6 (default configuration in step 7) |
 
 The ADC subsystem samples the input with 12 bit resolution. The minimum
 input (0V) gets sampled as 0 (zero) and the maximum input (1V8) gets
@@ -103,9 +111,9 @@ oszi.bas, rb_file.bas, rb_oszi.bas and trigger.bas.
 
 Each digital header pin can get configured either in GPIO mode or in
 one of up to seven alternative modes. The matrix of the possible
-connections is hard-coded in the CPU logic. Find the subset of the
-Beaglebone headers described in the \BbbRef{7}. Or find the complete
-description in the CPU documentation \MpuRef{2.2} .
+connections is hard-coded in the CPU logic. Find the subset of CPU
+balls connected to the Beaglebone headers described in the \BbbRef{7}.
+Or find the complete description in the CPU documentation \MpuRef{4.2}.
 
 Before a digital header pin gets used, \Proj checks its mode. When the
 current setting matches the required feature, \Proj just continues and
@@ -114,7 +122,7 @@ appropriately, first. This needs the libpruio-00A0.dtbo device tree
 overlay loaded, and the program has to be executed with admin
 privileges for write access to the pinmuxing folders in
 
-- `/sys/devices/ocp.?/pruio-??.*` (kernel 3.8)
+- `/sys/devices/ocp.?/pruio-??.*` (kernel <= 3.8)
 - `/sys/devices/platform/ocp/ocp:pruio-??` (kernel >3.8)
 
 The overlay contains pre-defined modes for a certain set of CPU balls.
@@ -125,14 +133,14 @@ BBB, ie. by disabling HDMI or other features on the board, you can
 create an universal overlay with adapted pin claiming. This can get
 easily done by using the tool dts_universal.bas.
 
-If you don't want to execute the program under admin privileges, you've
-to ensure that all used digital header pins are in the appropriate mode
-before you start the program (so that the initial checks succeed). This
-can get achieved by loading a customized overlay. In contrast to the
-universal overlay, the customized contains only one configuration for
-each used header pin and \Proj cannot change the mode at run-time. You
-can easily create a customized overlay with fixed pinmuxing by using
-the tool dts_custom.bas.
+If you don't want to execute your application with root privileges,
+you've to ensure that all used digital header pins are in the
+appropriate mode before you start the program (so that the initial
+checks succeed). This can get achieved by loading a customized overlay.
+In contrast to the universal overlay, the customized contains only one
+configuration for each used header pin and \Proj cannot change the mode
+at run-time. You can easily create a customized overlay with fixed
+pinmuxing by using the tool dts_custom.bas.
 
 In any case, all digital lines operates in the range of 0 to 3V3. An
 input pin returns low in the range of 0 to 0V8 and high in the range of
@@ -144,21 +152,25 @@ current on an output pin shouldn't exceed 6 mA.
 | output | 0        | 3V3        | max. 6 mA                 |
 |  input | 0 to 0V8 | 1V8 to 3V3 | undefined from 0V8 to 1V8 |
 
+\note Two CPU balls are connected to the JTag header, which is designed
+      to operate at 5V. You can use RXD (`JT_04`) as 5V tolerant input
+      (GPIO or CAP) or TXD (`JT_05`) as 5V output (GPIO, PWM or TIMER).
+
 Two of the Beaglebone header pins are connected to multiple CPU balls.
-Those are P9_41 and P9_42. When changing the pinmuxing of any of the
-related CPU balls, it must be ensured that the second CPU ball doesn't
-operate in a contrary output state. Therefor the universal device tree
-overlay libpruio-00A0.dtbo (and all overlays generated by the tools
-dts_custom.bas and dts_universal.bas) always configures two CPU balls
-for those pins at once. First, the unused CPU ball gets set in a GPIO
-input mode (without resistor) and then the other ball gets set
-accordingly.
+Those are pins `P9_41` and `P9_42`. When changing the pinmuxing of any
+of the related CPU balls, it must be ensured that the second CPU ball
+doesn't operate in a contrary output state. Therefor the universal
+device tree overlay `libpruio-00A0.dtbo` (and all overlays generated by
+the tools `dts_custom.bas` and `dts_universal.bas`) always configures
+two CPU balls for those pins at once. First, the unused CPU ball gets
+set in GPIO input mode (without resistor) and then the other ball gets
+set accordingly.
 
 Some pins are used to control the boot sequence and mustn't be
-connected at boot-time.
+connected at boot-time, find details in \BbbRef{6.7}.
 
-Depending on the pin mode the pin can act either as input or output
-pin. Here's the strategy to fetch digital input (after calling the
+Depending on the pin mode any pin can act either as input or output
+pin. Here's the sequence to fetch digital input (after calling the
 constructor PruIo::PruIo() )
 
 - configure the pin by the related function (GpioUdt::config(),
@@ -169,16 +181,21 @@ constructor PruIo::PruIo() )
 - read the current pin state by calling the related function
   (GpioUdt::Value(), CapUdt::Value() or QepUdt::Value() ).
 
-And here's the strategy to set digital output (after calling the
-constructor PruIo::PruIo() )
+It's more convenient for digital output, follow that sequence (after calling
+the constructor PruIo::PruIo() )
 
 - start the main loop by calling PruIo::config()
 
-- set the required pin state by calling the related function
-  (GpioUdt::setValue() or PwmUdt::setValue() ).
+- just set the required pin state by calling the related function
+  (GpioUdt::setValue(), TimerUdt::setValue() or PwmUdt::setValue() ).
+
+The first call to the `setValue()` function takes a little more
+execution time for the pinmuxing. In order to avoid that (and to get
+predictable timings), you can also call the `setValue()` function
+before calling PruIo::config().
 
 
-### GPIO  {#SubSecGpio}
+### GPIO  {#SSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -219,7 +236,7 @@ Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
 
 
-### TIMER  {#SubSecTimer}
+### TIMER  {#SSecTimer}
 
 A TIMER output sends a pulse to a header pin. First, it waits a certain
 time and then toggles the state for a certain time. After that sequence
@@ -246,7 +263,7 @@ is 32 bit and the duration range in [s] vary between the pins.
 | P8_08 | TIMER-7         | 45812   | 0,000000167 | free              |
 | P9_28 | PWMSS-2, CAP    | 42,94   | 0,00000002  | MCASP0            |
 | P9_42 | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
-| JT_05 | PWMSS-1, PRUCAP | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+| JT_05 | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
 
 The output gets specified by calling function TimerUdt::setValue().
 Since the output timing may vary from the specified parameters due to
@@ -254,7 +271,7 @@ resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
 
-### PWM  {#SubSecPwm}
+### PWM  {#SSecPwm}
 
 PWM stands for Pulse Width Modulated output. So it means generating a
 digital signal with a given frequency and duty cycle. Usualy PWM is
@@ -288,7 +305,7 @@ frequency range vary between the pins.
 | P9_31 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
-| JT_05 | PWMSS-1, PRUCAP | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
+| JT_05 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
@@ -312,8 +329,10 @@ case of six different events, see \ArmRef{5.2.4.3} for details. By
 default \Proj configures the Action Qualifiers to set both outputs to
 high state at the beginning of a period and switch to low state when
 the counter matches the duty value. The default configuration can get
-overriden in array PwmMod::AcCtl. This three dimensional array contains
-the configurations for the Action Qualifiers.
+overriden in array PwmMod::AqCtl. This three dimensional array contains
+the configurations for the Action Qualifiers. Find a use case in
+[example qep](ChaExamples.html#SubSecExaQep), where the two A and B
+outputs of a quadrature encoder get simulated by a PWMSS-PWM subsystem.
 
 | Index | Value | Description                                                                    |
 | :---: | :---: | :----------------------------------------------------------------------------- |
@@ -331,7 +350,7 @@ PwmMod::Value().
 Find example code in pwm_adc.bas or pwm_cap.bas.
 
 
-### CAP  {#SubSecCap}
+### CAP  {#SSecCap}
 
 CAP stands for Capture and Analyse a digital Pulse train. So it means
 measuring the frequency and the duty cycle of a digital signal input.
@@ -361,7 +380,7 @@ calling function CapMod::config() once.
 Find example code in pwm_cap.bas.
 
 
-### QEP  {#SubSecQep}
+### QEP  {#SSecQep}
 
 QEP stands for Quadrature Encoder Pulse measurement. So it means
 measuring the position and the speed of a quadrature encoder. Encoders
@@ -475,18 +494,303 @@ by calling function QepMod::config() once.
 Find example code in qep.bas.
 
 
-# Pinmuxing
+# Muxing  {#SecSetPinmuxing}
 
-This section describes how to set a header pin in the desired mode. At
-startup (= POR = Power On Reset) the operating system sets all pins in
-a save mode. Execute example [analyse.bas](SubSecExaAnalyse) to see a
-list of the default header pin configuration.
+This section describes how to set up a digital header pin in the
+desired mode. You wont need this knowledge as long as you can use pins
+in their default mode. At startup (= POR = Power On Reset) the
+operating system sets all pins in a save mode, most of them as GPIO
+input. In order to get a list off all default settings on your system,
+execute example [analyse](ChaExamples.html#SSecExaAnalyse), which
+prints the pin modes on top of the output. The default modes vary on
+the different Beaglebone models (White, Black, Green, ...).
 
-When you set up a header pin for use with \Proj, the desired setup gets
-compared with the default setup and if matching the pin operation gets
-done immediately. Otherwise, if the default configuration doesn't match
-the desired function, \Proj tries to adapt the pin mode.
+In most real world cases, when you need a PWM output or a QEP input,
+the default modes doesn't match. You have to mux header pin to an
+alternative CPU periperal or just set a pull-up instead of a pull-down
+resistor for a GPIO pin.
 
-## Loading an Overlay
+When your source code calls a \Proj function on a header pin, your
+desired setup gets compared against the current (default) setup. If
+matching, the pin operation gets done immediately. Otherwise, \Proj
+tries to adapt the pin mode, first. Therefor changing the pinmux
+registers in the Control Module is neccesary. The Control Module is a
+restricted area in the CPU. Only the ARM CPU has write access when
+running in supervisor mode, see \ArmRef{8 + 9} for details. That's why
+changing the mux modes can only get done by kernel code (and isn't
+implemented in \Proj directly).
 
-## Creating an Overlay
+The kernel uses a structure called device tree to describe the
+hardware. From the operating system point of view, the mux mode of a
+pin is part of the hardware description, although the pin is not
+connected to an OCP (= On Chip Periperal) but to an external. So you
+have to deal with the device tree in order to set a pin in a certain
+mode, different from the default setting.
+
+There're several file types dealing with the device tree. Their names
+end with suffix
+
+-# `dts` for device tree source (human readable text file)
+  - `dtsi` for source includes (just subnodes, no root node)
+
+-# `dtb` for device tree blobs (compiled binaries for the kernel loading at POR)
+  - `dtbo` for blob overlays (change or extend the POR dtb settings)
+
+The kernel needs a `dtb` file to boot and can adapt this initial
+configuration by an `dtbo` file, loaded by the capemanager. Those
+binary files get created by the device tree compiler (dtc), which uses
+a human readable `dts` file as input. So the necessary steps are
+
+-# create a source tree with root `.dts` file
+-# compile that root file with `dtc`
+-# install the binary
+-# make the kernel load the binary
+
+You can either adapt your pinmuxing in the initial `dtb` file. This is
+a bit unconvenient, since you have to replace the POR device tree for
+every change in your pinmuxing. The alternative solution is loading an
+`dtbo` overlay after POR. You can prepare several overlays and load the
+one (or more) you need for your current task (without changing the POR
+sequence).
+
+\note Pinmuxing is also possible by using the default tool `config_pin`
+      and the `cape_universal` type overlays. This may look like a
+      convenient alternative solution and works for simple tasks. In a
+      real world project you'll soon face problems. Those overlays
+      aren't save regarding the Beaglebone double pins `P9_41` and
+      `P9_42`. A slow kernel driver (the overlays enables all kernel
+      drivers, consuming lots of memory) may interfer with the fast
+      \Proj code. Or you may need to free some pins for an additional
+      cape. In the later case you'll also have to deal with device tree
+      source, so learn it now and enjoy your headstart.
+
+
+## Creating an Overlay  {#SSecCreateOverlay}
+
+Creating a device tree source file (`dts`) isn't straight forward. It
+needs several concerted entries to claim, declare and export a pin
+configuration. Documentation is widely spread over different places and
+error messages are pure and confusing. That's why this project includes
+tools to generate consistent device tree source files for
+
+- an universal overlay (flexible, run-time pinmuxing capability)
+- a customized overlay (lightweight, fixed mux modes)
+
+When you experiment with the Beaglebone hardware, when you test the
+\Proj examples, or when you start the development phase of a new
+project, the universal overlay is your first choise. It claims all free
+header pins and sets a bunch of reasonable pre-defined modes for them.
+You can set or change a pin configuration or move a feature from one
+pin to another by editing a few characters in your source code. But
+that flexibility has its price. A universal overlay uses lots of kernel
+memory and isn't fast at boot-time.
+
+Once you finished development and you burn your project to a PCB, you
+wont need that flexibility any more. Now it's time to create a
+lightweight customized overlay that claims only the neccesary pins and
+their required modes.
+
+Inbetween those scenarios, ie. when you want to use a pin for a one
+wire bus driven by the kernel driver (check out [libpruw1
+project](https://github.com/DTJF/libpruw1) first), or when you want to
+use a cape that needs to claim certain pins, in most cases it's best to
+create an adapted universal overlay by just freeing some pins for the
+other systems.
+
+
+### Universal  {#SSecUniversal}
+
+The tool dts_universal.bas is designed to create universal overlays.
+First, the code declares an array for all CPU ball modes (`M(109 + 1)`)
+and fills that array with reasonable mode settings for all header pins.
+By default, each pin gets four GPIO settings (either output without
+resistor or input with pull-up, pull-down or no resistor) and,
+depending on the connected CPU periperals, up to seven further modes.
+See \MpuRef{4.2} for details.
+
+A special case are pins `P9_41` and `P9_42`. Those pins are connected
+to two CPU balls on the Beaglebone PCB. Both balls must not get set in
+contrary output modes (which will result in hardware damage). The tools
+code handles that case. Before setting the desired feature to one CPU
+ball, the other gets set to input mode with no resistor.
+
+Afterwards, the code frees some pins for the target board. Depending on
+the specified Beaglebone model (BBW: White, BBB: Black or BBG: Green)
+either the EMMC2 or additional the HDMI and MCASP0 pins get freed. This
+gets done by just removing the pre-defining settings for that header
+pins from the `M()` array.
+
+Finally the `CREATE()` macro generates the code to write the device
+tree source code in to the current folder and to compile that file to
+the destination directory. Only pins with at least one mode entry in
+the CPU ball modes array `M(109 + 1)` get claimed and configured in the
+overlay source file.
+
+As long as you do not use additional capes or additional kernel drivers
+(both may conflict with some header pins), you can use the source
+as-is. Just compile the source code and execute the executable as
+described in the file documentation.
+
+In contrast, when you have to free pins, add some lines to clear the
+pin configurations. Preferable add a new `CASE "xyz"` branch with your
+customized setting and specify your `xyz` string as second command line
+option when executing the binary.
+
+
+### Customized  {#SSecCustomized}
+
+The tool dts_custom.bas is designed to create customized overlays.
+First, the code also declares an array for all CPU ball modes (`M(109 +
+1)`). But in contrast to the tool dts_universal.bas, this tool leaves
+the array empty.
+
+In order to operate a pin, store its desired mode value in to the mode
+string array `M()`. This value contains information about the pin mode,
+the pull-up or pull-down resistor setting and the receiver setting, all
+ORed together. Find detailed information in \ArmRef{9} and examples in
+the source code dts_custom.bas.
+
+Usually you'll set one fixed mode for each requested pin. But it's also
+possible to set more modes and switch at run-time (with root
+privileges). See files P8.bi, P9.bi and JTag.bi for examples.
+
+Finally the `CREATE()` macro generates the code to write the device
+tree source code in to the current folder and to compile that file to
+the destination directory. Only pins with at least one mode entry in
+the CPU ball modes array `M(109 + 1)` get claimed and configured in the
+overlay source file.
+
+Preferably copy that code and create one version for each of your
+finalized projects.
+
+
+## Loading an Overlay  {#SSecLoadOverlay}
+
+Once you created your device tree overlay, the operating system should
+load it. There're several ways to get this working.
+
+-# adapting uEnv.txt (initial device tree at POR)
+-# adapting /etc/default/capemgr (load an overlay at POR)
+-# `systemctl enable libpruio.service` (load an overlay at POR or later)
+-# manually loading an overlay
+
+The first option is the fastest (regarding boot-time) with the smallest
+memory foot-print. But it's unflexible, you have to adapt the boot
+device tree in the initrd. The tools don't support that directly. In
+contrast by loading an overlay you can add or remove configuration
+files and switch between them without adapting the operating systems
+boot sequence. Just install your overlay files (one or more) in folder
+`/lib/firmware` and use the capemanager to load them.
+
+\note The capemanager always uses the basis file name, not the full
+      name. Ie. to load the overlay `/lib/firmware/libpruio.00A0.dtbo`
+      pass the name `libpruio`.
+
+\note The capemgr should be able to unload an overlay by writing the
+      negative slot number to the `slots` file. This never worked yet
+      (effective 2016, Dec.). In order to reliable get rid of an
+      overlay configuration you have to reboot your system.
+
+\note In case of problems find kernel error messages by executing
+      `dmesg`.
+
+
+### File `/boot/uEnv.txt`  {#SSecLoadInit}
+
+The advantage of using this method is to boot the system with a fixed
+configuration with shortest boot time and smallest memory foot print.
+But the handling isn't easy since you have to deal with the initial
+device tree source and insert (copy/paste) context from the overlay
+source.
+
+It's beyond the scope of that documentation to decribe that in detail.
+In general you need to download the source, adapt the initial device
+tree for your Beaglebone model, compile that source and copy the binary
+to the initrd (replace `4.4` by your kernel version):
+
+~~~{.txt}
+git clone -b 4.4-ti https://github.com/RobertCNelson/dtb-rebuilder dtb-4.4-ti --depth=1
+cd ./dtb-4.4-ti/0
+
+# adapt the source in folder src/arm/ for your model here
+
+make
+sudo make install
+sudo reboot
+~~~
+
+
+### File `/etc/default/capemgr`  {#SSecLoadCapemgr}
+
+The advantage of using this method is to boot the system with a fixed
+configuration. This file declares one default overlay to be loaded at
+POR. You can switch between different overlays by editing this file,
+but you have to reboot in order to get the change in effect.
+
+The file gets read by the systemd `capemgr.service` at boot time. Edit
+the file and specify your overlay in a line like `CAPE=libpruio` and
+save the result:
+
+~~~{.txt}
+sudo nano /etc/default/capemgr
+~~~
+
+Then make sure the service is enabled and reboot
+
+~~~{.txt}
+sudo systemctl enable capemgr.service
+sudo reboot
+~~~
+
+
+### Systemd Service  {#SSecLoadSystemd}
+
+The advantage of loading an overlay by a systemd service is the
+flexibility. You can either load a fixed configuration at boot time or
+boot a clean system and start a service later for the project you're
+currently working on. You can load more than one configuration (modular
+set up).
+
+~~~{.txt}
+sudo su
+???
+exit
+~~~
+
+
+### Manually  {#SSecLoadManually}
+
+The advantage of manually loading an overlay is the flexibility. You'll
+have a clean system (no fixed configuration) after POR. Then you load
+the configuration for the project you're currently working on. You can
+load more than one configuration (modular set up).
+
+Ie. in order to load the file `/lib/firmware/libpruio-00A0.dtbo` switch
+to root user (`sudo` isn't sufficient) and write the basis file name to
+the capemanager slots file, like
+
+~~~{.txt}
+sudo su
+echo libpruio > /sys/devices/bone_capemgr.*/slots
+exit
+~~~
+
+or on kernel versions > 3.8 (different path)
+
+~~~{.txt}
+sudo su
+echo libpruio > /sys/devices/platform/bone_capemgr/slots
+exit
+~~~
+
+
+## Free Pins  {#SSecFreePins}
+
+The operating systems claims pins at POR for features like the HDMI
+controller. Ie. if you run your hardware headless and don't need HDMI,
+you can free those pins. First check the boot options in the file
+`/boot/uEnv.txt`. Several initial device tree files are prepared to
+boot with different settings, find details at [this page](http://???).
+
+If those settings doesn't match your needs, you can adapt the initial
+device tree as described in section \ref SSecLoadInit.

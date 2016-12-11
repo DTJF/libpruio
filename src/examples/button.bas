@@ -1,10 +1,13 @@
 /'* \file button.bas
 \brief Example: get state of a button.
 
-This file contains an example on how to use libpruio to get the state
-of a button connetect to a GPIO pin on the beaglebone board. Here pin 7
-on header P8 is used as input with pullup resistor. Connect the button
-between P8_07 (GPIO input) and P8_01 (GND).
+This file contains an example on how to use \Proj to get the state of a
+button connetect to a GPIO pin on the beaglebone board. Here pin 7 on
+header P8 is used as input with pullup resistor. Connect the button
+between P8_07 (GPIO input) and P8_01 (GND). Find a description on the
+setup and the output in section [Examples ->
+button](ChaExamples.html#SSecExaButton).
+
 
 Licence: GPLv3
 

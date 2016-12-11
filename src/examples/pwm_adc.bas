@@ -5,7 +5,9 @@ This file contains an example on how to use libpruio to generate Pulse
 Width Modulated (PWM) output. Here the two channels (A + B) of an
 eHRPWM module and an eCAP module (in PWM) mode generate the PWM
 signals. The output gets measured by the ADC subsystem at channels
-AIN-0 to AIN-2, and shown as a line graf in a graphics windows.
+AIN-0 to AIN-2, and shown as a line graf in a graphics windows. Find a
+description on the setup and the output in section [Examples ->
+pwm_adc](ChaExamples.html#SSecExaPwmAdc).
 
 Licence: GPLv3
 

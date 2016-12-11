@@ -4,7 +4,8 @@
 This file contains an short and simple example for text output of the
 analog input lines. It's designed for the description pages and shows
 the basic usage of libpruio with a minimum of source code, translatable
-between FreeBASIC and C.
+between FreeBASIC and C. Find a description on the output in
+section [Examples -> Simple (1)](ChaExamples.html#SSecExaSimple).
 
 Licence: GPLv3
 
@@ -12,6 +13,7 @@ Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `gcc -Wall -o 1 1.c -lpruio -lprussdrv`
 
+\since 0.0
 */
 
 

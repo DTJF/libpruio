@@ -154,7 +154,7 @@ IoCEnd:
 
 
 //
-// MM or RB mode
+// MM or RB mode, prepare and wait for interrupt
 //
 MmStart:
   ADC_MM_Init

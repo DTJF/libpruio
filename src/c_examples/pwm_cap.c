@@ -6,7 +6,8 @@ cycle of a pulse train with a eCAP module input. The program sets
 another pin as eHRPWM output to generate a pulse width modulated signal
 as source for the measurement. The output can be changed by some keys,
 the frequency and duty cycle of the input is shown continuously in the
-terminal output.
+terminal output. Find a description on the setup and the output in
+section [Examples -> pwm_cap](ChaExamples.html#SSecExaPwmCap).
 
 Licence: GPLv3
 
@@ -36,7 +37,9 @@ Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio -lprussdrv`
 
 Wait for a keystroke or timeout and return which of the events happened.
 
+\since 0.2
 */
+
 int
 isleep(unsigned int mseconds)
 {

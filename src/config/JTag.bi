@@ -15,9 +15,9 @@ Copyright 2014-\Year by \Mail
 ' Load convenience macros.
 #INCLUDE ONCE "../pruio/pruio_pins.bi"
 
-' pin 1, DGND
-' pin 2, -
-' pin 3, -
+' JT_01, DGND
+' JT_02, not connected
+' JT_03, not connected
 
 ' ZCZ ball E15 (RXD 5V)
 M(JT_04) = CHR( _
@@ -27,8 +27,9 @@ M(JT_04) = CHR( _
   , 3 + IOD _ ' I2C2_SDA
   , 4 + CAPi _ ' eCAP2_in_PWM2_out
   , 5 + _O_ _ ' pr1_pru1_pru_r30_14
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_14
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_14
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
 ' ZCZ ball E16 (TXD 5V)
 M(JT_05) = CHR( _
@@ -38,7 +39,8 @@ M(JT_05) = CHR( _
   , 3 + IOD _ ' I2C2_SCL
   , 4 + CAPo _ ' eCAP1_in_PWM1_out
   , 5 + _O_ _ ' pr1_pru1_pru_r30_15
-  , 6 + _I_ _ ' pr1_pru1_pru_r31_15
-  ) & GPIO_DEF
+  , PRUI_DEF(6) _ ' pr1_pru1_pru_r31_15
+  , GPIO_DEF _    ' 4xGPIO I/O
+  )
 
-' pin 6, -
+' JT_06, not connected

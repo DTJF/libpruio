@@ -234,7 +234,7 @@ ALIASES                = "ArmRef{1}=[ARM Reference Guide, chapter \1](http://www
                          "Email=Thomas{ dOt ]Freiherr[ aT ]gmx[DoT}net" \
                          "Item{1}=- <b>\1</b>:" \
                          "BbbRef{1}=[BBB Software Reference Guide, chapter \1](https://github.com/beagleboard/BeagleBone-Black/blob/master/BBB_SRM.pdf?raw=true)" \
-                         "MpuRef{1}=[Sitara AM335x ARM Cortex-A8 Microprocessors Guide, chapter \1](http://www.openhacks.com/uploadsproductos/am3359.pdf)"
+                         "MpuRef{1}=[AM335x Sitara Processors Guide, chapter \1](http://www.ti.com/lit/ds/symlink/am3358.pdf)"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -1910,7 +1910,7 @@ ENABLE_PREPROCESSING   = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = YES
+MACRO_EXPANSION        = NO
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -1918,7 +1918,7 @@ MACRO_EXPANSION        = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES the includes files in the
 # INCLUDE_PATH will be searched if a #include is found.
@@ -1940,7 +1940,7 @@ INCLUDE_PATH           =
 # used.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-INCLUDE_FILE_PATTERNS  =
+INCLUDE_FILE_PATTERNS  = *.hp
 
 # The PREDEFINED tag can be used to specify one or more macro names that are
 # defined before the preprocessor is started (similar to the -D option of e.g.
@@ -1950,7 +1950,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = FOR_DOXYGEN_ONLY
+PREDEFINED             = FOR_DOXYGEN_ONLY:=1
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

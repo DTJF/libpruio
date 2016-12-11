@@ -61,6 +61,10 @@ It's beyond the scope of this guide to describe the installation for
 those tools. Find detailed installation instructions on the related
 websides, linked by the name in the first column.
 
+Just an example on how to install the tolls on Debian based systems
+(ie. like Ubuntu, Mint, ...). The following commands install the tool
+packages:
+
 -# First, install the distributed (D) packages of your choise, either mandatory
    ~~~{.txt}
    sudo apt-get install git cmake
@@ -235,3 +239,8 @@ This will create the packages
 - libpruio-fbdev.deb contains the FreeBASIC header files
 
 \ToDo -doc package
+
+
+# Fix Kernel 4 PWM Issue  {#SecFixPwm}
+
+ToDo

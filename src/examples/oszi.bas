@@ -2,7 +2,9 @@
 \brief Example: draw a graph of analog inputs.
 
 This file contains an example on how to use libpruio to continuously
-draw a graph of the sampled data from the analog input lines.
+draw a graph of the sampled data from the analog input lines. Find a
+description on the setup and the output in section [Examples ->
+oszi](ChaExamples.html#SSecExaOszi).
 
 Licence: GPLv3
 
