@@ -359,7 +359,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
   , c_a(...) = {0, 0, 0} _ ' module counters A
   , c_b(...) = {0, 0, 0}   ' module counters B
 
-  IF Top->Pwm->Pwmss_Ctrl AND (1 SHL Nr) THEN Top->Errr = E0 : RETURN E0 ' PWMSS not ready (kernel 4)
+  IF Top->Pwm->Pwmss_Ctrl AND (1 SHL Nr) THEN Top->Errr = EA : RETURN EA ' PWMSS not ready (kernel 4)
   VAR ctl = 0
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
