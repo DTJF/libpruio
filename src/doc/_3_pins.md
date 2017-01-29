@@ -258,12 +258,17 @@ is 32 bit and the duration range in [s] vary between the pins.
 | Pin   | Subsystem       | Max Dur |   Min Dur   | Notice            |
 | ----- | :-------------: | :-----: | :---------: | :---------------- |
 | P8_07 | TIMER-4         | 45812   | 0,000000167 | free              |
+| P8_08 | TIMER-7         | 45812   | 0,000000167 | free              |
 | P8_09 | TIMER-5         | 45812   | 0,000000167 | free              |
 | P8_10 | TIMER-6         | 45812   | 0,000000167 | free              |
-| P8_08 | TIMER-7         | 45812   | 0,000000167 | free              |
+| P9_19 | TIMER-5         | 45812   | 0,000000167 | i2c2              |
+| P9_20 | TIMER-6         | 45812   | 0,000000167 | i2c2              |
 | P9_28 | PWMSS-2, CAP    | 42,94   | 0,00000002  | MCASP0            |
+| P9_41 | TIMER-7         | 45812   | 0,000000167 | free (double pin) |
 | P9_42 | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
 | JT_05 | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+| SD_01 | TIMER-6         | 45812   | 0,000000167 | SD (mmc0_dat2)    |
+| SD_02 | TIMER-5         | 45812   | 0,000000167 | SD (mmc0_dat3)    |
 
 The output gets specified by calling function TimerUdt::setValue().
 Since the output timing may vary from the specified parameters due to
@@ -295,6 +300,8 @@ frequency range vary between the pins.
 | P8_19 | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | free              |
 | P9_14 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | free              |
 | P9_16 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | free              |
+| P9_19 | TIMER-5         | 0.000010914 to 6e6 Hz  | i2c2              |
+| P9_20 | TIMER-6         | 0.000010914 to 6e6 Hz  | i2c2              |
 | P9_21 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | free              |
 | P9_22 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | free              |
 | P8_34 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
@@ -304,16 +311,19 @@ frequency range vary between the pins.
 | P9_29 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_31 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
+| Pp_41 | TIMER-7         | 0.000010914 to 6e6 Hz  | free (double pin) |
 | P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
 | JT_05 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
+| SD_01 | TIMER-6         | 0.000010914 to 6e6 Hz  | SD (mmc0_dat2)    |
+| SD_02 | TIMER-5         | 0.000010914 to 6e6 Hz  | SD (mmc0_dat2)    |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
 and low when the compare value is reached. In the TIMER subsystems the
 counter clock can get pre-scaled, so very long periods (low
-frequencies) are possible. The maximum is ??? days.
+frequencies) are possible. The maximum period is more than one day.
 
-In contrast the PWMSS-PWM subsystems use a 16 bit counter with 17 bit
+In contrast the PWMSS-PWM modules use a 16 bit counter with 17 bit
 duty resolution in up-down mode. The frequency range can get extended
 by a clock pre-scaler. \Proj auto-configures the mode and the
 pre-scaler. For high frequencies (low counter periods) the counter runs
