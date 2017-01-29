@@ -38,6 +38,7 @@ stored to compute the offset in the Init and Conf data blocks.
 CONSTRUCTOR PwmssUdt(BYVAL T AS Pruio_ PTR)
   Top = T
   WITH *Top
+    Pwmss_Ctrl = .DRam[3]
     VAR i = .ParOffs
     InitParA = i
     i += 1 : .DRam[i] = &h48300000uL
@@ -359,7 +360,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
   , c_a(...) = {0, 0, 0} _ ' module counters A
   , c_b(...) = {0, 0, 0}   ' module counters B
 
-  IF Top->Pwm->Pwmss_Ctrl AND (1 SHL Nr) THEN Top->Errr = EA : RETURN EA ' PWMSS not ready (kernel 4)
+  IF 0 = ((1 SHL Nr) AND Pwmss_Ctrl) THEN     Top->Errr = EA : RETURN EA ' PWMSS not ready (kernel 4)
   VAR ctl = 0
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
@@ -440,18 +441,12 @@ from the user point of view, the functions to control the modules are
 separated to extra classes. This UDT contains functions to control the
 PWM module.
 
-The constructor copies a pointer to the calling main UDT PruIo and
-reads the Control Module register pwmss_ctrl setting.
+The constructor copies a pointer to the calling main UDT PruIo.
 
 \since 0.2
 '/
 CONSTRUCTOR PwmMod(BYVAL T AS Pruio_ PTR)
   Top = T
-  WHILE .DRam[1] : WEND
-  .DRam[2] = &h44E10664uL
-  .DRam[1] = 4 OR (PRUIO_COM_PEEK SHL 24)
-  WHILE .DRam[1] : WEND
-  Pwmss_Ctrl = DRam[3]
 END CONSTRUCTOR
 
 
@@ -479,13 +474,8 @@ FUNCTION PwmMod.Value CDECL( _
     SELECT CASE AS CONST Ball
     CASE P8_07 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(0, Hz, Du))
     CASE P8_09 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(1, Hz, Du))
-    CASE P9_19 : e = IIF(ModeCheck(Ball,1), .PwmSS->E3, .TimSS->pwm_get(1, Hz, Du))
-    CASE SD_02 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .TimSS->pwm_get(1, Hz, Du))
     CASE P8_10 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(2, Hz, Du))
-    CASE P9_20 : e = IIF(ModeCheck(Ball,1), .PwmSS->E3, .TimSS->pwm_get(2, Hz, Du))
-    CASE SD_01 : e = IIF(ModeCheck(Ball,3), .PwmSS->E3, .TimSS->pwm_get(2, Hz, Du))
     CASE P8_08 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .TimSS->pwm_get(3, Hz, Du))
-    CASE P9_41 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .TimSS->pwm_get(3, Hz, Du))
     CASE P8_13 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 1))
     CASE P8_19 : e = IIF(ModeCheck(Ball,4), .PwmSS->E3, .PwmSS->pwm_pwm_get(2, Hz, Du, 0))
     CASE P8_34 : e = IIF(ModeCheck(Ball,2), .PwmSS->E3, .PwmSS->pwm_pwm_get(1, Hz, Du, 1))
@@ -558,53 +548,43 @@ FUNCTION PwmMod.setValue CDECL( _
     SELECT CASE AS CONST Ball
     CASE P8_07 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(0, Hz, Du)
-    CASE P8_09 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' timer5
+    CASE P8_09 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(1, Hz, Du)
-    CASE P9_19 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
-      RETURN .TimSS->pwm_set(1, Hz, Du)
-    CASE SD_02 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN .TimSS->pwm_set(1, Hz, Du)
-    CASE P8_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' timer6
+    CASE P8_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(2, Hz, Du)
-    CASE P9_20 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
-      RETURN .TimSS->pwm_set(2, Hz, Du)
-    CASE SD_01 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
-      RETURN .TimSS->pwm_set(2, Hz, Du)
-    CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' timer7
+    CASE P8_08 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .TimSS->pwm_set(3, Hz, Du)
-    CASE P9_41 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN .TimSS->pwm_set(3, Hz, Du)
-    CASE P8_13 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) 'ehrpwm2b
+    CASE P8_13 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->pwm_pwm_set(2, Hz, -1., Du)
-    CASE P8_19 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) 'ehrpwm2a
+    CASE P8_19 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->pwm_pwm_set(2, Hz, Du, -1.)
-    CASE P8_34 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) 'ehrpwm1b
+    CASE P8_34 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .PwmSS->pwm_pwm_set(1, Hz, -1., Du)
-    CASE P8_36 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) 'ehrpwm1a
+    CASE P8_36 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
       RETURN .PwmSS->pwm_pwm_set(1, Hz, Du, -1.)
-    CASE P8_45 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0B) 'ehrpwm2a
+    CASE P8_45 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN .PwmSS->pwm_pwm_set(2, Hz, -1., Du)
-    CASE P8_46 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0B) 'ehrpwm2b
+    CASE P8_46 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN .PwmSS->pwm_pwm_set(2, Hz, Du, -1.)
-    CASE P9_14 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0E) 'ehrpwm1a
+    CASE P9_14 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
       RETURN .PwmSS->pwm_pwm_set(1, Hz, Du, -1.)
-    CASE P9_16 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0E) 'ehrpwm1b
+    CASE P9_16 : IF ModeCheck(Ball,6) THEN ModeSet(Ball, &h0E)
       RETURN .PwmSS->pwm_pwm_set(1, Hz, -1., Du)
-    CASE P9_21 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B) 'ehrpwm0b
+    CASE P9_21 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN .PwmSS->pwm_pwm_set(0, Hz, -1., Du)
-    CASE P9_22 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B) 'ehrpwm0a
+    CASE P9_22 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
       RETURN .PwmSS->pwm_pwm_set(0, Hz, Du, -1.)
-    CASE P9_29 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09) 'ehrpwm0b
+    CASE P9_29 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
       RETURN .PwmSS->pwm_pwm_set(0, Hz, -1., Du)
-    CASE P9_31 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09) 'ehrpwm0a
+    CASE P9_31 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
       RETURN .PwmSS->pwm_pwm_set(0, Hz, Du, -1.)
-    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) 'ecap2
+    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->cap_pwm_set(2, Hz, Du)
-    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) 'ecap1
+    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->cap_pwm_set(1, Hz, Du)
-    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08) 'ecap0
+    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
       RETURN .PwmSS->cap_pwm_set(0, Hz, Du)
-    'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D) 'pru0_cap
+    'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D)
       'RETURN pru_cap_set(Hz, Du)
     END SELECT :                       .Errr = .PwmSS->E4 : RETURN .Errr ' pin has no PWM capability
   END WITH

@@ -55,6 +55,11 @@
   PWMSS_Init
   TIMER_Init
 
+// get Control Module register pwmss_ctrl to DRam[3]
+  MOV UR, 0x44E10664
+  LBBO UR, UR, 0, 4
+  SBCO UR, DRam, 3*4, 4
+
 // report to host and halt
   MOV  UR, PRUIO_MSG_INIT_OK
   SBCO UR, DRam, 0, 4    // write status information

@@ -387,9 +387,9 @@ to generate output at the required frequency. -> Check the parameter
 `Hz` and set an appropriate value (CAP and PWM modules have different
 frequency ranges).
 
-\Item{"no PWM pin (fix initrd)"} The PWM module isn't ready for PWM
+\Item{no PWM pin -> fix initrd} The PWM module isn't ready for PWM
 output. -> Fix the kernel 4 PWM issue first. Find details in \ref
-SecFixPwm.
+SubFixPwm.
 
 
 ## Value {#SSecErrPwmValue}

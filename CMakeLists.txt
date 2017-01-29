@@ -23,7 +23,8 @@ ENDFUNCTION()
 
 CONFIGURE_FILE(src/doc/ReadMe.md.in ${CMAKE_SOURCE_DIR}/ReadMe.md @ONLY)
 
-ADD_SUBDIRECTORY(src/config)
+#ADD_SUBDIRECTORY(src/config)
+#ADD_SUBDIRECTORY(src/kernel)
 ADD_SUBDIRECTORY(src/pruio)
 ADD_SUBDIRECTORY(doxy)
 ADD_SUBDIRECTORY(src/python)
