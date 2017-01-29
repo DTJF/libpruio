@@ -38,6 +38,7 @@ stored to compute the offset in the Init and Conf data blocks.
 CONSTRUCTOR PwmssUdt(BYVAL T AS Pruio_ PTR)
   Top = T
   WITH *Top
+    Pwmss_Ctrl = .DRam[3]
     VAR i = .ParOffs
     InitParA = i
     i += 1 : .DRam[i] = &h48300000uL
@@ -359,7 +360,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
   , c_a(...) = {0, 0, 0} _ ' module counters A
   , c_b(...) = {0, 0, 0}   ' module counters B
 
-  IF Top->Pwm->Pwmss_Ctrl AND (1 SHL Nr) THEN Top->Errr = E0 : RETURN E0 ' PWMSS not ready (kernel 4)
+  IF 0 = ((1 SHL Nr) AND Pwmss_Ctrl) THEN     Top->Errr = EA : RETURN EA ' PWMSS not ready (kernel 4)
   VAR ctl = 0
   WITH *Conf(Nr)
     IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
@@ -440,18 +441,12 @@ from the user point of view, the functions to control the modules are
 separated to extra classes. This UDT contains functions to control the
 PWM module.
 
-The constructor copies a pointer to the calling main UDT PruIo and
-reads the Control Module register pwmss_ctrl setting.
+The constructor copies a pointer to the calling main UDT PruIo.
 
 \since 0.2
 '/
 CONSTRUCTOR PwmMod(BYVAL T AS Pruio_ PTR)
   Top = T
-  WHILE .DRam[1] : WEND
-  .DRam[2] = &h44E10664uL
-  .DRam[1] = 4 OR (PRUIO_COM_PEEK SHL 24)
-  WHILE .DRam[1] : WEND
-  Pwmss_Ctrl = DRam[3]
 END CONSTRUCTOR
 
 

@@ -174,7 +174,9 @@ TYPE PwmssUdt
   , Conf(PRUIO_AZ_PWMSS)   '*< Current subsystem configuration, used in PruIo::config().
   AS PwmssArr PTR _
     Raw(PRUIO_AZ_PWMSS)    '*< Pointer to current raw subsystem data (IO).
-  AS UInt32 InitParA       '*< Initial parameters offset.
+  AS UInt32 _
+     InitParA _ '*< Initial parameters offset.
+   , Pwmss_Ctrl '*< The Control Module pwmss_ctrl register value
   AS CONST UInt16 _
     PwmMode = &b1011010000 _'*< Value for ECCTL2 in PWM mode.
   , CapMode = &b0011010110  '*< Value for ECCTL2 in CAP mode.
@@ -189,7 +191,7 @@ TYPE PwmssUdt
   , E7 = @"pin not in QEP mode" _         '*< Common error message.
   , E8 = @"pin has no QEP capability" _   '*< Common error message.
   , E9 = @"eCAP module not in output mode" _ '*< Common error message.
-  , EA = @"no PWM pin (fix initrd)"       '*< Common error message.
+  , EA = @"no PWM pin -> fix initrd"      '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR
@@ -248,7 +250,6 @@ C wrapper equivalent pwmMod.
 '/
 TYPE PwmMod
   AS Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  AS LONG Pwmss_Ctrl
   AS UInt16 _
     ForceUpDown = 0 _               '*< Switch to force up-down counter for ePWM modules.
   , Cntrl(PRUIO_AZ_PWMSS) = _       '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).

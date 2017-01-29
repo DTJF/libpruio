@@ -412,7 +412,9 @@ typedef struct pwmssUdt{
     *Conf[PRUIO_AZ_PWMSS + 1]; //!< Current subsystem configuration, used in  PruIo::config().
   pwmssArr
     *Raw[PRUIO_AZ_PWMSS + 1];  //!< Pointer to current raw subsystem data (IO).
-  uint32 InitParA;             //!< Offset to read data block offset.
+  uint32
+     InitParA,                 //!< Offset to read data block offset.
+   , Pwmss_Ctrl;               //!< The Control Module pwmss_ctrl register value
   const uint16
     PwmMod                     //!< Value for ECCTL2 in PWM mode (&b1011010000).
   , CapMod;                    //!< Value for ECCTL2 in CAP mode (&b0011010110).
