@@ -155,6 +155,21 @@ all related pins as one group.
 '* CPU ball (E16) number for pin 5 on JTag header (E16)
 #DEFINE JT_05 &h5D '93
 
+'* CPU ball number for pin 1 on SD connector (F18)
+#DEFINE SD_01 &h3D '61
+'* CPU ball number for pin 2 on SD connector (F17)
+#DEFINE SD_02 &h3E '60
+'* CPU ball number for pin 3 on SD connector (G18)
+#DEFINE SD_03 &h41 '65
+'* CPU ball number for pin 5 on SD connector (G17)
+#DEFINE SD_05 &h40 '64
+'* CPU ball number for pin 7 on SD connector (G16)
+#DEFINE SD_07 &h3F '63
+'* CPU ball number for pin 8 on SD connector (G15)
+#DEFINE SD_08 &h3E '62
+'* CPU ball number for switch on SD connector (C15)
+#DEFINE SD_09 &h58 '88
+
 '* number of analog line on pin 39 on header 9
 #DEFINE P9_39 AIN0
 '* number of analog line on pin 40 on header 9

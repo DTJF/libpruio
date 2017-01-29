@@ -161,10 +161,15 @@ FUNCTION TimerUdt.setValue CDECL( _
 
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_07 : nr = 0
-    CASE P8_09 : nr = 1
-    CASE P8_10 : nr = 2
-    CASE P8_08 : nr = 3
+    CASE P8_07 : nr = 0 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+    CASE P8_09 : nr = 1 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+    CASE P9_19 : nr = 1 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
+    CASE SD_02 : nr = 1 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
+    CASE P8_10 : nr = 2 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+    CASE P9_20 : nr = 2 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h09)
+    CASE SD_01 : nr = 2 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h0B)
+    CASE P8_08 : nr = 3 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+    CASE P9_41 : nr = 3 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->cap_tim_set(2, Dur1, Dur2, Mode)
     CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
@@ -175,7 +180,6 @@ FUNCTION TimerUdt.setValue CDECL( _
     END SELECT
 
     IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
-    IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
     IF Dur1 < 0. ORELSE Dur2 < 0. THEN ' switch off
       Conf(nr)->TCLR = IIF(Mode AND &b01, TimHigh, Tim_Low)
@@ -258,19 +262,24 @@ FUNCTION TimerUdt.Value CDECL( _
   , BYVAL Dur2 AS Float_t PTR = 0 _
   , BYVAL Mode AS SHORT PTR = 0) AS ZSTRING PTR
 
-  DIM AS Uint32 nr
+  DIM AS Uint32 nr = -1
   DIM AS ZSTRING PTR e
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_07 : nr = 0
-    CASE P8_09 : nr = 1
-    CASE P8_10 : nr = 2
-    CASE P8_08 : nr = 3
+    CASE P8_07 : e = IIF(ModeCheck(Ball,2), E2, 0) : nr = 0
+    CASE P8_09 : e = IIF(ModeCheck(Ball,2), E2, 0) : nr = 1
+    CASE P9_19 : e = IIF(ModeCheck(Ball,1), E2, 0) : nr = 1
+    CASE SD_02 : e = IIF(ModeCheck(Ball,3), E2, 0) : nr = 1
+    CASE P8_10 : e = IIF(ModeCheck(Ball,2), E2, 0) : nr = 2
+    CASE P9_20 : e = IIF(ModeCheck(Ball,1), E2, 0) : nr = 2
+    CASE SD_01 : e = IIF(ModeCheck(Ball,3), E2, 0) : nr = 2
+    CASE P8_08 : e = IIF(ModeCheck(Ball,2), E2, 0) : nr = 3
+    CASE P9_41 : e = IIF(ModeCheck(Ball,4), E2, 0) : nr = 3
     CASE P9_28 : e = IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(2, Dur1, Dur2, Mode))
     CASE JT_05 : e = IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(1, Dur1, Dur2, Mode))
     CASE P9_42 : e = IIF(ModeCheck(Ball,0), E2, .PwmSS->cap_tim_get(0, Dur1, Dur2, Mode))
     CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
-    END SELECT
+    END SELECT : if e orelse nr < 0                       then return e
 
     IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
     IF Conf(nr)->TCLR <> PwmMode THEN             .Errr = E2 : RETURN E2 ' TIMER module not in output mode
