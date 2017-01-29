@@ -279,7 +279,7 @@ FUNCTION TimerUdt.Value CDECL( _
     CASE JT_05 : e = IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(1, Dur1, Dur2, Mode))
     CASE P9_42 : e = IIF(ModeCheck(Ball,0), E2, .PwmSS->cap_tim_get(0, Dur1, Dur2, Mode))
     CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
-    END SELECT : if e orelse nr < 0                       then return e
+    END SELECT : if e orelse nr < 0           then .Errr = e : return .Errr
 
     IF 2 <> Conf(nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' TIMER not enabled
     IF Conf(nr)->TCLR <> PwmMode THEN             .Errr = E2 : RETURN E2 ' TIMER module not in output mode
