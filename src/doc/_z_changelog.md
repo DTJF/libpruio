@@ -122,6 +122,9 @@ Meanwhile \Proj is used in many projects. Here're some of them
 - [Library upgrade to PRU gives Fast IO on Beaglebone](http://hackaday.com/2015/02/16/library-upgrade-to-pru-gives-fast-io-on-beaglebone/#comments)
 - [Pd BeagleBone Black IO](http://java-hackers.com/p/rvega/pd-bbb-gpio)
 - [How to create a very-low-cost, very-low-power, credit-card-sized and real-time-ready datalogger](http://www.adv-geosci.net/40/37/2015/adgeo-40-37-2015.pdf)
+- [Desenvolvimento de uma plataforma de simulação Hardware in the Loop de baixo custo (HIL simulation)](http://bdm.unb.br/bitstream/10483/14953/1/2016_AlceuBernardesCastanheiraDeFarias_tcc.pdf)
+- [University of North Carolina: SoundSifter: Mitigating Overhearing of Continuous Listening Devices](http://www.cs.unc.edu/~nirjon/paper/soundsifter-mobisys2017.pdf)
+- [Rathin Dholakia at IIT Bombay: GPS supported, IEEE C37.118 compliant Phasor Measurement Unit (PMU)](http://???)
 - []()
 
 
