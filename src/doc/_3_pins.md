@@ -27,7 +27,13 @@ colored pins
 ![Header pins controllable by libpruio](pins.png)
 
 
-# Analog {#SecAnalog}
+# Pin Functions
+
+This section explains the different functions the header pins can work
+in and gives detailed information about the limits.
+
+
+## Analog {#SecAnalog}
 
 Analog lines work always as input line. Analog output isn't supported
 by the Beaglebone hardware (but can get achieved by a combination of a
@@ -93,7 +99,7 @@ configurations in \ArmRef{12}. Find example code in io_input.bas,
 oszi.bas, rb_file.bas, rb_oszi.bas and trigger.bas.
 
 
-# Digital {#SecDigital}
+## Digital {#SecDigital}
 
 Each digital header pin can get configured either in GPIO mode or in
 one of up to seven alternative modes. The matrix of the possible
@@ -172,7 +178,7 @@ constructor PruIo::PruIo() )
   (GpioUdt::setValue() or PwmUdt::setValue() ).
 
 
-##GPIO  {#SubSecGpio}
+### GPIO  {#SubSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -213,7 +219,7 @@ Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
 
 
-## TIMER  {#SubSecTimer}
+### TIMER  {#SubSecTimer}
 
 A TIMER output sends a pulse to a header pin. First, it waits a certain
 time and then toggles the state for a certain time. After that sequence
@@ -248,7 +254,7 @@ resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
 
-## PWM  {#SubSecPwm}
+### PWM  {#SubSecPwm}
 
 PWM stands for Pulse Width Modulated output. So it means generating a
 digital signal with a given frequency and duty cycle. Usualy PWM is
@@ -325,7 +331,7 @@ PwmMod::Value().
 Find example code in pwm_adc.bas or pwm_cap.bas.
 
 
-##CAP  {#SubSecCap}
+### CAP  {#SubSecCap}
 
 CAP stands for Capture and Analyse a digital Pulse train. So it means
 measuring the frequency and the duty cycle of a digital signal input.
@@ -355,7 +361,7 @@ calling function CapMod::config() once.
 Find example code in pwm_cap.bas.
 
 
-##QEP  {#SubSecQep}
+### QEP  {#SubSecQep}
 
 QEP stands for Quadrature Encoder Pulse measurement. So it means
 measuring the position and the speed of a quadrature encoder. Encoders
@@ -467,3 +473,20 @@ QepMod::Value(). Before, you have to configure the pin(s) for QEP input
 by calling function QepMod::config() once.
 
 Find example code in qep.bas.
+
+
+# Pinmuxing
+
+This section describes how to set a header pin in the desired mode. At
+startup (= POR = Power On Reset) the operating system sets all pins in
+a save mode. Execute example [analyse.bas](SubSecExaAnalyse) to see a
+list of the default header pin configuration.
+
+When you set up a header pin for use with \Proj, the desired setup gets
+compared with the default setup and if matching the pin operation gets
+done immediately. Otherwise, if the default configuration doesn't match
+the desired function, \Proj tries to adapt the pin mode.
+
+## Loading an Overlay
+
+## Creating an Overlay

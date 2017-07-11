@@ -268,7 +268,7 @@ CapComm:
   JMP  IoCEnd               // finish command
 
 PwmCCon:
-  QBNE QepCom, Comm.b3, PRUIO_COM_PWM // if no CAP command -> skip
+  QBNE QepCom, Comm.b3, PRUIO_COM_PWM // if no PWM command -> skip
   LBCO U2, DRam, 4*2, 4*3  // get parameters (subsystem address, CMPA & CMPB, AQCTLA & AQCTLB)
   SBBO U3, U2, 0x12, 2*4   // write new AQCTLA & AQCTLB & CMPA & CMPB values
   QBEQ IoCEnd, Comm.w0, 0  // if no frequency change -> skip

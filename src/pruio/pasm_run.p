@@ -139,6 +139,7 @@ IoData:
   RET
 
 IoComm:
+  BALL_IO_Command
   GPIO_IO_Command
   PWMSS_IO_Command
   TIMER_IO_Command
