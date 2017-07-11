@@ -129,6 +129,7 @@ CASE "BBB"
   'PIN_DEL(I2C1_Pins)
   'PIN_DEL(I2C2_Pins)
   PIN_DEL(MCASP0_Pins)
+  M(P8_25) = "" ' #4:BB-BONE-EMMC-2G
   COMPATIBL = "ti,beaglebone-black"
 CASE ELSE ' all pins
 END SELECT
