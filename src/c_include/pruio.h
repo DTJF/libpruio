@@ -274,7 +274,7 @@ typedef struct timerUdt{
   char*
     E0  //!< Common error message.
   , E1  //!< Common error message.
-  , E2  //!< Common error message.
+  , E2; //!< Common error message.
 } timerUdt;
 
 

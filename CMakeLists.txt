@@ -36,7 +36,7 @@ ENDIF()
 ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
 ADD_DEPENDENCIES(pruio pruiofbcode)
 SET_TARGET_PROPERTIES(pruio PROPERTIES
-  LINK_FLAGS "-Wl -z,relro"
+  LINK_FLAGS "-Wl -z,relro,-lprussdrv"
   SOVERSION "${PROJ_VERS}"
   )
 
@@ -76,7 +76,7 @@ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
     "${PROJ_DESC}"
-  "\n ${PROJ_NAME} is a driver to handle input and putput on"
+  "\n ${PROJ_NAME} is a driver to handle input and output on"
   "\n digital and analog lines on Beaglebone hardware."
   "\n The driver bypasses the kernel driver and provides direct"
   "\n access to the hardware, supported by the PRU subsystems."
