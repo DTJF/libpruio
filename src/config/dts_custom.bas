@@ -70,8 +70,10 @@ fbc -w all dts_custom.bas
 VAR PATH_NAME = "/lib/firmware"
 
 ' create settings for all required pins here
-M(P8_09) = CHR(7 + _I_)  ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
-M(P9_42) = CHR(0 + _O_)  ' example: pin 42 at header P9 in mode 0 (eCAP) as output (no resistor)
+'M(P8_09) = CHR(7 + _I_)   ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
+'M(P9_21) = CHR(3 + PWMo)  ' example: pin 21 at header P9 in mode 3 (PWM) as output (no resistor)
+M(P9_14) = CHR(6 + PWMo)  ' example: pin 14 at header P9 in mode 6 (PWMo) as output (no resistor)
+M(P9_42) = CHR(0 + CAPi)  ' example: pin 42 at header P9 in mode 0 (eCAP) as input (pulldown resistor)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
 
@@ -104,4 +106,9 @@ ELSE
 
   IF LEN(COMMAND) THEN PATH_NAME = COMMAND
   SHELL("dtc -@ -I dts -O dtb -o " & PATH_NAME & "/" & fnam & ".dtbo " & fnam & ".dts")
+  IF MULTI_FLAG THEN
+    ?"Blob needs root privilegues (containing " & MULTI_FLAG & " multiple ball settings)"
+  ELSE
+    ?"Blob ready for user space (no multiple ball settings, no root privilegues necessary)"
+  END IF
 END IF

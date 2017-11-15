@@ -26,12 +26,12 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n/plugin/;" _
   !"\n" _
   !"\n/ {" _
-  !"\n    compatible = ""ti,beaglebone"", ""ti,beaglebone-black"", ""ti,beaglebone-green"";" _
+  !"\n    compatible = ""ti,beaglebone-black"", ""ti,beaglebone-green"",  ""ti,beaglebone"";" _
   !"\n" _
   !"\n    // identification" _
   !"\n    board-name = """ & FILE_NAME & """;" _
   !"\n    manufacturer = ""TJF"";" _
-  !"\n    part-number = ""PruIoBBB"";" _
+  !"\n    part-number = ""LibPruIo"";" _
   !"\n    version = """ & VERS_NAME & """;" _
   !"\n" _
   !"\n    // state the resources this cape uses" _
@@ -112,13 +112,22 @@ END ENUM
 
 '* The array to be filled with modus settings for all pins.
 DIM SHARED AS STRING M(109)
+'* The flag for multiple settings.
+DIM SHARED AS LONG MULTI_FLAG = 0
 
 
 /'* \brief Create lines for fragment0 for all settings of a pin.
 \param I The index (ball number) of the pin in global array M.
 \returns A string containing several lines with pin settings for fragment0.
 
-FIXME
+In fragment 0 the different pinmux variants for the balls are
+specified. Each line contains a list of pairs: ball register offset and
+mux setting. Each pair gets a name, so that the pinmux helper can use
+it in fragment 1.
+
+\note In order to avoid board damage, the double pins P9_41 and P9_42
+are handled special. Before the relevant ball gets configured, the
+unsed one gets set in GPIO input state (no-pull).
 
 '/
 FUNCTION f0entry(BYVAL I AS UBYTE) AS STRING
@@ -147,7 +156,14 @@ END FUNCTION
 \param I The index (ball number) of the pin in global array M.
 \returns A string containing an entry with pin settings for fragment1.
 
-FIXME
+In fragment 1 the bone-pinmux-helper is used to make the predefined
+ball configurations from fragment 0 available. A list of pinctrl-names
+gets generated and referenced to the related settings defined in
+fragment 0.
+
+\note In case of multiple settings for a single ball, the libpruio
+application has to get executed with root privilegues to work properly
+with this device tree blob.
 
 '/
 FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING
@@ -164,15 +180,17 @@ FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING
   , l = "" _
   , n = ""
 
-  FOR j = 0 TO LEN(M(I)) - 2
-    VAR t = HEX(M(I)[j], 2)
-    n &= """x" & t & """, "
-    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
-  NEXT
-  VAR t = HEX(M(I)[j], 2)
-  n &= """x" & t & """;"
-  l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
-  RETURN t0 & n & l & t1
+  IF LEN(M(I)) = 1 THEN
+    n &= ", ""default"""
+    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & HEX(M(I)[j], 2) & ">;"
+  ELSE
+    FOR j = 0 TO LEN(M(I)) - 1
+      VAR t = HEX(M(I)[j], 2)
+      n &= ", ""x" & t & """"
+      l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
+    NEXT : MULTI_FLAG += 1
+  END IF
+  RETURN t0 & MID(n, 3) & ";" & l & t1
 END FUNCTION
 
 
