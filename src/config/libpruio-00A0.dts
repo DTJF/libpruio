@@ -3,7 +3,7 @@
 /plugin/;
 
 / {
-    compatible = "ti,beaglebone", "ti,beaglebone-black", "ti,beaglebone-green";
+    compatible = "ti,beaglebone-black", "ti,beaglebone";
 
     // identification
     board-name = "libpruio";
@@ -39,6 +39,8 @@
       "P9.18",
       "P9.17",
       "P9.42",
+      "JT.04",
+      "JT.05",
       "P9.20",
       "P9.19",
       "P9.26",

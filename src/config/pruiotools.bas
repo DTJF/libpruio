@@ -26,7 +26,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n/plugin/;" _
   !"\n" _
   !"\n/ {" _
-  !"\n    compatible = " & COMPATIBL & """ti,beaglebone""" _
+  !"\n    compatible = " & COMPATIBL & """ti,beaglebone"";" _
   !"\n" _
   !"\n    // identification" _
   !"\n    board-name = """ & FILE_NAME & """;" _
@@ -48,7 +48,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
   !"\n          status = ""okay"";"_
   !"\n      };" _
   !"\n    };" _
-  USER_ADD_ON _
+  & USER_ADD_ON & _
   !"\n  };"
 
 
@@ -110,6 +110,11 @@ TYPE AS UBYTE uint8 '*< Type alias.
     IF LEN(COMMAND(1)) THEN TARG_PATH = COMMAND(1)
     IF RIGHT(TARG_PATH, 1) <> "/" THEN TARG_PATH &= "/"
     SHELL("dtc -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts")
+    IF MULTI_FLAG THEN
+      ?"Blob needs root privilegues (containing " & MULTI_FLAG & " multiple ball settings)"
+    ELSE
+      ?"Blob ready for user space (no multiple ball settings, no root privilegues necessary)"
+    END IF
   END IF
 #ENDMACRO
 
@@ -150,6 +155,8 @@ END ENUM
 DIM SHARED AS STRING M(109)
 '* A variable to add user fragments (starting at fragment@3 {}), in order to enable subsystems.
 DIM SHARED AS STRING USER_ADD_ON
+'* The flag for multiple settings.
+DIM SHARED AS LONG MULTI_FLAG = 0
 
 
 /'* \brief Create lines for `fragment@0` with all settings of a pin.
@@ -213,15 +220,16 @@ FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING
   , l = "" _
   , n = ""
 
-  FOR j = 0 TO LEN(M(I)) - 2
-    VAR t = HEX(M(I)[j], 2)
-    n &= """x" & t & """, "
-    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
-  NEXT
-  VAR t = HEX(M(I)[j], 2)
-  n &= """x" & t & """;"
-  l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
-  RETURN t0 & n & l & t1
+  IF LEN(M(I)) = 1 THEN
+    n &= ", ""default"""
+    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & HEX(M(I)[j], 2) & ">;"
+  ELSE
+    FOR j = 0 TO LEN(M(I)) - 1
+      VAR t = HEX(M(I)[j], 2)
+      n &= ", ""x" & t & """"
+      l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
+    NEXT : MULTI_FLAG += 1
+  END IF : RETURN t0 & MID(n, 3) & ";" & l & t1
 END FUNCTION
 
 

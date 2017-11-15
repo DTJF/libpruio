@@ -94,8 +94,10 @@ VAR TARG_PATH = "/lib/firmware"
 VAR COMPATIBL = "ti,beaglebone-black"
 
 ''''''''''''''''''''''''''''' create settings for all required pins here
-M(P8_09) = CHR(7 + _I_)  ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
-M(P9_42) = CHR(0 + _O_)  ' example: pin 42 at header P9 in mode 0 (eCAP) as output (no resistor)
+'M(P8_09) = CHR(7 + _I_)   ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
+'M(P9_21) = CHR(3 + PWMo)  ' example: pin 21 at header P9 in mode 3 (PWM) as output (no resistor)
+M(P9_14) = CHR(6 + PWMo)  ' example: pin 14 at header P9 in mode 6 (PWMo) as output (no resistor)
+M(P9_42) = CHR(0 + CAPi)  ' example: pin 42 at header P9 in mode 0 (eCAP) as input (pulldown resistor)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
 CREATE()

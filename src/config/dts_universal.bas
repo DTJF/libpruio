@@ -22,7 +22,7 @@ and run the executable
 
     ./dts_universal
 
-This will create a complete (all header pins and the JTag pins) overlay
+This will create an overlay for the BeagleboneBlack with the
 source file named `libpruio-00A0.dts` in the current directory.
 
 In order to create and install that overlay, execute with root
@@ -38,13 +38,10 @@ BeagleBone model as second parameter
 
 The available models are
 
-- BBW for BeagleboneWhite
-- BBB for BeagleboneBlack
-- BBG for BeagleboneGreen
-
-The latest command will also create a device tree source file named
-`libpruio-00A0.dts` in the current directory and the compiled version
-in file `/lib/firmware/libpruio-00A0.dtbo`.
+- BBW for BeagleboneWhite (EMMC2_Pins freed)
+- BBG for BeagleboneGreen (EMMC2_Pins freed)
+- ALL for experimental use (no pins freed)
+- default is BeagleboneBlack
 
 If you want to free further pins (ie. to solve conflicts with a cape),
 you can adapt the source code before compiling and running the tool. In
@@ -85,6 +82,12 @@ exit
 capemgr to load the overlay. See \ref SecPreconditions for further
 information.)
 
+\note The universal overlays are experimental! There's a bug in the
+device tree compiler. Its number of pin configurations is limited and
+no error message or warning gets generated when reaching the limit. So
+double check the results! You may have to split a big overlay in two
+peaces.
+
 Licence: GPLv3
 
 Copyright 2014-\Year by \Mail
@@ -102,7 +105,7 @@ Copyright 2014-\Year by \Mail
 '* The version.
 #DEFINE VERS_NAME "00A0"
 '* The folder where to place the compiled overlay binary.
-VAR TARG_PATH = "./"
+VAR TARG_PATH = "/lib/firmware/"
 '* The BB model.
 VAR COMPATIBL = ""
 
@@ -123,7 +126,8 @@ CASE "BBG"
   'PIN_DEL(I2C1_Pins)
   'PIN_DEL(MCASP0_Pins)
   COMPATIBL = "ti,beaglebone-green"
-CASE "BBB"
+CASE "ALL" ' all pins
+CASE ELSE  ' default is BBB
   PIN_DEL(HDMI_Pins)
   PIN_DEL(EMMC2_Pins)
   'PIN_DEL(I2C1_Pins)
@@ -131,7 +135,6 @@ CASE "BBB"
   PIN_DEL(MCASP0_Pins)
   M(P8_25) = "" ' #4:BB-BONE-EMMC-2G
   COMPATIBL = "ti,beaglebone-black"
-CASE ELSE ' all pins
 END SELECT
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
 
