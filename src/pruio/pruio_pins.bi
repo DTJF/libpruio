@@ -15,176 +15,176 @@ all related pins as one group.
 '/
 
 '* CPU ball number for pin 3 on header 8 (emmc2)
-#define P8_03 &h06
+#DEFINE P8_03 &h06
 '* CPU ball number for pin 4 on header 8 (emmc2)
-#define P8_04 &h07
+#DEFINE P8_04 &h07
 '* CPU ball number for pin 5 on header 8 (emmc2)
-#define P8_05 &h02
+#DEFINE P8_05 &h02
 '* CPU ball number for pin 6 on header 8 (emmc2)
-#define P8_06 &h03
+#DEFINE P8_06 &h03
 '* CPU ball number for pin 7 on header 8
-#define P8_07 &h24' 36
+#DEFINE P8_07 &h24' 36
 '* CPU ball number for pin 8 on header 8
-#define P8_08 &h25 '37
+#DEFINE P8_08 &h25 '37
 '* CPU ball number for pin 9 on header 8
-#define P8_09 &h27 '39
+#DEFINE P8_09 &h27 '39
 '* CPU ball number for pin 10 on header 8
-#define P8_10 &h26 '38
+#DEFINE P8_10 &h26 '38
 '* CPU ball number for pin 11 on header 8
-#define P8_11 &h0D '13
+#DEFINE P8_11 &h0D '13
 '* CPU ball number for pin 12 on header 8
-#define P8_12 &h0C '12
+#DEFINE P8_12 &h0C '12
 '* CPU ball number for pin 13 on header 8
-#define P8_13 &h09 '9
+#DEFINE P8_13 &h09 '9
 '* CPU ball number for pin 14 on header 8
-#define P8_14 &h0A '10
+#DEFINE P8_14 &h0A '10
 '* CPU ball number for pin 15 on header 8
-#define P8_15 &h0F '15
+#DEFINE P8_15 &h0F '15
 '* CPU ball number for pin 16 on header 8
-#define P8_16 &h0E '14
+#DEFINE P8_16 &h0E '14
 '* CPU ball number for pin 17 on header 8
-#define P8_17 &h0B '11
+#DEFINE P8_17 &h0B '11
 '* CPU ball number for pin 18 on header 8
-#define P8_18 &h23 '35
+#DEFINE P8_18 &h23 '35
 '* CPU ball number for pin 19 on header 8
-#define P8_19 &h08 '8
+#DEFINE P8_19 &h08 '8
 '* CPU ball number for pin 20 on header 8 (emmc2)
-#define P8_20 &h21 '33
+#DEFINE P8_20 &h21 '33
 '* CPU ball number for pin 21 on header 8 (emmc2)
-#define P8_21 &h20 '32
+#DEFINE P8_21 &h20 '32
 '* CPU ball number for pin 22 on header 8 (emmc2)
-#define P8_22 &h05 '5
+#DEFINE P8_22 &h05 '5
 '* CPU ball number for pin 23 on header 8 (emmc2)
-#define P8_23 &h04 '4
+#DEFINE P8_23 &h04 '4
 '* CPU ball number for pin 24 on header 8 (emmc2)
-#define P8_24 &h01 '1
+#DEFINE P8_24 &h01 '1
 '* CPU ball number for pin 25 on header 8 (emmc2)
-#define P8_25 &h00 '0
+#DEFINE P8_25 &h00 '0
 '* CPU ball number for pin 26 on header 8
-#define P8_26 &h1F '31
+#DEFINE P8_26 &h1F '31
 '* CPU ball number for pin 27 on header 8 (hdmi)
-#define P8_27 &h38 '56
+#DEFINE P8_27 &h38 '56
 '* CPU ball number for pin 28 on header 8 (hdmi)
-#define P8_28 &h3A '58
+#DEFINE P8_28 &h3A '58
 '* CPU ball number for pin 29 on header 8 (hdmi)
-#define P8_29 &h39 '57
+#DEFINE P8_29 &h39 '57
 '* CPU ball number for pin 30 on header 8 (hdmi)
-#define P8_30 &h3B '59
+#DEFINE P8_30 &h3B '59
 '* CPU ball number for pin 31 on header 8 (hdmi)
-#define P8_31 &h36 '54
+#DEFINE P8_31 &h36 '54
 '* CPU ball number for pin 32 on header 8 (hdmi)
-#define P8_32 &h37 '55
+#DEFINE P8_32 &h37 '55
 '* CPU ball number for pin 33 on header 8 (hdmi)
-#define P8_33 &h35 '53
+#DEFINE P8_33 &h35 '53
 '* CPU ball number for pin 34 on header 8 (hdmi)
-#define P8_34 &h33 '51
+#DEFINE P8_34 &h33 '51
 '* CPU ball number for pin 35 on header 8 (hdmi)
-#define P8_35 &h34 '52
+#DEFINE P8_35 &h34 '52
 '* CPU ball number for pin 36 on header 8 (hdmi)
-#define P8_36 &h32 '50
+#DEFINE P8_36 &h32 '50
 '* CPU ball number for pin 37 on header 8 (hdmi)
-#define P8_37 &h30 '48
+#DEFINE P8_37 &h30 '48
 '* CPU ball number for pin 38 on header 8 (hdmi)
-#define P8_38 &h31 '49
+#DEFINE P8_38 &h31 '49
 '* CPU ball number for pin 39 on header 8 (hdmi)
-#define P8_39 &h2E '46
+#DEFINE P8_39 &h2E '46
 '* CPU ball number for pin 40 on header 8 (hdmi)
-#define P8_40 &h2F '47
+#DEFINE P8_40 &h2F '47
 '* CPU ball number for pin 41 on header 8 (hdmi)
-#define P8_41 &h2C '44
+#DEFINE P8_41 &h2C '44
 '* CPU ball number for pin 42 on header 8 (hdmi)
-#define P8_42 &h2D '45
+#DEFINE P8_42 &h2D '45
 '* CPU ball number for pin 43 on header 8 (hdmi)
-#define P8_43 &h2A '42
+#DEFINE P8_43 &h2A '42
 '* CPU ball number for pin 44 on header 8 (hdmi)
-#define P8_44 &h2B '43
+#DEFINE P8_44 &h2B '43
 '* CPU ball number for pin 45 on header 8 (hdmi)
-#define P8_45 &h28 '40
+#DEFINE P8_45 &h28 '40
 '* CPU ball number for pin 46 on header 8 (hdmi)
-#define P8_46 &h29 '41
+#DEFINE P8_46 &h29 '41
 
 '* CPU ball number for pin 11 on header 9
-#define P9_11 &h1C '28
+#DEFINE P9_11 &h1C '28
 '* CPU ball number for pin 12 on header 9
-#define P9_12 &h1E '30
+#DEFINE P9_12 &h1E '30
 '* CPU ball number for pin 13 on header 9
-#define P9_13 &h1D '29
+#DEFINE P9_13 &h1D '29
 '* CPU ball number for pin 14 on header 9
-#define P9_14 &h12 '18
+#DEFINE P9_14 &h12 '18
 '* CPU ball number for pin 15 on header 9
-#define P9_15 &h10 '16
+#DEFINE P9_15 &h10 '16
 '* CPU ball number for pin 16 on header 9
-#define P9_16 &h13 '19
+#DEFINE P9_16 &h13 '19
 '* CPU ball number for pin 17 on header 9
-#define P9_17 &h57 '87
+#DEFINE P9_17 &h57 '87
 '* CPU ball number for pin 18 on header 9
-#define P9_18 &h56 '86
+#DEFINE P9_18 &h56 '86
 '* CPU ball number for pin 19 on header 9 (i2c2)
-#define P9_19 &h5F '95
+#DEFINE P9_19 &h5F '95
 '* CPU ball number for pin 20 on header 9 (i2c2)
-#define P9_20 &h5E '94
+#DEFINE P9_20 &h5E '94
 '* CPU ball number for pin 21 on header 9
-#define P9_21 &h55 '85
+#DEFINE P9_21 &h55 '85
 '* CPU ball number for pin 22 on header 9
-#define P9_22 &h54 '84
+#DEFINE P9_22 &h54 '84
 '* CPU ball number for pin 23 on header 9
-#define P9_23 &h11 '17
+#DEFINE P9_23 &h11 '17
 '* CPU ball number for pin 24 on header 9
-#define P9_24 &h61 '97
+#DEFINE P9_24 &h61 '97
 '* CPU ball number for pin 25 on header 9 (mcasp0)
-#define P9_25 &h6B '107
+#DEFINE P9_25 &h6B '107
 '* CPU ball number for pin 26 on header 9
-#define P9_26 &h60 '96
+#DEFINE P9_26 &h60 '96
 '* CPU ball number for pin 27 on header 9
-#define P9_27 &h69 '105
+#DEFINE P9_27 &h69 '105
 '* CPU ball number for pin 28 on header 9 (mcasp0)
-#define P9_28 &h67 '103
+#DEFINE P9_28 &h67 '103
 '* CPU ball number for pin 29 on header 9 (mcasp0)
-#define P9_29 &h65 '101
+#DEFINE P9_29 &h65 '101
 '* CPU ball number for pin 30 on header 9
-#define P9_30 &h66 '102
+#DEFINE P9_30 &h66 '102
 '* CPU ball number for pin 31 on header 9 (mcasp0)
-#define P9_31 &h64 '100
+#DEFINE P9_31 &h64 '100
 '* CPU ball number for pin 41 on header 9
-#define P9_41 &h6D '109
+#DEFINE P9_41 &h6D '109
 '* CPU ball number for pin 42 on header 9
-#define P9_42 &h59 '89
+#DEFINE P9_42 &h59 '89
 
 '* CPU ball number for pin 4 on JTag header (E15)
-#define JT_04 &h5C '92
+#DEFINE JT_04 &h5C '92
 '* CPU ball number for pin 5 on JTag header (E16)
-#define JT_05 &h5D '93
+#DEFINE JT_05 &h5D '93
 
 '* number of analog line on pin 39 on header 9
-#define P9_39 AIN0
+#DEFINE P9_39 AIN0
 '* number of analog line on pin 40 on header 9
-#define P9_40 AIN1
+#DEFINE P9_40 AIN1
 '* number of analog line on pin 37 on header 9
-#define P9_37 AIN2
+#DEFINE P9_37 AIN2
 '* number of analog line on pin 38 on header 9
-#define P9_38 AIN3
+#DEFINE P9_38 AIN3
 '* number of analog line on pin 33 on header 9
-#define P9_33 AIN4
+#DEFINE P9_33 AIN4
 '* number of analog line on pin 36 on header 9
-#define P9_36 AIN5
+#DEFINE P9_36 AIN5
 '* number of analog line on pin 35 on header 9
-#define P9_35 AIN6
+#DEFINE P9_35 AIN6
 '* default step number of analog line AIN-0
-#define AIN0 1
+#DEFINE AIN0 1
 '* default step number of analog line AIN-1
-#define AIN1 2
+#DEFINE AIN1 2
 '* default step number of analog line AIN-2
-#define AIN2 3
+#DEFINE AIN2 3
 '* default step number of analog line AIN-3
-#define AIN3 4
+#DEFINE AIN3 4
 '* default step number of analog line AIN-4
-#define AIN4 5
+#DEFINE AIN4 5
 '* default step number of analog line AIN-5
-#define AIN5 6
+#DEFINE AIN5 6
 '* default step number of analog line AIN-6
-#define AIN6 7
+#DEFINE AIN6 7
 '* default step number of analog line AIN-7 (internal, no pin)
-#define AIN7 8
+#DEFINE AIN7 8
 
 '* Array of CPU ball numbers for all pins on header P8.
 DIM SHARED AS UInt8 P8_Pins(...) = { _

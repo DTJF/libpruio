@@ -45,4 +45,5 @@ INSTALL(
   DIRECTORY "${CMAKE_BINARY_DIR}/doxy/html"
   DESTINATION "share/doc/${PROJ_NAME}"
   COMPONENT doc
+  OPTIONAL
   )

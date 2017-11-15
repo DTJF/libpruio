@@ -274,7 +274,7 @@ typedef struct timerUdt{
   char*
     E0  //!< Common error message.
   , E1  //!< Common error message.
-  , E2  //!< Common error message.
+  , E2; //!< Common error message.
 } timerUdt;
 
 
@@ -501,7 +501,7 @@ enum activateDevice{
 , PRUIO_ACT_TIM5  = 1 << 10  //!< Activate TIMER-5.
 , PRUIO_ACT_TIM6  = 1 << 11  //!< Activate TIMER-6.
 , PRUIO_ACT_TIM7  = 1 << 12  //!< Activate TIMER-7.
-, PRUIO_DEF_ACTIVE = 0xFFFFF //!< Activate all subsystems.
+, PRUIO_DEF_ACTIVE = 0xFFFF  //!< Activate all subsystems.
 };
 
 
@@ -525,10 +525,11 @@ typedef struct pruIo{
   adcUdt* Adc;     //!< Pointer to ADC subsystem structure.
   gpioUdt* Gpio;   //!< Pointer to GPIO subsystem structure.
   pwmssUdt* PwmSS; //!< Pointer to PWMSS subsystem structure.
-  //timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
+  timerUdt* TimSS; //!< Pointer to TIMER subsystem structure.
   pwmMod* Pwm;     //!< Pointer to ePWM module structure (in PWMSS subsystem).
   capMod* Cap;     //!< Pointer to eCAP module structure (in PWMSS subsystem).
   qepMod* Qep;     //!< pointer to eQEP module structure (in PWMSS subsystem)
+  timerUdt* Tim;   //!< Pointer to the TimSS structure (for homogenous API).
 
   uint32* DRam;    //!< Pointer to access PRU DRam.
   ballSet

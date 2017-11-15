@@ -25,8 +25,11 @@ Compile by: `fbc -w all analyse.bas`
 ' include macros to print out register context
 #INCLUDE ONCE "../pruio/pruio_out.bi"
 
-  '* The type of the output (either Inint or Conf).
-#define OUT_TYPE Init ' alternative: Conf
+'' Output all CPU balls or just header pins?
+'#DEFINE __ALL_BALLS__
+
+'* The type of the output (either Init or Conf).
+#DEFINE  OUT_TYPE Init ' alternative: Conf
 
 ' *****  main  *****
 
@@ -36,7 +39,7 @@ WITH *io
   IF .Errr THEN
     ?"initialisation failed (" & *.Errr & ")"
   ELSE
-#IF __ALL_PINS__
+#IFDEF __ALL_BALLS__
     BALL_OUT(OUT_TYPE)
 #ELSE
     ?"Header Pins:"
@@ -46,6 +49,8 @@ WITH *io
     FOR i AS LONG = 0 TO UBOUND(P9_Pins)
       ?"  " & *.Pin(P9_Pins(i))
     NEXT
+    ?"  " & *.Pin(JT_04)
+    ?"  " & *.Pin(JT_05)
 #ENDIF
 
     GPIO_OUT(OUT_TYPE)

@@ -31,3 +31,25 @@ BallCopy:
   AND  Para.b0, Para.b0, 0xFC // adjust at UInt32 border
 BallDone:
 .endm
+
+
+.macro BALL_IO_Command
+//
+// handle subsystem command in IO mode
+//
+  QBLT BallEnd, Comm.b3, PRUIO_COM_POKE // if no Ball command -> skip
+  LBCO U2, DRam, 4*2, 4    // get adress
+  MOV  Para.b0, Comm.b0    // get length
+  QBNE BallCIn, Comm.b3, PRUIO_COM_POKE // if no Ball_OUT command -> skip to IN
+
+  LBCO U3, DRam, 4*3, b0  // get context
+  SBBO U3, U2,     0, b0  // save context
+  JMP  IoCEnd             // finish command
+
+BallCIn:
+  LBBO U3, U2,     0, b0  // get context
+  SBCO U3, DRam, 4*3, b0  // save context
+  JMP  IoCEnd             // finish command
+
+BallEnd:
+.endm
