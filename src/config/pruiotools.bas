@@ -15,9 +15,17 @@ Copyright 2014-\Year by \Mail
 
 '* The name of the pinmux folders in /sys/devices/ocp.* (must match the definition in pruio.bas).
 #DEFINE PMUX_NAME "pruio-"
-TYPE AS UBYTE uint8 '*< Type alias.
+TYPE AS UBYTE UInt8 '*< Type alias.
 ' Convenience declarations.
 #INCLUDE ONCE "../pruio/pruio_pins.bi"
+
+'* The array to be filled with modus settings for all pins.
+DIM SHARED AS STRING M(109)
+'* A variable to add user fragments (starting at fragment@3 {}), in order to enable subsystems.
+DIM SHARED AS STRING USER_ADD_ON
+'* The flag for multiple settings.
+DIM SHARED AS LONG MULTI_FLAG = 0
+
 
 '* The start of the source file
 #DEFINE ALL_START _
@@ -90,7 +98,7 @@ TYPE AS UBYTE uint8 '*< Type alias.
     PRINT #fnr, ALL_START;
     FOR i AS LONG = 0 TO UBOUND(M)
       VAR x = IIF(LEN(M(i)), nameBall(i), 0) '*< The header pin name.
-      IF x THEN PRINT #fnr, ENTRY_EXCL(*x);
+      IF x THEN PRINT #fnr, ENTRY_EXCL(*x); : IF LEN(M(i)) > 1 THEN MULTI_FLAG += 1
     NEXT
 
     PRINT #fnr, FRAG0_START;
@@ -109,7 +117,12 @@ TYPE AS UBYTE uint8 '*< Type alias.
 
     IF LEN(COMMAND(1)) THEN TARG_PATH = COMMAND(1)
     IF RIGHT(TARG_PATH, 1) <> "/" THEN TARG_PATH &= "/"
-    SHELL("dtc -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts")
+    IF SHELL("dtc -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts") THEN
+      ?"=> File " & fnam & ".dts generated. Compile and install by executing"
+      ?"  sudo dtc -@ -I dts -O dtb -o /lib/firmware/" & fnam & ".dtbo " & fnam & ".dts"
+    ELSE
+      ?"=> Blob /lib/firmware/" & fnam & ".dtbo installed"
+    END IF
     IF MULTI_FLAG THEN
       ?"Blob needs root privilegues (containing " & MULTI_FLAG & " multiple ball settings)"
     ELSE
@@ -150,13 +163,6 @@ END ENUM
 
 '* Macro to delete the pin configuration for a pin set array.
 #DEFINE PIN_DEL(_A_) FOR i AS LONG = 0 TO UBOUND(_A_) : M(_A_(i)) = "" : NEXT
-
-'* The array to be filled with modus settings for all pins.
-DIM SHARED AS STRING M(109)
-'* A variable to add user fragments (starting at fragment@3 {}), in order to enable subsystems.
-DIM SHARED AS STRING USER_ADD_ON
-'* The flag for multiple settings.
-DIM SHARED AS LONG MULTI_FLAG = 0
 
 
 /'* \brief Create lines for `fragment@0` with all settings of a pin.
@@ -220,15 +226,15 @@ FUNCTION f1entry(BYVAL I AS UBYTE) AS STRING
   , l = "" _
   , n = ""
 
-  IF LEN(M(I)) = 1 THEN
-    n &= ", ""default"""
-    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & HEX(M(I)[j], 2) & ">;"
-  ELSE
+  IF MULTI_FLAG THEN
     FOR j = 0 TO LEN(M(I)) - 1
       VAR t = HEX(M(I)[j], 2)
       n &= ", ""x" & t & """"
       l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & t & ">;"
-    NEXT : MULTI_FLAG += 1
+    NEXT
+  ELSE
+    n &= ", ""default"""
+    l &= !"\n          pinctrl-" & j & " = <&B" & tn & "_" & HEX(M(I)[j], 2) & ">;"
   END IF : RETURN t0 & MID(n, 3) & ";" & l & t1
 END FUNCTION
 
