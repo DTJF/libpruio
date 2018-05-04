@@ -341,7 +341,7 @@ active in the Mask, the array contains:
 
 Currently the number of samples is limited by the external memory
 allocated by the kernel PRUSS driver. This is 256 kByte by default (=
-128 kSamples). See ChaMemory for informations on how to extend
+128 kSamples). See \ref SecERam0 for informations on how to extend
 this memory block.
 
 | number of active Steps | max. Samples |

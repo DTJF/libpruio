@@ -188,7 +188,7 @@ TYPE PwmssUdt
   , E6 = @"pin has no CAP capability" _   '*< Common error message.
   , E7 = @"pin not in QEP mode" _         '*< Common error message.
   , E8 = @"pin has no QEP capability" _   '*< Common error message.
-  , E9 = @"eCAP module not in output mode"  '*< Common error message.
+  , E9 = @"eCAP module not in output mode" '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR

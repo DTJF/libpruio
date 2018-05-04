@@ -115,13 +115,17 @@ much appreciated.
 Peter
 ~~~
 
-Meanwhile \Proj is used in many projects. Here're some of them
+Meanwhile \Proj is used in many projects all over the world. Here're some of them
 
 - [Using low cost single-board microcontrollers to record underwater acoustical data](http://www.acoustics.asn.au/conference_proceedings/INTERNOISE2014/papers/p236.pdf)
 - [Browser controlled tank (video)](https://www.youtube.com/watch?v=3cXCUmCWQHQ)
 - [Library upgrade to PRU gives Fast IO on Beaglebone](http://hackaday.com/2015/02/16/library-upgrade-to-pru-gives-fast-io-on-beaglebone/#comments)
 - [Pd BeagleBone Black IO](http://java-hackers.com/p/rvega/pd-bbb-gpio)
 - [How to create a very-low-cost, very-low-power, credit-card-sized and real-time-ready datalogger](http://www.adv-geosci.net/40/37/2015/adgeo-40-37-2015.pdf)
+- [BeagleBone Black Communication Interface (CI-BBB), TAMPERE UNIVERSITY OF TECHNOLOGY](http://www.google.at/url?q=https://dspace.cc.tut.fi/dpub/bitstream/handle/123456789/22387/Perez.pdf%3Fsequence%3D1&sa=U&ved=0ahUKEwjatLSs5OjYAhXRalAKHWuOCP04HhAWCBgwAA&usg=AOvVaw0c_k8rGEq-Az0dEEthvlE3)
+- [Desenvolvimento de uma plataforma de simulação Hardware in the Loop de baixo custo, Universidade de Brasília - UnB](http://www.google.at/url?q=http://bdm.unb.br/bitstream/10483/14953/1/2016_AlceuBernardesCastanheiraDeFarias_tcc.pdf&sa=U&ved=0ahUKEwjatLSs5OjYAhXRalAKHWuOCP04HhAWCCMwAw&usg=AOvVaw0OxGUHU47XQ5PEgfdIu4-g)
+- [Prototipo de electrocardiógrafo portátil, Universidad de Sevilla](http://bibing.us.es/proyectos/abreproy/12343/fichero/Prototipo+de+electrocardi%C3%B3grafo+port%C3%A1til+-+copia.pdf)
+- [bela (ultra-low latency real-time audio processing)](https://github.com/BelaPlatform/Bela/wiki)
 - []()
 
 

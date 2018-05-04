@@ -846,30 +846,30 @@ FUNCTION QepMod.config CDECL( _
     CASE P8_11, P8_12, P8_16 : m = 2
       VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2C)
       IF ModeCheck(P8_12,4) THEN ModeSet(P8_12,v)
-      IF Ball = P8_12 THEN x = 2 : EXIT SELECT
+      IF Ball = P8_12 THEN                       x = 2 : EXIT SELECT
       IF ModeCheck(P8_11,4) THEN ModeSet(P8_11,v)
-      IF Ball = P8_11 THEN x = 1 : EXIT SELECT
+      IF Ball = P8_11 THEN                       x = 1 : EXIT SELECT
       IF ModeCheck(P8_16,4) THEN ModeSet(P8_16,v)
     CASE P8_33, P8_35, P8_31 : m = 1
       VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2A)
       IF ModeCheck(P8_35,2) THEN ModeSet(P8_35,v)
-      IF Ball = P8_35 THEN x = 2 : EXIT SELECT
+      IF Ball = P8_35 THEN                       x = 2 : EXIT SELECT
       IF ModeCheck(P8_33,2) THEN ModeSet(P8_33,v)
-      IF Ball = P8_33 THEN x = 1 : EXIT SELECT
+      IF Ball = P8_33 THEN                       x = 1 : EXIT SELECT
       IF ModeCheck(P8_31,2) THEN ModeSet(P8_31,v)
     CASE P8_41, P8_42, P8_39 : m = 2
       VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h2B)
       IF ModeCheck(P8_41,3) THEN ModeSet(P8_41,v)
-      IF Ball = P8_42 THEN x = 2 : EXIT SELECT
+      IF Ball = P8_42 THEN                       x = 2 : EXIT SELECT
       IF ModeCheck(P8_42,3) THEN ModeSet(P8_42,v)
-      IF Ball = P8_42 THEN x = 1 : EXIT SELECT
+      IF Ball = P8_42 THEN                       x = 1 : EXIT SELECT
       IF ModeCheck(P8_39,3) THEN ModeSet(P8_39,v)
     CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
       VAR v = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, &h29)
       IF ModeCheck( 104 ,1) THEN ModeSet( 104 ,v)
-      IF Ball = P9_42 ORELSE Ball = 104 THEN x = 2 : EXIT SELECT
+      IF Ball = P9_42 ORELSE Ball = 104 THEN     x = 2 : EXIT SELECT
       IF ModeCheck(P9_27,1) THEN ModeSet(P9_27,v)
-      IF Ball = P9_27 THEN x = 1 : EXIT SELECT
+      IF Ball = P9_27 THEN                       x = 1 : EXIT SELECT
       IF ModeCheck( 106 ,1) THEN ModeSet( 106 ,v)
     CASE ELSE :                           .Errr = .PwmSS->E8 : RETURN .Errr' pin has no QEP capability
     END SELECT
@@ -930,18 +930,18 @@ END FUNCTION
 \returns Zero on success (otherwise a string with an error message).
 
 Compute position and speed from the sensor pulse trains. Either a
-single sensor signal gets evaluated (when an A input was specified as
-parameter `Ball` for function QepMod::config() ) to compute speed
-information. Or two sensor signals gets evaluated to compute speed and
-position information.
+single sensor signal gets evaluated (when an A input is specified as
+parameter `Ball`) to compute Velo information only. Or two sensor
+signals get evaluated to compute the speed and the position (when a B
+or C input is specified as parameter `Ball`).
 
 The position value is scaled in transitions (since the start or the
 last index impulse) and counts upwards in case of a single input (A pin
-passed as parameter `Ball` to QepMod::config()). Otherwise the position
-gets counted considering the direction. The `Velo` value is scaled as
-transitions per second by default and get get customized by parameter
-`Scale` in the previous call to function QepMod::config(). Either of
-the parameters `Posi` or `Velo` may be NULL to skip this computation.
+passed as parameter `Ball`). Otherwise the position gets counted
+considering the direction. The `Velo` value is scaled as transitions
+per second by default and get customized by parameter `Scale` in the
+previous call to function QepMod::config(). Either of the parameters
+`Posi` or `Velo` may be NULL to skip this computation.
 
 In order to speed up execution this function doesn't check the
 configuration of all input pins, meaning it computes (erratic) output
@@ -960,10 +960,14 @@ FUNCTION QepMod.Value CDECL( _
   VAR m = 0
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_11, P8_12, P8_16 : m = 2
-    CASE P8_33, P8_35, P8_31 : m = 1
-    CASE P8_41, P8_42, P8_39 : m = 2
-    CASE P9_27, P9_42, 104, P9_41, 106 : m = 0
+    CASE P8_12 : Posi = 0 : m = 2
+    VASE P8_11, P8_16 :     m = 2
+    CASE P8_35 : Posi = 0 : m = 1
+    CASE P8_33, P8_31 :     m = 1
+    CASE P8_41 : Posi = 0 : m = 2
+    CASE P8_42, P8_39 :     m = 2
+    CASE P9_42, 104 : Posi = 0 : m = 0
+    CAES P9_27, P9_41, 106 :     m = 0
     CASE ELSE  :                       .Errr = .PwmSS->E0 : RETURN .Errr 'PwmSS not enabled
     END SELECT
 

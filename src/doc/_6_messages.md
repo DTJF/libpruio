@@ -132,7 +132,7 @@ PruIo::config().
 required number of samples. -> Either reduce the number of samples
 (parameter `Samp`) or the number of active steps (parameter `Mask`) in
 the previous call to function PruIo::config(). Or increase the
-size of the external memory (see ChaMemory for details).
+size of the external memory (see \ref ChaMemory for details).
 
 \Item{"sample rate too big"} The specified sampling rate isn't
 reachable with the current step configuration. -> Either reduce the
