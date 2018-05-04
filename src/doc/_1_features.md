@@ -185,7 +185,7 @@ only).
 # TIMER {#SecTim}
 
 Generating a pulse at an output line. The time period until the pulse
-starts and its duration gets specified. See section \ref SubSecTim for
+starts and its duration gets specified. See section \ref sSecTim for
 details.
 
 - Call function TimerUdt::setValue() to set the durations or stop a
@@ -246,7 +246,7 @@ AIN-7.
   *Samp* in the most recent call to function PruIo::config().
 
 
-## Bit Encoding {#SubSecBitEncoding}
+## Bit Encoding {#sSecBitEncoding}
 
 The Beaglebone ADC subsystem samples 12 bit values in the range of `0` to
 `4095`. Most other devices (ie. like sound cards) use `16` bit encoding
@@ -258,7 +258,7 @@ default the output is 16 bit encoded (range 0 to 65520).
   customize the bit encoding.
 
 
-## Ring Buffer {#SubSecRB}
+## Ring Buffer {#sSecRB}
 
 In Ring Buffer (RB) mode the samples from the ADC subsystem
 continuously get stored in the external memory. The calling software
@@ -275,7 +275,7 @@ index counter jumps to 0 (zero)). Find examples in rb_file.bas
 (rb_file.c) or rb_oszi.bas.
 
 
-## Measurement Mode and Triggers {#SubSecTriggers}
+## Measurement Mode and Triggers {#sSecTriggers}
 
 In Measurement Mode (MM mode) the start of a measurement is either
 immediately, or the start can get triggered by up to four events. When

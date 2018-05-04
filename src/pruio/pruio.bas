@@ -518,7 +518,7 @@ The function will fail if
 - the libpruio device tree overlays isn't loaded, or
 - the required pin isn't defined in that overlay (ie HDMI), or
 - the user has no write access to the state configuration files (see
-  section SecPinmux for details), or
+  section \ref SecPinmux for details), or
 - the required mode isn't available in the overlay.
 
 The function returns an error message in case of a failure. You can use

@@ -178,7 +178,7 @@ constructor PruIo::PruIo() )
   (GpioUdt::setValue() or PwmUdt::setValue() ).
 
 
-### GPIO  {#SubSecGpio}
+### GPIO  {#sSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -219,7 +219,7 @@ Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
 
 
-### TIMER  {#SubSecTimer}
+### TIMER  {#sSecTimer}
 
 A TIMER output sends a pulse to a header pin. First, it waits a certain
 time and then toggles the state for a certain time. After that sequence
@@ -254,7 +254,7 @@ resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
 
-### PWM  {#SubSecPwm}
+### PWM  {#sSecPwm}
 
 PWM stands for Pulse Width Modulated output. So it means generating a
 digital signal with a given frequency and duty cycle. Usualy PWM is
@@ -331,7 +331,7 @@ PwmMod::Value().
 Find example code in pwm_adc.bas or pwm_cap.bas.
 
 
-### CAP  {#SubSecCap}
+### CAP  {#sSecCap}
 
 CAP stands for Capture and Analyse a digital Pulse train. So it means
 measuring the frequency and the duty cycle of a digital signal input.
@@ -361,7 +361,7 @@ calling function CapMod::config() once.
 Find example code in pwm_cap.bas.
 
 
-### QEP  {#SubSecQep}
+### QEP  {#sSecQep}
 
 QEP stands for Quadrature Encoder Pulse measurement. So it means
 measuring the position and the speed of a quadrature encoder. Encoders
@@ -479,7 +479,7 @@ Find example code in qep.bas.
 
 This section describes how to set a header pin in the desired mode. At
 startup (= POR = Power On Reset) the operating system sets all pins in
-a save mode. Execute example [analyse.bas](SubSecExaAnalyse) to see a
+a save mode. Execute example [analyse.bas](sSecExaAnalyse) to see a
 list of the default header pin configuration.
 
 When you set up a header pin for use with \Proj, the desired setup gets

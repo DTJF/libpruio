@@ -778,7 +778,7 @@ This function configures headers pins to be used for quadrature encoder
 sensors (analysed by the QEP subsystem). By default the module gets
 configured to work in Quadrature Count Mode, meaning that the
 Quadrature detector is used to analyse raw input. See subsection \ref
-SubSecQep for further information and see \ArmRef{15.4.2.5} for
+sSecQep for further information and see \ArmRef{15.4.2.5} for
 details.
 
 Up to three header pins may get configured, but only one of the pins get

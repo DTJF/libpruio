@@ -115,7 +115,7 @@ host (ARM) and the PRU software. The context changes, depending on the
 current operational state of libpruio.
 
 
-## Constructor {#SubSecMemCTOR}
+## Constructor {#sSecMemCTOR}
 
 Before the constructor loads and executes the pasm_init.p instructions,
 it calls the constructors of the subsystem structures AdcUdt, GpioUdt
@@ -175,7 +175,7 @@ This method allows to extend libpruio by new subsystem code with
 minimal adaption in the existing source.
 
 
-## config {#SubSecMemConfig}
+## config {#sSecMemConfig}
 
 The function PruIo::config() uploads the customized configuration to
 the subsystems and starts operation in the declared run mode. Before
@@ -306,7 +306,7 @@ to the running PRU software
       parameters.
 
 
-## Destructor {#SubSecMemDTOR}
+## Destructor {#sSecMemDTOR}
 
 The destructor PruIo::~PruIo restores the subsystems before the PruIo
 structure gets destroyed. It load the initial configuration data block

@@ -249,9 +249,9 @@ TYPE PwmMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
   AS UInt16 _
     ForceUpDown = 0 _               '*< Switch to force up-down counter for ePWM modules.
-  , Cntrl(PRUIO_AZ_PWMSS) = _       '*< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
+  , Cntrl(PRUIO_AZ_PWMSS) = _       '*< Initializers TBCTL register for ePWM modules (see \ref sSecPwm).
     {&b1010000000010000, &b1010000000010000, &b1010000000010000} _
-  , AqCtl(1, PRUIO_AZ_PWMSS, 2) = _ '*< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
+  , AqCtl(1, PRUIO_AZ_PWMSS, 2) = _ '*< Initializers for Action Qualifier for ePWM modules (see \ref sSecPwm).
 { { {&b000000010010, &b000000010010, &b000001000010} _
   , {&b000000010010, &b000000010010, &b000001000010} _
   , {&b000000010010, &b000000010010, &b000001000010} } _

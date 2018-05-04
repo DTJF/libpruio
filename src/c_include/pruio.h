@@ -427,8 +427,8 @@ typedef struct pwmMod{
   pruIo* Top;  //!< pointer to the calling PruIo instance
   uint16
     ForceUpDown               //!< Switch to force up-down counter for ePWM modules.
-  , Cntrl[PRUIO_AZ_PWMSS + 1] //!< Initializers TBCTL register for ePWM modules (see \ref SubSecPwm).
-  , AqCtl[1 + 1][PRUIO_AZ_PWMSS + 1][2 + 1]; //!< Initializers for Action Qualifier for ePWM modules (see \ref SubSecPwm).
+  , Cntrl[PRUIO_AZ_PWMSS + 1] //!< Initializers TBCTL register for ePWM modules (see \ref sSecPwm).
+  , AqCtl[1 + 1][PRUIO_AZ_PWMSS + 1][2 + 1]; //!< Initializers for Action Qualifier for ePWM modules (see \ref sSecPwm).
   char
     *E0  //!< Common error message.
   , *E1  //!< Common error message.

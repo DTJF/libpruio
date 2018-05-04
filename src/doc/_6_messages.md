@@ -51,7 +51,7 @@ member functions and some hints on how to fix the related code:
 
 # PruIo {#SecErrPruIo}
 
-## Constructor {#SubSecPruIoCTor}
+## Constructor {#sSecPruIoCTor}
 
 The constructor doesn't return a value. You have to check the error
 variable PruIo::Errr. When it runs OK this variable is 0 (zero).
@@ -82,7 +82,7 @@ the configurations (Init and Conf). -> Make sure that you have at least
 5 kB free.
 
 
-## Destructor {#SubSecPruIoDTor}
+## Destructor {#sSecPruIoDTor}
 
 Th destructor doesn't return a value. It also doesn't use the error
 variable PruIo::Errr.
@@ -115,7 +115,7 @@ restore the subsystems initial state), since the constructor failed in
 an early state.
 
 
-## config {#SubSecPruIoConfig}
+## config {#sSecPruIoConfig}
 
 \Item{"ADC not enabled"} Sampling analog lines is required, but the ADC
 subsystem isn't enabled. -> Either check constructor parameter `Act`
@@ -153,7 +153,7 @@ in the PRU instructions due to customization. Re-install or re-compile
 the libpruio library.
 
 
-## rb_start {#SubSecErrRbStart}
+## rb_start {#sSecErrRbStart}
 
 \Item{"ring buffer mode not ready"} Starting ring buffer (RB) mode is
 required, but the PRU software isn't ready. -> Check if the ADC
@@ -162,7 +162,7 @@ subsystem is enabled. Check if there's at least one active step
 PruIo::config().
 
 
-## mm_start {#SubSecErrMmStart}
+## mm_start {#sSecErrMmStart}
 
 \Item{"measurement mode not ready"} Starting measurement (MM) mode is
 required, but the PRU software isn't ready. -> First, call function
@@ -190,13 +190,13 @@ mode. -> Re-create the trigger specification with appropriate parameter
 GpioUdt::config(), first.
 
 
-## Pin {#SubSecPruIoPin}
+## Pin {#sSecPruIoPin}
 
 \Item{"unknown pin number"} The specified ball number is too big. ->
 Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
 
 
-## setPin {#SubSecPruIoSetPin}
+## setPin {#sSecPruIoSetPin}
 
 \Item{"unknown pin number"} The specified ball number is too big. ->
 Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
@@ -222,7 +222,7 @@ device tree overlay and that overlay is loaded.
 
 # ADC {#SecErrAdc}
 
-## setStep {#SubSecErrSetStep}
+## setStep {#sSecErrSetStep}
 
 \Item{"ADC not enabled"}
 
@@ -233,7 +233,7 @@ Make sure that parameter `Stp` is in the range of 0 to 16.
 big. -> Make sure that parameter `ChN` is in the range of 0 to 7.
 
 
-## mm_trg_pin {#SubSecErrMmTrgPin}
+## mm_trg_pin {#sSecErrMmTrgPin}
 
 \Item{"ADC not enabled"}
 
@@ -256,7 +256,7 @@ GpioUdt::config() to set appropriate mode, receiver and resistor
 configuration, first.
 
 
-## mm_trg_ain {#SubSecErrMmTrgAin}
+## mm_trg_ain {#sSecErrMmTrgAin}
 
 \Item{"ADC not enabled"}
 
@@ -273,7 +273,7 @@ step, first, by calling function AdcUdt::setStep().
 Make sure that parameter `Skip` is in the range of 0 to 1023.
 
 
-## mm_trg_pre {#SubSecErrMmTrgPre}
+## mm_trg_pre {#sSecErrMmTrgPre}
 
 \Item{"ADC not enabled"}
 
@@ -303,7 +303,7 @@ PruIo::config().
 
 # GPIO {#SecErrGpio}
 
-## config {#SubSecErrGpioConfig}
+## config {#sSecErrGpioConfig}
 
 \Item{"GPIO subsystem not enabled"} Setting a header pin in GPIO mode
 is required, but the related GPIO subsystem isn't enabled. -> Set
@@ -317,10 +317,10 @@ sure to specify a valid GPIO mode (ie. from enumerators PinMuxing).
 
 \note When the pin (CPU ball) is not in the matching mode, libpruio
       tries to configure it. In that case you also may get error
-      messages as described in \ref SubSecPruIoSetPin.
+      messages as described in \ref sSecPruIoSetPin.
 
 
-## Value {#SubSecErrGpioValue}
+## Value {#sSecErrGpioValue}
 
 \Item{"unknown GPIO input pin number"} The specified ball number is too
 big. -> Make sure that parameter `Ball` is less or equal \ref
@@ -338,7 +338,7 @@ parameter `Ball`. Call function GpioUdt::config() to change the
 pin configuration to GPIO in mode.
 
 
-## setValue {#SubSecErrGpioSetValue}
+## setValue {#sSecErrGpioSetValue}
 
 \Item{"unknown GPIO output pin number"} The specified ball number is
 too big. -> Make sure that parameter `Ball` is less or equal \ref
@@ -358,11 +358,11 @@ pin configuration to GPIO out mode.
 
 # PWM {#SecErrPwm}
 
-## setValue {#SubSecErrPwmSetValue}
+## setValue {#sSecErrPwmSetValue}
 
 \Item{"pin has no PWM capability"} The specified ball number has no
 TIMER capability. -> Make sure that parameter `Ball` is one of the PWM
-pins listed in section \ref SubSecPwm.
+pins listed in section \ref sSecPwm.
 
 \Item{"pin not in PWM mode"} Setting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode.
@@ -387,11 +387,11 @@ to generate output at the required frequency. -> Check the parameter
 `Hz` and set an appropriate value (CAP and PWM modules have different
 frequency ranges).
 
-## Value {#SubSecErrPwmValue}
+## Value {#sSecErrPwmValue}
 
 \Item{"pin has no PWM capability"} The specified ball number has no
 TIMER capability. -> Make sure that parameter `Ball` is one of the PWM
-pins listed in section \ref SubSecPwm.
+pins listed in section \ref sSecPwm.
 
 \Item{"pin not in PWM mode"} Getting the values of a PWM output is
 required, but the related header pin (CPU ball) isn't in PWM mode. ->
@@ -410,11 +410,11 @@ input mode. -> Check the previous configuration of that pin.
 
 # TIMER {#SecErrTim}
 
-## setValue {#SubSecErrTimSetValue}
+## setValue {#sSecErrTimSetValue}
 
 \Item{"pin has no TIMER capability"} The specified ball number has no
 TIMER capability. -> Make sure that parameter `Ball` is one of the
-TIMER pins listed in section \ref SubSecTimer.
+TIMER pins listed in section \ref sSecTimer.
 
 \Item{"TIMER subsystem not enabled"} Setting a TIMER output is
 required, but the related TIMERSS subsystem isn't enabled. -> Set
@@ -429,14 +429,14 @@ CAP modules have different ranges).
 
 \note When the pin (CPU ball) is not in the matching mode, libpruio
       tries to configure it. In that case you also may get error
-      messages as described in \ref SubSecPruIoSetPin.
+      messages as described in \ref sSecPruIoSetPin.
 
 
-## Value {#SubSecErrTimValue}
+## Value {#sSecErrTimValue}
 
 \Item{"pin has no TIMER capability"} The specified ball number has no
 TIMER capability. -> Make sure that parameter `Ball` is on of the TIMER
-pins listed in section \ref SubSecTimer.
+pins listed in section \ref sSecTimer.
 
 \Item{"TIMER subsystem not enabled"} Getting the values of a TIMER
 output is required, but the related TIMER subsystem isn't enabled. ->
@@ -452,7 +452,7 @@ configuration of that pin.
 
 # CAP {#SecErrCap}
 
-## config {#SubSecErrCapConfig}
+## config {#sSecErrCapConfig}
 
 \Item{"unknown CAP pin number"} The specified ball number is too big. ->
 Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
@@ -469,10 +469,10 @@ first.
 
 \note When the pin (CPU ball) is not in the matching mode, libpruio
       tries to configure it. In that case you also may get error
-      messages as described in \ref SubSecPruIoSetPin.
+      messages as described in \ref sSecPruIoSetPin.
 
 
-## Value {#SubSecErrCapValue}
+## Value {#sSecErrCapValue}
 
 \Item{"unknown CAP pin number"} The specified ball number is too big. ->
 Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
@@ -492,11 +492,11 @@ function PruIo::config(), first.
 
 # QEP {#SecErrQep}
 
-## config {#SubSecErrQepConfig}
+## config {#sSecErrQepConfig}
 
 \Item{pin has no QEP capability} The specified ball number can not get
 muxed to a PWMSS-QEP module -> Make sure to specify a correct pin, see
-\ref SubSecQep for details.
+\ref sSecQep for details.
 
 \Item{QEP not enabled} Setting a CPU ball for QEP is required, but the
 related PWMSS subsystem isn't enabled. -> Set
@@ -506,18 +506,18 @@ first.
 
 \Item{frequency not supported} The specified frequency for speed
 measurement is out of the supported range -> Specify a frequency in the
-range of 12 to 50e6 Hz, see \ref SubSecQep for details.
+range of 12 to 50e6 Hz, see \ref sSecQep for details.
 
 \note When the pin (CPU ball) is not in the matching mode, libpruio
       tries to configure it. In that case you also may get error
-      messages as described in \ref SubSecPruIoSetPin.
+      messages as described in \ref sSecPruIoSetPin.
 
 
-## Value {#SubSecErrQepValue}
+## Value {#sSecErrQepValue}
 
 \Item{pin has no QEP capability} The specified ball number is not
 connected to a PWMSS-QEP module -> Make sure to specify a correct pin,
-see \ref SubSecQep for details.
+see \ref sSecQep for details.
 
 \Item{IO/RB mode not running} Fetching a value is required, but the PRU
 software isn't running. -> Call function PruIo::config(), first.

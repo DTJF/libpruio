@@ -108,7 +108,7 @@ This function sets timer output on a header pin. The output can be either
 - a high state for the `Dur1` period of time, then low state for `Dur2`, then this sequence again endless.
 
 Parameter `Ball` specifies the header pin to use. Check section \ref
-SubSecTimer for available header pins. \Proj will check the pins
+sSecTimer for available header pins. \Proj will check the pins
 configuration and adapt it, if necessary and possible. If unpossible an
 error message gets returned.
 
@@ -132,7 +132,7 @@ not 0 (zero), the signal gets inverted.
 
 \note Due to hardware limitations, the allowed range for the summ of
       both `Dur1` and `Dur2` is limited. See the table in section \ref
-      SubSecTimer for details.
+      sSecTimer for details.
 
 \note The pulse length is always a multiple of the hardware timer
       counter period. In order to get low frequencies, the counter gets
