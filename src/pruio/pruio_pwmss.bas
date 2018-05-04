@@ -961,13 +961,13 @@ FUNCTION QepMod.Value CDECL( _
   WITH *Top
     SELECT CASE AS CONST Ball
     CASE P8_12 : Posi = 0 : m = 2
-    VASE P8_11, P8_16 :     m = 2
+    CASE P8_11, P8_16 :     m = 2
     CASE P8_35 : Posi = 0 : m = 1
     CASE P8_33, P8_31 :     m = 1
     CASE P8_41 : Posi = 0 : m = 2
     CASE P8_42, P8_39 :     m = 2
     CASE P9_42, 104 : Posi = 0 : m = 0
-    CAES P9_27, P9_41, 106 :     m = 0
+    CASE P9_27, P9_41, 106 :     m = 0
     CASE ELSE  :                       .Errr = .PwmSS->E0 : RETURN .Errr 'PwmSS not enabled
     END SELECT
 
