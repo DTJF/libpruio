@@ -148,7 +148,7 @@ the archive. Then change to the newly created folder.
 
 # Build Binary  {#SecBuildBin}
 
-##CMake
+## CMake  {#sSecBinBuild}
 
 In the project folder, create a new directory for an out-of-source
 build, compile the source code and install:
@@ -165,7 +165,7 @@ sudo ldconfig
 
 # Build Examples
 
-##CMake
+## CMake  {#sSecExamples}
 
 In the that same build folder, build the examples by:
 
@@ -200,7 +200,7 @@ make c_examples
 
 # Build Documentation
 
-##CMake
+## CMake  {#sSecDoc}
 
 In the that same build folder, build the documentation by:
 
@@ -220,7 +220,7 @@ make doc_pdf
 
 # Build Debian Package
 
-##CMake
+## CMake  {#sSecDebPack}
 
 In the that same build folder, build the Debian packages by:
 

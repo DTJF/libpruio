@@ -60,6 +60,10 @@ the data block sections:
 | PwmssUdt::Init (0) | Initial PWMSS-0 configuration            |
 | PwmssUdt::Init (1) | Initial PWMSS-1 configuration            |
 | PwmssUdt::Init (2) | Initial PWMSS-2 configuration            |
+| TimerUdt::Init (0) | Initial TIMER4 configuration             |
+| TimerUdt::Init (1) | Initial TIMER5 configuration             |
+| TimerUdt::Init (2) | Initial TIMER6 configuration             |
+| TimerUdt::Init (3) | Initial TIMER7 configuration             |
 |       PruIo::DConf | Start of custom block (= AdcUdt::Conf)   |
 |       AdcUdt::Conf | Custom ADC configuration                 |
 |  GpioUdt::Conf (0) | Custom GPIO-0 configuration              |
@@ -70,6 +74,10 @@ the data block sections:
 | PwmssUdt::Conf (0) | Custom PWMSS-0 configuration             |
 | PwmssUdt::Conf (1) | Custom PWMSS-1 configuration             |
 | PwmssUdt::Conf (2) | Custom PWMSS-2 configuration             |
+| TimerUdt::Conf (0) | Custom TIMER4 configuration              |
+| TimerUdt::Conf (1) | Custom TIMER5 configuration              |
+| TimerUdt::Conf (2) | Custom TIMER6 configuration              |
+| TimerUdt::Conf (3) | Custom TIMER7 configuration              |
 
 In order to minimize memory consumption libpruio may generate
 uncomplete subsystem sets. In such a set only the first four member
@@ -143,6 +151,14 @@ instructions the DRam area contains
 | DRam[16] | Adress of the PWMSS-1 clock register       |
 | DRam[17] | Base Adress of PWMSS-2 subsystem registers |
 | DRam[18] | Adress of the PWMSS-2 clock register       |
+| DRam[19] | Base Adress of TIMER4 subsystem registers  |
+| DRam[20] | Adress of the TIMER4 clock register        |
+| DRam[21] | Base Adress of TIMER5 subsystem registers  |
+| DRam[22] | Adress of the TIMER5 clock register        |
+| DRam[23] | Base Adress of TIMER6 subsystem registers  |
+| DRam[24] | Adress of the TIMER6 clock register        |
+| DRam[25] | Base Adress of TIMER7 subsystem registers  |
+| DRam[26] | Adress of the TIMER7 clock register        |
 
 In case of an inactive subsystem (configuration bit in parameter *Act*
 cleared) the clock adress is set to 0 (zero) so that the PRU can still
@@ -193,12 +209,13 @@ the pasm_run.p instructions get executed, the DRam area contains
 The PRU software reads these parameters and writes the configuration to
 the subsystem registers. Then it prepares the DRam area as follows
 
-|   Value  | Description           |
-| -------: | : ------------------- |
-|  DRam[0] | PRUIO_MSG_xxx         |
-| DRam[16] | 4xGpioArr (64 bytes)  |
-| DRam[32] | 3xPwmssArr (96 bytes) |
-| DRam[56] | ADC data (38 bytes)   |
+|   Value  | Description             |
+| -------: | : --------------------- |
+|  DRam[0] | PRUIO_MSG_xxx           |
+| DRam[16] | 4xGpioArr (64 bytes)    |
+| DRam[32] | 3xPwmssArr (96 bytes)   |
+| DRam[56] | ADC data (38 bytes)     |
+| DRam[32] | 4xTimerssArr ??? bytes) |
 
 The type of PRUIO_MSG_xxx depends on the required run mode. It's either
 \ref PRUIO_MSG_IO_OK in case of IO mode (parameter *Samp* = 1) or \ref
@@ -293,6 +310,28 @@ to the running PRU software
   |  Value  | Description                                              |
   | ------: | : ------------------------------------------------------ |
   | DRam[1] | PRUIO_COM_CAP `shl 24` + PwmssSet::ECCTL2 register value |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+
+- PRU command \ref PRUIO_COM_QEP (switch PWMSS-QEP module in QEP mode)
+  |  Value  | Description                                              |
+  | ------: | : ------------------------------------------------------ |
+  | DRam[1] | PRUIO_COM_QEP `shl 24`                                   |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+  | DRam[3] | Value for PwmssSet::QPOSMAX register                     |
+  | DRam[4] | Value for PwmssSet::QUPRD register                       |
+  | DRam[5] | Value for PwmssSet::.QDECCTL OR .QEPCTL SHL 16 registers |
+  | DRam[6] | Value for PwmssSet::QCAPCTL register                     |
+
+- PRU command \ref PRUIO_COM_TIM_PWM (switch TIMERSS in PWM mode)
+  |  Value  | Description                                              |
+  | ------: | : ------------------------------------------------------ |
+  | DRam[1] | PRUIO_COM_TIM_PWM `shl 24` + ???PwmssSet::ECCTL2 register value |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+
+- PRU command \ref PRUIO_COM_TIM_CAP (switch TIMERSS in CAP mode)
+  |  Value  | Description                                              |
+  | ------: | : ------------------------------------------------------ |
+  | DRam[1] | PRUIO_COM_TIM_CAP `shl 24` + ???PwmssSet::ECCTL2 register value |
   | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
 
 - PRU command \ref PRUIO_COM_ADC (set a new step mask in IO mode)

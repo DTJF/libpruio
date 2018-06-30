@@ -27,13 +27,11 @@ colored pins
 ![Header pins controllable by libpruio](pins.png)
 
 
-# Pin Functions
-
 This section explains the different functions the header pins can work
 in and gives detailed information about the limits.
 
 
-## Analog {#SecAnalog}
+# Analog  {#SecAnalog}
 
 Analog lines work always as input line. Analog output isn't supported
 by the Beaglebone hardware (but can get achieved by a combination of a
@@ -99,7 +97,7 @@ configurations in \ArmRef{12}. Find example code in io_input.bas,
 oszi.bas, rb_file.bas, rb_oszi.bas and trigger.bas.
 
 
-## Digital {#SecDigital}
+# Digital  {#SecDigital}
 
 Each digital header pin can get configured either in GPIO mode or in
 one of up to seven alternative modes. The matrix of the possible
@@ -178,7 +176,7 @@ constructor PruIo::PruIo() )
   (GpioUdt::setValue() or PwmUdt::setValue() ).
 
 
-### GPIO  {#sSecGpio}
+## GPIO  {#sSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -219,7 +217,7 @@ Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
 
 
-### TIMER  {#sSecTimer}
+## TIMER  {#sSecTimer}
 
 A TIMER output sends a pulse to a header pin. First, it waits a certain
 time and then toggles the state for a certain time. After that sequence
@@ -254,7 +252,7 @@ resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
 
-### PWM  {#sSecPwm}
+## PWM  {#sSecPwm}
 
 PWM stands for Pulse Width Modulated output. So it means generating a
 digital signal with a given frequency and duty cycle. Usualy PWM is
@@ -269,7 +267,7 @@ subsystems (and \Proj supports many of them), the resolution and the
 frequency range vary between the pins.
 
 | Pin   | Subsystem       | Frequency Range        | Notice            |
-| ----- | :-------------: | :--------------------- | :---------------- |
+| ----- | :-------------: | ---------------------: | :---------------- |
 | P8_07 | TIMER-4         | 0.000010914 to 6e6 Hz  | free              |
 | P8_09 | TIMER-5         | 0.000010914 to 6e6 Hz  | free              |
 | P8_10 | TIMER-6         | 0.000010914 to 6e6 Hz  | free              |
@@ -331,7 +329,7 @@ PwmMod::Value().
 Find example code in pwm_adc.bas or pwm_cap.bas.
 
 
-### CAP  {#sSecCap}
+## CAP  {#sSecCap}
 
 CAP stands for Capture and Analyse a digital Pulse train. So it means
 measuring the frequency and the duty cycle of a digital signal input.
@@ -350,7 +348,6 @@ range vary between the pins.
 
 | Pin   |   Subsystem    | Frequency Range        | Notice            |
 | ----- | :------------: | :--------------------- | :---------------- |
-| P8_07 | TIMER-4        | 0,000007629 to 50e6 Hz | free              |
 | P9_28 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
 
@@ -361,7 +358,7 @@ calling function CapMod::config() once.
 Find example code in pwm_cap.bas.
 
 
-### QEP  {#sSecQep}
+## QEP  {#sSecQep}
 
 QEP stands for Quadrature Encoder Pulse measurement. So it means
 measuring the position and the speed of a quadrature encoder. Encoders
@@ -475,18 +472,21 @@ by calling function QepMod::config() once.
 Find example code in qep.bas.
 
 
-# Pinmuxing
+# Pinmuxing  {#SecPinmuxing}
 
 This section describes how to set a header pin in the desired mode. At
 startup (= POR = Power On Reset) the operating system sets all pins in
 a save mode. Execute example [analyse.bas](sSecExaAnalyse) to see a
 list of the default header pin configuration.
 
-When you set up a header pin for use with \Proj, the desired setup gets
-compared with the default setup and if matching the pin operation gets
-done immediately. Otherwise, if the default configuration doesn't match
-the desired function, \Proj tries to adapt the pin mode.
+When you set up a header pin for use with \Proj, the pin mode gets
+checked first. When it matches the desired feature, the pin operation
+gets done immediately. Otherwise, if the default configuration doesn't
+match the desired function, \Proj tries to adapt the pin mode first.
+Therefor it needs pinmuxing capability, ie. by loading the universal
+overlay. ???
 
-## Loading an Overlay
 
-## Creating an Overlay
+## Loading an Overlay  {#sSecLoadOverlay}
+
+## Creating an Overlay  {#sSecCreateOverlay}
