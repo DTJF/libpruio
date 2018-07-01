@@ -244,7 +244,7 @@ is 32 bit and the duration range in [s] vary between the pins.
 | P8_08 | TIMER-7         | 45812   | 0,000000167 | free              |
 | P9_28 | PWMSS-2, CAP    | 42,94   | 0,00000002  | MCASP0            |
 | P9_42 | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
-| JT_05 | PWMSS-1, PRUCAP | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+| JT_05 | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
 
 The output gets specified by calling function TimerUdt::setValue().
 Since the output timing may vary from the specified parameters due to
@@ -286,7 +286,7 @@ frequency range vary between the pins.
 | P9_31 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
 | P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
-| JT_05 | PWMSS-1, PRUCAP | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
+| JT_05 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
@@ -350,6 +350,7 @@ range vary between the pins.
 | ----- | :------------: | :--------------------- | :---------------- |
 | P9_28 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
+| JT_04 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | JTag (UART0_RXD)  |
 
 The measurement results get available by calling function
 CapMod::Value(). Before, you have to configure the pin for CAP input by

@@ -643,8 +643,8 @@ FUNCTION CapMod.config CDECL( _
     SELECT CASE AS CONST Ball
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
-    'CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24) ' input???
-      'm = 1
+    CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
+      m = 2
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h25) ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
     'CASE    88 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h22)

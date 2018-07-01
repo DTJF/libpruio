@@ -189,7 +189,7 @@ TrgLoop:
 TrgPost:
   QBEQ TrgNext, Tr_c, 0    // if no post-trigger -> skip
   LDI  UR, 1               // value to clear counter
-  SBCO UR, C26, 0x0C, 4    // reset IEP tiner COUNT register
+  SBCO UR, C26, 0x0C, 4    // reset IEP timer COUNT register
   SBCO UR, C26, 0x44, 1    // clear timer CMP_HIT[0]
 TrgTimer:
   LBCO UR, C26, 0x44, 1    // load CMP_STATUS bits
