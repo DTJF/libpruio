@@ -33,7 +33,7 @@ FOREACH(bi ${SRC_BI})
 ENDFOREACH()
 
 ADD_CUSTOM_COMMAND(OUTPUT ${ResFile}
-  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib=${PROJ_NAME} ${InFiles} > ${ResFile}
+  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib="pruio" ${InFiles} > ${ResFile}
   #${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/post.cmake
   DEPENDS ${bidep} ${CType_BINARY}
   COMMENT "creating file ${ResFile}"
@@ -53,3 +53,5 @@ ADD_CUSTOM_TARGET(py DEPENDS ${ResFile})
 #FILE(READ "${ResFile}" tmpi)
 #STRING(REGEX REPLACE "POINTER(Pruio_)" "POINTER(PruIo)" tmpo "${tmpi}")
 #FILE(WRITE "${ResFile}" tmpo)
+
+#set(ENV{LD_LIBRARY_PATH} ${CMAKE_INSTALL_PREFIX}
