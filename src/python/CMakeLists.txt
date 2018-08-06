@@ -33,7 +33,7 @@ FOREACH(bi ${SRC_BI})
 ENDFOREACH()
 
 ADD_CUSTOM_COMMAND(OUTPUT ${ResFile}
-  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib="pruio" ${InFiles} > ${ResFile}
+  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib="pruio" -pyimports="from libprussdrv import tpruss_intc_initdata" ${InFiles} > ${ResFile}
   #${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/post.cmake
   DEPENDS ${bidep} ${CType_BINARY}
   COMMENT "creating file ${ResFile}"
