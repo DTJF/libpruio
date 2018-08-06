@@ -347,9 +347,10 @@ Closed loop, Adc->Value to function Gpio->Value:
   output and how to measure such a pulse train (CAP = Capture and
   Analyse a Pulsetrain) with libpruio. The code creates a PruIo
   instance configured in IO mode. One header pin (P9_21) gets
-  configured as PWM output and an other (P9_42) as CAP input. The
-  measured pulse train data get shown in a continuously updated line.
-  You can adapt the output and watch the changes in the input.
+  configured as PWM output and an other (P9_42) as CAP input. When both
+  pins get connected, the measured pulse train data get shown in a
+  continuously updated line. You can adapt the output and watch the
+  input changing.
 
 \Item{Preparation}
 
@@ -429,6 +430,8 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/examples/pwm_cap.bas
 
   src/c_examples/pwm_cap.c
+
+  src/python/pwm_cap.py
 
 
 ## qep {#sSecExaQep}

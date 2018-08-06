@@ -47,6 +47,7 @@ ADD_CUSTOM_TARGET(examples)
 ADD_SUBDIRECTORY(src/examples)
 ADD_SUBDIRECTORY(src/c_examples)
 ADD_DEPENDENCIES(examples pruio)
+ADD_DEPENDENCIES(py pruio)
 #SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
 
 INSTALL(TARGETS pruio
@@ -66,63 +67,63 @@ INSTALL(FILES ${C_HEADERS}
   )
 
 
-SET(CPACK_GENERATOR "DEB")
-SET(CPACK_PACKAGE_VERSION "${PROJ_VERS}")
-#SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}-${CPACK_DEB_PACKAGE_COMPONENT_PART_NAME}-${PROJ_VERS}")
-SET(CPACK_PACKAGE_NAME "${PROJ_NAME}")
-SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}")
-SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJ_WEBS}")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
-  "Arend Lammertink <lamare@gmail.com>") #required
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
-SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
-    "${PROJ_DESC}"
-  "\n ${PROJ_NAME} is a driver to handle input and output on"
-  "\n digital and analog lines on Beaglebone hardware."
-  "\n The driver bypasses the kernel driver and provides direct"
-  "\n access to the hardware, supported by the PRU subsystems."
-     )
+#SET(CPACK_GENERATOR "DEB")
+#SET(CPACK_PACKAGE_VERSION "${PROJ_VERS}")
+##SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}-${CPACK_DEB_PACKAGE_COMPONENT_PART_NAME}-${PROJ_VERS}")
+#SET(CPACK_PACKAGE_NAME "${PROJ_NAME}")
+#SET(CPACK_PACKAGE_FILE_NAME "${PROJ_NAME}")
+#SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJ_WEBS}")
+#SET(CPACK_DEBIAN_PACKAGE_MAINTAINER
+  #"Arend Lammertink <lamare@gmail.com>") #required
+#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJ_DESC})
+#SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+    #"${PROJ_DESC}"
+  #"\n ${PROJ_NAME} is a driver to handle input and output on"
+  #"\n digital and analog lines on Beaglebone hardware."
+  #"\n The driver bypasses the kernel driver and provides direct"
+  #"\n access to the hardware, supported by the PRU subsystems."
+     #)
 
-# Generate required change log file
-EXECUTE_PROCESS(
-  COMMAND gzip -9 -c -n ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-  OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
-  )
+## Generate required change log file
+#EXECUTE_PROCESS(
+  #COMMAND gzip -9 -c -n ${CMAKE_CURRENT_SOURCE_DIR}/debian/changelog
+  #WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  #OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz"
+  #)
 
-#SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
-SET(CPACK_DEB_COMPONENT_INSTALL ON)
-SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
+##SET(CPACK_PACKAGE_DESCRIPTION_FILE ReadMe.md)
+#SET(CPACK_DEB_COMPONENT_INSTALL ON)
+#SET(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
 
-SET(CPACK_COMPONENT_DEV_DEPENDS bin)
-SET(CPACK_COMPONENT_DOC_DEPENDS bin)
+#SET(CPACK_COMPONENT_DEV_DEPENDS bin)
+#SET(CPACK_COMPONENT_DOC_DEPENDS bin)
 
-SET(CPACK_DEBIAN_BIN_PACKAGE_SHLIBDEPS ON)
-#SET(CPACK_DEBIAN_BIN_PACKAGE_NAME "${PROJ_NAME}") # since 3.5!
-INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
-                "${CMAKE_SOURCE_DIR}/debian/copyright"
-                DESTINATION "share/doc/${PROJ_NAME}"
-                COMPONENT bin
-                )
-SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
-  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
-  "${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
-  )
+#SET(CPACK_DEBIAN_BIN_PACKAGE_SHLIBDEPS ON)
+##SET(CPACK_DEBIAN_BIN_PACKAGE_NAME "${PROJ_NAME}") # since 3.5!
+#INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                #"${CMAKE_SOURCE_DIR}/debian/copyright"
+                #DESTINATION "share/doc/${PROJ_NAME}"
+                #COMPONENT bin
+                #)
+#SET(CPACK_DEBIAN_BIN_PACKAGE_CONTROL_EXTRA
+  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst"
+  #"${CMAKE_CURRENT_SOURCE_DIR}/debian/postrm"
+  #)
 
-SET(CPACK_DEBIAN_DEV_PACKAGE_SECTION libdevel) # since 3.5!
-INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
-                "${CMAKE_SOURCE_DIR}/debian/copyright"
-                DESTINATION "share/doc/${PROJ_NAME}-dev"
-                COMPONENT dev
-                )
-SET(CPACK_DEBIAN_DOC_PACKAGE_SECTION doc)
-INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
-                "${CMAKE_SOURCE_DIR}/debian/copyright"
-                DESTINATION "share/doc/${PROJ_NAME}-doc"
-                COMPONENT doc
-                )
+#SET(CPACK_DEBIAN_DEV_PACKAGE_SECTION libdevel) # since 3.5!
+#INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                #"${CMAKE_SOURCE_DIR}/debian/copyright"
+                #DESTINATION "share/doc/${PROJ_NAME}-dev"
+                #COMPONENT dev
+                #)
+#SET(CPACK_DEBIAN_DOC_PACKAGE_SECTION doc)
+#INSTALL(FILES   "${CMAKE_BINARY_DIR}/changelog.gz"
+                #"${CMAKE_SOURCE_DIR}/debian/copyright"
+                #DESTINATION "share/doc/${PROJ_NAME}-doc"
+                #COMPONENT doc
+                #)
 
-SET(CMAKE_INSTALL_RPATH /usr/local/lib)
-SET(CPACK_DEBIAN_PACKAGE_DEBUG ON)
+#SET(CMAKE_INSTALL_RPATH /usr/local/lib)
+#SET(CPACK_DEBIAN_PACKAGE_DEBUG ON)
 
-INCLUDE(CPack)
+#INCLUDE(CPack)
