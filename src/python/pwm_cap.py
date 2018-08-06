@@ -66,7 +66,6 @@ def pwm_cap(stdscr):
         else: break
         if pruio_pwm_setValue(io, P_OUT, f0.value, d0.value): # update output
           raise AssertionError("failed setting PWM output (%s)" % IO.Errr)
-        stdscr.addstr(9,4, "IO.Errr: %s" % IO.Errr)
         stdscr.addstr(0,4, form % (f0.value, d0.value)) # show new demand
   finally:
     pruio_destroy(io) #                                       we're done
