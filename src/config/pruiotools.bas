@@ -117,7 +117,7 @@ DIM SHARED AS LONG MULTI_FLAG = 0
 
     IF LEN(COMMAND(1)) THEN TARG_PATH = COMMAND(1)
     IF RIGHT(TARG_PATH, 1) <> "/" THEN TARG_PATH &= "/"
-    IF SHELL("dtc -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts") THEN
+    IF SHELL("dtc -W no-unit_address_vs_reg -@ -I dts -O dtb -o " & TARG_PATH & fnam & ".dtbo " & fnam & ".dts") THEN
       ?"=> File " & fnam & ".dts generated. Compile and install by executing"
       ?"  sudo dtc -@ -I dts -O dtb -o /lib/firmware/" & fnam & ".dtbo " & fnam & ".dts"
     ELSE

@@ -31,12 +31,21 @@ VAR io = NEW PruIo '*< Create a PruIo structure, wakeup devices.
 WITH *io
   DO
     IF .Errr THEN    ?"initialisation failed (" & *.Errr & ")" : EXIT DO
-    IF .config() THEN        ?"config failed (" & *.Errr & ")" : EXIT DO
+
+    IF .Gpio->config(PIN, PRUIO_GPIO_IN_0) THEN _ '        configure pin
+                 ?"GPIO configuration failed (" & *.Errr & ")" : EXIT DO
+
+    IF .config() THEN _
+                             ?"config failed (" & *.Errr & ")" : EXIT DO
+
     DO '                           print current state (until keystroke)
       ?!"\r" & .Gpio->Value(PIN);
       SLEEP 100
     LOOP UNTIL LEN(INKEY()) : ?
   LOOP UNTIL 1
+' The following line is optional, the DESTRUCTOR does the job by default
+  IF .Gpio->config(PIN, PRUIO_PIN_RESET) THEN _ '       re-configure pin
+                         ?"pin re-configuration failed (" & *.Errr & ")"
 
   IF .Errr THEN ?"press any key to quit" : SLEEP
 END WITH

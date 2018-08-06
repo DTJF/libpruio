@@ -76,6 +76,8 @@ E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
 
   src/c_examples/1.c
 
+  src/python/1.py
+
 
 ## analyse {#sSecExaAnalyse}
 
@@ -146,8 +148,8 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 \Item{Description}
 
   This example shows how to get input from a digital line. It creates a
-  new PruIo instance cinfigured in IO mode, which continuously prints
-  out the state of a single digital line.
+  new PruIo instance configured in IO mode, which continuously prints
+  out the state of a single digital inout line.
 
 \Item{Preparation}
 
@@ -162,7 +164,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 
   Start the program by executing `./button` and you'll see a new line
   containing a continuously updated single number. `1` gets shown when
-  the button is open and `0` (zero) when the button is closed. Press
+  the button is open, and `0` (zero) when the button is closed. Press
   any key on your keyboard to end the program.
 
 \Item{Source Code}
@@ -170,6 +172,14 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
   src/examples/button.bas
 
   src/c_examples/button.c
+
+  src/python/button.py
+
+\note The button2 example swaps logic. It configures P8_07 as input
+      with pulldown resistor. In order to see any change, you have to
+      connect it to 3V3 (move cable from P8_02 to P9_03). This example
+      requires pinmuxing capability: execute with `sudo`. (Also
+      mandatory: universal device tree overlay for pinmuxing.)
 
 
 ## io_input {#sSecExaIoInput}
@@ -226,6 +236,8 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   src/examples/io_input.bas
 
   src/c_examples/io_input.c
+
+  src/python/io_input.py
 
 
 ## performance {#sSecExaPerformance}

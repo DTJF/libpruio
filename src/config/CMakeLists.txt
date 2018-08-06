@@ -48,7 +48,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
   COMMAND ${CMAKE_Fbc_COMPILER} -w all -x ${univ} ${CMAKE_CURRENT_SOURCE_DIR}/${univ}.bas
   COMMAND ./${univ} ${fold}
   #COMMAND ${CMAKE_COMMAND} -E remove ${univ}
-  DEPENDS ${univ}.bas P8.bi P9.bi pruiotools.bas
+  DEPENDS ${univ}.bas P8.bi P9.bi JTag.bi pruiotools.bas
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
   )

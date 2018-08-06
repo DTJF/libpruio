@@ -1,6 +1,7 @@
 SET(c_tar
   "1"
   "button"
+  "button2"
   "io_input"
   "performance"
   "pwm_cap"

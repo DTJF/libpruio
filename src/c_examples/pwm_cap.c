@@ -130,5 +130,5 @@ finish:
   } while (0);
 
   pruio_destroy(Io);       /* destroy driver structure */
-	return 0;
+  return 0;
 }

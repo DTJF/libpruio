@@ -2,6 +2,7 @@ SET(fb_tar
   "1"
   "analyse"
   "button"
+  "button2"
   "io_input"
   "oszi"
   "performance"
