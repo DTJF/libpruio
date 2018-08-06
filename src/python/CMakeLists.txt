@@ -42,6 +42,10 @@ ADD_CUSTOM_COMMAND(OUTPUT ${ResFile}
   )
 ADD_CUSTOM_TARGET(py DEPENDS ${ResFile})
 
+#ToDo:
+# - replace Pruio_ -> PruIo in POINTER()
+# - find a solution to locate the binary
+# - add a header with imports
 
 #https://gitlab.kitware.com/cmake/cmake/commit/5bd48ac5348885e15ebb23ea825a1ea777985b97:
 #SET(tmpi)
