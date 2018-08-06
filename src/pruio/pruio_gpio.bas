@@ -117,7 +117,7 @@ as enumerators PruIo::PinMuxing :
 | PRUIO_GPIO_OUT0  | output pin set to low (no resistor)      |
 | PRUIO_GPIO_OUT1  | output pin set to high (no resistor)     |
 
-C-wrapper function: pruio_gpio_config().
+Wrapper function (C or Python): pruio_gpio_config().
 
 \since 0.2
 '/
@@ -178,7 +178,7 @@ macros defined in pruio_pins.bi (ie. P8_03 selects pin 3 on header P8).
 Parameter `Mo` specifies either the state to set (0 or 1). Or it
 specifies the pinmux mode to test and the state in the MSB.
 
-C-wrapper function: pruio_gpio_setValue().
+Wrapper function (C or Python): pruio_gpio_setValue().
 
 \since 0.2
 '/
@@ -243,7 +243,7 @@ are
 | 0     | GPIO is in low state          |
 | -1    | error (undefined ball number) |
 
-C-wrapper function: pruio_gpio_Value().
+Wrapper function (C or Python): pruio_gpio_Value().
 
 \since 0.2
 '/

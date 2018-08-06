@@ -124,17 +124,6 @@ websides, linked by the name in the first column.
 Depending on whether you installed the optional GIT package, there're
 two ways to get the \Proj package.
 
-## GIT  {#SecGet_Git}
-
-Using GIT is the prefered way to download the \Proj package (since it
-helps users to get involved in to the development process). Get your
-copy and change to the source tree by executing
-
-~~~{.txt}
-git clone https://github.com/DTJF/libpruio
-cd libpruio
-~~~
-
 ## ZIP  {#SecGet_Zip}
 
 As an alternative you can download a Zip archive by clicking the
@@ -146,26 +135,119 @@ the archive. Then change to the newly created folder.
       cannot switch to a certain point in the history.
 
 
-# Build Binary  {#SecBuildBin}
+## GIT  {#SecGet_Git}
 
-## CMake  {#sSecBinBuild}
+Using GIT is the prefered way to download the \Proj package (since it
+helps users to get involved in to the development process). Get your
+copy and change to the source tree by executing
 
-In the project folder, create a new directory for an out-of-source
-build, compile the source code and install:
+~~~{.txt}
+git clone https://github.com/DTJF/libpruio
+cd libpruio
+~~~
+
+
+# Configuration  {#SecConfig}
+
+Before you can use \Proj you have to make sure that your system is
+prepared. This means
+
+- \ref sSecPrepBuild : prepare the source tree for your system.
+- \ref sSecPruDriver : block `rproc`, make the system load `uio_pruss`.
+- \ref sSecDtboFile : load a pinmux file for custom or universal pinmuxing.
+
+Use cmake/cmakefbc for your work. Building and installing the software
+manually is a complex process. It isn't described here, since it's
+beyond the scope of this documentation.
+
+
+## Prepare build  {#sSecPrepBuild}
+
+The project either supports in-source or out-of-source building. The
+later is more easy to understand and to handle, since the source code
+doesn't change (much). Mostly all generated files go into a separate
+`build` folder:
 
 ~~~{.txt}
 mkdir build
 cd build
-cmake ..
+cmakefbc ..
+~~~
+
+When the script fails, solve the problems first before you continue.
+
+
+## PRU driver  {#sSecPruDriver}
+
+Unfortunatelly this step may get complicated. \Proj needs the uio_pruss
+driver. In kernel 3.8 this is default, no further action is necessary.
+But in kernel 4.x the new rproc driver gets default, and it took years
+until easy reconfiguration was supported. Depending on the subversion
+different action has to be done to get it out of the way. It's beyond
+the scope of this documentation to describe all the diffent approaches.
+
+The only help I can provide is a command to test success. Executing
+
+    lsmod | grep uio
+
+should output
+
+~~~{txt}
+uio_pruss              16384  0
+uio_pdrv_genirq        16384  0
+uio                    20480  2 uio_pruss,uio_pdrv_genirq
+~~~
+
+
+## DTBO File  {#sSecDtboFile}
+
+The device tree blob (DTBO) for libpruio has two purposes
+
+-# enable the PRUSS
+-# set pinmuxing
+
+While the first is mandatory, the second may get done in diffent ways:
+
+- Either a custom configuration with the necessary setting for your project (header connections).
+- Or a universal setting that allows you to change pinmuxing at runtime.
+
+The later is very flexible in development phase while you design and
+test your PCB (hardware board), by the cost of high memory consumption
+and slow booting. At the beginning this is the prefered solution.
+
+\Proj is prepared to generate and install an universal overlay for the
+BeagleBoneBlack hardware by executing
+
+    sudo make init
+
+This compiles and runs the `dts_universal.bas` code in folder
+src/config, which generates a `libpruio-00A0.dts` file. That file gets
+compiled to the final destination `/lib/firmware`. Afterward you have
+to make sure that the overlay gets loaded:
+
+- kernel 3.8: use capemgr to load the overlay.
+
+- kernel 4.x: bootload the overlay. Depending on the subversion
+  different action has to be done. It's beyond the scope of this
+  documentation to describe all the diffent approaches.
+
+
+# Build Binary  {#SecBuildBin}
+
+Compile the source code and install by executing (in `build` folder):
+
+~~~{.txt}
 make
 sudo make install
 sudo ldconfig
 ~~~
 
+\note The last command `sudo ldconfig` is only necessary after first
+      install. It makes the newly installed library visible for the
+      linker. You can omit it for further updates.
 
-# Build Examples
 
-## CMake  {#sSecExamples}
+# Build Examples  {#SecBuildExamples}
 
 In the that same build folder, build the examples by:
 
@@ -198,9 +280,7 @@ make c_examples
       binary first, see section \ref SecBuildBin.
 
 
-# Build Documentation
-
-## CMake  {#sSecDoc}
+# Build Documentation  {#SecBuildDoc}
 
 In the that same build folder, build the documentation by:
 
@@ -218,9 +298,21 @@ make doc_pdf
 ~~~
 
 
-# Build Debian Package
+# Build Python Binding  {#SecBuildPython}
 
-## CMake  {#sSecDebPack}
+In order to generate a ctypes-based python binding from the current FB
+source code execute
+
+~~~{.txt}
+make py
+~~~
+
+Find the resulting file `libpruio.py` in folder `src/python`.
+
+\note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
+
+
+# Build Debian Package  {#SecBuildDeb}
 
 In the that same build folder, build the Debian packages by:
 
@@ -233,5 +325,3 @@ This will create the packages
 - libpruio-bin.deb contains the runtime binary and the overlay
 - libpruio-dev.deb contains the C header files
 - libpruio-fbdev.deb contains the FreeBASIC header files
-
-\ToDo -doc package

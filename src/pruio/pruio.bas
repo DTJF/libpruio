@@ -121,7 +121,7 @@ See \ArmRef{12} for details on step configuration.
 These step configurations can get customized or extended later on by
 calling function AdcUdt::setStep().
 
-C-wrapper function: pruio_new().
+Wrapper function (C or Python): pruio_new().
 
 \since 0.0
 '/
@@ -234,7 +234,7 @@ The destructor cannot report error messages in member variable
 PruIo::Errr. Messages (if any) get sent directly to the ERROUT pipe of
 the operating system instead.
 
-C-wrapper function: pruio_destroy().
+Wrapper function (C or Python): pruio_destroy().
 
 \since 0.0
 '/
@@ -398,7 +398,7 @@ samples from other ADC devices (like 16 bit audio data). Examples
 | 3     | 15 bit  |
 | >= 4  | 16 bit  |
 
-C-wrapper function: pruio_config().
+Wrapper function (C or Python): pruio_config().
 
 \since 0.0
 '/
@@ -529,7 +529,7 @@ SPI or UART).
       Instead, call the features config function (ie. like
       GpioUdt::config() or CapMod::config() ).
 
-C-wrapper function: pruio_setPin().
+Wrapper function (C or Python): pruio_setPin().
 
 \since 0.2
 '/
@@ -668,7 +668,7 @@ read the samples.
 RB mode runs endless. Stop it by up-loading a new configuration (by
 calling function PruIo::config() ).
 
-C-wrapper function: pruio_rb_start().
+Wrapper function (C or Python): pruio_rb_start().
 
 \since 0.2
 '/
@@ -714,7 +714,7 @@ Function are available to create trigger specifications:
 MM mode runs endless. Stop it by up-loading a new configuration (by
 calling function PruIo::config() ).
 
-C-wrapper function: pruio_mm_start().
+Wrapper function (C or Python): pruio_mm_start().
 
 \since 0.2
 '/

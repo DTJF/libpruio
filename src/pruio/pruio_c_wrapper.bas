@@ -9,11 +9,6 @@ Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
 Copyright 2014-\Year by \Mail
 
-
-compile by (static and dynamic library)
-
-./build
-
 \since 0.0
 '/
 

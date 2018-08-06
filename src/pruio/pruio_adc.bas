@@ -193,7 +193,7 @@ member variables AdcSet::St_p `(i).Confg` and
 AdcSet::St_p `(i).Delay`. See \ArmRef{12} for details on ADC
 configurations.
 
-C-wrapper function: pruio_adc_setStep().
+Wrapper function (C or Python): pruio_adc_setStep().
 
 \since 0.2
 '/
@@ -242,7 +242,7 @@ mode while the GPIO gets checked.
        the trigger specification, the trigger has no effect (it gets
        skipped).
 
-C-wrapper function: pruio_adc_mm_trg_pin().
+Wrapper function (C or Python): pruio_adc_mm_trg_pin().
 
 \since 0.2
 '/
@@ -330,7 +330,7 @@ trigger step since there is no channel muxing.)
       be on the save side, re-create your trigger specifications after
       each call to function PruIo::config().
 
-C-wrapper function: pruio_adc_mm_trg_ain().
+Wrapper function (C or Python): pruio_adc_mm_trg_ain().
 
 \since 0.2
 '/
@@ -417,7 +417,7 @@ activated steps while waiting for the trigger event.
       call to function PruIo::mm_start() (all further
       specifications get ignored).
 
-C-wrapper function: pruio_adc_mm_trg_pre().
+Wrapper function (C or Python): pruio_adc_mm_trg_pre().
 
 \since 0.2
 '/

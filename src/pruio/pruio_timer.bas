@@ -144,7 +144,7 @@ not 0 (zero), the signal gets inverted.
 \note Currently, \Proj uses CLK_M_OSC (24 MHz) input clock only.
       CLK_32KHZ (32.768 kHz) input clock isn't supported, yet.
 
-C-wrapper function: pruio_tim_setValue().
+Wrapper function (C or Python): pruio_tim_setValue().
 
 \since 0.4
 '/
@@ -248,7 +248,7 @@ function TimerUdt::setValue() rounds the input parameters to the best
 matching values, this function can get used to compute the current
 setting.
 
-C-wrapper function: pruio_tim_Value().
+Wrapper function (C or Python): pruio_tim_Value().
 
 \since 0.4
 '/

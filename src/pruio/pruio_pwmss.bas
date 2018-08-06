@@ -458,7 +458,7 @@ This functions computes the real PWM output of a header pin. The real
 setting may differ from the parameters passed to function
 PwmMod::setValue(). Use this function to compute the active settings.
 
-C-wrapper function: pruio_pwm_Value().
+Wrapper function (C or Python): pruio_pwm_Value().
 
 \since 0.2
 '/
@@ -533,7 +533,7 @@ limitations (ie. 17 bit resolution in case of eHRPWM modules). Use
 function PwmMod::Value() to compute the active settings, in order to
 calculate differences.
 
-C-wrapper function: pruio_pwm_setValue().
+Wrapper function (C or Python): pruio_pwm_setValue().
 
 \since 0.2
 '/
@@ -630,7 +630,7 @@ seconds before the new values are available. To shorten this time, you
 can specify the lowest frequency. When a period without change is over,
 the counter gets restarted.
 
-C-wrapper function: pruio_cap_config().
+Wrapper function (C or Python): pruio_cap_config().
 
 \since 0.2
 '/
@@ -700,7 +700,7 @@ restarts and zero gets returned for both results (`Hz` and `Du`). The
 minimal frequency can get adapted by parameter `FLow` in the previous
 call to function CapMod::config().
 
-C-wrapper function: pruio_cap_Value().
+Wrapper function (C or Python): pruio_cap_Value().
 
 \since 0.2
 '/
@@ -826,7 +826,7 @@ sensor with 1024 lines per revolution, set this factor as
 Scale = 60 [s/min] / (1024 [imp/rev] * 4 [cnt/imp])
 ~~~
 
-C-wrapper function: pruio_qep_config().
+Wrapper function (C or Python): pruio_qep_config().
 
 \since 0.4.0
 '/
@@ -948,7 +948,7 @@ configuration of all input pins, meaning it computes (erratic) output
 even if some (or all) of the pins are not in the matching
 configuration.
 
-C-wrapper function: pruio_qep_Value().
+Wrapper function (C or Python): pruio_qep_Value().
 
 \since 0.4.0
 '/

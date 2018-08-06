@@ -12,11 +12,12 @@ Feel free to send further ideas to the author (\Email).
 
 # libpruio-0.4.0 {#SecV-0-4-0}
 
-Released in 2016, ???.
+Released in 2018, ???.
 
 ## New:
 
 - Documentation page Pins added.
+- Folder src/python and target py.
 - Build management added (by CMake).
 - GIT version control system implemented.
 - QEP module support (function QepMod::config() and QepMod::Value() ).

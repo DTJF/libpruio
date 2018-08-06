@@ -311,7 +311,7 @@ C wrapper equivalent qepMod.
 '/
 TYPE QepMod
   AS  Pruio_ PTR Top  '*< pointer to the calling PruIo instance
-  AS Float_T _
+  AS Float_t _
     FVh(PRUIO_AZ_PWMSS) _               '*< Factor for high velocity measurement.
   , FVl(PRUIO_AZ_PWMSS)                 '*< Factor for low velocity measurement.
   AS UInt32 _
