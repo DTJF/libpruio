@@ -144,14 +144,14 @@ int main(int argc, char **argv)
         switch (getchar()) { //                       evaluate keystroke
           case '2': if (w < 512) w <<= 1; break;
           case '8': if (w >   1) w >>= 1; break;
-          case '4': d =  1; break;
-          case '7': d =  2; break;
-          case '9': d = -2; break;
-          case '6': d = -1; break;
+          case '4': d = -1; break;
+          case '7': d = -2; break;
+          case '9': d =  2; break;
+          case '6': d =  1; break;
           case '0': d =  0; PIN_OUT(0,0,0,0); break;
           case '5': d =  0; move(Io, d); break;
-          case '1': if (d == 0) move(Io,  1); break;
-          case '3': if (d == 0) move(Io, -1); break;
+          case '1': if (d == 0) move(Io, -1); break;
+          case '3': if (d == 0) move(Io,  1); break;
           default: goto finish;
         };
         printf("\t\t%2d\t\t%3d", d, w); //              user information

@@ -7,10 +7,9 @@ def pwm_cap(stdscr):
   stdscr.clear()
   stdscr.nodelay(1)
 
-  #P_OUT = P9_21 # header pin for pwm output
-  P_OUT = P8_07 # header pin for pwm output
+  POUT = P9_21 # header pin for pwm output
+  #POUT = P8_07 # header pin for pwm output
   P_IN = P9_42  # header pin for cap input
-  e = ""        # error varible
 
   # Create a ctypes pointer to the pruio structure
   io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
@@ -23,8 +22,8 @@ def pwm_cap(stdscr):
     d1 = c_float(0.) #                Variable for calculated duty cycle
     f0 = c_float(31250) #                         The required frequency
     d0 = c_float(.5) #                           The required duty cycle
-    if pruio_pwm_setValue(io, P_OUT, f0, d0): #     configure output pin
-      raise AssertionError("failed setting output @P_OUT (%s)" % IO.Errr)
+    if pruio_pwm_setValue(io, POUT, f0, d0): #     configure output pin
+      raise AssertionError("failed setting output @POUT (%s)" % IO.Errr)
     #          pin config passed, now transfer local settings to PRU and
     if pruio_config(io, 1, 0x1FE, 0,     4): #             start IO mode
       raise AssertionError("config failed (%s)" % IO.Errr)
@@ -64,7 +63,7 @@ def pwm_cap(stdscr):
         elif c == ord(','): d0.value = 1.
         elif c == ord('.'): d0.value = 1.
         else: break
-        if pruio_pwm_setValue(io, P_OUT, f0.value, d0.value): # update output
+        if pruio_pwm_setValue(io, POUT, f0.value, d0.value): # update output
           raise AssertionError("failed setting PWM output (%s)" % IO.Errr)
         stdscr.addstr(0,4, form % (f0.value, d0.value)) # show new demand
   finally:

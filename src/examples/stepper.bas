@@ -107,13 +107,13 @@ WITH *io
         SELECT CASE AS CONST k '                react on user keystrokes
         CASE ASC("2") : IF w < 512 THEN w SHL= 1 '                faster
         CASE ASC("8") : IF w >   1 THEN w SHR= 1 '                slower
-        CASE ASC("4") : d =  1 '                            half step CW
-        CASE ASC("7") : d =  2 '                           half step CCW
-        CASE ASC("9") : d = -2 '                            full step CW
-        CASE ASC("6") : d = -1 '                           full step CCW
+        CASE ASC("4") : d = -1 '                            half step CW
+        CASE ASC("7") : d = -2 '                           half step CCW
+        CASE ASC("9") : d =  2 '                            full step CW
+        CASE ASC("6") : d =  1 '                           full step CCW
         CASE ASC("5") : d =  0 : move(io, d) '              powered stop
-        CASE ASC("1") : IF 0 = d THEN move(io,  1) '      single step CW
-        CASE ASC("3") : IF 0 = d THEN move(io, -1) '     single step CCW
+        CASE ASC("1") : IF 0 = d THEN move(io, -1) '      single step CW
+        CASE ASC("3") : IF 0 = d THEN move(io,  1) '     single step CCW
         CASE ASC("0") : d =  0 '                          unpowered stop
           .Gpio->setValue(P1, 0)
           .Gpio->setValue(P2, 0)
