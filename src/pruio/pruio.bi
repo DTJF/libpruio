@@ -74,7 +74,7 @@ ENUM ActivateDevice
   PRUIO_ACT_TIM6   = &b0100000000000 '*< Activate TIMER-6
   PRUIO_ACT_TIM7   = &b1000000000000 '*< Activate TIMER-7
   PRUIO_DEF_ACTIVE = &b1111111111111 '*< Activate all subsystems
-  PRUIO_ACT_FREMUX = &b1000000000000000 '*< Activate free lkm muxing, no kernel claims
+  PRUIO_ACT_FREMUX = &b1000000000000000 '*< Activate free LKM muxing, no kernel claims
 END ENUM
 
 

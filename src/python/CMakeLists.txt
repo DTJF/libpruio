@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 IF(NOT FbDoc_WORKS)
-  MSG_LOG(">> no target <python>! (tool fb-doc missing)")
+  MSG_LOG("!! no target <python>! (tool fb-doc missing)")
   RETURN()
 ENDIF()
 
@@ -15,7 +15,7 @@ FIND_LIBRARY(CType_BINARY
   NO_DEFAULT_PATH
 )
 IF(NOT CType_BINARY)
-  MSG_LOG(">> no target <python> (py_ctypes plugin missing in fb-doc project)")
+  MSG_LOG("!! no target <python> (py_ctypes plugin missing in fb-doc project)")
   RETURN()
 ENDIF()
 
@@ -34,7 +34,8 @@ FOREACH(bi ${SRC_BI})
 ENDFOREACH()
 
 ADD_CUSTOM_COMMAND(OUTPUT ${ResFile}
-  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib="pruio" -pyimports="from libprussdrv import tpruss_intc_initdata" ${InFiles} > ${ResFile}
+  COMMAND echo 'from libprussdrv import tpruss_intc_initdata' > ${ResFile}
+  COMMAND ${FbDoc_EXECUTABLE} ARGS -e "py_ctypes" -t -pylib="pruio" ${InFiles} >> ${ResFile}
   DEPENDS ${bidep} ${CType_BINARY}
   COMMENT "creating file ${ResFile}"
   WORKING_DIRECTORY ${PluginDir}

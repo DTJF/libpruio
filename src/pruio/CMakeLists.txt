@@ -41,7 +41,7 @@ SET(SRC_BI_EXTRA
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)
   FIND_PROGRAM(pasm_bin pasm DOC "pasm assembler" HINTS /usr/local/bin)
   IF(NOT pasm_bin)
-    MSG_LOG(">> no target <all> (pasm assembler missing)")
+    MSG_LOG("!! no target <all> (pasm assembler missing)")
     RETURN()
   ENDIF()
   EXECUTE_PROCESS(
@@ -94,20 +94,20 @@ IF(NOT DEFINED PASM_ASSEMBER_WORKS)
 ENDIF()
 
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)
-  MSG_LOG(">> no target <all> (pasm assembler problem)")
+  MSG_LOG("!! no target <all> (pasm assembler problem)")
   RETURN()
 ENDIF()
 
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi
-  COMMAND pasm ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Init pasm_init.p
+  COMMAND ${pasm_bin} ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Init pasm_init.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_init.p ${PASM_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
-  COMMAND pasm ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Run pasm_run.p
+  COMMAND ${pasm_bin} ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Run pasm_run.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
   DEPENDS pasm_run.p ${PASM_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

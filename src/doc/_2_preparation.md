@@ -8,17 +8,28 @@ yet. So you have to add a PPA (Personal Package Archive) to your
 package management sources:
 
 ~~~{.txt}
-sudo add-apt-repository "deb http://beagle.tuks.nl/debian unstable main"
+sudo add-apt-repository     "deb http://beagle.tuks.nl/debian unstable main"
 sudo add-apt-repository "deb-src http://beagle.tuks.nl/debian unstable main"
 wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
 ~~~
 
-Once prepared, you can download the library, the header files and the
-documentation by executing
+or manually add the text in double quotes to your
+`/etc/apt/sources.list` file. Once prepared, you can download and
+install the library, the header files and the documentation by
+executing (example for FreeBASIC source)
 
 ~~~{.txt}
-sudo apt-get install libpruio libpruio-dev libpruio-doc
+sudo apt-get update
+sudo apt-get install libpruio-bas libpruio-doc
 ~~~
+
+In case of C programming language replace `libpruio-bas` by
+`libpruio-dev`, and for Python choose `python-pruio`. There's also an
+examples package containing precompiled binaries, that you can install
+and run without dealing with source code (mind the wiring descriptions
+in chapter \ref ChaExamples).
+
+??? Tabelle
 
 The further stuff in this chapter is for advanced users who want to
 adapt the source code and recompile the binary.
@@ -216,22 +227,30 @@ Installation is a bit more difficult. The official way is to install
 the module in folder `/lib/modules/$(uname -r)/extra`, where `$(uname
 -r)` is the version of the current kernel running. This has the
 advantage that the module exactly matches the kernel specifications and
-the tool `modprobe` can handle intelligently loading. But the downside
+the tool `modprobe` can handle loading intelligently. But the downside
 is that you have to re-build and re-install the module each time when
-the kernel changes (ie. when `apt upgrade` installs an kernel update).
+the kernel changes (ie. when `apt upgrade` installs a kernel update).
 For this type of installation execute
 
     make lkm-vers-install
 
+Afterwards the LKM can get loaded by `sudo modprobe libpruio` and
+unloaded by `sudo modprobe -r libpruio`. To uninstall that the LKM
+execute
+
+    make lkm-vers-uninstall
+
 Alternatively \Proj provides a further install method where the binary
 is located in folder `/lib/modules` and doesn't get affected by kernel
-updates, but cannot get reached by the tool `modprobe` there. A
-`systemctl` service gets installed and enabled to load the module at
-boot time. For this type of installation execute
+updates, but cannot get reached by the tool `modprobe` at this
+location. Consequently a `systemctl` service gets installed and enabled
+to load the module for you at boot time. The service also adds a
+system user group named `pruio`. All members of this group have
+pinmuxing privileges. For this type of installation execute
 
     make lkm-glob-install
 
-After the next boot the LKM will be auto-loaded, and you can use
+From the next boot on the LKM will be auto-loaded, and you can use
 `systemctl` features for further handling. At runtime for the current
 session, execute
 
@@ -241,7 +260,7 @@ to unload the module, and
 
     sudo systemctl start libpruio.service
 
-to re-load it again. Or in generally for the next boots, execute
+to re-load it again. Or generally for the next boots, execute
 
     sudo systemctl disable libpruio.service
 
@@ -249,7 +268,18 @@ to disable auto-loading at boot-time, and
 
     sudo systemctl enable libpruio.service
 
-to enable auto-loading at boot-time.
+to enable auto-loading at boot-time. To uninstall that service and the
+LKM execute
+
+    make lkm-glob-uninstall
+
+
+\note The user group `pruio` doesn't get removed, it's still existent
+      after uninstall. To remove it execute `sudo nano /etc/group` and
+      remove the related line `pruio:x:...` from that file (change is
+      effective after next logout or boot). That way you can also
+      remove a user from that group by deleting only his name in the
+      line.
 
 
 # Build Binary  {#SecBuildBin}
@@ -333,7 +363,7 @@ Find the resulting file `pruio.py` in folder `src/python/libpruio`.
 \note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
 
 
-## DTBO File  {#sSecDtboFile}
+# DTBO File  {#sSecDtboFile}
 
 The device tree blob (DTBO) for libpruio has two purposes
 
@@ -371,11 +401,17 @@ to make sure that the overlay gets loaded:
 In the that same build folder, build the Debian packages by:
 
 ~~~{.txt}
-make package
+make deb
 ~~~
 
 This will create the packages
 
-- libpruio-bin.deb contains the runtime binary and the overlay
-- libpruio-dev.deb contains the C header files
-- libpruio-fbdev.deb contains the FreeBASIC header files
+- libpruio.deb containing the runtime binary and the LKM
+- libpruio-doc.deb containing HTML documentation tree
+- libpruio-examples.deb containing precompiled binaries to execute
+- libpruio-dev.deb containing the C header files and C examples
+- libpruio-bas.deb containing the FreeBASIC header files and examples
+- python-pruio containing the Python binding and example source
+
+and the auxiliary file to upload them to a PPA. Find the output in
+folder `debian/packages`.

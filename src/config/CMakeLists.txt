@@ -35,7 +35,7 @@ IF(NOT DEFINED DTC_COMPILER_WORKS)
   ENDIF()
 ENDIF()
 IF(NOT DTC_COMPILER_WORKS)
-  MSG_LOG(">> no target <lkm> (device tree compiler test failed)")
+  MSG_LOG("!! no target <lkm> (device tree compiler test failed)")
   RETURN()
 ENDIF()
 

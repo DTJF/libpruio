@@ -1,30 +1,32 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 IF(NOT CMAKE_C_COMPILER_WORKS)
-  MSG_LOG(">> no targets <lkm...> (C compiler problem)")
+  MSG_LOG("!! no targets <lkm...> (C compiler problem)")
   RETURN()
 ENDIF()
 
 #check linux headers
 SET(hpath /usr/src/linux-headers-${CMAKE_SYSTEM_VERSION})
 IF(NOT EXISTS ${hpath})
-  MSG_LOG(">> no targets <lkm...> (missing headers @ ${hpath})")
+  MSG_LOG("!! no targets <lkm...> (missing headers @ ${hpath})")
   RETURN()
 ENDIF()
 
 
 # use a subfolder x in order to avoid CMake overriding our Makefile
-IF(NOT (${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}))
+IF(NOT (${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
   SET(wdir ${CMAKE_CURRENT_BINARY_DIR}/x)
 ELSE()
   SET(wdir ${CMAKE_CURRENT_SOURCE_DIR}/x)
 ENDIF()
 
-SET(src  ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_NAME}.c)
+SET(serv_nam ${PROJ_NAME}.service)
 SET(lkm ${wdir}/${PROJ_NAME}.ko)
-CONFIGURE_FILE(systemctl.service.in ${CMAKE_BINARY_DIR}/debian/${PROJ_NAME}.service @ONLY)
-CONFIGURE_FILE(systemctl.service.in ${wdir}/${PROJ_NAME}.service @ONLY)
+SET(src ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_NAME}.c)
+SET(serv_deb ${CMAKE_SOURCE_DIR}/debian/${serv_nam})
 CONFIGURE_FILE(Makefile.in ${wdir}/Makefile @ONLY)
+CONFIGURE_FILE(systemctl.service.in ${wdir}/${serv_nam} @ONLY)
+CONFIGURE_FILE(systemctl.service.in ${serv_deb} @ONLY)
 
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
   COMMAND "${CMAKE_COMMAND}" -E copy ${src} ${wdir}
@@ -54,24 +56,29 @@ ADD_CUSTOM_TARGET(lkm-vers-uninstall
   )
 ADD_DEPENDENCIES(lkm-vers-install lkm)
 
-SET(lkm_serv ${PROJ_NAME}.service)
-SET(serv_tar /etc/systemd/system/${lkm_serv})
+SET(serv_tar /etc/systemd/system/${serv_nam})
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm_glob}
   COMMAND "${CMAKE_COMMAND}" -E copy ${lkm} ${lkm_glob}
+  DEPENDS ${lkm}
   #VERBATIM
   )
 ADD_CUSTOM_COMMAND(OUTPUT ${serv_tar}
-  COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${lkm_serv} ${serv_tar}
-  COMMAND systemctl enable ${PROJ_NAME}.service
-  COMMAND systemctl start ${PROJ_NAME}.service
+  COMMAND addgroup --system pruio > /dev/null
+  COMMAND "${CMAKE_COMMAND}" -E copy ${serv_deb} ${serv_tar}
+  COMMAND systemctl daemon-reload
+  COMMAND systemctl enable ${serv_nam}
+  COMMAND systemctl start ${serv_nam}
+  DEPENDS ${serv_deb} ${lkm_glob}
   #VERBATIM
   )
 ADD_CUSTOM_TARGET(lkm-glob-install DEPENDS ${lkm_glob} ${serv_tar} )
 ADD_CUSTOM_TARGET(lkm-glob-uninstall
+  COMMAND systemctl stop ${serv_nam} > /dev/null
+  COMMAND systemctl disable ${serv_nam} > /dev/null
   COMMAND "${CMAKE_COMMAND}" -E remove ${serv_tar}
-  COMMAND "${CMAKE_COMMAND}" -E remove ${lkm_glob}
   COMMAND systemctl daemon-reload
-  COMMAND /sbin/rmmod libpruio
+  COMMAND "${CMAKE_COMMAND}" -E remove ${lkm_glob}
+  #COMMAND /sbin/rmmod libpruio
   #VERBATIM
   )
 ADD_DEPENDENCIES(lkm-glob-install lkm)

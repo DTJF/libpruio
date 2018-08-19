@@ -5,6 +5,7 @@ Description=Load @PROJ_NAME@ loadable kernel module
 [Service]
 Type=oneshot
 ExecStart=/sbin/insmod /lib/modules/@PROJ_NAME@.ko
+ExecStartPost=/bin/chown root:pruio /sys/devices/platform/@PROJ_NAME@/state
 ExecStop=/sbin/rmmod @PROJ_NAME@
 StandardOutput=tty
 RemainAfterExit=yes

@@ -28,13 +28,13 @@ Released in 2018, August.
 
 - easy installation due to debian packages
 - PruIo::setPin() function implemented as callback for use in C and Python
-- no restrictions in case of lkm pinmuxing, smaller memory footprint, faster boot
+- no restrictions in case of LKM pinmuxing, smaller memory footprint, faster boot
 - pinmuxing either by dtbo overlay (compatible) or by loadable kernel module (powerful)
 
 ## Bugfixes:
 
 - build system hierarchy and messages
-- kernel 4.x problem with PWMSS.Pwm outputs fixed by lkm
+- kernel 4.x problem with PWMSS.Pwm outputs fixed by LKM
 
 
 # libpruio-0.4.0 {#SecV-0-4-0}

@@ -2,7 +2,7 @@ Source: libpruio
 Priority: extra
 Maintainer: Thomas Freiherr <Thomas.Freiherr@gmx.net>
 Build-Depends: dh-python, python-all (>= 2.6.6-3), debhelper (>= 9), dh-systemd (>= 1.5), autotools-dev, doxygen, graphviz, freebasic (>= 1.0.0), cmake (>= 2.8.3)
-#Build-Depends: , cmake (>= 2.8.3), cmakefbc, fbdoc (>= 0.4)
+#Build-Depends: , cmake (>= 2.8.3), cmakefbc, fbdoc (>= 0.4.2), fb_prussdrv, dtc, git
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://github.com/DTJF/libpruio
@@ -73,7 +73,7 @@ Description: PRUSS driver for BB A/D-IO
  /usr/share/doc/python-pruio/examples.  Sorry, the Auther isn't keen on
  packaging perfect python bindings. For now, you have to copy the
  example folder to your working directory and execute the code at user
- space.
+ space. (Proposals for optimization are welcome.)
 
 Package: libpruio-doc
 Section: doc
@@ -85,5 +85,5 @@ Description: HTML-documentation for libpruio-dev packages
  Beaglebone[Black|White|Green|Blue|Pocket-] hardware, providing
  features like PWM, eCAP, eQEP, ADC, GPIO, Timers. This package
  contains the documentation for using the library (packages
- libpruio-dev or libpruiofb-dev) in your own projects.  The docs ship
- in HTML format, starting at /usr/share/libpruio/index.html.
+ libpruio-dev or libpruiofb-dev) in your own projects.  The docs
+ install as HTML tree, starting at /usr/share/doc/libpruio/index.html.

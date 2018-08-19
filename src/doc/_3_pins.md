@@ -479,10 +479,11 @@ At boot time the operating system sets all pins in a save mode. You can
 output the default settings by executing the example
 [analyse.bas](sSecExaAnalyse) after power on reset.
 
-When you use a header pin in your code, \Proj checks its mode, and just
-continues in case of a match. Otherwise action is necessary to get you
-what you need. In order to set a header pin in an other mode, or just
-configure a pull-up or pull-down resistor, there're three methods:
+When you use a header pin in your code, \Proj first checks its mode,
+and just continues in case of a match. Otherwise action is necessary to
+get you what you need. In order to set a header pin in an other mode,
+or just configure a pull-up or pull-down resistor, there're three
+methods:
 
 -# \ref sSecCustom: configure at boot time the desired mode in an overlay
 -# \ref sSecUniversal: configure at boot time multiple custom modes in an overlay, and switch at runtime
@@ -491,14 +492,14 @@ configure a pull-up or pull-down resistor, there're three methods:
 Each method has its advantages and downsides. The first two are save
 and documented, but unflexible. There is no fixed border between them,
 ie. you can prepare multiple settings for some pins, and single
-settings for the others. You have to know each pin configuration before
-boot. The tools (device tree compiler) are not very reliable. Debuggung
-is a mess.
+settings for the others. Anyway, you have to know each pin
+configuration before boot. The tools (device tree compiler) are not
+very reliable. Debuggung is a mess.
 
 In contrast the loadable kernel module (LKM) is flexible and fast in
 executation speed. You need not prepare the pins before boot. Instead
 you can access all pins at runtime. It shortens the boot time and has a
-small memory foot print. But you can more easy raise conflicts with
+small memory footprint. But you can more easy raise conflicts with
 other systems, and a false configuration may damage your CPU.
 
 
@@ -570,11 +571,13 @@ loaded from there.
 
 This method is very similar to the previous \ref sSecCustom method. You
 need source code for a device tree overlay, that gets compiled to a
-binary blob, which gets loaded by the kernel finally. But the source
-code does not contain only a single cofiguration per pin. Instead it
-prepares multiple configurations for each (or just some) pins, and the
-mode can get adapted at runtime by SysFs activities. Therefor the
-programm must be executed with `sudo`.
+binary blob, which gets loaded by the kernel finally, either as uBoot
+overlay at boottime, or at runtime by `capemgr`.
+
+But the source code does not contain only a single cofiguration per
+pin. Instead the blob prepares multiple configurations for each (or
+just some) pins, and the mode can get adapted at runtime by SysFs
+activities. Therefor the programm must be executed with `sudo`.
 
 \Proj also ships with a tool to generate that kind of device tree blob,
 named `src/config/dts_universal.bas`. The same code is used to generate
@@ -636,13 +639,35 @@ splitting in multiple files.
 
 This method has no restriction to pre-prepared pin configurations. Each
 pin (or CPU ball) can get configured at runtime to any mode. No device
-tree overlay is necessary at boot time, and the feature can get enabled
-or disabled during a session (without re-bootimg).
+tree overlay for pinmuxing is necessary at boot time (exept
+`AM335X-PRU-UIO` that loads `uio_pruss` kernel driver and enables the
+PRUSS). And the feature can get enabled or disabled at runtime during a
+session (without re-booting).
+
+As always, when the pins are prepared in the matching mode before
+starting the \Proj application, it runs with user privileges. In
+contrast it stops, when pinmuxing is required. The application needs
+special privileges, similar to the method described in section \ref
+sSecUniversal. So you can either execute the application with `sudo`.
+That method has the disadvantage that any file written by the code
+usually needs administrator privileges for read access.
+
+Therefor \Proj offers a further method. It installs a new user group
+named `pruio` in the system area (GID < 1000). All users who are member
+in this group have pinmuxing privileges. So make yourself a member of
+this group, and you can change pinmuxing configuration without `sudo`:
+
+    sudo adduser YOUR_USER_NAME pruio
+
+By default, the pinmuxing feature is limited to the free header pins,
+which are not claimed by other subsystems by the kernel. However, this
+safety feature can get disabled in the constructor PruIo::PruIo()
+parameters.
 
 FIXME
 
 In contrast the second solution is easy and powerfull at the same time.
-\Proj ships with a loadable kernel module (lkm). When this module is
+\Proj ships with a loadable kernel module (LKM). When this module is
 taint to the kernel and you run your program with administrator
 privileges, then \Proj can override any pinmux setting at runtime, even
 CPU balls claimed by other systems and restricted by the kernel. (So be

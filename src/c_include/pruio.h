@@ -502,7 +502,7 @@ enum activateDevice{
 , PRUIO_ACT_TIM6  = 1 << 11  //!< Activate TIMER-6.
 , PRUIO_ACT_TIM7  = 1 << 12  //!< Activate TIMER-7.
 , PRUIO_DEF_ACTIVE = 0x1FFF  //!< Activate all subsystems.
-, PRUIO_ACT_FREMUX = 0xFFF8   //!< Activate free lkm muxing
+, PRUIO_ACT_FREMUX = 0xFFF8   //!< Activate free LKM muxing
 };
 
 
@@ -558,10 +558,10 @@ typedef struct pruIo{
   uint8 BallGpio[PRUIO_AZ_BALL + 1];
 //! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
   struct __pruss_intc_initdata IntcInit;
-  uint32 MuxFnr; //!< FreeBASIC file number for lkm pinmuxing
+  uint32 MuxFnr; //!< FreeBASIC file number for LKM pinmuxing
   char
     *MuxAcc,     //!< pathfile for dtbo pinmuxing
-    (*setPin)(pruIo*, uint8, uint8); //!< callback function for lkm/dtbo pinmuxing
+    (*setPin)(pruIo*, uint8, uint8); //!< callback function for LKM/dtbo pinmuxing
 } pruIo;
 
 /** \brief Wrapper function for the constructor PruIo::PruIo().

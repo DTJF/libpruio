@@ -12,9 +12,10 @@ MODULE_VERSION("0.0");              ///< The version of the module
 //MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
 
 static struct platform_device *pdev;
-static   void __iomem *mem0, *mem1, *mem2;
-//static   void __iomem *mem2;
-static unsigned int pruss_org, tbclk_org;
+//static   void __iomem *mem0, *mem1, *mem2;
+static   void __iomem *mem1, *mem2;
+//static unsigned int pruss_mem, tbclk_org;
+static unsigned int tbclk_org;
 
 
 static unsigned char hex1(char t){
@@ -26,8 +27,10 @@ static unsigned char hex1(char t){
 static ssize_t state_read(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "tbclk=%u/%u (orig/curr)\nprclk=%u/%u (orig/curr)"
-               , tbclk_org, ioread16(mem1), pruss_org, ioread32(mem0));
+	return sprintf(buf, "tbclk=%u/%u (orig/curr)"
+               , tbclk_org, ioread16(mem1));
+	//return sprintf(buf, "tbclk=%u/%u (orig/curr)\nprclk=%u/%u (orig/curr)"
+               //, tbclk_org, ioread16(mem1), pruss_mem, ioread32(mem0));
 }
 
 static ssize_t state_write(struct device *dev,
@@ -73,7 +76,7 @@ static ssize_t state_write(struct device *dev,
 	return count;
 }
 
-static DEVICE_ATTR(state, S_IWUSR | S_IRUGO, state_read, state_write);
+static DEVICE_ATTR(state, S_IWUSR | S_IRUGO | S_IWGRP | S_IRGRP, state_read, state_write);
 
 static struct attribute *libpruio_attributes[] = {
 	&dev_attr_state.attr,
@@ -86,27 +89,25 @@ static const struct attribute_group libpruio_attr_group = {
 
 
 static int fail(int N, char* Text, int Ret){
-  //if(N >= 5) sysfs_remove_group(&(&pdev->dev)->kobj, &libpruio_attr_group);
+  if(N >= 5) sysfs_remove_group(&(&pdev->dev)->kobj, &libpruio_attr_group);
   if(N >= 4) platform_device_unregister(pdev);
   if(N >= 3) iounmap(mem2);
   if(N >= 2) {iowrite16(tbclk_org, mem1); iounmap(mem1);}
-  if(N >= 1) {iowrite32(pruss_org, mem0); iounmap(mem0);}
-	if(Text) printk(KERN_ALERT "libpruioInitError: %s\n", Text);
+  //if(N >= 1) {iowrite32(pruss_mem, mem0); iounmap(mem0);}
+	if(Text) printk(KERN_ALERT "libpruioInit: failed %s\n", Text);
   return Ret;
 }
 
 static int __init libpruio_init(void){
-  int val;
+  //mem0 = ioremap(0x44e00c00uL, 0x10uL);
+	//if (!mem0) return fail(0, "ioremap pruss_clk", -ENODEV);
 
-  mem0 = ioremap(0x44e00c00uL, 0x10uL);
-	if (!mem0) return fail(0, "ioremap pruss_clk", -ENODEV);
-
-  pruss_org = ioread32(mem0);
-  //iowrite32(pruss_org | 0x7, mem0);
+  //pruss_mem = ioread32(mem0);
+  //if (0xE0 != (pruss_mem & 0xE0))
+    //iowrite32((pruss_mem & 0xFFFFFF1F) | 0xE0, mem0);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);
 	if (!mem1) return fail(1, "ioremap PWM_tbclk", -ENODEV);
-
   tbclk_org = ioread16(mem1);
   iowrite16(tbclk_org | 0x7, mem1);
 
@@ -117,14 +118,14 @@ static int __init libpruio_init(void){
   if (IS_ERR(pdev)) fail(3, "register pdev", PTR_ERR(pdev));
 
 	/* Register sysfs hooks */
-	val = sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group);
-	if (val) fail(4, "create sysfs group", val);
+	if (sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group))
+	  return fail(4, "create sysfs group", -ENODEV);
 
   return 0;
 }
 
 static void __exit libpruio_exit(void){
-  fail(3, NULL, 0);
+  fail(99, NULL, 0);
 }
 
 module_init(libpruio_init);

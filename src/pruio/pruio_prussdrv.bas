@@ -18,6 +18,8 @@ module are included.
 #INCLUDE ONCE "dir.bi"
 ' The header for kernel drivercode.
 #INCLUDE ONCE "pruio_prussdrv.bi"
+' Header file with convenience macros and header pin arrays.
+#INCLUDE ONCE "pruio_pins.bi"
 
 
 '* \brief The data structure, global at module level.
@@ -503,12 +505,17 @@ FUNCTION find_claims() AS ZSTRING PTR
   VAR fd = open_(KERNEL_PINMUX_PINS, O_RDONLY) : IF fd < 0   THEN RETURN 0
   VAR r = read_(fd, @t, TBUFF_SIZE)
   close_(fd)
-' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1
-  mux = STRING(toffs, 0)
-  VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _ ' gain some speed
+  mux = STRING(toffs, 0) & "internal CPU ball" & CHR(0)
+  VAR m = CAST(SHORT PTR, SADD(mux))
+  FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL   : m[i] = toffs : NEXT
+  FOR i AS INTEGER = 0 TO UBOUND(P8_Pins) : m[P8_Pins(i)] = 0 : NEXT
+  FOR i AS INTEGER = 0 TO UBOUND(P9_Pins) : m[P9_Pins(i)] = 0 : NEXT
+  m[JT_04] = 0 : m[JT_05] = 0
+  VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _
     , c = CVL("pin ") _
     , a = 1, e = INSTR(t, !"\n")
+' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
   WHILE e
     IF *CAST(LONG PTR, p + a - 4) = c THEN ' check "pin "
       VAR n = VALINT(*(p + a)) : IF n > PRUIO_AZ_BALL    THEN EXIT WHILE
