@@ -5,7 +5,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 IF(NOT COMMAND FB_DOCUMENTATION)
   INCLUDE(UseFb-Doc)
   IF(NOT COMMAND FB_DOCUMENTATION)
-    MSG_LOG(">> no target doc!")
+    MSG_LOG(">> no targets <doc...> (UseFb-doc.cmake failed)")
     RETURN()
   ENDIF()
 ENDIF()
@@ -46,3 +46,5 @@ INSTALL(
   COMPONENT doc
   OPTIONAL
   )
+
+MSG_LOG(">> targets <doc...> OK!")

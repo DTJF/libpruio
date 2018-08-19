@@ -475,19 +475,178 @@ Find example code in qep.bas.
 
 # Pinmuxing  {#SecPinmuxing}
 
-This section describes how to set a header pin in the desired mode. At
-startup (= POR = Power On Reset) the operating system sets all pins in
-a save mode. Execute example [analyse.bas](sSecExaAnalyse) to see a
-list of the default header pin configuration.
+At boot time the operating system sets all pins in a save mode. You can
+output the default settings by executing the example
+[analyse.bas](sSecExaAnalyse) after power on reset.
 
-When you set up a header pin for use with \Proj, the pin mode gets
-checked first. When it matches the desired feature, the pin operation
-gets done immediately. Otherwise, if the default configuration doesn't
-match the desired function, \Proj tries to adapt the pin mode first.
-Therefor it needs pinmuxing capability, ie. by loading the universal
-overlay. ???
+When you use a header pin in your code, \Proj checks its mode, and just
+continues in case of a match. Otherwise action is necessary to get you
+what you need. In order to set a header pin in an other mode, or just
+configure a pull-up or pull-down resistor, there're three methods:
+
+-# \ref sSecCustom: configure at boot time the desired mode in an overlay
+-# \ref sSecUniversal: configure at boot time multiple custom modes in an overlay, and switch at runtime
+-# \ref sSecLKM: load the kernel module, and switch at runtime
+
+Each method has its advantages and downsides. The first two are save
+and documented, but unflexible. There is no fixed border between them,
+ie. you can prepare multiple settings for some pins, and single
+settings for the others. You have to know each pin configuration before
+boot. The tools (device tree compiler) are not very reliable. Debuggung
+is a mess.
+
+In contrast the loadable kernel module (LKM) is flexible and fast in
+executation speed. You need not prepare the pins before boot. Instead
+you can access all pins at runtime. It shortens the boot time and has a
+small memory foot print. But you can more easy raise conflicts with
+other systems, and a false configuration may damage your CPU.
 
 
-## Loading an Overlay  {#sSecLoadOverlay}
+## Custom overlay  {#sSecCustom}
 
-## Creating an Overlay  {#sSecCreateOverlay}
+A custom setting contains a single configuration for each pin. Once you
+finished your development and burned the design on a printed circuit
+board, this is the prefered method for setup.
+
+- The pinmux matches your design,
+- it's loaded safely by the kernel, and
+- the software can run from user space (no administrator privileges).
+
+But this is the final state, and it's a long way to get there.
+
+In order to load a custom overlay, you need to create the device tree
+blob first. Therefor a source code file (suffix `*.dts`) is necessary,
+containing the pin claims and configurations. Also code to export the
+pins to SysFs is necessary, and the overlay should load the `uio_pruss`
+kernel module and enable the PRUSS.
+
+\Proj ships with a tool that can handle all that stuff for you. You
+specify the bare minimum in a source code file, compile the code and
+execute the binary. It will create a matching device tree source code,
+and - when executed with `sudo` - will also compile the device tree
+blob to the correct place, so that you can load it as usual (either as
+uBoot overlay or by `capemgr`).
+
+Therefor use the source code `src/config/dts_custom.bas` as a template,
+rename it and adapt it to your needs, by editing the part
+
+~~~{txt}
+'* The file name.
+#DEFINE FILE_NAME "pruio_custom"
+'* The version.
+#DEFINE VERS_NAME "00A0"
+'* The folder where to place the compiled overlay binary.
+VAR TARG_PATH = "/lib/firmware"
+'* The BB model.
+VAR COMPATIBL = "ti,beaglebone-black"
+
+''''''''''''''''''''''''''''' create settings for all required pins here
+'M(P8_09) = CHR(7 + _I_)   ' example: pin  9 at header P8 in mode 7 (GPIO) as input (pulldown resistor)
+'M(P9_21) = CHR(3 + PWMo)  ' example: pin 21 at header P9 in mode 3 (PWM) as output (no resistor)
+M(P9_14) = CHR(6 + PWMo)  ' example: pin 14 at header P9 in mode 6 (PWMo) as output (no resistor)
+M(P9_42) = CHR(0 + CAPi)  ' example: pin 42 at header P9 in mode 0 (eCAP) as input (pulldown resistor)
+''''''''''''''''''''''''''''''''''''''''''''''''''''''' end of adaptions
+~~~
+
+The array named `M(...)` is of type `UBYTE` and contains the
+configuration for the header pins (or CPU balls). This code outputs a
+file named `pruio_custom-00A0.dts` in the current directory, ready to
+get compiled to a device tree blob that
+
+- claims PRUSS and pins P9_14 + P9_42
+- sets pin P9_14 in PWM output mode
+- sets pin P9_42 in CAP input mode
+- enables the PRUSS
+
+When you execute the binary with `sudo`, the source code also gets
+compiled to `/lib/firmware/pruio_custom-00A0.dtbo`, ready to get
+loaded from there.
+
+\note For capemgr loading use `echo pruio_custom > ...` in this case (=
+      drop the `-00A0.dtbo` part).
+
+
+## Universal overlay  {#sSecUniversal}
+
+This method is very similar to the previous \ref sSecCustom method. You
+need source code for a device tree overlay, that gets compiled to a
+binary blob, which gets loaded by the kernel finally. But the source
+code does not contain only a single cofiguration per pin. Instead it
+prepares multiple configurations for each (or just some) pins, and the
+mode can get adapted at runtime by SysFs activities. Therefor the
+programm must be executed with `sudo`.
+
+\Proj also ships with a tool to generate that kind of device tree blob,
+named `src/config/dts_universal.bas`. The same code is used to generate
+the source file `*.dts` and compile it. But in contrast the array named
+`M(...)` contains multiple configurations for each pin. All standard
+configurations are prepared in header files, and can get loaded by
+
+~~~{txt}
+' quick & dirty: first create settings for all pins ...
+#INCLUDE ONCE "P8.bi"
+#INCLUDE ONCE "P9.bi"
+#INCLUDE ONCE "JTag.bi"
+~~~
+
+Afterwards you can (and should) reduce the configurations to the set of
+desired pins. Therefor just empty the entries in array `M(...)` for the
+pins your wont use, by code like
+
+~~~{txt}
+M(P8_25) = "" ' #4:BB-BONE-EMMC-2G
+~~~
+
+All remaining pins will get claimed and configured by the resulting
+device tree blob, that gets generated after compiling and executing the
+FreeBASIC code. When executing with `sudo`, the blob source gets
+compiled to folder `lib/firmware/libpruio-00A0.dtbo`, from where it can
+get loaded by the kernel.
+
+\note The device tree compiler has a bug (effective up to kernel
+      version 4.4.x). When the source file contains a certain number of
+      pin configurations, the compiler stops compiling, without any
+      warning or error message. The resulting output file is validate,
+      but contains just a subset of the source file configuration.
+
+\note When your blob tries to use a pin claimed by another subsystem
+      (ie. HDMI), this pin configuration doesn't load. Check the output
+      of `dmesg` for errors.
+
+This method is pretty similar to the solution used by tool
+`config-pin`, but unfortunately it cannot be compatible. While
+`config-pin` uses human readable pin naming, \Proj uses byte coding
+instead. This is feasible since the user need not deal with numbers.
+Instead he can handle the byte code for pin numbers and modes by the
+prepared macros. The \Proj code can compute adaptions without
+containing long lists of text description. The code executes faster,
+consumes less memory, and is more easy to maintain.
+
+There's another difference. While `config-pin` allows to set double
+pins `P9_41` and `P9_42` in contrary output modes, \Proj handles taht
+pins savely, since there are no `P9_91` and `P9_92` pins.
+
+Anyway, the desired mode for the pins in use has to be prepared before
+boot. All prepared modes get loaded at boot time. This slows down boot
+time and consumes a lot of kernel space memory. Big overlays needs
+splitting in multiple files.
+
+
+## LKM  {#sSecLKM}
+
+This method has no restriction to pre-prepared pin configurations. Each
+pin (or CPU ball) can get configured at runtime to any mode. No device
+tree overlay is necessary at boot time, and the feature can get enabled
+or disabled during a session (without re-bootimg).
+
+FIXME
+
+In contrast the second solution is easy and powerfull at the same time.
+\Proj ships with a loadable kernel module (lkm). When this module is
+taint to the kernel and you run your program with administrator
+privileges, then \Proj can override any pinmux setting at runtime, even
+CPU balls claimed by other systems and restricted by the kernel. (So be
+careful what you're doing!). This solution gives you all freedom to
+focus on you target and get the best out of your system, without
+dealing with kernel qircks and pitfalls. Find details on how to setup
+your system in section \ref SecLkm.

@@ -140,7 +140,7 @@ HTML_OUTPUT      = html
       COMMAND ${FbDoc_SYNTAX} ${htmconf}
       DEPENDS ${ARG_BAS_SRC} ${ARG_DEPENDS}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      VERBATIM
+      #VERBATIM
       )
     ADD_CUSTOM_TARGET(doc_htm DEPENDS ${htmfile})
     ADD_DEPENDENCIES(doc doc_htm)
@@ -165,7 +165,7 @@ LATEX_OUTPUT     = latex
       COMMAND ${CMAKE_COMMAND} -E rename ${reffile} ${pdffile}
       DEPENDS ${ARG_BAS_SRC} ${ARG_DEPENDS}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      VERBATIM
+      #VERBATIM
       )
     ADD_CUSTOM_TARGET(doc_pdf DEPENDS ${pdffile})
     ADD_DEPENDENCIES(doc doc_pdf)

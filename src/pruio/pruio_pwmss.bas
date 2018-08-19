@@ -589,6 +589,43 @@ FUNCTION PwmMod.setValue CDECL( _
 END FUNCTION
 
 
+
+/'* \brief Synchronize PWMSS-PWM modules
+\param Mask The bit-mask to set
+\returns Zero on success (otherwise a string with an error message).
+
+All clocks of the PWM modules in the PWM sub systems can get enabled or
+disabled by a single write access to TBCLK register in the controll
+modules (CM). This feature allows to syncronise PWM signals generated
+by several modules on different subsystem. The process is
+
+-# stopp the related PWMSS-PWM modules
+-# configure the registers
+-# start the clocks simultaneou0sly
+
+In order to stop a clock, set its bit in the Mask parameter to 0
+(zero). Bit 2 is for PWMSS2-PWM, Bit 1 for PWMSS1-PWM and Bit 0 for
+PWMSS0-PWM module.
+
+Once you configured the modules and uploaded the configuration to the
+PRUSS (by calling PruIo::config() ) you can start all PWM modules by a
+further call with their Mask bits set to 1. See \ArmRef{15.2.2.3.4} for
+details,
+
+Examples:
+
+    .sync(&b000) ' -> stopps all PWM module clocks
+    .sync(&b101) ' -> starts clocks of modules 2 and 0, counters synchonized
+
+\since 0.6
+'/
+FUNCTION PwmMod.sync CDECL( _
+  BYVAL Mask AS UInt8) AS ZSTRING PTR
+  IF Top->MuxFnr > 255                 THEN RETURN @"libpruio LKM missing"
+  PRINT #Top->MuxFnr, "08" & HEX(Mask, 2) : RETURN 0
+END FUNCTION
+
+
 /'* \brief The constructor for the CAP feature of the PWMSS.
 \param T A pointer of the calling PruIo structure.
 

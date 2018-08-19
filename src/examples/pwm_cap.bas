@@ -48,6 +48,8 @@ WITH *io
     IF .config(1, 2) THEN _ '                upload configuration to PRU
                                    ?"config failed: " & *.Errr : EXIT DO
 
+    ?!"\n--> " & LEFT("Frequency: " & f0 & SPACE(10), 20) _
+               & LEFT(", Duty: " & d0 & SPACE(10), 20) '    initial info
     WHILE 1
       VAR k = ASC(INKEY()) '*< The key code.
       IF k THEN

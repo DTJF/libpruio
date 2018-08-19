@@ -133,9 +133,10 @@ FUNCTION GpioUdt.config CDECL( _
       , m = 1 SHL n           ' mask for bit
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
 
-    VAR x = iif(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
-    IF x <> .BallConf[Ball] THEN IF .setPin(Ball, x) THEN         RETURN .Errr
-    IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV       THEN         RETURN 0 ' input, we're done
+    VAR x = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
+    IF x <> .BallConf[Ball] THEN ModeSet(Ball, x)
+    'IF x <> .BallConf[Ball] THEN if .setPin(Top, Ball, x) then return .Errr
+    IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV               THEN RETURN 0 ' input, we're done
 
     WITH *Conf(i)
       IF BIT(Mo, 5) THEN '                                    input Ball
@@ -193,13 +194,13 @@ FUNCTION GpioUdt.setValue CDECL( _
       , m = 1 SHL (r AND 31) _ ' mask for bit
       , x = IIF(Mo > 1, Mo AND &b1111111, PRUIO_GPIO_OUT0) '*< the pinmux mode
 
-    IF 2 <> Conf(i)->ClVa THEN                 .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
+    IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
     IF .BallConf[Ball] <> x THEN
       SELECT CASE AS CONST Mo
       CASE 0: x = PRUIO_GPIO_OUT0
       CASE 1: x = PRUIO_GPIO_OUT1
       CASE ELSE : x = Mo
-      END SELECT :                                          return config(Ball, x)
+      END SELECT :                                                return config(Ball, x)
     end if
 
     IF Mo = 1 ORELSE BIT(Mo, 7) THEN
@@ -210,14 +211,14 @@ FUNCTION GpioUdt.setValue CDECL( _
       Conf(i)->SETDATAOUT   AND= NOT m
     END IF
 
-    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
+    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                            RETURN 0
 
     WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
     .DRam[4] = Conf(i)->SETDATAOUT
     .DRam[3] = Conf(i)->CLEARDATAOUT
     .DRam[2] = Conf(i)->DeAd + &h100
     .DRam[1] = PRUIO_COM_GPIO_OUT SHL 24
-  END WITH :                                                    RETURN 0
+  END WITH :                                                      RETURN 0
 END FUNCTION
 
 
@@ -253,8 +254,8 @@ FUNCTION GpioUdt.Value CDECL(BYVAL Ball AS UInt8) AS Int32
     VAR r = .BallGpio(Ball) _ ' resulting GPIO (index and bit number)
       , i = r SHR 5 _         ' index of GPIO
       , n = r AND 31          ' number of bit
-    IF 2 <> Conf(i)->ClVa THEN                    .Errr = E0 : RETURN -1 ' GPIO subsystem not enabled
-    IF .BallConf[Ball] AND &b111 <> 7 THEN        .Errr = E1 : RETURN -1 ' no GPIO pin
+    IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN -1 ' GPIO subsystem not enabled
+    IF .BallConf[Ball] AND &b111 <> 7 THEN           .Errr = E1 : RETURN -1 ' no GPIO pin
                                    RETURN IIF(BIT(Raw(i)->Mix, n), 1, 0)
   END WITH
 END FUNCTION

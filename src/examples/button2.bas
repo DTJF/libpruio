@@ -13,7 +13,7 @@ Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all button.bas`
 
-\since 0.0.2
+\since 0.6
 '/
 
 ' include libpruio

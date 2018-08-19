@@ -12,7 +12,7 @@
 #
 
 # This file is used by EnableLanguage in cmGlobalGenerator to
-# determine that the selected fbc compiler can actually compile
+# determine that the selected Fbc compiler can actually compile
 # and link the most basic of programs.   If not, a fatal error
 # is set and cmake stops processing commands and will not generate
 # any makefiles or projects.
@@ -28,28 +28,18 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
   SET(testfile testFbcCompiler)
   SET(testpath ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp)
   FILE(WRITE ${testpath}/${testfile}.bas
-    "?__FB_VERSION__;\nSCREEN 100,100\nEND SIZEOF(ANY PTR)\n")
+    "?__FB_VERSION__;\nEND SIZEOF(ANY PTR)\n")
   EXECUTE_PROCESS(
-    COMMAND fbc -v -m ${testfile} ${testfile}.bas
+    COMMAND ${CMAKE_Fbc_COMPILER} -v -m ${testfile} ${testfile}.bas
     WORKING_DIRECTORY ${testpath}
     RESULT_VARIABLE compiler_error
 	  OUTPUT_VARIABLE output
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   FILE(REMOVE ${testpath}/${testfile}.bas)
-
-  IF(compiler_error)
+  IF(NOT output)
     SET(log "  Compiler test failed: [${output}]\n")
   ELSE()
-    EXECUTE_PROCESS(
-      COMMAND ./${testfile}
-      WORKING_DIRECTORY ${testpath}
-      RESULT_VARIABLE CMAKE_Fbc_SIZEOF_DATA_PTR
-	    OUTPUT_VARIABLE CMAKE_Fbc_COMPILER_ID
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
-    FILE(REMOVE ${testpath}/${testfile})
-
     # Construct a regex to match linker lines.  It must match both the
     # whole line and just the command (argv[0]).
     SET(linker_regex "^( *|.*[/\\])(linking:|([^/\\]+-)?ld|collect2)[^/\\]*( |$)")
@@ -125,21 +115,29 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
     SET(CMAKE_Fbc_IMPLICIT_LINK_DIRECTORIES "${implicit_dirs}")
 
     FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-      "Analysing the fbc compiler passed with "
+      "Analysing the Fbc compiler passed with "
       "the following output:\n${log}\n\n")
     UNSET(CMAKE_Fbc_COMPILER_WORKS CACHE)
     SET(CMAKE_Fbc_COMPILER_WORKS 1)
+
+    EXECUTE_PROCESS(
+      COMMAND ./${testfile}
+      WORKING_DIRECTORY ${testpath}
+      RESULT_VARIABLE CMAKE_Fbc_SIZEOF_DATA_PTR
+	    OUTPUT_VARIABLE CMAKE_Fbc_COMPILER_ID
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    FILE(REMOVE ${testpath}/${testfile})
   ENDIF()
   SET(Fbc_TEST_WAS_RUN 1)
-  MESSAGE(STATUS "Check for working Fbc compiler OK ==> ${CMAKE_Fbc_COMPILER} (${CMAKE_Fbc_COMPILER_ID})")
 ENDIF()
 
 IF(CMAKE_Fbc_COMPILER_WORKS)
+  MESSAGE(STATUS "Found working Fbc compiler ==> ${CMAKE_Fbc_COMPILER} (${CMAKE_Fbc_COMPILER_ID})")
   IF(FBC_TEST_WAS_RUN)
-    MESSAGE(STATUS "Compiler: ${CMAKE_Fbc_COMPILER} -- works")
     FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-      "Determining if the fbc compiler works passed with "
-      "the following output:\n${OUTPUT}\n\n")
+      "Determining if the Fbc compiler works passed with "
+      "the following output:\n${output}\n\n")
   ENDIF()
 
   # Re-configure to save learned information.
@@ -150,16 +148,15 @@ IF(CMAKE_Fbc_COMPILER_WORKS)
     @ONLY IMMEDIATE # IMMEDIATE must be here for compatibility mode <= 2.0
     )
   INCLUDE(${CMAKE_PLATFORM_INFO_DIR}/CMakeFbcCompiler.cmake)
-
 ELSE()
-  MESSAGE(STATUS "Check for working fbc compiler: ${CMAKE_Fbc_COMPILER} -- broken")
-  MESSAGE(STATUS "To force a specific fbc compiler set the FBC environment variable")
-  MESSAGE(STATUS "    ie - export FBC=\"/usr/local/bin/fbc\"")
   FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
-    "Determining if the fbc compiler works failed with "
-    "the following output:\n${OUTPUT}\n\n")
+    "Determining if the Fbc compiler works failed with "
+    "the following output:\n${output}\n\n")
   MESSAGE(FATAL_ERROR
-    "The fbc compiler \"${CMAKE_Fbc_COMPILER}\" is not able to compile a simple test program.\n"
-    "It fails with the following output:\n---8<---\n${OUTPUT}\n--->8---\n"
-    "CMake will not be able to correctly generate this project.")
+      "Check for working Fbc compiler failed: ${CMAKE_Fbc_COMPILER}."
+     " This compiler is not able to compile a simple test program."
+     " It fails with the following output:\n---8<---\n${output}\n--->8---"
+    "\nCMake will not be able to correctly generate this project."
+    "\n  To force a specific Fbc compiler set the FBC environment variable"
+    "\n  ie: export FBC=\"/usr/local/bin/fbc\"\n")
 ENDIF()

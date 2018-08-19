@@ -12,7 +12,7 @@ Copyright 2014-\Year by \Mail
 
 Thanks for C code translation: Nils Kohrs <nils.kohrs@gmail.com>
 
-Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio -lprussdrv`
+Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio`
 
 \since 0.4.0
 */

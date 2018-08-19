@@ -14,6 +14,7 @@ SET(SRC_BAS
   "pruio_gpio.bas"
   "pruio_pwmss.bas"
   "pruio_timer.bas"
+  "pruio_prussdrv.bas"
   "pruio_c_wrapper.bas"
   CACHE FILEPATH "BASIC source files" FORCE
   )
@@ -27,6 +28,8 @@ SET(SRC_BI
   "pruio_gpio.bi"
   "pruio_pwmss.bi"
   "pruio_timer.bi"
+  "pruio_intc.bi"
+  "pruio_prussdrv.bi"
   CACHE FILEPATH "BASIC header files" FORCE
   )
 
@@ -34,26 +37,34 @@ SET(SRC_BI_EXTRA
     "pruio_out.bi"
   )
 
-IF(NOT LIBPRUSSDRV_FOUND)
-  FIND_PACKAGE(LIBPRUSSDRV)
-ENDIF()
-
 # Check the PRU assembler pasm (presence and version):
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)
+  FIND_PROGRAM(pasm_bin pasm DOC "pasm assembler" HINTS /usr/local/bin)
+  IF(NOT pasm_bin)
+    MSG_LOG(">> no target <all> (pasm assembler missing)")
+    RETURN()
+  ENDIF()
   EXECUTE_PROCESS(
-    COMMAND pasm
+    COMMAND ${pasm_bin} # no ARGS -> helptext
     RESULT_VARIABLE assembler_works
-	  OUTPUT_VARIABLE output
+	  OUTPUT_VARIABLE pasm_vers
+	  ERROR_VARIABLE pasm_opts
     OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
     )
 
   IF(assembler_works EQUAL "1")
-    STRING(REGEX REPLACE "\r?\n" ";" output_lines "${output}")
-    SET(fb_option FALSE)
+    STRING(REGEX REPLACE "\r?\n" ";" output_lines ${pasm_vers})
     FOREACH(line IN LISTS output_lines)
       IF(line MATCHES "PRU Assembler Version")
         SET(PASM_ASSEMBER_ID ${line})
-      ELSEIF(line MATCHES "f  - Create 'FreeBasic array' binary output")
+      ENDIF()
+    ENDFOREACH()
+
+    STRING(REGEX REPLACE "\r?\n" ";" output_lines ${pasm_opts})
+    SET(fb_option FALSE)
+    FOREACH(line IN LISTS output_lines)
+      IF(line MATCHES "f  - Create 'FreeBasic array' binary output")
         SET(fb_option "f")
         BREAK()
       ELSEIF(line MATCHES "y  - Create 'FreeBasic array' binary output")
@@ -63,14 +74,14 @@ IF(NOT DEFINED PASM_ASSEMBER_WORKS)
     ENDFOREACH()
 
     IF(fb_option)
-      MESSAGE(STATUS "Check for working PASM assembler OK ==> ${PASM_ASSEMBER_ID}")
+      MESSAGE(STATUS "Check for PASM assembler OK ==> Option -${fb_option} in ${PASM_ASSEMBER_ID}")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Determining if the pasm assembler works passed with "
         "the following output:\n${output}\n\n")
       SET(PASM_ASSEMBER_WORKS "${fb_option}" CACHE STRING "pasm assembler" FORCE)
       MARK_AS_ADVANCED(PASM_ASSEMBER_WORKS)
     ELSE()
-      MESSAGE(STATUS "Wrong PASM assembler version!")
+      MESSAGE(STATUS "PASM assembler insufficient! (${PASM_ASSEMBER_ID})")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
         "Determining if the pasm assembler works failed with "
         "the following output:\n${output}\n\n")
@@ -82,8 +93,8 @@ IF(NOT DEFINED PASM_ASSEMBER_WORKS)
   ENDIF()
 ENDIF()
 
-IF(NOT (LIBPRUSSDRV_FOUND AND PASM_ASSEMBER_WORKS AND CMAKE_Fbc_COMPILER_WORKS))
-  MSG_LOG(">> no target all!")
+IF(NOT DEFINED PASM_ASSEMBER_WORKS)
+  MSG_LOG(">> no target <all> (pasm assembler problem)")
   RETURN()
 ENDIF()
 
@@ -114,16 +125,4 @@ SET_TARGET_PROPERTIES(pruiofbcode PROPERTIES
 ADD_DEPENDENCIES(pruiofbcode pasm)
 ADD_Fbc_SRC_DEPS(pruiofbcode)
 
-# install the header files (*.bi)
-GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
-IF(UNIX)
-  SET(bi_dest ${fbpath}/../include)
-ELSE()
-  SET(bi_dest ${fbpath}/../inc)
-ENDIF()
-INSTALL(FILES ${SRC_BI} ${SRC_BI_EXTRA}
-  DESTINATION ${bi_dest}/freebasic/BBB
-  COMPONENT dev
-  )
-
-
+MSG_LOG(">> target <all> OK!")

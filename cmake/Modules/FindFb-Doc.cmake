@@ -14,7 +14,7 @@
 
 IF(NOT FbDoc_WORKS)
   SET(fbdoc "fb-doc")
-  SET(minvers "0.4.0")
+  SET(minvers "0.4.2")
 
   FIND_PROGRAM(FbDoc_EXECUTABLE
     NAMES ${fbdoc}

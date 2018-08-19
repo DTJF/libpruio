@@ -13,6 +13,7 @@ dts_custom
 1
 analyse
 button
+button2
 io_input
 oszi
 performance
@@ -34,6 +35,7 @@ src/config/*.dtbo
 # Use wildcards as well
 *.bz2
 *.deb
+*.pyc
 CMakeCache*
 CPack*
 

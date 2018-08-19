@@ -110,7 +110,7 @@ Or destroy the libpruio structure when done by calling the destructor
 PruIo::~PruIo.
 
 
-# Pinmuxing {#SecPinmuxing}
+# Pinmuxing {#SecPinmuxingIntro}
 
 A digital line of the AM33xx CPU needs to be configured before use
 (see section \ref SecPinConfig for details). libpruio checks the pin

@@ -6,7 +6,7 @@ SET(CMAKE_VERBOSE_MAKEFILE 1)
 # constants
 SET(PROJ_NAME "libpruio" CACHE STRING "project name" FORCE)
 SET(PROJ_DESC "Fast and easy Input/Output for digital/analog on Beagleboard" CACHE STRING "project description" FORCE)
-SET(PROJ_VERS "0.4.0"   CACHE STRING "project version" FORCE)
+SET(PROJ_VERS "0.6.0"   CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "DTJF"    CACHE STRING "project authors" FORCE)
 SET(PROJ_MAIL "Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net"  CACHE STRING "project mail address" FORCE)
 SET(PROJ_WEBS "https://github.com/DTJF/libpruio" CACHE STRING "project website" FORCE)
@@ -24,37 +24,68 @@ ENDFUNCTION()
 
 CONFIGURE_FILE(src/doc/ReadMe.md.in ${CMAKE_SOURCE_DIR}/ReadMe.md @ONLY)
 
-ADD_SUBDIRECTORY(src/config)
-ADD_SUBDIRECTORY(src/pruio)
-ADD_SUBDIRECTORY(doxy)
-
-ADD_SUBDIRECTORY(src/python)
-
-IF(NOT (PASM_ASSEMBER_WORKS AND LIBPRUSSDRV_LIBRARY))
-  MSG_LOG(">> no target examples!")
-  #SET_TARGET_PROPERTIES(doc PROPERTIES EXCLUDE_FROM_ALL 0)
-  RETURN()
+IF(NOT CMAKE_C_COMPILER_WORKS)
+  MSG_LOG(">> no target <lkm...> (C compiler problem)")
+ELSE()
+  ADD_SUBDIRECTORY(src/lkm)    # target lkm
 ENDIF()
 
-ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
-ADD_DEPENDENCIES(pruio pruiofbcode)
-SET_TARGET_PROPERTIES(pruio PROPERTIES
-  LINK_FLAGS "-Wl -z,relro,-lprussdrv"
-  SOVERSION "${PROJ_VERS}"
-  )
-
 ADD_CUSTOM_TARGET(examples)
-ADD_SUBDIRECTORY(src/examples)
-ADD_SUBDIRECTORY(src/c_examples)
-ADD_DEPENDENCIES(examples pruio)
-ADD_DEPENDENCIES(py pruio)
-#SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
+IF(NOT CMAKE_Fbc_COMPILER_WORKS)
+  MSG_LOG(">> no targets <all> <fb_examples> <c_examples> (fbc compiler problem)")
+ELSE()
+  ADD_SUBDIRECTORY(src/pruio)
+  IF(NOT PASM_ASSEMBER_WORKS)
+    MSG_LOG(">> no targets <all> <fb_examples> <c_examples> (missing pasm assembler)")
+  ELSE()
+    ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
+    ADD_DEPENDENCIES(pruio pruiofbcode)
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -z,relro") # must be global
+    SET_TARGET_PROPERTIES(pruio PROPERTIES
+      #LINK_FLAGS "-Wl -z,relro"
+      SOVERSION "o" # adapt <Package: ...> in debian/control
+      #NO_SONAME "YES"
+      )
+    INSTALL(TARGETS pruio
+      #LIBRARY DESTINATION lib/${PROJ_NAME}-${PROJ_VERS}
+      LIBRARY DESTINATION lib/
+      COMPONENT bin
+      )
 
-INSTALL(TARGETS pruio
-  #LIBRARY DESTINATION lib/${PROJ_NAME}-${PROJ_VERS}
-  LIBRARY DESTINATION lib/
-  COMPONENT bin
-  )
+    ADD_CUSTOM_TARGET(fb_examples DEPENDS pruio)
+    ADD_SUBDIRECTORY(src/examples)
+    SET_TARGET_PROPERTIES(fb_examples PROPERTIES EXCLUDE_FROM_ALL 1)
+    ADD_DEPENDENCIES(examples fb_examples)
+
+    IF(NOT CMAKE_C_COMPILER_WORKS)
+      MSG_LOG(">> no target <c_examples> (C compiler problem)")
+    ELSE()
+      ADD_CUSTOM_TARGET(c_examples DEPENDS pruio)
+      SET_TARGET_PROPERTIES(c_examples PROPERTIES EXCLUDE_FROM_ALL 1)
+      ADD_DEPENDENCIES(examples c_examples)
+      ADD_SUBDIRECTORY(src/c_examples)
+    ENDIF()
+  ENDIF()
+  ADD_SUBDIRECTORY(src/config)
+
+  # install the header files (*.bi)
+  SET(bifiles)
+  FOREACH(bi ${SRC_BI} ${SRC_BI_EXTRA})
+    LIST(APPEND bifiles src/pruio/${bi})
+  ENDFOREACH()
+
+  GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
+  INSTALL(FILES ${bifiles}
+    DESTINATION ${fbpath}/../include/freebasic/BBB
+    COMPONENT dev
+    )
+ENDIF()
+
+ADD_SUBDIRECTORY(doxy)       # targets <doc> <doc_htm> <doc_pdf> <doc_www>
+ADD_SUBDIRECTORY(src/python) # target <python>
+ADD_SUBDIRECTORY(debian)     # target <deb>
+
+SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
 
 SET(C_HEADERS
   "src/pruio/pruio.hp"
@@ -62,9 +93,34 @@ SET(C_HEADERS
   "src/c_include/pruio_pins.h"
   )
 INSTALL(FILES ${C_HEADERS}
-  DESTINATION include
+  DESTINATION include/${PROJ_NAME}
   COMPONENT dev
   )
+#INSTALL(DIRECTORY src/c_examples/
+  #DESTINATION src/${PROJ_NAME}
+  #CONFIGURATIONS Release
+  #FILES_MATCHING PATTERN "src/c_examples/*.c"
+  #PATTERN "CMakeFiles" EXCLUDE
+  #)
+
+#INSTALL(DIRECTORY src/examples/
+  #DESTINATION src/${PROJ_NAME}
+  #CONFIGURATIONS Release
+  #FILES_MATCHING PATTERN "src/examples/*.bas"
+  #PATTERN "CMakeFiles" EXCLUDE
+  #)
+
+#INSTALL(DIRECTORY src/python/
+  #DESTINATION src/${PROJ_NAME}
+  #CONFIGURATIONS Release
+  #FILES_MATCHING PATTERN "src/python/*.py"
+  #PATTERN "CMakeFiles" EXCLUDE
+  #)
+#INSTALL(DIRECTORY src/python/libpruio/
+  #DESTINATION lib/${PROJ_NAME}
+  #CONFIGURATIONS Release
+  #FILES_MATCHING PATTERN "src/python/libpruio/*.py"
+  #)
 
 
 #SET(CPACK_GENERATOR "DEB")

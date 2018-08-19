@@ -122,7 +122,7 @@ typedef struct adcSet{
 typedef struct adcUdt{
   pruIo* Top; //!< Pointer to the calling PruIo instance.
   adcSet
-    *Init,    //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    *Init,    //!< Initial subsystem configuration, used in the destructor  PruIo::~PruIo().
     *Conf;    //!< Current subsystem configuration, used in  PruIo::config().
   uint32
     Samples,  //!< Number of samples (specifies run mode: 0 = config, 1 = IO mode, >1 = MM mode).
@@ -196,7 +196,7 @@ typedef struct gpioArr{
 typedef struct gpioUdt{
   pruIo* Top;//!< pointer to the calling PruIo instance
   gpioSet
-    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo::~PruIo().
     *Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
   gpioArr
     *Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
@@ -260,7 +260,7 @@ typedef struct timerArr{
 typedef struct timerUdt{
   pruIo* Top;                 //!< Pointer to the calling PruIo instance.
   timerSet
-    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    *Init[PRUIO_AZ_GPIO + 1], //!< Initial subsystem configuration, used in the destructor  PruIo::~PruIo().
     *Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
   timerArr
     *Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
@@ -408,7 +408,7 @@ typedef struct pwmssArr{
 typedef struct pwmssUdt{
   pruIo* Top;  //!< pointer to the calling PruIo instance
   pwmssSet
-    *Init[PRUIO_AZ_PWMSS + 1], //!< Initial subsystem configuration, used in the destructor  PruIo:~PruIo().
+    *Init[PRUIO_AZ_PWMSS + 1], //!< Initial subsystem configuration, used in the destructor  PruIo::~PruIo().
     *Conf[PRUIO_AZ_PWMSS + 1]; //!< Current subsystem configuration, used in  PruIo::config().
   pwmssArr
     *Raw[PRUIO_AZ_PWMSS + 1];  //!< Pointer to current raw subsystem data (IO).
@@ -501,7 +501,8 @@ enum activateDevice{
 , PRUIO_ACT_TIM5  = 1 << 10  //!< Activate TIMER-5.
 , PRUIO_ACT_TIM6  = 1 << 11  //!< Activate TIMER-6.
 , PRUIO_ACT_TIM7  = 1 << 12  //!< Activate TIMER-7.
-, PRUIO_DEF_ACTIVE = 0xFFFF  //!< Activate all subsystems.
+, PRUIO_DEF_ACTIVE = 0x1FFF  //!< Activate all subsystems.
+, PRUIO_ACT_FREMUX = 0xFFF8   //!< Activate free lkm muxing
 };
 
 
@@ -557,8 +558,11 @@ typedef struct pruIo{
   uint8 BallGpio[PRUIO_AZ_BALL + 1];
 //! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
   struct __pruss_intc_initdata IntcInit;
+  uint32 MuxFnr; //!< FreeBASIC file number for lkm pinmuxing
+  char
+    *MuxAcc,     //!< pathfile for dtbo pinmuxing
+    (*setPin)(pruIo*, uint8, uint8); //!< callback function for lkm/dtbo pinmuxing
 } pruIo;
-
 
 /** \brief Wrapper function for the constructor PruIo::PruIo().
 \param Act The mask for active subsystems and PRU number.

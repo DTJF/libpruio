@@ -35,7 +35,7 @@ def pwm_cap(stdscr):
         raise AssertionError("failed reading input @P_IN (%s)" % IO.Errr)
       stdscr.addstr(1,4, form % (f1.value, d1.value)) #         and show
       c = stdscr.getch()
-      if c != -1:
+      if c != -1: #                             react on user keystrokes
         if c == ord('-'): f0.value = 0.5
         elif c == ord('+'): f0.value = 1000000.
         elif c == ord('m'):

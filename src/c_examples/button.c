@@ -10,7 +10,7 @@ Licence: GPLv3
 
 Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
-Compile by: `gcc -Wall -o button button.c -lpruio -lprussdrv`
+Compile by: `gcc -Wall -o button button.c -lpruio`
 
 */
 

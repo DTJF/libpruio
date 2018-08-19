@@ -1,9 +1,0 @@
-#!/bin/sh
-# libpruio.postrm, runs ldconfig
-set -e
-
-case "$1" in
-  remove)
-    ldconfig
-    ;;
-esac

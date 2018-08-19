@@ -10,9 +10,36 @@ Changelog & Credits {#ChaChangelog}
 Feel free to send further ideas to the author (\Email).
 
 
+# libpruio-0.6.0 {#SecV-0-6-0}
+
+Released in 2018, August.
+
+## New:
+
+- debian packaging
+- python bindings and examples
+- example button2 demonstrates pinmuxing
+- in build prussdrv driver, less dependencies
+- constructor mode PRUIO_ACT_FREMUX for free pinmuxing
+- function PwmUdt::sync() for synchonization of PWMSS.Pwm outputs
+- pinmuxing with loadable kernel module, no more overlays, easy install
+
+## Changes:
+
+- easy installation due to debian packages
+- PruIo::setPin() function implemented as callback for use in C and Python
+- no restrictions in case of lkm pinmuxing, smaller memory footprint, faster boot
+- pinmuxing either by dtbo overlay (compatible) or by loadable kernel module (powerful)
+
+## Bugfixes:
+
+- build system hierarchy and messages
+- kernel 4.x problem with PWMSS.Pwm outputs fixed by lkm
+
+
 # libpruio-0.4.0 {#SecV-0-4-0}
 
-Released in 2018, ???.
+Released in 2017, Nov.
 
 ## New:
 

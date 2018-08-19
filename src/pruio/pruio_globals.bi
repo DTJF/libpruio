@@ -9,6 +9,10 @@ Header file for including global libpruio definitions and declarations.
 ' Common macros, shared with PRU pasm compiler.
 #INCLUDE ONCE "pruio.hp"
 
+'* The NULL pointer
+'#DEFINE NULL CAST(ANY PTR, 0)
+#DEFINE NULL 0
+
 '* The default setting for avaraging.
 #DEFINE PRUIO_DEF_AVRAGE 4
 '* The default value for open delay in channel settings.
@@ -29,7 +33,7 @@ Header file for including global libpruio definitions and declarations.
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
 #DEFINE ModeCheck(_B_,_M_) (.BallConf[_B_] and &b111) <> _M_
 '* Macro to check a CPU ball mode.
-#DEFINE ModeSet(_B_,_M_) IF .setPin(_B_, _M_) THEN RETURN .Errr
+#DEFINE ModeSet(_B_,_M_) IF .setPin(Top, _B_, _M_) THEN RETURN .Errr
 
 TYPE AS   BYTE Int8    '*< 8 bit signed integer data type
 TYPE AS  SHORT Int16   '*< 16 bit signed integer data type

@@ -182,9 +182,10 @@ When the script fails, solve the problems first before you continue.
 Unfortunatelly this step may get complicated. \Proj needs the uio_pruss
 driver. In kernel 3.8 this is default, no further action is necessary.
 But in kernel 4.x the new rproc driver gets default, and it took years
-until easy reconfiguration was supported. Depending on the subversion
-different action has to be done to get it out of the way. It's beyond
-the scope of this documentation to describe all the diffent approaches.
+until easy reconfiguration was supported. Depending on the kernels
+subversion, different action has to be done to get it out of the way.
+It's beyond the scope of this documentation to describe all the diffent
+quirks and pitfalls. Search the internet for further documentation.
 
 The only help I can provide is a command to test success. Executing
 
@@ -199,37 +200,56 @@ uio                    20480  2 uio_pruss,uio_pdrv_genirq
 ~~~
 
 
-## DTBO File  {#sSecDtboFile}
+## LKM  {#sSecLkm}
 
-The device tree blob (DTBO) for libpruio has two purposes
+The loadable kernel module (LKM) for libpruio has three purposes
 
--# enable the PRUSS
--# set pinmuxing
+-# enable the PRUSS, if not running
+-# fix a kernel 4.x problem (PWMSS-Pwm output disabled)
+-# support for \Proj pinmuxing
 
-While the first is mandatory, the second may get done in diffent ways:
+Build the LKM by executing
 
-- Either a custom configuration with the necessary setting for your project (header connections).
-- Or a universal setting that allows you to change pinmuxing at runtime.
+    make lkm
 
-The later is very flexible in development phase while you design and
-test your PCB (hardware board), by the cost of high memory consumption
-and slow booting. At the beginning this is the prefered solution.
+Installation is a bit more difficult. The official way is to install
+the module in folder `/lib/modules/$(uname -r)/extra`, where `$(uname
+-r)` is the version of the current kernel running. This has the
+advantage that the module exactly matches the kernel specifications and
+the tool `modprobe` can handle intelligently loading. But the downside
+is that you have to re-build and re-install the module each time when
+the kernel changes (ie. when `apt upgrade` installs an kernel update).
+For this type of installation execute
 
-\Proj is prepared to generate and install an universal overlay for the
-BeagleBoneBlack hardware by executing
+    make lkm-vers-install
 
-    sudo make init
+Alternatively \Proj provides a further install method where the binary
+is located in folder `/lib/modules` and doesn't get affected by kernel
+updates, but cannot get reached by the tool `modprobe` there. A
+`systemctl` service gets installed and enabled to load the module at
+boot time. For this type of installation execute
 
-This compiles and runs the `dts_universal.bas` code in folder
-src/config, which generates a `libpruio-00A0.dts` file. That file gets
-compiled to the final destination `/lib/firmware`. Afterward you have
-to make sure that the overlay gets loaded:
+    make lkm-glob-install
 
-- kernel 3.8: use capemgr to load the overlay.
+After the next boot the LKM will be auto-loaded, and you can use
+`systemctl` features for further handling. At runtime for the current
+session, execute
 
-- kernel 4.x: bootload the overlay. Depending on the subversion
-  different action has to be done. It's beyond the scope of this
-  documentation to describe all the diffent approaches.
+    sudo systemctl stop libpruio.service
+
+to unload the module, and
+
+    sudo systemctl start libpruio.service
+
+to re-load it again. Or in generally for the next boots, execute
+
+    sudo systemctl disable libpruio.service
+
+to disable auto-loading at boot-time, and
+
+    sudo systemctl enable libpruio.service
+
+to enable auto-loading at boot-time.
 
 
 # Build Binary  {#SecBuildBin}
@@ -276,8 +296,8 @@ make fb_examples
 make c_examples
 ~~~
 
-\note In order to build the examples you have to install the library
-      binary first, see section \ref SecBuildBin.
+\note In order to build the examples you have to build and install the
+      library binary first, see section \ref SecBuildBin.
 
 
 # Build Documentation  {#SecBuildDoc}
@@ -300,16 +320,50 @@ make doc_pdf
 
 # Build Python Binding  {#SecBuildPython}
 
-In order to generate a ctypes-based python binding from the current FB
-source code execute
+In order to execute the Python examples, you have to generate a
+ctypes-based python binding for the library fist. To build a fresh file
+from the current FB source code execute
 
 ~~~{.txt}
-make py
+make python
 ~~~
 
-Find the resulting file `libpruio.py` in folder `src/python`.
+Find the resulting file `pruio.py` in folder `src/python/libpruio`.
 
 \note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
+
+
+## DTBO File  {#sSecDtboFile}
+
+The device tree blob (DTBO) for libpruio has two purposes
+
+-# enable the PRUSS
+-# set pinmuxing
+
+While the first is mandatory, the second may get done in diffent ways:
+
+- Either a custom configuration with the necessary setting for your project (header connections).
+- Or a universal setting that allows you to change pinmuxing at runtime.
+
+The later is very flexible in development phase while you design and
+test your PCB (hardware board), by the cost of high memory consumption
+and slow booting. At the beginning this is the prefered solution.
+
+\Proj is prepared to generate and install an universal overlay for the
+BeagleBoneBlack hardware by executing
+
+    sudo make dtconf
+
+This compiles and runs the `dts_universal.bas` code in folder
+src/config, which generates a `libpruio-00A0.dts` file. That file gets
+compiled to the final destination `/lib/firmware`. Afterward you have
+to make sure that the overlay gets loaded:
+
+- kernel 3.8: use capemgr to load the overlay.
+
+- kernel 4.x: bootload the overlay. Depending on the subversion
+  different action has to be done. It's beyond the scope of this
+  documentation to describe all the diffent approaches.
 
 
 # Build Debian Package  {#SecBuildDeb}

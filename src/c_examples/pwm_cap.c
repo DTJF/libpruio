@@ -12,7 +12,7 @@ Licence: GPLv3
 
 Copyright 2014-\Year by \Mail
 
-Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio -lprussdrv`
+Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio`
 
 */
 

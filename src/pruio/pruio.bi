@@ -9,6 +9,7 @@ different components together and provides all declarations.
 
 #IFNDEF __PRUIO_COMPILING__
 #INCLIB "pruio"
+#ENDIF
 ' PruIo global declarations.
 #INCLUDE ONCE "pruio_globals.bi"
 ' Header for ADC part.
@@ -19,17 +20,8 @@ different components together and provides all declarations.
 #INCLUDE ONCE "pruio_pwmss.bi"
 ' Header for TIMER part.
 #INCLUDE ONCE "pruio_timer.bi"
-#ENDIF
-
-'* Version string.
-'#DEFINE PRUIO_VERSION "0.4"
-
-'* Tell pruss_intc_mapping.bi that we use ARM33xx.
-#DEFINE AM33XX
-' The PRUSS driver library.
-#INCLUDE ONCE "BBB/prussdrv.bi"
-' PRUSS driver interrupt settings.
-#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
+' Header for interrupt controller.
+#INCLUDE ONCE "pruio_intc.bi"
 
 '* The channel for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_CHAN CHANNEL5
@@ -68,20 +60,21 @@ C wrapper equivalent activateDevice.
 \since 0.2
 '/
 ENUM ActivateDevice
-  PRUIO_ACT_PRU1   = &b0000000000001 '*< activate PRU-1 (= default, instead of PRU-0)
-  PRUIO_ACT_ADC    = &b0000000000010 '*< activate ADC
-  PRUIO_ACT_GPIO0  = &b0000000000100 '*< activate GPIO-0
-  PRUIO_ACT_GPIO1  = &b0000000001000 '*< activate GPIO-1
-  PRUIO_ACT_GPIO2  = &b0000000010000 '*< activate GPIO-2
-  PRUIO_ACT_GPIO3  = &b0000000100000 '*< activate GPIO-3
-  PRUIO_ACT_PWM0   = &b0000001000000 '*< activate PWMSS-0 (including eCAP, eQEP, ePWM)
-  PRUIO_ACT_PWM1   = &b0000010000000 '*< activate PWMSS-1 (including eCAP, eQEP, ePWM)
-  PRUIO_ACT_PWM2   = &b0000100000000 '*< activate PWMSS-2 (including eCAP, eQEP, ePWM)
-  PRUIO_ACT_TIM4   = &b0001000000000 '*< activate TIMER-4
-  PRUIO_ACT_TIM5   = &b0010000000000 '*< activate TIMER-5
-  PRUIO_ACT_TIM6   = &b0100000000000 '*< activate TIMER-6
-  PRUIO_ACT_TIM7   = &b1000000000000 '*< activate TIMER-7
-  PRUIO_DEF_ACTIVE = &b1111111111111 '*< activate all subsystems
+  PRUIO_ACT_PRU1   = &b0000000000001 '*< Activate PRU-1 (= default, instead of PRU-0)
+  PRUIO_ACT_ADC    = &b0000000000010 '*< Activate ADC
+  PRUIO_ACT_GPIO0  = &b0000000000100 '*< Activate GPIO-0
+  PRUIO_ACT_GPIO1  = &b0000000001000 '*< Activate GPIO-1
+  PRUIO_ACT_GPIO2  = &b0000000010000 '*< Activate GPIO-2
+  PRUIO_ACT_GPIO3  = &b0000000100000 '*< Activate GPIO-3
+  PRUIO_ACT_PWM0   = &b0000001000000 '*< Activate PWMSS-0 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_PWM1   = &b0000010000000 '*< Activate PWMSS-1 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_PWM2   = &b0000100000000 '*< Activate PWMSS-2 (including eCAP, eQEP, ePWM)
+  PRUIO_ACT_TIM4   = &b0001000000000 '*< Activate TIMER-4
+  PRUIO_ACT_TIM5   = &b0010000000000 '*< Activate TIMER-5
+  PRUIO_ACT_TIM6   = &b0100000000000 '*< Activate TIMER-6
+  PRUIO_ACT_TIM7   = &b1000000000000 '*< Activate TIMER-7
+  PRUIO_DEF_ACTIVE = &b1111111111111 '*< Activate all subsystems
+  PRUIO_ACT_FREMUX = &b1000000000000000 '*< Activate free lkm muxing, no kernel claims
 END ENUM
 
 
@@ -189,8 +182,49 @@ TYPE PruIo
        PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK OR PRUIO_MASK) _
       )
 
-  AS STRING _
-    MuxAcc      '*< Path for pinmuxing.
+  AS UInt32 MuxFnr      '*< Pinmuxing file number, if any
+  AS ZSTRING PTR MuxAcc '*< Pinmuxing file
+  /'* \brief Tnterface for pinmuxing function (internal).
+  \param Top The toplevel PruIo instance.
+  \param Ball The CPU ball number (use macros from pruio_pins.bi).
+  \param Mo The new modus to set.
+  \returns Zero on success (otherwise a string with an error message).
+
+  This is an internal function. It tries to set a new mode for a header
+  pin (or CPU ball number) configuration. Each digital header pin is
+  connected to a CPU ball. The CPU ball can get muxed to
+
+  - several internal features (like GPIO, CAP, PWM, ...),
+  - internal pullup or pulldown resistors, as well as
+  - an internal receiver module for input pins.
+
+  The function will fail if (depending on system setup):
+
+  - the libpruio device tree overlays isn't loaded, or
+  - the required pin isn't defined in that overlay (ie HDMI), or
+  - the user has no write access to the state configuration files (see
+    section \ref SecPinmux for details), or
+  - the required mode isn't available in the overlay.
+
+  The function returns an error message in case of a failure, otherwise
+  0 (zero). The callback function gets connected in the constructor
+  PruIo::PruIo(), depending on the system setup and current write
+  privileges.
+
+  \note Don't use this function to set a pin for a libpruio feature.
+        Instead, call for input pins the feature config function (ie.
+        GpioUdt::config() or CapMod::config() ), and for output pins
+        just set the desired value (ie. PwmMod::setValue()). But you
+        can use the function to set pins in modes that are not
+        supported by libpruio (ie. like SPI or UART). In this case you
+        have to care about loading the matching driver by yourself.
+
+  \since 0.6
+  '/
+  setPin as FUNCTION CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _
@@ -206,9 +240,6 @@ TYPE PruIo
   DECLARE FUNCTION Pin CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS UInt8 = 1) AS ZSTRING PTR
-  DECLARE FUNCTION setPin CDECL( _
-    BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
   DECLARE FUNCTION nameBall CDECL( _
     BYVAL AS UInt8) AS ZSTRING PTR
   DECLARE FUNCTION rb_start CDECL() AS ZSTRING PTR
