@@ -17,9 +17,10 @@ wrapper functions are not included as in the original version).
 
 
 ' The PRUSS driver library.
-#INCLUDE ONCE "BBB/prussdrv.bi"
+'#INCLUDE ONCE "BBB/prussdrv.bi"
+#INCLUDE ONCE "pruio_prussdrv.bi"
 ' PRUSS driver interrupt settings.
-#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
+'#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
 
 ' PruIo global declarations.
 #INCLUDE ONCE "pruio_globals.bi"
@@ -42,8 +43,8 @@ wrapper functions are not included as in the original version).
 ' FB include
 #INCLUDE ONCE "dir.bi"
 
-'* \brief Declaration for C runtime function memcpy().
-DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR
+''* \brief Declaration for C runtime function memcpy().
+'DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR
 
 
 /'* \brief Constructor, initialize subsystems, create default configuration.

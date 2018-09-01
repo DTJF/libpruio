@@ -27,9 +27,10 @@ different components together and provides all declarations.
 '* Tell pruss_intc_mapping.bi that we use ARM33xx.
 #DEFINE AM33XX
 ' The PRUSS driver library.
-#INCLUDE ONCE "BBB/prussdrv.bi"
+'#INCLUDE ONCE "BBB/prussdrv.bi"
+#INCLUDE ONCE "pruio_prussdrv.bi"
 ' PRUSS driver interrupt settings.
-#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
+'#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
 
 '* The channel for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_CHAN CHANNEL5

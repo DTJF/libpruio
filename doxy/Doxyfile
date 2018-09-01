@@ -782,6 +782,7 @@ FILE_PATTERNS          = *.bi \
                          *.bas \
                          *.md \
                          *.hp \
+                         *.py \
                          *.h \
                          *.c
 

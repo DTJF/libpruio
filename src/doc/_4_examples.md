@@ -272,7 +272,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   These are the used pins
   |  Pin  | Function | Description                          |
   | :---: | :------: | :----------------------------------- |
-  | P8_16 |  output  | Common controller output             |
+  | P8_16 |  output  | Common controller GPIO output        |
   | P8_14 |   input  | GPIO input for closed loop control   |
   | P9_42 |   input  | CAP input to measure the frequency   |
   | P9_39 |   input  | Analog input for closed loop control |
@@ -283,6 +283,10 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   Here's the wiring diagram
 
   ![Wiring diagram for performance example](perf_circuit.png)
+
+  \note Since closed loop controllers wait for a change at the input
+        line, the program runs endless without connecting the outputs
+        to the input, or when your connection breaks during test run.
 
 \Item{Operation}
 
@@ -332,11 +336,17 @@ Closed loop, Adc->Value to function Gpio->Value:
   host (ARM) CPU, which sometimes has to execute interrupts (ie.
   keyboard, mouse, network, ...).
 
+  While FreeBASIC and C compiler code is similar in speed (as shown in
+  table above), the Python interpreter executes about ten times slower
+  than the compiled code.
+
 \Item{Source Code}
 
   src/examples/performance.bas
 
   src/c_examples/performance.c
+
+  src/python/performance.py
 
 
 ## pwm_cap {#sSecExaPwmCap}
@@ -442,9 +452,9 @@ Closed loop, Adc->Value to function Gpio->Value:
   that is connected to some header pins. It creates a PruIo instance
   configured in IO mode and reads input (digital pulse trains) from up
   to three header pins, see \ref sSecQep for details on QEP feature.
-  Either a real encoder can get connected or the encoder signals can
-  get simulated by PWM output. The frequency measurement is running at
-  25 Hz update rate.
+  Either a real encoder can get connected to the input pins, or the
+  encoder signals can get simulated by PWM output. In the example, the
+  frequency measurement is running at 25 Hz update rate.
 
 \Item{Preparation}
 
