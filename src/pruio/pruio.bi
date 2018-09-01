@@ -200,10 +200,11 @@ TYPE PruIo
 
   The function will fail if (depending on system setup):
 
+  - the libpruio loadable kernel module isn't loaded, or
   - the libpruio device tree overlays isn't loaded, or
   - the required pin isn't defined in that overlay (ie HDMI), or
   - the user has no write access to the state configuration files (see
-    section \ref SecPinmux for details), or
+    section \ref SecPinmuxing for details), or
   - the required mode isn't available in the overlay.
 
   The function returns an error message in case of a failure, otherwise
@@ -222,9 +223,9 @@ TYPE PruIo
   \since 0.6
   '/
   setPin as FUNCTION CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
+    BYVAL Top AS Pruio_ PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _

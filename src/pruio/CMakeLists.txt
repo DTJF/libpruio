@@ -1,11 +1,11 @@
-SET(PASM_SRC
+SET(pasm_src
   "pruio.hp"
   "pruio_ball.p"
   "pruio_adc.p"
   "pruio_gpio.p"
   "pruio_pwmss.p"
   "pruio_timer.p"
-  CACHE FILEPATH "ASM source files" FORCE
+  #CACHE FILEPATH "ASM source files" FORCE
   )
 
 SET(SRC_BAS
@@ -41,14 +41,14 @@ SET(SRC_BI_EXTRA
 IF(NOT DEFINED PASM_ASSEMBER_WORKS)
   FIND_PROGRAM(pasm_bin pasm DOC "pasm assembler" HINTS /usr/local/bin)
   IF(NOT pasm_bin)
-    MSG_LOG("!! no target <all> (pasm assembler missing)")
+    MSG_LOG("!! no target <all> (missing pasm assembler)")
     RETURN()
   ENDIF()
   EXECUTE_PROCESS(
     COMMAND ${pasm_bin} # no ARGS -> helptext
     RESULT_VARIABLE assembler_works
-	  OUTPUT_VARIABLE pasm_vers
-	  ERROR_VARIABLE pasm_opts
+    OUTPUT_VARIABLE pasm_vers
+    ERROR_VARIABLE pasm_opts
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_STRIP_TRAILING_WHITESPACE
     )
@@ -102,14 +102,14 @@ ENDIF()
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_init.bi
   COMMAND ${pasm_bin} ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Init pasm_init.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
-  DEPENDS pasm_init.p ${PASM_SRC}
+  DEPENDS pasm_init.p ${pasm_src}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pasm_run.bi
   COMMAND ${pasm_bin} ARGS -V3 -${PASM_ASSEMBER_WORKS} -CPru_Run pasm_run.p
   COMMAND ${CMAKE_COMMAND} -E touch_nocreate pruio.bas
-  DEPENDS pasm_run.p ${PASM_SRC}
+  DEPENDS pasm_run.p ${pasm_src}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -124,5 +124,11 @@ SET_TARGET_PROPERTIES(pruiofbcode PROPERTIES
   )
 ADD_DEPENDENCIES(pruiofbcode pasm)
 ADD_Fbc_SRC_DEPS(pruiofbcode)
+
+GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
+INSTALL(FILES ${SRC_BI} ${SRC_BI_EXTRA}
+  DESTINATION ${fbpath}/../include/freebasic/BBB
+  COMPONENT dev
+  )
 
 MSG_LOG(">> target <all> OK!")

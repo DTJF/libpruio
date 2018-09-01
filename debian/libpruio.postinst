@@ -1,3 +1,2 @@
+addgroup --system pruio
 #DEBHELPER#
-
-addgroup --system pruio || addgroup --system PruIO || addgroup --system libpruio || addgroup --system LibPruIO

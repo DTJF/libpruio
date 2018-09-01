@@ -83,25 +83,47 @@
 #DEFINE PRU_EVTOUT_6 6
 #DEFINE PRU_EVTOUT_7 7
 
+
+/'* \brief Mapping from system event to interrupt channel
+
+The stucture contains a single mapping from a system event to the
+specified interrupt channel.
+
+\since 0.6
+'/
 TYPE __sysevt_to_channel_map
-  AS SHORT sysevt
-  AS SHORT channel
+  AS SHORT _
+     sysevt _ '*< The number of the system event
+  , channel   '*< The mapped channel number
 END TYPE
 
 TYPE tsysevt_to_channel_map AS __sysevt_to_channel_map
 
+/'* \brief Mapping from interrupt channel to host ???
+
+The stucture contains a single mapping from an interrupt channel to ???.
+
+\since 0.6
+'/
 TYPE __channel_to_host_map
-  AS SHORT channel
-  AS SHORT host
+  AS SHORT channel '*< The channel number
+  AS SHORT host    '*< The host interrupt
 END TYPE
 
 TYPE tchannel_to_host_map AS __channel_to_host_map
 
+/'* \brief Init data structure for the interrupt controller setting
+
+The stucture contains a setting for the interrupt controller. It loads
+in the first call to prussdrv_open().
+
+\since 0.6
+'/
 TYPE __pruss_intc_initdata
-  AS BYTE sysevts_enabled(NUM_PRU_SYS_EVTS-1)
-  AS tsysevt_to_channel_map sysevt_to_channel_map(NUM_PRU_SYS_EVTS-1)
-  AS tchannel_to_host_map channel_to_host_map(NUM_PRU_CHANNELS-1)
-  AS UINTEGER host_enable_bitmask
+  AS BYTE sysevts_enabled(NUM_PRU_SYS_EVTS-1) '*< The list of enabled system events.
+  AS tsysevt_to_channel_map sysevt_to_channel_map(NUM_PRU_SYS_EVTS-1) '*< Mappings event -> interrupt channel.
+  AS   tchannel_to_host_map channel_to_host_map(NUM_PRU_CHANNELS-1) '*< Mappings interrupt channel -> host ???.
+  AS UINTEGER host_enable_bitmask '*< The mask of enabled host interrupts.
 END TYPE
 
 TYPE tpruss_intc_initdata AS __pruss_intc_initdata

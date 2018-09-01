@@ -11,19 +11,23 @@
 
 #DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 export PREFIX:=/usr
-export PYBUILD_NAME=keystone-engine
+export PYBUILD_NAME = pruio
 
 override_dh_auto_configure:
 	cmake . -DCMAKE_MODULE_PATH=$$(pwd)/cmake/Modules -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON
 
 override_dh_auto_build:
-#	make && make lkm && make doc_htm
-	make && make lkm && make python && make doc_htm
-#	make
+	make && make lkm && make python && make fb_examples && make doc_htm
+#	make && make lkm && make python && make fb_examples
 
 override_dh_installinit:
 	dh_installinit --noscripts
 
+override_dh_compress:
+	dh_compress -X.bas -X.bi -X.py -X.c -X.h -X.bin/
+#	dh_compress -X.bas -X.py -X.c -X.bin/
+
 %:
 #	dh $@ --with autotools-dev  --with systemd --with python2 --buildsystem=pybuild
-	dh $@ --with autotools-dev  --with systemd --with python2
+#	dh $@ --with autotools-dev  --with systemd,python2,python3
+	dh $@ --with autotools-dev  --with systemd

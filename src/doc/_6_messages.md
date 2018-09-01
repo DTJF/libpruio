@@ -53,24 +53,19 @@ member functions and some hints on how to fix the related code:
 
 ## Constructor {#sSecPruIoCTor}
 
-The constructor doesn't return a value. You have to check the error
-variable PruIo::Errr. When it runs OK this variable is 0 (zero).
-Otherwise it points to one of the following error messages:
+The constructor doesn't return a value. In order to check for errors,
+you have to check the error variable PruIo::Errr. It contains 0 (zero)
+on success. Otherwise it points to one of the following error messages:
 
 \Item{"cannot open /dev/uio5"} The constructor failed to open the
 interrupt file /dev/uio5 for read and write access. -> Make sure that
-the kernel driver uio_pruss is loaded (ie. by an appropriate device
+the kernel driver `uio_pruss` is loaded (ie. by an appropriate device
 tree overlay) and the user has write privileges. Find details in
-section \ref SecPreconditions.
-
-\Item{"failed opening prussdrv library"} The constructor failed to
-initialize the library libprussdrv. -> Make sure that the library is
-working properly. (Follow the documentation and test some examples.)
+section \ref sSecPruDriver.
 
 \Item{"failed loading Pru_Init instructions"} The constructor failed to
-load the init instructions to the PRU. -> Make sure that the library
-libprussdrv is working properly. (Follow the documentation and test
-some examples.)
+load the init instructions to the PRU. -> Internal problem, no hint for
+fixing.
 
 \Item{"failed executing Pru_Init instructions"} The constructor failed
 to execute the init instructions on the PRU. -> There's some internal
@@ -82,19 +77,19 @@ the configurations (Init and Conf). -> Make sure that you have at least
 5 kB free.
 
 \Item{"parsing kernel claims"} The constructor failed to scan for
-kernel pinmux claims. This error may occur when you use the loadable
-kernel module for pinmuxing and you didn't enable the free pinmux
-feature (= not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ). The
-driver couldn't find or the KERNEL_PINMUX_PINS file. The most likly
-reason is that the structur of the sysfs folder tree changed, due to
-kernel developments.
+kernel pinmux claims. This error only occurs when you use the loadable
+kernel module for pinmuxing, and you didn't enable the free pinmux
+feature (= not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ). In that
+case the file KERNEL_PINMUX_PINS wasn't found. The most likly reason is
+that the path to that sysfs file changed, due to kernel developments.
 
 \Item{"segfault"} There are lots of reasons for this kind of message.
-When you're sure that it happens in the constructor. then it's most
+When you're sure that it happens in the constructor, then it's most
 likely that it happens because the driver tried to wtite to PRUSS
-memory while the PRUSS isn't enabled. -> Either load a device tree
-overlay that includes `&pruss { status = "okay" }` or load the kernel
-module.
+memory while the PRUSS isn't enabled. -> Make sure that the PRUSS are
+enabled, by loading a device tree overlay that includes `&pruss {
+status = "okay" }` and check if the `uio_pruss` kernel module is
+loaded. See chapter \ref sSecPruDriver for further info.
 
 
 ## Destructor {#sSecPruIoDTor}
@@ -578,7 +573,7 @@ lines before for errors or warnings and solve them. The system
 preparation is described in Chapter \ref ChaPreparation. The build tree
 is fine when the `cmakefbc ..` command output ends with:
 
-~~~{txt}
+~~~{.txt}
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/debian/YOUR/PATH/HERE

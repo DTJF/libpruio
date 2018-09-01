@@ -18,10 +18,8 @@ or manually add the text in double quotes to your
 install the library, the header files and the documentation by
 executing (example for FreeBASIC source)
 
-~~~{.txt}
-sudo apt-get update
-sudo apt-get install libpruio-bas libpruio-doc
-~~~
+    sudo apt-get update
+    sudo apt-get install libpruio-bas libpruio-doc
 
 In case of C programming language replace `libpruio-bas` by
 `libpruio-dev`, and for Python choose `python-pruio`. There's also an
@@ -152,10 +150,8 @@ Using GIT is the prefered way to download the \Proj package (since it
 helps users to get involved in to the development process). Get your
 copy and change to the source tree by executing
 
-~~~{.txt}
-git clone https://github.com/DTJF/libpruio
-cd libpruio
-~~~
+    git clone https://github.com/DTJF/libpruio
+    cd libpruio
 
 
 # Configuration  {#SecConfig}
@@ -179,24 +175,23 @@ later is more easy to understand and to handle, since the source code
 doesn't change (much). Mostly all generated files go into a separate
 `build` folder:
 
-~~~{.txt}
-mkdir build
-cd build
-cmakefbc ..
-~~~
+    mkdir build
+    cd build
+    cmakefbc ..
 
 When the script fails, solve the problems first before you continue.
 
 
 ## PRU driver  {#sSecPruDriver}
 
-Unfortunatelly this step may get complicated. \Proj needs the uio_pruss
-driver. In kernel 3.8 this is default, no further action is necessary.
-But in kernel 4.x the new rproc driver gets default, and it took years
-until easy reconfiguration was supported. Depending on the kernels
-subversion, different action has to be done to get it out of the way.
-It's beyond the scope of this documentation to describe all the diffent
-quirks and pitfalls. Search the internet for further documentation.
+Unfortunatelly this step may get complicated. \Proj needs the
+`uio_pruss` driver. In kernel 3.8 this is default, no further action is
+necessary. But in kernel 4.x the new rproc driver gets default, and it
+took years until easy reconfiguration was supported. Depending on the
+kernels subversion, different action has to be done to get it out of
+the way. It's beyond the scope of this documentation to describe all
+the diffent quirks and pitfalls. Search the internet for further
+documentation.
 
 The only help I can provide is a command to test success. Executing
 
@@ -204,14 +199,14 @@ The only help I can provide is a command to test success. Executing
 
 should output
 
-~~~{txt}
+~~~{.txt}
 uio_pruss              16384  0
 uio_pdrv_genirq        16384  0
 uio                    20480  2 uio_pruss,uio_pdrv_genirq
 ~~~
 
 
-## LKM  {#sSecLkm}
+## LKM  {#sSecLkmBuild}
 
 The loadable kernel module (LKM) for libpruio has three purposes
 
@@ -286,11 +281,9 @@ LKM execute
 
 Compile the source code and install by executing (in `build` folder):
 
-~~~{.txt}
-make
-sudo make install
-sudo ldconfig
-~~~
+    make
+    sudo make install
+    sudo ldconfig
 
 \note The last command `sudo ldconfig` is only necessary after first
       install. It makes the newly installed library visible for the
@@ -301,30 +294,22 @@ sudo ldconfig
 
 In the that same build folder, build the examples by:
 
-~~~{.txt}
-make examples
-~~~
+    make examples
 
 That will build both, the FreeBASIC and the C examples. To run them execute ie.
 
-~~~{.txt}
-src/examples/1
-~~~
+    src/examples/1
 
 to run the `1.bas` example, or
 
-~~~{.txt}
-src/c_examples/1_c
-~~~
+    rc/c_examples/1_c
 
 to run the `1.c` example.
 
 The build scripts also support separate builds
 
-~~~{.txt}
-make fb_examples
-make c_examples
-~~~
+    make fb_examples
+    make c_examples
 
 \note In order to build the examples you have to build and install the
       library binary first, see section \ref SecBuildBin.
@@ -334,18 +319,14 @@ make c_examples
 
 In the that same build folder, build the documentation by:
 
-~~~{.txt}
-make doc
-~~~
+    make doc
 
 This will build the html tree (in `doxy/html`) and a pdf version (in
 the current folder) of the documentation content. The build scripts
 also support separate builds
 
-~~~{.txt}
-make doc_htm
-make doc_pdf
-~~~
+    make doc_htm
+    make doc_pdf
 
 
 # Build Python Binding  {#SecBuildPython}
@@ -354,9 +335,7 @@ In order to execute the Python examples, you have to generate a
 ctypes-based python binding for the library fist. To build a fresh file
 from the current FB source code execute
 
-~~~{.txt}
-make python
-~~~
+    make python
 
 Find the resulting file `pruio.py` in folder `src/python/libpruio`.
 
@@ -385,9 +364,9 @@ BeagleBoneBlack hardware by executing
     sudo make dtconf
 
 This compiles and runs the `dts_universal.bas` code in folder
-src/config, which generates a `libpruio-00A0.dts` file. That file gets
-compiled to the final destination `/lib/firmware`. Afterward you have
-to make sure that the overlay gets loaded:
+´src/config´, which generates a `libpruio-00A0.dts` file. That file
+gets compiled to the final destination `/lib/firmware`. Afterward you
+have to make sure that the overlay gets loaded:
 
 - kernel 3.8: use capemgr to load the overlay.
 
@@ -400,9 +379,7 @@ to make sure that the overlay gets loaded:
 
 In the that same build folder, build the Debian packages by:
 
-~~~{.txt}
-make deb
-~~~
+    make deb
 
 This will create the packages
 

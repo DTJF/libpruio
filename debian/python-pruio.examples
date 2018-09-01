@@ -1,1 +1,2 @@
-debian/tmp/usr/src/python/*
+src/python/*.py
+src/python/libpruio

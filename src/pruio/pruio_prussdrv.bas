@@ -192,7 +192,6 @@ END FUNCTION
 
 /'* \brief Enable one PRU subsystem.
 \param PruId The PRU number.
-\param Addr An optional adress value.
 \returns 0 (zero) in case of success, otherwise -1
 
 Disable a PRU subsystem, by starting its clock.

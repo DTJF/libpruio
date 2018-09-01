@@ -1,18 +1,18 @@
 # check for Debian packaging tools
 FIND_PROGRAM(deb_exe debuild)
 IF(NOT deb_exe)
-  MSG_LOG(">> no target <deb> (Debian tools missing - tried command debuild)")
+  MSG_LOG("!! no target <deb> (Debian tools missing - tried command debuild)")
   RETURN()
 ENDIF()
 MSG_LOG(">> target <deb> OK!")
 
-##SET(exam ${CMAKE_SOURCE_DIR}/debian/tmp/usr/src/${PROJ_NAME})
-#SET(exam ${CMAKE_SOURCE_DIR}/debian/tmp/usr/src/${PROJ_NAME})
-#ADD_CUSTOM_TARGET(exportexam mkdir -p ${exam}
-  #COMMAND cd ${CMAKE_SOURCE_DIR}/src/examples && cp *.bas ${exam}
-  #COMMAND cd ${CMAKE_SOURCE_DIR}/src/c_examples && cp *.c ${exam}
-  #COMMAND cd ${CMAKE_SOURCE_DIR}/src/python && cp *.py ${exam}
-  #)
+ADD_CUSTOM_TARGET(Install-Debian
+  ${CMAKE_COMMAND}
+  -D "BUILD_TYPE=Release"
+  -D "CMAKE_INSTALL_COMPONENT=Debian"
+  -D "CMAKE_INSTALL_PREFIX=/usr"
+  -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+  )
 
 # in-source: create target deb for in-source debuild
 IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -24,34 +24,32 @@ IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/lkm/systemctl.service.in ${PROJ_NAME}.service @ONLY)
 
+  #SET(exam ${CMAKE_SOURCE_DIR}/debian/tmp/usr/src/${PROJ_NAME})
   #EXECUTE_PROCESS(
-    #COMMAND
+    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/examples   && cp *.bas ${exam}
+    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/c_examples && cp *.c   ${exam}
+    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/python     && cp -r *.py ${exam}
   #)
 
-  SET(dest src/${PROJ_NAME}.examples)
-  INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/c_examples/
-    DESTINATION ${dest}
-    FILES_MATCHING PATTERN "src/c_examples/*.c"
-    PATTERN "CMakeFiles" EXCLUDE
-    )
+  #SET(dest src/${PROJ_NAME}.examples)
+  #INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/c_examples/
+    #DESTINATION ${dest}
+    #FILES_MATCHING PATTERN "src/c_examples/*.c"
+    #PATTERN "CMakeFiles" EXCLUDE
+    #)
 
-  INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/examples/
-    DESTINATION ${dest}
-    FILES_MATCHING PATTERN "src/examples/*.bas"
-    PATTERN "CMakeFiles" EXCLUDE
-    )
+  FOREACH(tar ${FB_EXAMPLES})
+    #INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION share/doc/${PROJ_NAME}.bin/examples)
+    INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION bin RENAME pruio_${tar})
+    #INSTALL(   FILES ../src/examples/${tar}.bas DESTINATION ${dest})
+  ENDFOREACH(tar)
 
-  SET(dest src/python)
-  INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/
-    DESTINATION ${dest}
-    FILES_MATCHING PATTERN "src/python/*.py"
-    PATTERN "CMakeFiles" EXCLUDE
-    )
-  INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/${PROJ_NAME}/
-    DESTINATION ${dest}/${PROJ_NAME}
-    FILES_MATCHING PATTERN "src/python/${PROJ_NAME}/*.py"
-    PATTERN "*.py?" EXCLUDE
-    )
+  #SET(dest share/python-pruio)
+  #INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/
+    #DESTINATION ${dest}
+    #FILES_MATCHING PATTERN "*.py"
+    #PATTERN "CMakeFiles" EXCLUDE
+    #)
   RETURN()
 ENDIF()
 

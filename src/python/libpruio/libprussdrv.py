@@ -1,3 +1,10 @@
+'''Declarations for libpruio.py
+
+Translated from: prussdrv.h
+
+Do not modify this file.
+'''
+
 # header file to import in python code
 from ctypes import *
 

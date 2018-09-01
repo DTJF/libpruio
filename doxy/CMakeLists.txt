@@ -1,11 +1,11 @@
-# Note: this script needs an fb-doc version (0.4), which may not be published yet.
+  # Note: this script needs an fb-doc version (0.4), which may not be published yet.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 IF(NOT COMMAND FB_DOCUMENTATION)
   INCLUDE(UseFb-Doc)
   IF(NOT COMMAND FB_DOCUMENTATION)
-    MSG_LOG(">> no targets <doc...> (UseFb-doc.cmake failed)")
+    MSG_LOG("!! no targets <doc...> (UseFb-doc.cmake failed)")
     RETURN()
   ENDIF()
 ENDIF()
@@ -40,11 +40,11 @@ DEPENDS
   ${C_HEADERS}
   )
 
-INSTALL(
-  DIRECTORY "${CMAKE_BINARY_DIR}/doxy/html"
-  DESTINATION "share/doc/${PROJ_NAME}"
-  COMPONENT doc
-  OPTIONAL
-  )
+#INSTALL(
+  #DIRECTORY "${CMAKE_BINARY_DIR}/doxy/html"
+  #DESTINATION "share/doc/${PROJ_NAME}"
+  #COMPONENT doc
+  #OPTIONAL
+  #)
 
 MSG_LOG(">> targets <doc...> OK!")

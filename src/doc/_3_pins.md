@@ -531,7 +531,7 @@ uBoot overlay or by `capemgr`).
 Therefor use the source code `src/config/dts_custom.bas` as a template,
 rename it and adapt it to your needs, by editing the part
 
-~~~{txt}
+~~~{.txt}
 '* The file name.
 #DEFINE FILE_NAME "pruio_custom"
 '* The version.
@@ -585,20 +585,16 @@ the source file `*.dts` and compile it. But in contrast the array named
 `M(...)` contains multiple configurations for each pin. All standard
 configurations are prepared in header files, and can get loaded by
 
-~~~{txt}
-' quick & dirty: first create settings for all pins ...
-#INCLUDE ONCE "P8.bi"
-#INCLUDE ONCE "P9.bi"
-#INCLUDE ONCE "JTag.bi"
-~~~
+    ' quick & dirty: first create settings for all pins ...
+    #INCLUDE ONCE "P8.bi"
+    #INCLUDE ONCE "P9.bi"
+    #INCLUDE ONCE "JTag.bi"
 
 Afterwards you can (and should) reduce the configurations to the set of
 desired pins. Therefor just empty the entries in array `M(...)` for the
 pins your wont use, by code like
 
-~~~{txt}
-M(P8_25) = "" ' #4:BB-BONE-EMMC-2G
-~~~
+    M(P8_25) = "" ' #4:BB-BONE-EMMC-2G
 
 All remaining pins will get claimed and configured by the resulting
 device tree blob, that gets generated after compiling and executing the
@@ -674,4 +670,4 @@ CPU balls claimed by other systems and restricted by the kernel. (So be
 careful what you're doing!). This solution gives you all freedom to
 focus on you target and get the best out of your system, without
 dealing with kernel qircks and pitfalls. Find details on how to setup
-your system in section \ref SecLkm.
+your system in section \ref sSecLkmBuild.

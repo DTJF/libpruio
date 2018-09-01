@@ -25,18 +25,18 @@ ENDFUNCTION()
 CONFIGURE_FILE(src/doc/ReadMe.md.in ${CMAKE_SOURCE_DIR}/ReadMe.md @ONLY)
 
 IF(NOT CMAKE_C_COMPILER_WORKS)
-  MSG_LOG(">> no target <lkm...> (C compiler problem)")
+  MSG_LOG("!! no target <lkm...> (C compiler problem)")
 ELSE()
   ADD_SUBDIRECTORY(src/lkm)    # target lkm
 ENDIF()
 
 ADD_CUSTOM_TARGET(examples)
 IF(NOT CMAKE_Fbc_COMPILER_WORKS)
-  MSG_LOG(">> no targets <all> <fb_examples> <c_examples> (fbc compiler problem)")
+  MSG_LOG("!! no targets <all> <fb_examples> <c_examples> (fbc compiler problem)")
 ELSE()
   ADD_SUBDIRECTORY(src/pruio)
   IF(NOT PASM_ASSEMBER_WORKS)
-    MSG_LOG(">> no targets <all> <fb_examples> <c_examples> (missing pasm assembler)")
+    MSG_LOG("!! no targets <all> <fb_examples> <c_examples> (missing pasm assembler)")
   ELSE()
     ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
     ADD_DEPENDENCIES(pruio pruiofbcode)
@@ -58,7 +58,7 @@ ELSE()
     ADD_DEPENDENCIES(examples fb_examples)
 
     IF(NOT CMAKE_C_COMPILER_WORKS)
-      MSG_LOG(">> no target <c_examples> (C compiler problem)")
+      MSG_LOG("!! no target <c_examples> (C compiler problem)")
     ELSE()
       ADD_CUSTOM_TARGET(c_examples DEPENDS pruio)
       SET_TARGET_PROPERTIES(c_examples PROPERTIES EXCLUDE_FROM_ALL 1)
@@ -68,17 +68,17 @@ ELSE()
   ENDIF()
   ADD_SUBDIRECTORY(src/config)
 
-  # install the header files (*.bi)
-  SET(bifiles)
-  FOREACH(bi ${SRC_BI} ${SRC_BI_EXTRA})
-    LIST(APPEND bifiles src/pruio/${bi})
-  ENDFOREACH()
+  ## install the header files (*.bi)
+  #SET(bifiles)
+  #FOREACH(bi ${SRC_BI} ${SRC_BI_EXTRA})
+    #LIST(APPEND bifiles src/pruio/${bi})
+  #ENDFOREACH()
 
-  GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
-  INSTALL(FILES ${bifiles}
-    DESTINATION ${fbpath}/../include/freebasic/BBB
-    COMPONENT dev
-    )
+  #GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
+  #INSTALL(FILES ${bifiles}
+    #DESTINATION ${fbpath}/../include/freebasic/BBB
+    #COMPONENT dev
+    #)
 ENDIF()
 
 ADD_SUBDIRECTORY(doxy)       # targets <doc> <doc_htm> <doc_pdf> <doc_www>

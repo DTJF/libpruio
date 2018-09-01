@@ -81,7 +81,7 @@ TYPE __prussdrv
   , pruss_map_size _   '*< Size of PRUSS memory mapping block
   , extram_phys_base _ '*< Physical address of external memory
   , extram_map_size    '*< Size of external memory from `uio_pruss`
-  AS tpruss_intc_initdata intc_data
+  AS tpruss_intc_initdata intc_data '*< A copy of the interrupt settings
 END TYPE
 
 TYPE AS __prussdrv tprussdrv

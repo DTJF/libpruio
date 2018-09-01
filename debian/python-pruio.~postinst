@@ -1,0 +1,2 @@
+cd /usr/share/doc/python-pruio/examples && python *.py
+#DEBHELPER#
