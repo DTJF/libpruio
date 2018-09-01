@@ -11,27 +11,11 @@ wrapper functions are not included as in the original version).
 
 '* Tell the header pruio.bi that we won't include libpruio.so.
 #DEFINE __PRUIO_COMPILING__
-'* The start of the pinmux-helper folder names in /sys/devices/ocp.*/.
-#DEFINE PMUX_NAME "pruio-"
-'#DEFINE PMUX_NAME "ocp:pruio-"
 
-
-' The PRUSS driver library.
-'#INCLUDE ONCE "BBB/prussdrv.bi"
+' Header for interrupt controller.
+#INCLUDE ONCE "pruio_intc.bi"
+' uio driver header file
 #INCLUDE ONCE "pruio_prussdrv.bi"
-' PRUSS driver interrupt settings.
-'#INCLUDE ONCE "BBB/pruss_intc_mapping.bi"
-
-' PruIo global declarations.
-#INCLUDE ONCE "pruio_globals.bi"
-' Header for ADC part.
-#INCLUDE ONCE "pruio_adc.bi"
-' Header for GPIO part.
-#INCLUDE ONCE "pruio_gpio.bi"
-' Header for PWMSS part, containing modules QEP, CAP and PWM.
-#INCLUDE ONCE "pruio_pwmss.bi"
-' Header for TIMER part.
-#INCLUDE ONCE "pruio_timer.bi"
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
 ' Header file with convenience macros.
@@ -43,8 +27,13 @@ wrapper functions are not included as in the original version).
 ' FB include
 #INCLUDE ONCE "dir.bi"
 
-''* \brief Declaration for C runtime function memcpy().
-'DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR
+'* The start of the pinmux-helper folder names in /sys/devices/ocp.*/.
+#DEFINE PMUX_NAME "pruio-"
+'* The constant number for no pinmux capability.
+#DEFINE PMUX_ERRR 258
+
+'* \brief Declaration for C runtime function memcpy().
+DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS ULONG /'size_t'/) AS ANY PTR
 
 
 /'* \brief Constructor, initialize subsystems, create default configuration.
@@ -131,20 +120,32 @@ CONSTRUCTOR PruIo( _
   , BYVAL  Av AS UInt8  = PRUIO_DEF_AVRAGE _
   , BYVAL OpD AS UInt32 = PRUIO_DEF_ODELAY _
   , BYVAL SaD AS UInt8  = PRUIO_DEF_SDELAY)
-
   VAR fnr = FREEFILE '                             test interrupt access
   IF OPEN("/dev/uio5" FOR OUTPUT AS fnr) THEN _
                       Errr = @"cannot open /dev/uio5" : EXIT CONSTRUCTOR
   CLOSE #fnr
 
-  VAR p = "/sys/devices/" _
-    , n = DIR(p & "ocp.*", fbDirectory)
-  IF LEN(n) THEN
-    MuxAcc = p & n & "/"
+  STATIC AS STRING mux
+  IF 0 = OPEN("/sys/devices/platform/libpruio/state" FOR OUTPUT AS fnr) THEN
+    IF Act AND PRUIO_ACT_FREMUX THEN
+      setPin = @setPin_lkm
+    ELSE
+      setPin = @setPin_save
+      Errr = setPin(@THIS, 255, 0)
+      IF Errr THEN CLOSE #fnr                         : EXIT CONSTRUCTOR
+    END IF : MuxFnr = fnr
   ELSE
-    p &= "platform/ocp/ocp:"
-    IF LEN(DIR(p & "pruio-*", fbDirectory)) THEN MuxAcc = p
-  END IF
+    VAR p = "/sys/devices/" _
+      , n = DIR(p & "ocp.*", fbDirectory)
+    IF LEN(n) THEN ' old kernel 3.x
+      mux = p & n & "/" & PMUX_NAME : MuxFnr = 256
+    ELSE ' new kernel 4.x
+      p &= "platform/ocp/ocp:"
+      IF LEN(DIR(p & "pruio-*", fbDirectory)) THEN mux = p & PMUX_NAME : MuxFnr = 257
+    END IF
+    IF LEN(mux) THEN setPin = @setPin_dtbo : MuxAcc = SADD(mux) _
+                ELSE setPin = @setPin_nogo : MuxFnr = 0
+ END IF
 
   IF Act AND PRUIO_ACT_PRU1 THEN
     PruIRam = PRUSS0_PRU1_IRAM
@@ -155,7 +156,6 @@ CONSTRUCTOR PruIo( _
     PruDRam = PRUSS0_PRU0_DATARAM
     PruNo = 0
   END IF
-  prussdrv_init()
   IF prussdrv_open(PRUIO_EVNT) THEN _  '              open PRU Interrupt
             Errr = @"failed opening prussdrv library" : EXIT CONSTRUCTOR
 
@@ -245,11 +245,12 @@ DESTRUCTOR PruIo()
     IF DInit THEN
       prussdrv_pru_disable(PruNo)
 
-      IF LEN(MuxAcc) THEN '                              reset pinmuxing
+      IF MuxFnr THEN '                                   reset pinmuxing
        FOR i AS LONG = 0 TO PRUIO_AZ_BALL
           IF BallInit[i] = BallConf[i] THEN CONTINUE FOR
-          IF setPin(i, BallInit[i]) THEN mux &= !"\n" & *Errr
+          IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
         NEXT
+        IF MuxFnr < 256 THEN CLOSE #MuxFnr
       END IF
 
       DRam[1] = PRUIO_DAT_ALL '           reset subsystems configuration
@@ -410,14 +411,14 @@ FUNCTION PruIo.config CDECL( _
   , BYVAL  Mds AS UInt16 = PRUIO_DEF_LSLMOD) AS ZSTRING PTR
 
   prussdrv_pru_disable(PruNo) '                              disable PRU
-  IF Adc->configure(Samp, Mask, Tmr, Mds) THEN               RETURN Errr
+  IF Adc->configure(Samp, Mask, Tmr, Mds)                    THEN RETURN Errr
 
   DRam[1] = PRUIO_DAT_ALL
   memcpy(CAST(ANY PTR, DRam) + DRam[1], DConf, DSize)
 
   VAR l = ArrayBytes(Pru_Run)
   IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Run(0), l) THEN _
-             Errr = @"failed loading Pru_Run instructions" : RETURN Errr
+                  Errr = @"failed loading Pru_Run instructions" : RETURN Errr
   prussdrv_pruintc_init(@IntcInit) '           get interrupt initialized
   prussdrv_pru_enable(PruNo)
   prussdrv_pru_wait_event(PRUIO_EVNT)
@@ -426,13 +427,12 @@ FUNCTION PruIo.config CDECL( _
   CASE 1    : l = DRam[0] <> PRUIO_MSG_IO_OK
   CASE ELSE : l = DRam[0] <> PRUIO_MSG_MM_WAIT
   END SELECT
-  IF l THEN _
-           Errr = @"failed executing Pru_Run instructions" : RETURN Errr
+  IF l THEN     Errr = @"failed executing Pru_Run instructions" : RETURN Errr
   IF Samp < 2 THEN RETURN 0
 
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT)
   prussdrv_pru_send_event(ARM_PRU1_INTERRUPT) '    prepare fast MM start
-  RETURN 0
+                                                                  RETURN 0
 END FUNCTION
 
 
@@ -467,8 +467,7 @@ FUNCTION PruIo.Pin CDECL( _
   IF x THEN
     t = *x
   ELSE
-    IF Ball > PRUIO_AZ_BALL THEN _
-                              Errr = @"unknown pin number" : RETURN Errr
+    IF Ball > PRUIO_AZ_BALL THEN   Errr = @"unknown pin number" : RETURN Errr
     t = "b " & RIGHT("00" & Ball, 3)
   END IF
 
@@ -495,74 +494,7 @@ FUNCTION PruIo.Pin CDECL( _
     t &= ", nopull"
   ELSE
     IF BIT(r, 4) THEN t &= ", pullup" ELSE t &= ", pulldown"
-  END IF
-
-  RETURN SADD(t)
-END FUNCTION
-
-
-/'* \brief Set a new pin configuration (internal).
-\param Ball The CPU ball number (use macros from pruio_pins.bi).
-\param Mo The new modus to set.
-\returns Zero on success (otherwise a string with an error message).
-
-This is an internal function. It tries to set a new header pin
-configuration. Each digital header pin is connected to a CPU ball. The
-CPU ball can get muxed to
-
-- several internal targets (like GPIO, CAP, PWM, ...),
-- internal pullup or pulldown resistors, as well as
-- an internal receiver module for input pins.
-
-The function will fail if
-
-- the libpruio device tree overlays isn't loaded, or
-- the required pin isn't defined in that overlay (ie HDMI), or
-- the user has no write access to the state configuration files (see
-  section \ref SecPinmux for details), or
-- the required mode isn't available in the overlay.
-
-The function returns an error message in case of a failure. You can use
-it to set pins in modes that are not supported by libpruio (ie. like
-SPI or UART).
-
-\note Don't use this function to set a pin for a libpruio feature.
-      Instead, call the features config function (ie. like
-      GpioUdt::config() or CapMod::config() ).
-
-Wrapper function (C or Python): pruio_setPin().
-
-\since 0.2
-'/
-FUNCTION PruIo.setPin CDECL( _
-    BYVAL Ball AS UInt8 _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR
-
-  IF Ball > PRUIO_AZ_BALL THEN _
-                      Errr = @"unknown setPin ball number" : RETURN Errr
-
-  VAR m = IIF(Mo = PRUIO_PIN_RESET, BallInit[Ball], Mo)
-  IF BallConf[Ball] = m THEN                                    RETURN 0 ' nothing to do
-
-  VAR fnam = MuxAcc & PMUX_NAME & HEX(Ball, 2)
-  SELECT CASE AS CONST LEN(MuxAcc)
-  CASE 0 :                         Errr = @"no ocp access" : RETURN Errr
-  CASE 30 '   kernel 4.x
-  CASE ELSE ' kernel 3.8
-    VAR p = DIR(fnam & ".*", fbDirectory)
-    fnam &= MID(p, INSTR(p, "."))
-  END SELECT
-
-  VAR fnr = FREEFILE
-  IF 0 = OPEN(fnam & "/state" FOR OUTPUT AS fnr) THEN
-    PRINT #fnr, "x" & HEX(m, 2)
-    CLOSE #fnr : BallConf[Ball] = m :                           RETURN 0
-  END IF
-
-  STATIC AS STRING*30 e = "pinmux failed: P._.. -> x.."
-  VAR x = nameBall(Ball)
-  IF x THEN MID(e, 16, 5) = *x ELSE MID(e, 16, 5) = "bal" & HEX(Ball, 2)
-  MID(e, 26, 2) = HEX(m, 2) :               Errr = SADD(e) : RETURN Errr
+  END IF                                                        : RETURN SADD(t)
 END FUNCTION
 
 

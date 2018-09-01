@@ -1,0 +1,14 @@
+[Unit]
+Description=Load libpruio loadable kernel module
+#After=capemgr.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/insmod /lib/modules/libpruio.ko
+ExecStartPost=/bin/chown root:pruio /sys/devices/platform/libpruio/state
+ExecStop=/sbin/rmmod libpruio
+StandardOutput=tty
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

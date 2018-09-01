@@ -28,7 +28,7 @@ all modules, but the functions to control the modules are separated in
 the module UDTs PwmMod, CapMod and QepMod in order to
 make the API more clear.
 
-C wrapper equivalent pwmssSet.
+C wrapper equivalent: pwmssSet.
 
 \since 0.2
 '/
@@ -138,7 +138,7 @@ END TYPE
 This UDT is used to fetch the current register data from eCAP and eQEP
 modules in IO and RB mode.
 
-C wrapper equivalent pwmssArr.
+C wrapper equivalent: pwmssArr.
 
 \since 0.2
 '/
@@ -163,7 +163,7 @@ subsystems in the CPU. The functions to drive the hardware are in
 separate UDTs, to make the API more easy to understand. See UDTs
 PwmMod, CapMod and QepMod for details.
 
-C wrapper equivalent pwmssUdt.
+C wrapper equivalent: pwmssUdt.
 
 \since 0.2
 '/
@@ -241,7 +241,7 @@ All PWM generators (ePWM-1/2, eCAP and Timer) are controlled by the
 member functions of this structure (UDT). See \ArmRef{15} for hardware
 details.
 
-C wrapper equivalent pwmMod.
+C wrapper equivalent: pwmMod.
 
 \since 0.2
 '/
@@ -268,6 +268,8 @@ TYPE PwmMod
     BYVAL AS UInt8, _
     BYVAL AS Float_t, _
     BYVAL AS Float_t) AS ZSTRING PTR
+  DECLARE FUNCTION sync CDECL( _
+    BYVAL AS UInt8) AS ZSTRING PTR
 END TYPE
 
 
@@ -305,7 +307,7 @@ modul in the PWMSS subsystems.
 
 See \ArmRef{15.4} for hardware details.
 
-C wrapper equivalent qepMod.
+C wrapper equivalent: qepMod.
 
 \since 0.4
 '/

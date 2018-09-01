@@ -37,6 +37,10 @@ pruio.bi in case of any change here.
 \def PRUIO_AZ_TIMER
 \brief The number of TIMER subsystems (minus one).
 
+\def PRUIO_COM_PEEK
+\brief The command number to peek a value from memory.
+\def PRUIO_COM_POKE
+\brief The command number to poke a value to memory.
 \def PRUIO_COM_GPIO_CONF
 \brief The command number to re-configure a GPIO.
 \def PRUIO_COM_GPIO_OUT

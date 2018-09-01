@@ -12,7 +12,7 @@ Copyright 2014-\Year by \Mail
 
 Thanks for C code translation: Nils Kohrs <nils.kohrs@gmail.com>
 
-Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio -lprussdrv`
+Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio`
 
 \since 0.4.0
 */
@@ -26,7 +26,7 @@ Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio -lprussdrv`
 int main(int argc, char **argv)
 {
   const uint32 tSamp = 123401;  //!< The number of samples in the files (per step).
-  const uint32 tmr = 5000;      //!< The sampling rate in ns (5000 -> 200 kHz).
+  const uint32 tmr = 20000;     //!< The sampling rate in ns (20000 -> 50 kHz).
   const uint32 NoStep = 3;      //!< The number of active steps (must match setStep calls and mask).
   const uint32 NoFile = 2;      //!< The number of files to write.
   const char *NamFil = "output.%u"; //!< The output file names.
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
       uint32 i = 0;               //!< Start index.
       while(i < tInd){
         i += half;
-        if(i > tInd){             // fetch the rest(no complete chunk)
+        if(i > tInd){        // fetch the rest(maybe no complete chunk)
           uint32 rest = tInd + half - i;
           uint32 iEnd = p1 >= p0 ? rest : rest + half;
           while(io->DRam[0] < iEnd) nanosleep(&mSec, NULL);
@@ -77,6 +77,7 @@ int main(int argc, char **argv)
           uint16 *swap = p0;
           p0 = p1;
           p1 = swap;
+          break;
         }
         if(p1 > p0) while(io->DRam[0] < half) nanosleep(&mSec, NULL);
         else        while(io->DRam[0] > half) nanosleep(&mSec, NULL);

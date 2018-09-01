@@ -8,17 +8,26 @@ yet. So you have to add a PPA (Personal Package Archive) to your
 package management sources:
 
 ~~~{.txt}
-sudo add-apt-repository "deb http://beagle.tuks.nl/debian unstable main"
+sudo add-apt-repository     "deb http://beagle.tuks.nl/debian unstable main"
 sudo add-apt-repository "deb-src http://beagle.tuks.nl/debian unstable main"
 wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
 ~~~
 
-Once prepared, you can download the library, the header files and the
-documentation by executing
+or manually add the text in double quotes to your
+`/etc/apt/sources.list` file. Once prepared, you can download and
+install the library, the header files and the documentation by
+executing (example for FreeBASIC source)
 
-~~~{.txt}
-sudo apt-get install libpruio libpruio-dev libpruio-doc
-~~~
+    sudo apt-get update
+    sudo apt-get install libpruio-bas libpruio-doc
+
+In case of C programming language replace `libpruio-bas` by
+`libpruio-dev`, and for Python choose `python-pruio`. There's also an
+examples package containing precompiled binaries, that you can install
+and run without dealing with source code (mind the wiring descriptions
+in chapter \ref ChaExamples).
+
+??? Tabelle
 
 The further stuff in this chapter is for advanced users who want to
 adapt the source code and recompile the binary.
@@ -141,10 +150,8 @@ Using GIT is the prefered way to download the \Proj package (since it
 helps users to get involved in to the development process). Get your
 copy and change to the source tree by executing
 
-~~~{.txt}
-git clone https://github.com/DTJF/libpruio
-cd libpruio
-~~~
+    git clone https://github.com/DTJF/libpruio
+    cd libpruio
 
 
 # Configuration  {#SecConfig}
@@ -168,23 +175,23 @@ later is more easy to understand and to handle, since the source code
 doesn't change (much). Mostly all generated files go into a separate
 `build` folder:
 
-~~~{.txt}
-mkdir build
-cd build
-cmakefbc ..
-~~~
+    mkdir build
+    cd build
+    cmakefbc ..
 
 When the script fails, solve the problems first before you continue.
 
 
 ## PRU driver  {#sSecPruDriver}
 
-Unfortunatelly this step may get complicated. \Proj needs the uio_pruss
-driver. In kernel 3.8 this is default, no further action is necessary.
-But in kernel 4.x the new rproc driver gets default, and it took years
-until easy reconfiguration was supported. Depending on the subversion
-different action has to be done to get it out of the way. It's beyond
-the scope of this documentation to describe all the diffent approaches.
+Unfortunatelly this step may get complicated. \Proj needs the
+`uio_pruss` driver. In kernel 3.8 this is default, no further action is
+necessary. But in kernel 4.x the new rproc driver gets default, and it
+took years until easy reconfiguration was supported. Depending on the
+kernels subversion, different action has to be done to get it out of
+the way. It's beyond the scope of this documentation to describe all
+the diffent quirks and pitfalls. Search the internet for further
+documentation.
 
 The only help I can provide is a command to test success. Executing
 
@@ -192,14 +199,150 @@ The only help I can provide is a command to test success. Executing
 
 should output
 
-~~~{txt}
+~~~{.txt}
 uio_pruss              16384  0
 uio_pdrv_genirq        16384  0
 uio                    20480  2 uio_pruss,uio_pdrv_genirq
 ~~~
 
 
-## DTBO File  {#sSecDtboFile}
+## LKM  {#sSecLkmBuild}
+
+The loadable kernel module (LKM) for libpruio has three purposes
+
+-# enable the PRUSS, if not running
+-# fix a kernel 4.x problem (PWMSS-Pwm output disabled)
+-# support for \Proj pinmuxing
+
+Build the LKM by executing
+
+    make lkm
+
+Installation is a bit more difficult. The official way is to install
+the module in folder `/lib/modules/$(uname -r)/extra`, where `$(uname
+-r)` is the version of the current kernel running. This has the
+advantage that the module exactly matches the kernel specifications and
+the tool `modprobe` can handle loading intelligently. But the downside
+is that you have to re-build and re-install the module each time when
+the kernel changes (ie. when `apt upgrade` installs a kernel update).
+For this type of installation execute
+
+    make lkm-vers-install
+
+Afterwards the LKM can get loaded by `sudo modprobe libpruio` and
+unloaded by `sudo modprobe -r libpruio`. To uninstall that the LKM
+execute
+
+    make lkm-vers-uninstall
+
+Alternatively \Proj provides a further install method where the binary
+is located in folder `/lib/modules` and doesn't get affected by kernel
+updates, but cannot get reached by the tool `modprobe` at this
+location. Consequently a `systemctl` service gets installed and enabled
+to load the module for you at boot time. The service also adds a
+system user group named `pruio`. All members of this group have
+pinmuxing privileges. For this type of installation execute
+
+    make lkm-glob-install
+
+From the next boot on the LKM will be auto-loaded, and you can use
+`systemctl` features for further handling. At runtime for the current
+session, execute
+
+    sudo systemctl stop libpruio.service
+
+to unload the module, and
+
+    sudo systemctl start libpruio.service
+
+to re-load it again. Or generally for the next boots, execute
+
+    sudo systemctl disable libpruio.service
+
+to disable auto-loading at boot-time, and
+
+    sudo systemctl enable libpruio.service
+
+to enable auto-loading at boot-time. To uninstall that service and the
+LKM execute
+
+    make lkm-glob-uninstall
+
+
+\note The user group `pruio` doesn't get removed, it's still existent
+      after uninstall. To remove it execute `sudo nano /etc/group` and
+      remove the related line `pruio:x:...` from that file (change is
+      effective after next logout or boot). That way you can also
+      remove a user from that group by deleting only his name in the
+      line.
+
+
+# Build Binary  {#SecBuildBin}
+
+Compile the source code and install by executing (in `build` folder):
+
+    make
+    sudo make install
+    sudo ldconfig
+
+\note The last command `sudo ldconfig` is only necessary after first
+      install. It makes the newly installed library visible for the
+      linker. You can omit it for further updates.
+
+
+# Build Examples  {#SecBuildExamples}
+
+In the that same build folder, build the examples by:
+
+    make examples
+
+That will build both, the FreeBASIC and the C examples. To run them execute ie.
+
+    src/examples/1
+
+to run the `1.bas` example, or
+
+    rc/c_examples/1_c
+
+to run the `1.c` example.
+
+The build scripts also support separate builds
+
+    make fb_examples
+    make c_examples
+
+\note In order to build the examples you have to build and install the
+      library binary first, see section \ref SecBuildBin.
+
+
+# Build Documentation  {#SecBuildDoc}
+
+In the that same build folder, build the documentation by:
+
+    make doc
+
+This will build the html tree (in `doxy/html`) and a pdf version (in
+the current folder) of the documentation content. The build scripts
+also support separate builds
+
+    make doc_htm
+    make doc_pdf
+
+
+# Build Python Binding  {#SecBuildPython}
+
+In order to execute the Python examples, you have to generate a
+ctypes-based python binding for the library fist. To build a fresh file
+from the current FB source code execute
+
+    make python
+
+Find the resulting file `pruio.py` in folder `src/python/libpruio`.
+
+\note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
+
+
+# DTBO File  {#sSecDtboFile}
 
 The device tree blob (DTBO) for libpruio has two purposes
 
@@ -218,12 +361,12 @@ and slow booting. At the beginning this is the prefered solution.
 \Proj is prepared to generate and install an universal overlay for the
 BeagleBoneBlack hardware by executing
 
-    sudo make init
+    sudo make dtconf
 
 This compiles and runs the `dts_universal.bas` code in folder
-src/config, which generates a `libpruio-00A0.dts` file. That file gets
-compiled to the final destination `/lib/firmware`. Afterward you have
-to make sure that the overlay gets loaded:
+´src/config´, which generates a `libpruio-00A0.dts` file. That file
+gets compiled to the final destination `/lib/firmware`. Afterward you
+have to make sure that the overlay gets loaded:
 
 - kernel 3.8: use capemgr to load the overlay.
 
@@ -232,96 +375,20 @@ to make sure that the overlay gets loaded:
   documentation to describe all the diffent approaches.
 
 
-# Build Binary  {#SecBuildBin}
-
-Compile the source code and install by executing (in `build` folder):
-
-~~~{.txt}
-make
-sudo make install
-sudo ldconfig
-~~~
-
-\note The last command `sudo ldconfig` is only necessary after first
-      install. It makes the newly installed library visible for the
-      linker. You can omit it for further updates.
-
-
-# Build Examples  {#SecBuildExamples}
-
-In the that same build folder, build the examples by:
-
-~~~{.txt}
-make examples
-~~~
-
-That will build both, the FreeBASIC and the C examples. To run them execute ie.
-
-~~~{.txt}
-src/examples/1
-~~~
-
-to run the `1.bas` example, or
-
-~~~{.txt}
-src/c_examples/1_c
-~~~
-
-to run the `1.c` example.
-
-The build scripts also support separate builds
-
-~~~{.txt}
-make fb_examples
-make c_examples
-~~~
-
-\note In order to build the examples you have to install the library
-      binary first, see section \ref SecBuildBin.
-
-
-# Build Documentation  {#SecBuildDoc}
-
-In the that same build folder, build the documentation by:
-
-~~~{.txt}
-make doc
-~~~
-
-This will build the html tree (in `doxy/html`) and a pdf version (in
-the current folder) of the documentation content. The build scripts
-also support separate builds
-
-~~~{.txt}
-make doc_htm
-make doc_pdf
-~~~
-
-
-# Build Python Binding  {#SecBuildPython}
-
-In order to generate a ctypes-based python binding from the current FB
-source code execute
-
-~~~{.txt}
-make py
-~~~
-
-Find the resulting file `libpruio.py` in folder `src/python`.
-
-\note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
-
-
 # Build Debian Package  {#SecBuildDeb}
 
 In the that same build folder, build the Debian packages by:
 
-~~~{.txt}
-make package
-~~~
+    make deb
 
 This will create the packages
 
-- libpruio-bin.deb contains the runtime binary and the overlay
-- libpruio-dev.deb contains the C header files
-- libpruio-fbdev.deb contains the FreeBASIC header files
+- libpruio.deb containing the runtime binary and the LKM
+- libpruio-doc.deb containing HTML documentation tree
+- libpruio-examples.deb containing precompiled binaries to execute
+- libpruio-dev.deb containing the C header files and C examples
+- libpruio-bas.deb containing the FreeBASIC header files and examples
+- python-pruio containing the Python binding and example source
+
+and the auxiliary file to upload them to a PPA. Find the output in
+folder `debian/packages`.

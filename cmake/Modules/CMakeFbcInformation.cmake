@@ -1,7 +1,7 @@
 #
 # CMakeFbc - CMake module for FreeBASIC Language
 #
-# Copyright (C) 2014-2016, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
+# Copyright (C) 2014-2018, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
 #
 # All rights reserved.
 #
@@ -108,15 +108,14 @@ MARK_AS_ADVANCED(
   )
 
 IF(NOT CMAKE_Fbc_DEPS_TOOL)
-  MESSAGE(STATUS "Tool cmake_fb_deps not available -> no Fbc extensions!")
+  MESSAGE(STATUS "Tool cmakefbc_deps not available -> no Fbc extensions!")
 ELSE()
   # the macro to add dependencies to a native FB target
   MACRO(ADD_Fbc_SRC_DEPS Tar)
     SET(_file ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${Tar}_deps.cmake)
     GET_TARGET_PROPERTY(_src ${Tar} SOURCES)
-    EXECUTE_PROCESS(
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} cmake_fb_deps ${_file} ${_src}
-      )
+    SET(_args ${CMAKE_Fbc_INST_PATH} -i=${CMAKE_CURRENT_SOURCE_DIR} ${_file} ${_src})
+    EXECUTE_PROCESS(COMMAND "${CMAKE_Fbc_DEPS_TOOL}" ${_args})
     INCLUDE(${_file})
     ADD_CUSTOM_TARGET(${Tar}_deps OUTPUT ${_file})
   ENDMACRO(ADD_Fbc_SRC_DEPS)
@@ -178,7 +177,7 @@ ELSE()
 
     IF(NOT ARG_NO_DEPS)
       EXECUTE_PROCESS(
-        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} cmake_fb_deps ${_deps} ${fbc_src}
+        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_Fbc_DEPS_TOOL} ${_deps} ${fbc_src}
         )
       INCLUDE(${_deps})
       ADD_CUSTOM_TARGET(${_tar} OUTPUT ${_deps})

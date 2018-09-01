@@ -76,7 +76,7 @@ Compile by: `fbc -w all performance.bas`
 
 ' *****  main  *****
 
-VAR io = NEW PruIo '*< Create a PruIo structure, wakeup devices.
+VAR io = NEW PruIo(PRUIO_DEF_ACTIVE, 0, 0, 0) '*< Create a PruIo structure, wakeup devices.
 
 WITH *io
   DO
@@ -122,9 +122,6 @@ WITH *io
      , cd = 0 _                '*< Register value for CLEARDATAOUT.
      , sd = 0 _                '*< Register value for SETDATAOUT.
      , ad = .Gpio->Conf(g0)->DeAd + &h100 '*< Subsystem adress.
-
-?.BallGpio(G_IN),r1,g1,m1
-?.BallGpio(GOUT),r0,g0,m0
 
     FOR i AS INTEGER = 0 TO UBOUND(desc) ' initialize minimum values
       nf(i) = 100e6

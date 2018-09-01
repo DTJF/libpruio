@@ -10,7 +10,7 @@ Licence: GPLv3
 
 Copyright 2014-\Year by \Mail
 
-Compile by: `gcc -Wall -o qep qep.c -lpruio -lprussdrv`
+Compile by: `gcc -Wall -o qep qep.c -lpruio`
 
 */
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
           case 'b' : case 'B' : m = 1; break;
           case 'i' : case 'I' : m = 2; break;
           case 'p' : case 'P' : m = 3; freq = (freq < 499995.) ? freq + 5. : 500000.; break;
-          case 'm' : case 'M' : m = 3; freq = (freq >     20.) ? freq - 5. :     25.; break;
+          case 'm' : case 'M' : m = 3; freq = (freq >     30.) ? freq - 5. :     25.; break;
           case '*'            : m = 3; freq = (freq < 250000.) ? freq * 5. : 500000.; break;
           case '/'            : m = 3; freq = (freq >     50.) ? freq / 5. :     25.; break;
           case '0' : m = p; pmax =    0; break;

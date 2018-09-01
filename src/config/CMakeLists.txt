@@ -35,7 +35,7 @@ IF(NOT DEFINED DTC_COMPILER_WORKS)
   ENDIF()
 ENDIF()
 IF(NOT DTC_COMPILER_WORKS)
-  MSG_LOG(">> no target init!")
+  MSG_LOG("!! no target <lkm> (device tree compiler test failed)")
   RETURN()
 ENDIF()
 
@@ -52,8 +52,6 @@ ADD_CUSTOM_COMMAND(OUTPUT ${dtbo}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
   )
+ADD_CUSTOM_TARGET(dtconf DEPENDS ${dtbo})
 
-ADD_CUSTOM_TARGET(init DEPENDS ${dtbo})
-
-
-
+MSG_LOG(">> target <dtconf> OK!")

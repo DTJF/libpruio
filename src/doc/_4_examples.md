@@ -267,7 +267,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
 
   Pinmuxing is required for this example, since the used pins are in
   GPIO mode by default. So make sure that you accordingly prepared your
-  system, see chapter \ref SecPinConfig for details.
+  system, see chapter \ref SecPinmuxing for details.
 
   These are the used pins
   |  Pin  | Function | Description                          |
@@ -366,7 +366,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 
   Pinmuxing is required for this example, since the used pins are in
   GPIO mode by default. So make sure that you accordingly prepared your
-  system, see chapter \ref SecPinConfig for details.
+  system, see chapter \ref SecPinmuxing for details.
 
   Here's the wiring diagram
 
@@ -645,7 +645,7 @@ press any key to quit
 
   First, the header pins (P8_08, P8_10, P8_12 and P8_14) need to get
   configured as GPIO output pins, so you'll have to prepare your system
-  for pinmuxing capability, see section \ref SecPinConfig for details.
+  for pinmuxing capability, see section \ref SecPinmuxing for details.
   Then connect the GPIO output pins to the controler inputs, a common
   ground and a power supply (5 V) as in the following wiring diagram
 
@@ -742,7 +742,7 @@ no support for native grafics.
 
   The digital lines (P9_14, P9_16 and P9_42) need pinmuxing to operate
   in PWM mode. So you have to prepare your system for pinmuxing (see
-  Section \ref SecPinConfig) and execute the binary with administrator
+  Section \ref SecPinmuxing) and execute the binary with administrator
   privileges.
 
 \Item{Operation}

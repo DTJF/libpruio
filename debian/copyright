@@ -3,15 +3,15 @@ Name: debian
 Maintainer: Thomas Freiherr <Thomas.Freiherr@gmx.net>
 Source: https://github.com/DTJF/libpruio
 
-Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+Copyright: 2014-2018 Thomas Freiherr <Thomas.Freiherr@gmx.net>
 License: LGPL-2+
 
-Files: src/examples/*;src/c_examples/*
-Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+Files: src/*
+Copyright: 2014-2018 Thomas Freiherr <Thomas.Freiherr@gmx.net>
 License: GPL-3+
 
 Files: debian/*
-Copyright: 2014-2016 Thomas Freiherr <Thomas.Freiherr@gmx.net>
+Copyright: 2014-2018 Thomas Freiherr <Thomas.Freiherr@gmx.net>
 License: GPL-3+
 
 License: LGPL-2+

@@ -53,24 +53,19 @@ member functions and some hints on how to fix the related code:
 
 ## Constructor {#sSecPruIoCTor}
 
-The constructor doesn't return a value. You have to check the error
-variable PruIo::Errr. When it runs OK this variable is 0 (zero).
-Otherwise it points to one of the following error messages:
+The constructor doesn't return a value. In order to check for errors,
+you have to check the error variable PruIo::Errr. It contains 0 (zero)
+on success. Otherwise it points to one of the following error messages:
 
 \Item{"cannot open /dev/uio5"} The constructor failed to open the
 interrupt file /dev/uio5 for read and write access. -> Make sure that
-the kernel driver uio_pruss is loaded (ie. by an appropriate device
+the kernel driver `uio_pruss` is loaded (ie. by an appropriate device
 tree overlay) and the user has write privileges. Find details in
-section \ref SecPreconditions.
-
-\Item{"failed opening prussdrv library"} The constructor failed to
-initialize the library libprussdrv. -> Make sure that the library is
-working properly. (Follow the documentation and test some examples.)
+section \ref sSecPruDriver.
 
 \Item{"failed loading Pru_Init instructions"} The constructor failed to
-load the init instructions to the PRU. -> Make sure that the library
-libprussdrv is working properly. (Follow the documentation and test
-some examples.)
+load the init instructions to the PRU. -> Internal problem, no hint for
+fixing.
 
 \Item{"failed executing Pru_Init instructions"} The constructor failed
 to execute the init instructions on the PRU. -> There's some internal
@@ -80,6 +75,21 @@ re-compile the libpruio library.
 \Item{"out of memory"} The constructor failed to allocate memory for
 the configurations (Init and Conf). -> Make sure that you have at least
 5 kB free.
+
+\Item{"parsing kernel claims"} The constructor failed to scan for
+kernel pinmux claims. This error only occurs when you use the loadable
+kernel module for pinmuxing, and you didn't enable the free pinmux
+feature (= not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ). In that
+case the file KERNEL_PINMUX_PINS wasn't found. The most likly reason is
+that the path to that sysfs file changed, due to kernel developments.
+
+\Item{"segfault"} There are lots of reasons for this kind of message.
+When you're sure that it happens in the constructor, then it's most
+likely that it happens because the driver tried to wtite to PRUSS
+memory while the PRUSS isn't enabled. -> Make sure that the PRUSS are
+enabled, by loading a device tree overlay that includes `&pruss {
+status = "okay" }` and check if the `uio_pruss` kernel module is
+loaded. See chapter \ref sSecPruDriver for further info.
 
 
 ## Destructor {#sSecPruIoDTor}
@@ -205,19 +215,38 @@ Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
 big. -> Make sure that parameter `Ball` is less or equal \ref
 PRUIO_AZ_BALL.
 
+\Item{"unknown setPin ball number"}
+
 \Item{"no ocp access"} The CPU ball isn't in the required modus and
 needs a new pinmux setting, but libpruio has no access to the sysfs
-folders. -> Either execute the code with administrator privileges. Or
-make sure that digital lines are set to the required modi before you
-execute the code.
+folders. -> Either load the universal device tree overlay and execute
+the code with administrator privileges. Or make sure that digital lines
+are set to the required modi before you execute the code. Or consider
+to use the loadable kernel module and execute with  administrator
+privileges.
 
 \Item{"pinmux failed: P._.. -> x.." (points replaced by numbers)} The
 CPU ball isn't in the required modus and needs a new pinmux setting,
 but the required CPU ball (parameter `Ball`) is not specified in the
-libpruio device tree overlay or the overlay isn't loaded or pinmuxing
+libpruio device tree overlay, or the overlay isn't loaded, or pinmuxing
 isn't supported for that state. -> Check the parameters `Ball` and
 `Mo`. Make sure that the required modus is defined in the libpruio
-device tree overlay and that overlay is loaded.
+device tree overlay and that overlay is loaded. Or consider to use the
+loadable kernel module and execute with administrator privileges.
+
+\Item{"pin P._.. claimed by ..."} This error may occur when you use the
+loadable kernel module for pinmuxing and you didn't enabled the free
+pinmux feature (by not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ).
+Your code tried to override the setting of a pin that is claimed by an
+other system.
+
+\Item{"pinmux missing"} Any function needs pinmuxing, but there is no
+pinmux configuration on your system. -> Load the kernel module and
+execute with administrator privileges.
+
+\note The above errors may occur in any XXX.setValue() or xxx.config()
+      function, since \Proj tries to adapt a pin when its muxmode
+      doesn't match.
 
 
 # ADC {#SecErrAdc}
@@ -407,6 +436,14 @@ first.
 output of a CAP module in a PWMSS is required, but the module is in
 input mode. -> Check the previous configuration of that pin.
 
+## snyc {#sSecErrPwmSync}
+
+\Item{"libpruio LKM missing"} This function needs the loadable kernel
+module (LKM) named `libpruio`. Check the output of `lsmod | grep
+libpruio` . If empty, you have to install and load that module.
+Otherwise you cannot use that feature. See chapter \ref ChaPreparation
+for details.
+
 
 # TIMER {#SecErrTim}
 
@@ -521,3 +558,46 @@ see \ref sSecQep for details.
 
 \Item{IO/RB mode not running} Fetching a value is required, but the PRU
 software isn't running. -> Call function PruIo::config(), first.
+
+
+# CMake  {#SecCMake}
+
+CMake, or better CMakeFbc errors may occur when you prepare the build
+tree. That is after downloading and installing the source tree, but
+before building the binaries.
+
+\Item{-- Configuring incomplete, errors occurred!} CMake couldn't
+process all configurations. That's a fatal error, it's unlikely that
+building this configuration will produce anything reasonable. Check the
+lines before for errors or warnings and solve them. The system
+preparation is described in Chapter \ref ChaPreparation. The build tree
+is fine when the `cmakefbc ..` command output ends with:
+
+~~~{.txt}
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/debian/YOUR/PATH/HERE
+~~~
+
+\Item{>> no target ...} Some components are missing on your system,
+necessary to build that target. Only the listed target is affected,
+other targets may work (reorted by text `>> target <...> OK!`). No
+action is required, until you need to build that target. In that case
+check the lines before for message for errors or warnings and solve
+them. The system preparation is described in Chapter \ref
+ChaPreparation.
+
+\Item{cmakefbc_deps: skipping dir.bi ...} The dependency scanner misses
+an include file and cannot generate a CMake dependency for it. That's
+just a warning information, no action is required. Find details in the
+(cmakefbc package documentation)[github.com/dtjf/cmakefbc].
+
+
+# make  {#SecMake}
+
+Make errors occur after you installed and prepared the source tree, and
+when you start to use it.
+
+\Item{file INSTALL cannot copy file} You executed a ` make install`
+instruction for a restricted location. The script has no permission to
+perform the required task. Prepend `sudo` to your command.

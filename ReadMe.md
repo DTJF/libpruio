@@ -10,7 +10,7 @@ It's designed for easy configuration and data handling at high speed.
 Programmable Realtime Unit SubSystem (= PRUSS or just PRU) and controls
 the CPU subsystems
 
-- Control Module: CPU Ball configurations
+- Control Module: CPU Ball configurations (pinmuxing)
 - GPIO: General Purpose Input / Output
 - PWMSS: Pulse-Width Modulation Subsystem
 - TSC_ADC_SS: Touch Screen Controler and Analog-to-Digital Convertor SubSystem (or just ADC)
@@ -26,8 +26,8 @@ The *libpruio* project is [hosted at GitHub](https://github.com/DTJF/libpruio). 
 developed and tested on a Beaglebone Black under Ubuntu 13.10 and
 Debian Image 2014-08-05. It should run on all Beaglebone platforms with
 Debian based LINUX operating system. It's compiled by the [FreeBasic
-compiler](http://www.freebasic.net). A wrapper for C programming
-language is included.
+compiler](http://www.freebasic.net). Wrappers and examples code for C
+programming language and Python are included.
 
 Find more information in the online documentation at
 

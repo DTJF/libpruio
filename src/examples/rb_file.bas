@@ -20,7 +20,7 @@ Compile by: `fbc -w all rb_file.bas`
 #INCLUDE ONCE "../pruio/pruio.bi"
 
 CONST tSamp = 123401 _  '*< The number of samples in the files (per step).
-      , tmr = 5000 _    '*< The sampling rate in ns (5000 -> 200 kHz).
+      , tmr = 20000 _   '*< The sampling rate in ns (20000 -> 50 kHz).
    , NoStep = 3 _       '*< The number of active steps (must match setStep calls and mask).
    , NoFile = 2 _       '*< The number of files to write.
    , NamFil = "output." '*< The output file names.
@@ -63,9 +63,9 @@ WITH *io
         VAR i = 0                    '*< Start index.
         WHILE i < tInd
           i += half
-          IF i > tInd THEN '          fetch the rest (no complete chunk)
-            VAR rest = tInd + half - i _ '*< The rest of the buffer (in bytes).
-              , iEnd = IIF(p1 >= p0, rest, rest + half) '*< The last byte of the rest.
+          IF i > tInd THEN '         fetch the rest (maybe no complete chunk)
+            VAR rest = tInd + half - i _ '*< The rest of the buffer (in bytes)
+              , iEnd = IIF(p1 >= p0, rest, rest + half) '*< The last byte of the rest
             WHILE .DRam[0] < iEnd : SLEEP 1 : WEND
             ?"  writing samples " & (tInd - rest) & "-" & (tInd - 1)
             PUT #fnr, , *p0, rest

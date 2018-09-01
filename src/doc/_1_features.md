@@ -110,10 +110,10 @@ Or destroy the libpruio structure when done by calling the destructor
 PruIo::~PruIo.
 
 
-# Pinmuxing {#SecPinmuxing}
+# Pinmuxing {#SecPinmuxingIntro}
 
-A digital line of the AM33xx CPU needs to be configured before use
-(see section \ref SecPinConfig for details). libpruio checks the pin
+A digital line of the AM33xx CPU needs to be configured before use (see
+section \ref SecPinmuxing for details). libpruio checks the pin
 configuration at run-time, and tries to adapt it if necessary.
 
 - An input line gets configured by a call to the config member function
@@ -131,7 +131,8 @@ are in the required state (configuration) before executing the code.
 # GPIO {#SecGpio}
 
 General Purpose Input Output is available by the GpioUdt member
-functions (in IO and RB mode, for all header pins).
+functions (in IO and RB mode, for all header pins). See section \ref
+sSecGpio for further info.
 
 - Call GpioUdt::config() to set the CPU ball in the required state
   (internal resistor pullup/pulldown/nopull, receiver active) when
@@ -151,9 +152,10 @@ access to the PRU software (experts only).
 
 # CAP {#SecCap}
 
-Capture and Analyse a digital Pulse train is available by the CapMod
-member functions (in IO and RB mode, two header pins). The frequency
-and duty cycle of an Beaglebone header input pin can get measured.
+Capture And Analyse a digital Pulse train is available by the CapMod
+member functions (in IO and RB mode). The frequency and duty cycle of
+an header pin pulse train can get measured. See section \ref sSecCap
+for further info.
 
 - Call function CapMod::config() to configure the pin as CAP input.
 
@@ -166,10 +168,11 @@ case of no input.
 # PWM {#SecPwm}
 
 Generating a Pulse Width Modulated output is available by the PwmMod
-member functions (in IO and RB mode). Therefor libpruio uses the PWMSS
-subsystems, either the PWM module (two `17` bit outputs A and B at the
-same frequency) or the CAP module in auxialiary PWM output mode (single
-`32` bit output). Both modules are supported in a transparent API.
+member functions (in IO and RB mode). Therefor libpruio uses different
+subsystems: the PWM modules and the CAP modules in the PWMSS
+subsystems, as well as the `TIMER [4-7]` subsystems. All modules are
+supported in a transparent API. See section \ref sSecPwm for further
+info.
 
 - Call function PwmMod::setValue() to set the frequncy and duty cycle
   (and configure the pin, if necessary).
@@ -185,7 +188,7 @@ only).
 # TIMER {#SecTim}
 
 Generating a pulse at an output line. The time period until the pulse
-starts and its duration gets specified. See section \ref sSecTim for
+starts and its duration gets specified. See section \ref sSecTimer for
 details.
 
 - Call function TimerUdt::setValue() to set the durations or stop a
@@ -218,7 +221,8 @@ speed of the movement can get detected.
 
 - tripple pin (speed and position, accurate reset by index pin)
 
-The mode gets specified by the call to function QepMod::config().
+The mode gets specified by the call to function QepMod::config(). See
+section \ref sSecQep for further info.
 
 
 # ADC {#SecAdc}
