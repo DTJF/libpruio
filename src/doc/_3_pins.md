@@ -31,7 +31,7 @@ This section explains the different functions the header pins can work
 in and gives detailed information about the limits.
 
 
-# Analog  {#SecAnalog}
+# Analog # {#SecAnalog}
 
 Analog lines work always as input line. Analog output isn't supported
 by the Beaglebone hardware (but can get achieved by a combination of a
@@ -97,7 +97,7 @@ configurations in \ArmRef{12}. Find example code in io_input.bas,
 oszi.bas, rb_file.bas, rb_oszi.bas and trigger.bas.
 
 
-# Digital  {#SecDigital}
+# Digital # {#SecDigital}
 
 Each digital header pin can get configured either in GPIO mode or in
 one of up to seven alternative modes. The matrix of the possible
@@ -176,7 +176,7 @@ constructor PruIo::PruIo() )
   (GpioUdt::setValue() or PwmUdt::setValue() ).
 
 
-## GPIO  {#sSecGpio}
+## GPIO ## {#sSecGpio}
 
 GPIO stands for General Purpose Input or Output. In output mode the
 program can switch any connected hardware on or off. In input mode the
@@ -217,7 +217,7 @@ Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
 
 
-## TIMER  {#sSecTimer}
+## TIMER ## {#sSecTimer}
 
 A TIMER output sends a pulse to a header pin. First, it waits a certain
 time and then toggles the state for a certain time. After that sequence
@@ -252,7 +252,7 @@ resolution issues, the real values can get computed by calling function
 TimerUdt::Value().
 
 
-## PWM  {#sSecPwm}
+## PWM ## {#sSecPwm}
 
 PWM stands for Pulse Width Modulated output. So it means generating a
 digital signal with a given frequency and duty cycle. Usualy PWM is
@@ -329,7 +329,7 @@ PwmMod::Value().
 Find example code in pwm_adc.bas or pwm_cap.bas.
 
 
-## CAP  {#sSecCap}
+## CAP ## {#sSecCap}
 
 CAP stands for Capture and Analyse a digital Pulse train. So it means
 measuring the frequency and the duty cycle of a digital signal input.
@@ -359,7 +359,7 @@ calling function CapMod::config() once.
 Find example code in pwm_cap.bas.
 
 
-## QEP  {#sSecQep}
+## QEP ## {#sSecQep}
 
 QEP stands for Quadrature Encoder Pulse measurement. So it means
 measuring the position and the speed of a quadrature encoder. Encoders
@@ -473,7 +473,7 @@ by calling function QepMod::config() once.
 Find example code in qep.bas.
 
 
-# Pinmuxing  {#SecPinmuxing}
+# Pinmuxing # {#SecPinmuxing}
 
 At boot time the operating system sets all pins in a save mode. You can
 output the default settings by executing the example
@@ -503,7 +503,7 @@ small memory footprint. But you can more easy raise conflicts with
 other systems, and a false configuration may damage your CPU.
 
 
-## Custom overlay  {#sSecCustom}
+## Custom overlay ## {#sSecCustom}
 
 A custom setting contains a single configuration for each pin. Once you
 finished your development and burned the design on a printed circuit
@@ -567,7 +567,7 @@ loaded from there.
       drop the `-00A0.dtbo` part).
 
 
-## Universal overlay  {#sSecUniversal}
+## Universal overlay ## {#sSecUniversal}
 
 This method is very similar to the previous \ref sSecCustom method. You
 need source code for a device tree overlay, that gets compiled to a
@@ -631,7 +631,7 @@ time and consumes a lot of kernel space memory. Big overlays needs
 splitting in multiple files.
 
 
-## LKM  {#sSecLKM}
+## LKM ## {#sSecLKM}
 
 This method has no restriction to pre-prepared pin configurations. Each
 pin (or CPU ball) can get configured at runtime to any mode. No device

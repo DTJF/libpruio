@@ -3,14 +3,14 @@ Changelog & Credits {#ChaChangelog}
 \tableofcontents
 
 
-# Further Development {#SecFurtherVev}
+# Further Development # {#SecFurtherVev}
 
 - More digital triggers for MM mode (ie. CAP and QEP).
 
 Feel free to send further ideas to the author (\Email).
 
 
-# libpruio-0.6.0 {#SecV-0-6-0}
+# libpruio-0.6.0 # {#SecV-0-6-0}
 
 Released in 2018, August.
 
@@ -37,7 +37,7 @@ Released in 2018, August.
 - kernel 4.x problem with PWMSS.Pwm outputs fixed by LKM
 
 
-# libpruio-0.4.0 {#SecV-0-4-0}
+# libpruio-0.4.0 # {#SecV-0-4-0}
 
 Released in 2017, Nov.
 
@@ -81,7 +81,7 @@ Released in 2017, Nov.
 - Example pwm_adc: frequency interferences fixed for A + B channel.
 
 
-# libpruio-0.2 {#SecV-0-2}
+# libpruio-0.2 # {#SecV-0-2}
 
 Released in 2014 October, 26.
 
@@ -112,7 +112,7 @@ Released in 2014 October, 26.
 - GPIO output fixed (former gpio_set sometimes skipped a setting).
 
 
-# libpruio-0.0.2 {#SecV-0-0-2}
+# libpruio-0.0.2 # {#SecV-0-0-2}
 
 Released on 2014 June, 6.
 
@@ -121,12 +121,12 @@ Released on 2014 June, 6.
 - Cosmetic: Minor adaptions in the source code
 
 
-# libpruio-0.0 {#SecV-0-0}
+# libpruio-0.0 # {#SecV-0-0}
 
 Released on 2014 May, 9.
 
 
-# References  {#SecReferences}
+# References # {#SecReferences}
 
 Here's some feedback about the \Proj project. [lejan
 wrote](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p217404)
@@ -157,7 +157,7 @@ Meanwhile \Proj is used in many projects all over the world. Here're some of the
 - []()
 
 
-# Credits  {#SecCredits}
+# Credits # {#SecCredits}
 
 Thanks go to:
 

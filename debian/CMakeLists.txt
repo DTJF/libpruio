@@ -1,3 +1,9 @@
+IF(${CMAKE_SYSTEM_VERSION} VERSION_LESS 4)
+  SET(osvers wheezy)
+ELSE()
+  SET(osvers jessie)
+ENDIF()
+
 # check for Debian packaging tools
 FIND_PROGRAM(deb_exe debuild)
 IF(NOT deb_exe)
@@ -16,40 +22,21 @@ ADD_CUSTOM_TARGET(Install-Debian
 
 # in-source: create target deb for in-source debuild
 IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-  ADD_CUSTOM_TARGET(deb cd ${CMAKE_SOURCE_DIR} && ${deb_exe} ${DEBUILD_FLAGS})
-
+  ADD_CUSTOM_TARGET(deb
+    COMMAND cp    compat.${osvers} compat
+    COMMAND cp   control.${osvers} control
+    COMMAND cat   control.packages >> control
+    COMMAND cp changelog.${osvers} changelog
+    COMMAND cd ${CMAKE_SOURCE_DIR} && ${deb_exe} ${DEBUILD_FLAGS}
+    )
   INSTALL(FILES ${CMAKE_BINARY_DIR}/src/lkm/x/${PROJ_NAME}.ko
     DESTINATION /lib/modules/
     )
-
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/lkm/systemctl.service.in ${PROJ_NAME}.service @ONLY)
 
-  #SET(exam ${CMAKE_SOURCE_DIR}/debian/tmp/usr/src/${PROJ_NAME})
-  #EXECUTE_PROCESS(
-    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/examples   && cp *.bas ${exam}
-    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/c_examples && cp *.c   ${exam}
-    #COMMAND cd ${CMAKE_SOURCE_DIR}/src/python     && cp -r *.py ${exam}
-  #)
-
-  #SET(dest src/${PROJ_NAME}.examples)
-  #INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/c_examples/
-    #DESTINATION ${dest}
-    #FILES_MATCHING PATTERN "src/c_examples/*.c"
-    #PATTERN "CMakeFiles" EXCLUDE
-    #)
-
   FOREACH(tar ${FB_EXAMPLES})
-    #INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION share/doc/${PROJ_NAME}.bin/examples)
     INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION bin RENAME pruio_${tar})
-    #INSTALL(   FILES ../src/examples/${tar}.bas DESTINATION ${dest})
   ENDFOREACH(tar)
-
-  #SET(dest share/python-pruio)
-  #INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/
-    #DESTINATION ${dest}
-    #FILES_MATCHING PATTERN "*.py"
-    #PATTERN "CMakeFiles" EXCLUDE
-    #)
   RETURN()
 ENDIF()
 
@@ -63,10 +50,15 @@ SET(src # files & dirs to copy from root dir
   src
   )
 # create target deb for out-of-source debuild
-SET(fold packages/${PROJ_NAME})
-ADD_CUSTOM_TARGET(deb rm -rf ${fold}
-  COMMAND mkdir -p ${fold}
-  COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${CMAKE_CURRENT_BINARY_DIR}/${fold}
-  COMMAND cd ${fold} && ${deb_exe} ${DEBUILD_FLAGS}
+SET(bdir ${CMAKE_CURRENT_BINARY_DIR}/${PROJ_NAME})
+SET(debdir ${bdir}/debian)
+ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
+  COMMAND mkdir -p ${bdir}
+  COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${bdir}
+  COMMAND cp    ${CMAKE_CURRENT_SOURCE_DIR}/compat.${osvers} ${debdir}/compat
+  COMMAND cp   ${CMAKE_CURRENT_SOURCE_DIR}/control.${osvers} ${debdir}/control
+  COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/control.packages >> ${debdir}/control
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/changelog.${osvers} ${debdir}/changelog
+  COMMAND cd ${bdir} && ${deb_exe} ${DEBUILD_FLAGS}
   )
 

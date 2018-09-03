@@ -20,7 +20,7 @@ minimal hardware requirements, so you need not spend a lot of money for
 testing.
 
 
-# Text {#SecExaText}
+# Text # {#SecExaText}
 
 The examples in this section produce console text output. The source
 code is available in FreeBASIC (folder src/examples) and C syntax
@@ -28,7 +28,7 @@ code is available in FreeBASIC (folder src/examples) and C syntax
 bit, in order to keep the examples informative, but the C example code
 simple.
 
-## Simple (1) {#sSecExaSimple}
+## Simple (1) ## {#sSecExaSimple}
 
 \Item{Description}
 
@@ -79,7 +79,7 @@ E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
   src/python/1.py
 
 
-## analyse {#sSecExaAnalyse}
+## analyse ## {#sSecExaAnalyse}
 
 \Item{Description}
 
@@ -143,7 +143,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
   No C source available
 
 
-## button {#sSecExaButton}
+## button ## {#sSecExaButton}
 
 \Item{Description}
 
@@ -182,7 +182,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
       mandatory: universal device tree overlay for pinmuxing.)
 
 
-## io_input {#sSecExaIoInput}
+## io_input ## {#sSecExaIoInput}
 
 \Item{Description}
 
@@ -240,7 +240,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
   src/python/io_input.py
 
 
-## performance {#sSecExaPerformance}
+## performance ## {#sSecExaPerformance}
 
 \Item{Description}
 
@@ -339,7 +339,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/performance.c
 
 
-## pwm_cap {#sSecExaPwmCap}
+## pwm_cap ## {#sSecExaPwmCap}
 
 \Item{Description}
 
@@ -434,7 +434,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/python/pwm_cap.py
 
 
-## qep {#sSecExaQep}
+## qep ## {#sSecExaQep}
 
 \Item{Description}
 
@@ -528,7 +528,7 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/qep.c
 
 
-## rb_file {#sSecExaRbFile}
+## rb_file ## {#sSecExaRbFile}
 
 \Item{Description}
 
@@ -576,7 +576,7 @@ Finished file output.1
   src/c_examples/rb_file.c
 
 
-## sos {#sSecExaSos}
+## sos ## {#sSecExaSos}
 
 \Item{Description}
 
@@ -616,7 +616,7 @@ press any key to quit
   src/c_examples/sos.c
 
 
-## stepper {#sSecExaStepper}
+## stepper ## {#sSecExaStepper}
 
 \Item{Description}
 
@@ -683,13 +683,13 @@ Pins            Key        Direction        Sleep
   src/c_examples/stepper.c
 
 
-# Grafic {#SecExaGrafic}
+# Grafic # {#SecExaGrafic}
 
 The examples in this section produce grafic output. The source code is
 available only in FreeBASIC syntax (folder src/examples), since C has
 no support for native grafics.
 
-## pwm_adc {#sSecExaPwmAdc}
+## pwm_adc ## {#sSecExaPwmAdc}
 
 \Item{Description}
 
@@ -806,7 +806,7 @@ sudo ./pwm_adc 640x150
   src/examples/pwm_adc.bas
 
 
-## oszi {#sSecExaOszi}
+## oszi ## {#sSecExaOszi}
 
 \Item{Description}
 
@@ -848,7 +848,7 @@ sudo ./pwm_adc 640x150
   src/examples/oszi.bas
 
 
-## rb_oszi {#sSecExaRbOszi}
+## rb_oszi ## {#sSecExaRbOszi}
 
 \Item{Description}
 
@@ -881,7 +881,7 @@ sudo ./pwm_adc 640x150
   src/examples/rb_oszi.bas
 
 
-## triggers {#sSecExaTriggers}
+## triggers ## {#sSecExaTriggers}
 
 \Item{Description}
 

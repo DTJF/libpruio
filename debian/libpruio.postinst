@@ -1,2 +1,3 @@
+ldconfig
 addgroup --system pruio
 #DEBHELPER#

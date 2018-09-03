@@ -21,7 +21,7 @@ in the destructor. PruIo::Conf contains the current configurations,
 adapted by the user code.
 
 
-# DInit {#SecDInit}
+# DInit # {#SecDInit}
 
 The PruIo::DInit data block holds the register context of the
 subsystems. It gets allocated by the constructor PruIo::PruIo(). Its
@@ -101,7 +101,7 @@ complete, first. This is the case when member variable `ClVa = 2`.
       result in non-revisible hardware damages.
 
 
-# DRam {#SecDRam}
+# DRam # {#SecDRam}
 
 The DRam area (data ram) is a fixed sized block of `2 * 8` kB,
 allocated by the PRUSS kernel driver. The host (ARM) can access only
@@ -123,7 +123,7 @@ host (ARM) and the PRU software. The context changes, depending on the
 current operational state of libpruio.
 
 
-## Constructor {#sSecMemCTOR}
+## Constructor ## {#sSecMemCTOR}
 
 Before the constructor loads and executes the pasm_init.p instructions,
 it calls the constructors of the subsystem structures AdcUdt, GpioUdt
@@ -191,7 +191,7 @@ This method allows to extend libpruio by new subsystem code with
 minimal adaption in the existing source.
 
 
-## config {#sSecMemConfig}
+## config ## {#sSecMemConfig}
 
 The function PruIo::config() uploads the customized configuration to
 the subsystems and starts operation in the declared run mode. Before
@@ -345,7 +345,7 @@ to the running PRU software
       parameters.
 
 
-## Destructor {#sSecMemDTOR}
+## Destructor ## {#sSecMemDTOR}
 
 The destructor PruIo::~PruIo restores the subsystems before the PruIo
 structure gets destroyed. It load the initial configuration data block
@@ -365,7 +365,7 @@ When the PRU finished successfully the DRam area contains
 | DRam[0] | PRUIO_MSG_CONF_OK |
 
 
-# ERam {#SecERam}
+# ERam # {#SecERam}
 
 The ERam area (external memory) is the biggest memory block in use.
 It's allocated by the kernel driver when loaded. The default size is
