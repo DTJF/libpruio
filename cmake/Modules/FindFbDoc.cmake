@@ -1,11 +1,11 @@
-# This script looks for fb-doc tool (http://github.com/DTJF/fb-doc) to
+# This script looks for fbdoc tool (http://github.com/DTJF/fbdoc) to
 # generate documentation by the Doxygen generator
 #
 # It defines the following variables:
 #
-#   FbDoc_EXECUTABLE     = The path to the fb-doc command.
-#   FbDoc_WORKS          = Was fb-doc found or not?
-#   FbDoc_VERSION        = The version reported by fb-doc --version
+#   FbDoc_EXECUTABLE     = The path to the fbdoc command.
+#   FbDoc_WORKS          = Was fbdoc found or not?
+#   FbDoc_VERSION        = The version reported by fbdoc --version
 #
 # Copyright (C) 2014-2018, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
 # License GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.html)
@@ -13,12 +13,12 @@
 # See ReadMe.md for details.
 
 IF(NOT FbDoc_WORKS)
-  SET(fbdoc "fb-doc")
-  SET(minvers "0.4.2")
+  SET(fbdoc "fbdoc")
+  SET(minvers "1.0")
 
   FIND_PROGRAM(FbDoc_EXECUTABLE
     NAMES ${fbdoc}
-    DOC "${fbdoc} documentation generation tool (http://github.com/DTJF/fb-doc)"
+    DOC "${fbdoc} documentation generation tool (http://github.com/DTJF/fbdoc)"
   )
 
   IF(FbDoc_EXECUTABLE EQUAL "")
@@ -42,7 +42,7 @@ IF(NOT FbDoc_WORKS)
     RETURN()
   ENDIF()
 
-  STRING(REGEX MATCH "[0-9][.][0-9][.][0-9]" FbDoc_VERSION "${output}")
+  STRING(REGEX MATCH "version [0-9][.][0-9][.][0-9]" FbDoc_VERSION "${output}")
   STRING(COMPARE LESS "${FbDoc_VERSION}" "${minvers}" not_working)
 
   IF(not_working)

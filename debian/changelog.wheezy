@@ -1,0 +1,5 @@
+libpruio (0.4) wheezy; urgency=low
+
+  * First build of debian packages for wheezy
+
+ -- Arend Lammertink <lamare@gmail.com>  Wed, 28 Sep 2016 08:17:22 +0000

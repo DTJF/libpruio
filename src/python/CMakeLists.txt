@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 IF(NOT FbDoc_WORKS)
-  MSG_LOG("!! no target <python>! (tool fb-doc missing)")
+  MSG_LOG("!! no target <python>! (missing fbdoc tool)")
   RETURN()
 ENDIF()
 
@@ -10,12 +10,12 @@ SET(csd ${CMAKE_SOURCE_DIR}/..)
 FIND_LIBRARY(CType_BINARY
   NAMES libpy_ctypes.so libpy_ctypes.dll
   PATHS ${csd} ${csd}/.. ${csd}/../.. ${csd}/../../.. ${csd}/../../../.. ${csd}/../../../../..
-  PATH_SUFFIXES fb-doc/build/src/bas/plugins fb-doc/src/bas/plugins
-  DOC "py_ctypes plugin for fb-doc"
+  PATH_SUFFIXES fbdoc/build/src/bas/plugins fbdoc/src/bas/plugins
+  DOC "py_ctypes plugin for fbdoc"
   NO_DEFAULT_PATH
 )
 IF(NOT CType_BINARY)
-  MSG_LOG("!! no target <python> (py_ctypes plugin missing in fb-doc project)")
+  MSG_LOG("!! no target <python> (py_ctypes plugin missing in fbdoc project)")
   RETURN()
 ENDIF()
 

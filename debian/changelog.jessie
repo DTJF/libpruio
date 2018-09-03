@@ -3,9 +3,3 @@ libpruio (0.6.0) unstable; urgency=low
   * First build of debian packages for jessie, wheezy
 
  -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Thu, 16 Aug 2018 13:02:20 +0200
-
-libpruio (0.4) wheezy; urgency=low
-
-  * First build of debian packages for wheezy
-
- -- Arend Lammertink <lamare@gmail.com>  Wed, 28 Sep 2016 08:17:22 +0000

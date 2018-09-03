@@ -33,7 +33,7 @@ The further stuff in this chapter is for advanced users who want to
 adapt the source code and recompile the binary.
 
 
-# Tools  {#SecTools}
+# Tools # {#SecTools}
 
 The further files in this package are related to the version control
 system GIT and to automatical builds of the examples and the
@@ -61,7 +61,7 @@ packages in their distrubution management system (D), or pre-installed
 | [GIT](http://git-scm.com/)                          | R  D | Version control system to organize the files                   |
 | [CMake](http://www.cmake.org)                       | R  D | Build management system to build executables and documentation |
 | [cmakefbc](http://github.com/DTJF/cmakefbc)         | R    | FreeBASIC extension for CMake                                  |
-| [fb-doc](http://github.com/DTJF/fb-doc)             | R    | FreeBASIC extension tool for Doxygen                           |
+| [fbdoc](http://github.com/DTJF/fbdoc)               | R    | FreeBASIC extension tool for Doxygen                           |
 | [Doxygen](http://www.doxygen.org/)                  | R  D | Documentation generator (for html output)                      |
 | [Graphviz](http://www.graphviz.org/)                | R  D | Graph Visualization Software (caller/callee graphs)            |
 | [LaTeX](https://latex-project.org/ftp.html)         | R  D | A document preparation system (for PDF output)                 |
@@ -114,11 +114,11 @@ websides, linked by the name in the first column.
    ~~~
    \note Omit `sudo` in case of non-LINUX systems.
 
--# And finaly, install fb-doc (if wanted) by using GIT and CMake.
+-# And finaly, install fbdoc (if wanted) by using GIT and CMake.
    Execute the commands
    ~~~{.txt}
-   git clone https://github.com/DTJF/fb-doc
-   cd fb-doc
+   git clone https://github.com/DTJF/fbdoc
+   cd fbdoc
    mkdir build
    cd build
    cmake ..
@@ -128,12 +128,12 @@ websides, linked by the name in the first column.
    \note Omit `sudo` in case of non-LINUX systems.
 
 
-# Get Package  {#SecGet}
+# Get Package # {#SecGet}
 
 Depending on whether you installed the optional GIT package, there're
 two ways to get the \Proj package.
 
-## ZIP  {#SecGet_Zip}
+## ZIP ## {#SecGet_Zip}
 
 As an alternative you can download a Zip archive by clicking the
 [Download ZIP](https://github.com/DTJF/girtobac/archive/master.zip)
@@ -144,7 +144,7 @@ the archive. Then change to the newly created folder.
       cannot switch to a certain point in the history.
 
 
-## GIT  {#SecGet_Git}
+## GIT ## {#SecGet_Git}
 
 Using GIT is the prefered way to download the \Proj package (since it
 helps users to get involved in to the development process). Get your
@@ -154,7 +154,7 @@ copy and change to the source tree by executing
     cd libpruio
 
 
-# Configuration  {#SecConfig}
+# Configuration # {#SecConfig}
 
 Before you can use \Proj you have to make sure that your system is
 prepared. This means
@@ -168,7 +168,7 @@ manually is a complex process. It isn't described here, since it's
 beyond the scope of this documentation.
 
 
-## Prepare build  {#sSecPrepBuild}
+## Prepare build ## {#sSecPrepBuild}
 
 The project either supports in-source or out-of-source building. The
 later is more easy to understand and to handle, since the source code
@@ -182,7 +182,7 @@ doesn't change (much). Mostly all generated files go into a separate
 When the script fails, solve the problems first before you continue.
 
 
-## PRU driver  {#sSecPruDriver}
+## PRU driver ## {#sSecPruDriver}
 
 Unfortunatelly this step may get complicated. \Proj needs the
 `uio_pruss` driver. In kernel 3.8 this is default, no further action is
@@ -206,7 +206,7 @@ uio                    20480  2 uio_pruss,uio_pdrv_genirq
 ~~~
 
 
-## LKM  {#sSecLkmBuild}
+## LKM ## {#sSecLkmBuild}
 
 The loadable kernel module (LKM) for libpruio has three purposes
 
@@ -277,7 +277,7 @@ LKM execute
       line.
 
 
-# Build Binary  {#SecBuildBin}
+# Build Binary # {#SecBuildBin}
 
 Compile the source code and install by executing (in `build` folder):
 
@@ -290,7 +290,7 @@ Compile the source code and install by executing (in `build` folder):
       linker. You can omit it for further updates.
 
 
-# Build Examples  {#SecBuildExamples}
+# Build Examples # {#SecBuildExamples}
 
 In the that same build folder, build the examples by:
 
@@ -315,7 +315,7 @@ The build scripts also support separate builds
       library binary first, see section \ref SecBuildBin.
 
 
-# Build Documentation  {#SecBuildDoc}
+# Build Documentation # {#SecBuildDoc}
 
 In the that same build folder, build the documentation by:
 
@@ -329,7 +329,7 @@ also support separate builds
     make doc_pdf
 
 
-# Build Python Binding  {#SecBuildPython}
+# Build Python Binding # {#SecBuildPython}
 
 In order to execute the Python examples, you have to generate a
 ctypes-based python binding for the library fist. To build a fresh file
@@ -339,10 +339,10 @@ from the current FB source code execute
 
 Find the resulting file `pruio.py` in folder `src/python/libpruio`.
 
-\note `fb-doc` and its plugin `py_ctype` are mandatory for that target.
+\note `fbdoc` and its plugin `py_ctype` are mandatory for that target.
 
 
-# DTBO File  {#sSecDtboFile}
+# DTBO File # {#sSecDtboFile}
 
 The device tree blob (DTBO) for libpruio has two purposes
 
@@ -375,7 +375,7 @@ have to make sure that the overlay gets loaded:
   documentation to describe all the diffent approaches.
 
 
-# Build Debian Package  {#SecBuildDeb}
+# Build Debian Package # {#SecBuildDeb}
 
 In the that same build folder, build the Debian packages by:
 

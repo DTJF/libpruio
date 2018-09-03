@@ -29,7 +29,7 @@ pasm_init.bi
 pasm_run.bi
 libpruio.so
 
-doxy/fb-doc.lfn
+doxy/fbdoc.lfn
 src/config/*.dtbo
 
 # Use wildcards as well

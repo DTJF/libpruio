@@ -1,0 +1,9 @@
+Source: libpruio
+Priority: extra
+Maintainer: Arend Lammertink <lamare@gmail.com>
+Build-Depends: dh-python, python-all (>= 2.6.6-3), debhelper (>= 9), dh-systemd (>= 1.5), autotools-dev, doxygen, graphviz, freebasic (>= 1.0.0), cmake (>= 2.8.3), am335x-pru-package, fbdoc (>= 1.0.0), dtc, cmakefbc (>= 1.0.0)
+Standards-Version: 3.9.4
+Section: libs
+Homepage: https://github.com/DTJF/libpruio
+Vcs-Git: git://github.com/DTJF/libpruio.git
+Vcs-Browser: https://github.com/DTJF/libpruio
