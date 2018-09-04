@@ -31,40 +31,64 @@ DIM SHARED AS tprussdrv PRUSSDRV
 #DEFINE KERNEL_PINMUX_PINS "/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins"
 
 '#include once "crt/fcntl.bi" ' from: bits/fnctl-linux.h
+'* The size type
 TYPE AS ULONG size_t
+'* The signed size type
 TYPE AS LONG ssize_t
 
+'* File acess mode
 #DEFINE O_ACCMODE  &o003
+'* File read only mode
 #DEFINE O_RDONLY   &o0
+'* File write only mode
 #DEFINE O_WRONLY   &o1
+'* File read/write mode
 #DEFINE O_RDWR     &o2
+'* File create mode
 #DEFINE O_CREAT    &o100  ' Not fcntl.
+'* Fail if file exists
 #DEFINE O_EXCL     &o200  ' Not fcntl.
+'* No tty mode
 #DEFINE O_NOCTTY   &o400  ' Not fcntl.
+'* File truncate to 0
 #DEFINE O_TRUNC    &o1000 ' Not fcntl.
+'* File append mode
 #DEFINE O_APPEND   &o2000
+'* File non blocking mode
 #DEFINE O_NONBLOCK &o4000
+'* File no delay mode
 #DEFINE O_NDELAY   O_NONBLOCK
+'* File write IO mode
 #DEFINE O_SYNC     &o4010000
-#DEFINE O_FSYNC    O_SYNC
-#DEFINE O_ASYNC    &o20000
 
 ' from: bits/mman-linux.h
-#DEFINE PROT_READ      &h1 ' Page can be read.
-#DEFINE PROT_WRITE     &h2 ' Page can be written.
-#DEFINE PROT_EXEC      &h4 ' Page can be executed.
-#DEFINE PROT_NONE      &h0 ' Page can not be accessed.
-#DEFINE PROT_GROWSDOWN &h01000000 ' Extend change to start of growsdown vma (mprotect only).
-#DEFINE PROT_GROWSUP   &h02000000 ' Extend change to start of growsup vma (mprotect only).
+'* Page can be read
+#DEFINE PROT_READ      &h1 '
+'* Page can be written
+#DEFINE PROT_WRITE     &h2
+'* Page can be executed
+#DEFINE PROT_EXEC      &h4
+'* Page can not be accessed
+#DEFINE PROT_NONE      &h0
+'*Extend change to start of growsdown vma (mprotect only)
+#DEFINE PROT_GROWSDOWN &h01000000
+'*Extend change to start of growsup vma (mprotect only)
+#DEFINE PROT_GROWSUP   &h02000000
 
-#DEFINE  MAP_SHARED &h01 ' Share changes.
-#DEFINE MAP_PRIVATE &h02 ' Changes are private.
+'* Share changes
+#DEFINE  MAP_SHARED &h01
+'* Changes are private
+#DEFINE MAP_PRIVATE &h02
 #IFDEF __USE_MISC
- #DEFINE   MAP_TYPE &h0f ' Mask for type of mapping.
+ '* Mask for type of mapping
+ #DEFINE   MAP_TYPE &h0f
 #ENDIF
 
+'* The offset type
 TYPE AS LONG off_t
+'* The adress type
 TYPE AS ANY PTR addr_t
+'* The character adress type
 TYPE AS UBYTE PTR caddr_t
 
 '* \brief Declaration for C runtime function mmap().
@@ -90,7 +114,7 @@ This is an internal service function.
 
 \since 0.6
 '/
-SUB __prussintc_set_cmr(BYVAL Intc AS ULONG PTR, BYVAL Event AS USHORT, BYVAL Ch AS USHORT)
+SUB __prussintc_set_cmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Event AS USHORT, BYVAL Ch AS USHORT)
   Intc[(PRU_INTC_CMR1_REG + (Event AND NOT(&b11))) SHR 2] _
       OR= ((Ch AND &b1111) SHL ((Event AND &b11) SHL 3))
 END SUB
@@ -105,7 +129,7 @@ This is an internal service function.
 
 \since 0.6
 '/
-SUB __prussintc_set_hmr(BYVAL Intc AS ULONG PTR, BYVAL Ch AS USHORT, BYVAL Host AS USHORT)
+SUB __prussintc_set_hmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Ch AS USHORT, BYVAL Host AS USHORT)
   Intc[(PRU_INTC_HMR1_REG     + (Ch AND NOT(&b11))) SHR 2] _
     = Intc[(PRU_INTC_HMR1_REG + (Ch AND NOT(&b11))) SHR 2] _
      OR (((Host) AND &b1111) SHL (((Ch) AND &b11) SHL 3))
@@ -121,7 +145,7 @@ original libprussdrv code, the function here gets called only once.
 
 \since 0.6
 '/
-FUNCTION __prussdrv_memmap_init(BYVAL IrqFd AS LONG) AS LONG
+FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
   WITH PRUSSDRV
     DIM AS STRING*PRUSS_UIO_PARAM_VAL_LEN buff = ""
     .mmap_fd = IrqFd
@@ -181,7 +205,7 @@ prussdrv_exit() closes all open files.
 
 \since 0.6
 '/
-FUNCTION prussdrv_open(BYVAL Irq AS ULONG) AS LONG
+FUNCTION prussdrv_open CDECL(BYVAL Irq AS ULONG) AS LONG
   WITH PRUSSDRV                                  : IF .fd(Irq) THEN RETURN -1 ' already open
     VAR nam = "/dev/uio" & HEX(Irq, 1)
     .fd(Irq) = open_(nam, O_RDWR OR O_SYNC) : IF .fd(Irq) < 0 THEN RETURN -2 ' open failed
@@ -198,7 +222,7 @@ Disable a PRU subsystem, by starting its clock.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_enable(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_enable CDECL(BYVAL PruId AS ULONG) AS LONG
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 2 : RETURN 0
   CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 2 : RETURN 0
@@ -214,7 +238,7 @@ Disable a PRU subsystem, by stopping its clock.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_disable(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_disable CDECL(BYVAL PruId AS ULONG) AS LONG
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 1 : RETURN 0
   CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 1 : RETURN 0
@@ -230,7 +254,7 @@ Force a reset at a PRU subsystem.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_reset(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_reset CDECL(BYVAL PruId AS ULONG) AS LONG
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 0 : RETURN 0
   CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 0 : RETURN 0
@@ -251,7 +275,7 @@ specified by parameter Offs.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_write_memory( _
+FUNCTION prussdrv_pru_write_memory CDECL( _
   BYVAL RamId AS ULONG _
 , BYVAL Offs AS ULONG _
 , BYVAL Dat AS CONST ULONG PTR _
@@ -259,11 +283,11 @@ FUNCTION prussdrv_pru_write_memory( _
 
   DIM AS ULONG PTR m
   SELECT CASE AS CONST RamId
-  CASE PRUSS0_PRU0_DATARAM   : m = CAST(ULONG PTR, PRUSSDRV.pru0_dataram_base   ) + Offs
-  CASE PRUSS0_PRU1_DATARAM   : m = CAST(ULONG PTR, PRUSSDRV.pru1_dataram_base   ) + Offs
-  CASE PRUSS0_PRU0_IRAM      : m = CAST(ULONG PTR, PRUSSDRV.pru0_iram_base      ) + Offs
-  CASE PRUSS0_PRU1_IRAM      : m = CAST(ULONG PTR, PRUSSDRV.pru1_iram_base      ) + Offs
-  CASE PRUSS0_SHARED_DATARAM : m = CAST(ULONG PTR, PRUSSDRV.pruss_sharedram_base) + Offs
+  CASE PRUSS0_PRU0_DRAM : m = CAST(ULONG PTR, PRUSSDRV.pru0_dataram_base   ) + Offs
+  CASE PRUSS0_PRU1_DRAM : m = CAST(ULONG PTR, PRUSSDRV.pru1_dataram_base   ) + Offs
+  CASE PRUSS0_PRU0_IRAM : m = CAST(ULONG PTR, PRUSSDRV.pru0_iram_base      ) + Offs
+  CASE PRUSS0_PRU1_IRAM : m = CAST(ULONG PTR, PRUSSDRV.pru1_iram_base      ) + Offs
+  CASE PRUSS0_SRAM      : m = CAST(ULONG PTR, PRUSSDRV.pruss_sharedram_base) + Offs
   CASE ELSE : RETURN -1
   END SELECT : VAR l = (Size + 3) SHR 2 ' Adjust length as multiple of 4 bytes
   FOR i as long = 0 TO l - 1
@@ -284,7 +308,7 @@ custom configuration must get compiled in the binary.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pruintc_init(BYVAL DatIni AS CONST tpruss_intc_initdata PTR) AS LONG
+FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata PTR) AS LONG
   WITH PRUSSDRV
     VAR intc = CAST(ULONG PTR, .intc_base)
     DIM AS ULONG i, mask1, mask2
@@ -353,7 +377,7 @@ PRUSS.
 
 \since 0.6
 '/
-SUB prussdrv_pru_send_event(BYVAL Event AS ULONG)
+SUB prussdrv_pru_send_event CDECL(BYVAL Event AS ULONG)
   VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
   IF Event < 32 THEN intc[PRU_INTC_SRSR1_REG SHR 2] = 1 SHL Event _
                 ELSE intc[PRU_INTC_SRSR2_REG SHR 2] = 1 SHL (Event - 32)
@@ -369,7 +393,7 @@ input occurs.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_wait_event(BYVAL Irq AS ULONG) AS ULONG
+FUNCTION prussdrv_pru_wait_event CDECL(BYVAL Irq AS ULONG) AS ULONG
   DIM AS ULONG event_count
   read_(PRUSSDRV.fd(Irq), @event_count, SIZEOF(ULONG))
   RETURN event_count
@@ -385,7 +409,7 @@ order to get ready for the next event.
 
 \since 0.6
 '/
-SUB prussdrv_pru_clear_event(BYVAL Irq AS ULONG, BYVAL Event AS ULONG)
+SUB prussdrv_pru_clear_event CDECL(BYVAL Irq AS ULONG, BYVAL Event AS ULONG)
   VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
   IF Event < 32 THEN intc[PRU_INTC_SECR1_REG SHR 2] = 1 SHL Event _
                 ELSE intc[PRU_INTC_SECR2_REG SHR 2] = 1 SHL (Event - 32)
@@ -401,7 +425,7 @@ input pointer. Memory is then accessed by an array.
 
 \since 0.6
 '/
-SUB prussdrv_map_extmem(BYVAL Addr AS ANY PTR PTR)
+SUB prussdrv_map_extmem CDECL(BYVAL Addr AS ANY PTR PTR)
   *Addr = PRUSSDRV.extram_base
 END SUB ' -> property
 
@@ -415,7 +439,7 @@ for details.
 
 \since 0.6
 '/
-FUNCTION prussdrv_extmem_size() AS ULONG
+FUNCTION prussdrv_extmem_size CDECL() AS ULONG
   RETURN PRUSSDRV.extram_map_size
 END FUNCTION ' -> property
 
@@ -433,13 +457,13 @@ accessed by an array.
 
 \since 0.6
 '/
-FUNCTION prussdrv_map_prumem(BYVAL RamId AS ULONG, BYVAL Addr AS ANY PTR PTR) AS LONG
+FUNCTION prussdrv_map_prumem CDECL(BYVAL RamId AS ULONG, BYVAL Addr AS ANY PTR PTR) AS LONG
   SELECT CASE AS CONST RamId
-  CASE PRUSS0_PRU0_DATARAM   : *Addr = PRUSSDRV.pru0_dataram_base    : RETURN 0
-  CASE PRUSS0_PRU1_DATARAM   : *Addr = PRUSSDRV.pru1_dataram_base    : RETURN 0
-  CASE PRUSS0_PRU0_IRAM      : *Addr = PRUSSDRV.pru0_iram_base       : RETURN 0
-  CASE PRUSS0_PRU1_IRAM      : *Addr = PRUSSDRV.pru1_iram_base       : RETURN 0
-  CASE PRUSS0_SHARED_DATARAM : *Addr = PRUSSDRV.pruss_sharedram_base : RETURN 0
+  CASE PRUSS0_PRU0_DRAM : *Addr = PRUSSDRV.pru0_dataram_base    : RETURN 0
+  CASE PRUSS0_PRU1_DRAM : *Addr = PRUSSDRV.pru1_dataram_base    : RETURN 0
+  CASE PRUSS0_PRU0_IRAM : *Addr = PRUSSDRV.pru0_iram_base       : RETURN 0
+  CASE PRUSS0_PRU1_IRAM : *Addr = PRUSSDRV.pru1_iram_base       : RETURN 0
+  CASE PRUSS0_SRAM      : *Addr = PRUSSDRV.pruss_sharedram_base : RETURN 0
   END SELECT : *Addr = 0 : RETURN -1
 END FUNCTION
 
@@ -454,7 +478,7 @@ value returned form a mmap() call.
 
 \since 0.6
 '/
-FUNCTION prussdrv_get_phys_addr(BYVAL Addr AS CONST ANY PTR) AS ULONG
+FUNCTION prussdrv_get_phys_addr CDECL(BYVAL Addr AS CONST ANY PTR) AS ULONG
   WITH PRUSSDRV
     SELECT CASE Addr
     CASE .pru0_dataram_base TO .pru0_dataram_base + .pruss_map_size - 1
@@ -474,7 +498,7 @@ The procedure unmaps the memory and closes the interrupt file.
 
 \since 0.6
 '/
-SUB prussdrv_exit()
+SUB prussdrv_exit CDECL()
   WITH PRUSSDRV
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)
@@ -497,7 +521,7 @@ is stored only once, no double entries.
 
 \since 0.6
 '/
-FUNCTION find_claims() AS ZSTRING PTR
+FUNCTION find_claims CDECL() AS ZSTRING PTR
 #DEFINE TBUFF_SIZE 32768
   STATIC AS STRING mux
   DIM AS STRING*TBUFF_SIZE t
@@ -554,7 +578,7 @@ shorter (no overlay loading) and less memory is used.
 \since 0.6
 '/
 FUNCTION setPin_lkm CDECL( _
-    BYVAL Top AS PruIo PTR _
+    BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
   WITH *Top
@@ -589,7 +613,7 @@ kernel claiming at runtime. You can re-fetch the claims when needed.
 \since 0.6
 '/
 FUNCTION setPin_save CDECL( _
-    BYVAL Top AS PruIo PTR _
+    BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
   WITH *Top
@@ -624,7 +648,7 @@ privileges). The function does nothing, but returns an error message.
 \since 0.6
 '/
 FUNCTION setPin_nogo CDECL( _
-    BYVAL Top AS PruIo PTR _
+    BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
                                   Top->Errr = @"pinmux missing" : RETURN Top->Errr
@@ -652,7 +676,7 @@ state.
 \since 0.6
 '/
 FUNCTION setPin_dtbo CDECL( _
-    BYVAL Top AS PruIo PTR _
+    BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
   WITH *Top

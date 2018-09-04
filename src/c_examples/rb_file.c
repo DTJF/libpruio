@@ -6,9 +6,7 @@ libpruio. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
 for maximum speed, sampled in to the ring buffer and from there saved
 as raw data to some files.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Thanks for C code translation: Nils Kohrs <nils.kohrs@gmail.com>
 

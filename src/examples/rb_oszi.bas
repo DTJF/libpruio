@@ -6,10 +6,7 @@ libpruio. A fixed step mask of AIN-4 and AIN-7 get sampled and drawn as
 a line graf to a grafic window. Unlike IO mode, the step
 mask cannot get changed in RB mode at run-time.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
-
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all rb_oszi.bas`
 

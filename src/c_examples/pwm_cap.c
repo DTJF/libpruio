@@ -8,12 +8,11 @@ as source for the measurement. The output can be changed by some keys,
 the frequency and duty cycle of the input is shown continuously in the
 terminal output.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio`
 
+\since 0.0
 */
 
 //! Message for the compiler.

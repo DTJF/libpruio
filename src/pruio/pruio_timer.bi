@@ -72,7 +72,7 @@ variables.
 TYPE TimerUdt
   AS Pruio_ PTR Top       '*< Pointer to the calling PruIo instance.
   AS TimerSet PTR _
-    Init(PRUIO_AZ_TIMER) _'*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
+    Init(PRUIO_AZ_TIMER) _'*< Initial subsystem configuration, used in the destructor PruIo::~PruIo().
   , Conf(PRUIO_AZ_TIMER)  '*< Current subsystem configuration, used in PruIo::config().
   AS TimerArr PTR _
     Raw(PRUIO_AZ_TIMER)   '*< Pointer to current raw subsystem data (IO), all 32 bits.

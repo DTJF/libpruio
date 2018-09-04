@@ -26,7 +26,7 @@ FUNCTION pruio_new CDECL ALIAS "pruio_new"( _
   RETURN NEW PruIo(Act, Av, OpD, SaD)
 END FUNCTION
 
-'* \brief Wrapper function for destructor PruIo::~PruIo.
+'* \brief Wrapper function for destructor PruIo::~PruIo().
 SUB pruio_destroy CDECL ALIAS "pruio_destroy"( _
     BYVAL Io AS PruIo PTR) EXPORT
 

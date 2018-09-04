@@ -86,7 +86,7 @@ C wrapper equivalent adcUdt.
 TYPE AdcUdt
   AS Pruio_ PTR Top  '*< Pointer to the calling PruIo instance.
   AS AdcSet PTR _
-    Init _     '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
+    Init _     '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo().
   , Conf       '*< Current subsystem configuration, used in PruIo::config().
   AS UInt32 _
     Samples _  '*< Number of samples (specifies run mode: 0 = config, 1 = IO mode, >1 = MM mode).

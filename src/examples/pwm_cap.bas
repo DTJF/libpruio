@@ -8,10 +8,7 @@ as source for the measurement. The output can be changed by some keys,
 the frequency and duty cycle of the input is shown continuously in the
 terminal output.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
-
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all pwm_cap.bas`
 

@@ -17,41 +17,63 @@ supports pinmuxing and PWM features.
 #INCLUDE ONCE "pruio.bi"
 #INCLUDE ONCE "pruio_intc.bi"
 
+'* The page size for memory maps
 #DEFINE PAGE_SIZE 4096
 
-'//PRUSS INTC register offsets
+' PRUSS INTC register offsets
 #DEFINE PRU_INTC_GER_REG     &h010
+'*
 #DEFINE PRU_INTC_HIEISR_REG  &h034
+'*
 #DEFINE PRU_INTC_SRSR1_REG   &h200
+'*
 #DEFINE PRU_INTC_SRSR2_REG   &h204
+'*
 #DEFINE PRU_INTC_SECR1_REG   &h280
+'*
 #DEFINE PRU_INTC_SECR2_REG   &h284
+'*
 #DEFINE PRU_INTC_ESR1_REG    &h300
+'*
 #DEFINE PRU_INTC_ESR2_REG    &h304
+'*
 #DEFINE PRU_INTC_CMR1_REG    &h400
+'*
 #DEFINE PRU_INTC_HMR1_REG    &h800
+'*
 #DEFINE PRU_INTC_SIPR1_REG   &hD00
+'*
 #DEFINE PRU_INTC_SIPR2_REG   &hD04
+'*
 #DEFINE PRU_INTC_SITR1_REG   &hD80
+'*
 #DEFINE PRU_INTC_SITR2_REG   &hD84
 
+'* The maximal number of host events
 #DEFINE MAX_HOSTS_SUPPORTED 10
 
-'//UIO driver expects user space to map PRUSS_UIO_MAP_OFFSET_XXX to
-'//access corresponding memory regions - region offset is N*PAGE_SIZE
-
+' UIO driver expects user space to map PRUSS_UIO_MAP_OFFSET_XXX to
+' access corresponding memory regions - region offset is N*PAGE_SIZE
+'* The offset for PRUSS register adresses
 #DEFINE PRUSS_UIO_MAP_OFFSET_PRUSS 0*PAGE_SIZE
+'* The base adress file of the memory area for PRUSS registers
 #DEFINE PRUSS_UIO_DRV_PRUSS_BASE "/sys/class/uio/uio0/maps/map0/addr"
+'* The size file of the memory area for PRUSS registers
 #DEFINE PRUSS_UIO_DRV_PRUSS_SIZE "/sys/class/uio/uio0/maps/map0/size"
 
+'* Mapping offset for external ram (ERam)
 #DEFINE PRUSS_UIO_MAP_OFFSET_EXTRAM 1*PAGE_SIZE
+'* The base adress file of the external ram (ERam)
 #DEFINE PRUSS_UIO_DRV_EXTRAM_BASE "/sys/class/uio/uio0/maps/map1/addr"
+'* The size file of the external ram (ERam)
 #DEFINE PRUSS_UIO_DRV_EXTRAM_SIZE "/sys/class/uio/uio0/maps/map1/size"
 
 
 /'* \brief Date structure for the `uio_pruss` kernel driver.
 
-FIXME
+The data in this structure is used to interact with the `uio_pruss`
+kernel driver. It contains physical and virtual adresses of PRUSS
+memory registers.
 
 \since 0.6
 '/
@@ -84,40 +106,41 @@ TYPE __prussdrv
   AS tpruss_intc_initdata intc_data '*< A copy of the interrupt settings
 END TYPE
 
+'* Forward declaration for `uio_pruss` data
 TYPE AS __prussdrv tprussdrv
 
-DECLARE FUNCTION prussdrv_open(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_enable(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_disable(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_reset(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_write_memory( _
+DECLARE FUNCTION prussdrv_open CDECL(BYVAL AS ULONG) AS LONG
+DECLARE FUNCTION prussdrv_pru_enable CDECL(BYVAL AS ULONG) AS LONG
+DECLARE FUNCTION prussdrv_pru_disable CDECL(BYVAL AS ULONG) AS LONG
+DECLARE FUNCTION prussdrv_pru_reset CDECL(BYVAL AS ULONG) AS LONG
+DECLARE FUNCTION prussdrv_pru_write_memory CDECL( _
   BYVAL AS ULONG _
 , BYVAL AS ULONG _
 , BYVAL AS CONST ULONG PTR _
 , BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pruintc_init(BYVAL AS CONST tpruss_intc_initdata PTR) AS LONG
-DECLARE SUB prussdrv_pru_send_event(BYVAL AS ULONG)
-DECLARE FUNCTION prussdrv_pru_wait_event(BYVAL AS ULONG) AS ULONG
-DECLARE SUB prussdrv_pru_clear_event(BYVAL AS ULONG, BYVAL AS ULONG)
-DECLARE SUB prussdrv_map_extmem(BYVAL AS ANY PTR PTR)
-DECLARE FUNCTION prussdrv_extmem_size() AS ULONG
-DECLARE FUNCTION prussdrv_map_prumem(BYVAL AS ULONG, BYVAL AS ANY PTR PTR) AS LONG
-DECLARE FUNCTION prussdrv_get_phys_addr(BYVAL AS CONST ANY PTR) AS ULONG
-DECLARE SUB prussdrv_exit()
+DECLARE FUNCTION prussdrv_pruintc_init CDECL(BYVAL AS CONST tpruss_intc_initdata PTR) AS LONG
+DECLARE SUB prussdrv_pru_send_event CDECL(BYVAL AS ULONG)
+DECLARE FUNCTION prussdrv_pru_wait_event CDECL(BYVAL AS ULONG) AS ULONG
+DECLARE SUB prussdrv_pru_clear_event CDECL(BYVAL AS ULONG, BYVAL AS ULONG)
+DECLARE SUB prussdrv_map_extmem CDECL(BYVAL AS ANY PTR PTR)
+DECLARE FUNCTION prussdrv_extmem_size CDECL() AS ULONG
+DECLARE FUNCTION prussdrv_map_prumem CDECL(BYVAL AS ULONG, BYVAL AS ANY PTR PTR) AS LONG
+DECLARE FUNCTION prussdrv_get_phys_addr CDECL(BYVAL AS CONST ANY PTR) AS ULONG
+DECLARE SUB prussdrv_exit CDECL()
 
-DECLARE FUNCTION setPin_save( _
-    BYVAL AS PruIo_ PTR _
+DECLARE FUNCTION setPin_save CDECL( _
+    BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_lkm( _
-    BYVAL AS PruIo_ PTR _
+DECLARE FUNCTION setPin_lkm CDECL( _
+    BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_dtbo( _
-    BYVAL AS PruIo_ PTR _
+DECLARE FUNCTION setPin_dtbo CDECL( _
+    BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_nogo( _
-    BYVAL AS PruIo_ PTR _
+DECLARE FUNCTION setPin_nogo CDECL( _
+    BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR

@@ -6,12 +6,11 @@ analog input lines. It's designed for the description pages and shows
 the basic usage of libpruio with a minimum of source code, translatable
 between FreeBASIC and C.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o 1 1.c -lpruio`
 
+\since 0.0
 */
 
 

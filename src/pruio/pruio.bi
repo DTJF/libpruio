@@ -48,7 +48,7 @@ operation.
 
 An enabled subsystem will get activated in the constructor
 PruIo::PruIo() and libpruio will set its configuration. When done, the
-destructor PruIo::~PruIo either disables it (when previously disabled)
+destructor PruIo::~PruIo() either disables it (when previously disabled)
 or resets the initial configuration.
 
 The first enumerator PRUIO_ACT_PRU1 is used to specify the PRU
@@ -92,6 +92,7 @@ TYPE BallSet
   AS UInt32 DeAd                 '*< Base address of Control Module subsystem.
   AS UInt8  Value(PRUIO_AZ_BALL) '*< The values of the pad control registers.
 END TYPE
+
 
 /'* \brief Main structure, binding all components together.
 
@@ -184,7 +185,8 @@ TYPE PruIo
 
   AS UInt32 MuxFnr      '*< Pinmuxing file number, if any
   AS ZSTRING PTR MuxAcc '*< Pinmuxing file
-  /'* \brief Tnterface for pinmuxing function (internal).
+
+  /'* \brief Interface for pinmuxing function (internal).
   \param Top The toplevel PruIo instance.
   \param Ball The CPU ball number (use macros from pruio_pins.bi).
   \param Mo The new modus to set.
@@ -221,11 +223,11 @@ TYPE PruIo
         have to care about loading the matching driver by yourself.
 
   \since 0.6
-  '/
-  setPin as FUNCTION CDECL( _
+  '/ '& FUNCTION_CDECL_AS_ZSTRING_PTR (setPin) (BYVAL_AS_Pruio__PTR Top, BYVAL_AS_UInt8 Ball, BYVAL_AS_UInt8 Mo); /*
+  setPin AS FUNCTION CDECL( _
     BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR '&  */
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _

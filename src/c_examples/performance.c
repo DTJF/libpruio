@@ -20,12 +20,11 @@ by
   - Input Adc->Value, output direct GPIO
   - Input Adc->Value, output function Gpio->Value
 
-Licence: GPLv3
-
-Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Licence: GPLv3, Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 Compile by: `gcc -Wall -o performance performance.c -lpruio`
 
+\since 0.4
 */
 
 //! Message for the compiler.

@@ -49,7 +49,7 @@ The constructor tries to
 - call the initialize functions of the subsystem UDTs.
 
 It reports a failure by setting the member variable PruIo::Errr to an
-appropriate text (the destructor PruIo::~PruIo should be called in that
+appropriate text (the destructor PruIo::~PruIo() should be called in that
 case).
 
 Otherwise (PruIo::Errr = 0) the constructor tries to enable the
@@ -149,11 +149,11 @@ CONSTRUCTOR PruIo( _
 
   IF Act AND PRUIO_ACT_PRU1 THEN
     PruIRam = PRUSS0_PRU1_IRAM
-    PruDRam = PRUSS0_PRU1_DATARAM
+    PruDRam = PRUSS0_PRU1_DRAM
     PruNo = 1
   ELSE
     PruIRam = PRUSS0_PRU0_IRAM
-    PruDRam = PRUSS0_PRU0_DATARAM
+    PruDRam = PRUSS0_PRU0_DRAM
     PruNo = 0
   END IF
   IF prussdrv_open(PRUIO_EVNT) THEN _  '              open PRU Interrupt
@@ -170,9 +170,9 @@ CONSTRUCTOR PruIo( _
   ParOffs = 1
   DevAct = Act
 
-'' order must match the order in
-''   pruio_init.p xxx_Init and in
-''   pruio_run.p  xxx_Config macro calls
+' order must match the order in
+'   pruio_init.p xxx_Init and in
+'   pruio_run.p  xxx_Config macro calls
   Adc = NEW AdcUdt(@THIS)
   Gpio = NEW GpioUdt(@THIS)
 
@@ -190,11 +190,12 @@ CONSTRUCTOR PruIo( _
   prussdrv_pruintc_init(@IntcInit) '          get interrupts initialized
   prussdrv_pru_enable(PruNo)
 
+'& /* Doxygen doesn't like this, but we need it:
   Pwm = NEW PwmMod(@THIS)
   Cap = NEW CapMod(@THIS)
   Qep = NEW QepMod(@THIS)
-  '& PwmMod::PwmMod(); CapMod::CapMod(); QepMod::QepMod();
-  Tim = TimSS
+'& */ PwmMod::PwmMod(); CapMod::CapMod(); QepMod::QepMod();
+  Tim = TimSS ' redundant, but consistent API for the user
 
   prussdrv_pru_wait_event(PRUIO_EVNT)
   IF DRam[0] <> PRUIO_MSG_INIT_OK THEN _

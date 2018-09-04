@@ -54,27 +54,21 @@ Once you adapted the code to your needs, compile and run it by
 
 Then load the overlay by (kernel <= 3.8)
 
-~~~{.txt}
-sudo su
-echo pruio_custom > /sys/devices/bone_capemgr.*/slots
-exit
-~~~
+    sudo su
+    echo pruio_custom > /sys/devices/bone_capemgr.?/slots
+    exit
 
 or on kernel versions > 3.8
 
-~~~{.txt}
-sudo su
-echo pruio_custom > /sys/devices/platform/bone_capemgr/slots
-exit
-~~~
+    sudo su
+    echo pruio_custom > /sys/devices/platform/bone_capemgr/slots
+    exit
 
 (Or execute this `echo ...` command in your boot sequence. Or use
-capemgr to load the overlay. See \ref SecPreconditions for further
+capemgr to load the overlay. See \ref SecPinmuxing for further
 information.)
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 \since 0.2
 '/

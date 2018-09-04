@@ -803,6 +803,7 @@ EXCLUDE                = ../src/pruio/pasm_init.bi \
                          ../src/pruio/pasm_run.bi \
                          ../src/c_include/pruio_pins.h \
                          ../src/c_include/pruio.hp \
+                         ../src/python/libpruio \
                          ../src/kernel \
                          ../src/test
 
@@ -837,14 +838,18 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = ../src/examples \
+                       = ../src/c_examples \
+                       = ../src/python
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
 # *.h) to filter out the source-files in the directories. If left blank all
 # files are included.
 
-EXAMPLE_PATTERNS       = *
+EXAMPLE_PATTERNS       = *.bas \
+                         *.c \
+                         *.py
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be
 # searched for input files to be used with the \include or \dontinclude commands
@@ -1919,7 +1924,7 @@ MACRO_EXPANSION        = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES the includes files in the
 # INCLUDE_PATH will be searched if a #include is found.

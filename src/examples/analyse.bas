@@ -7,10 +7,7 @@ PruIo structure containing the data and then prints out in a
 human-readable form. You may 'borrow' some code for debugging purposes
 in your code.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
-
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all analyse.bas`
 

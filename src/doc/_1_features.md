@@ -57,7 +57,7 @@ by a sequence of these three steps
    PruIo::rb_start() or PruIo::mm_start() ).
 
 -# When done, restore original register configuration and destroy the
-   PruIo structure (destructor PruIo::~PruIo).
+   PruIo structure (destructor PruIo::~PruIo() ).
 
 \note Create and use just one PruIo structure at a time.
 
@@ -107,7 +107,7 @@ function PruIo::config()
 
 To stop an endless mode (IO or RB) call function PruIo::config() again.
 Or destroy the libpruio structure when done by calling the destructor
-PruIo::~PruIo.
+PruIo::~PruIo().
 
 
 # Pinmuxing # {#SecPinmuxingIntro}
@@ -330,7 +330,7 @@ To ignore a subsystem, clear its status bit in parameter *Act* when
 calling the constructor PruIo::PruIo(). Each subsystem gets controlled
 by its own status bit. When a system is set to be ignored, libpruio
 cannot access it. There's no configuration data and there's no reset to
-the initial state for the subsystem by the destructor PruIo::~PruIo.
+the initial state for the subsystem by the destructor PruIo::~PruIo().
 
 By default all subsystems are active (not ignored). All active
 subsystems are enabled after the constructor call (unless the hardware

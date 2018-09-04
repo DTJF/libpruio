@@ -4,12 +4,11 @@
 This file contains an example on how to use libpruio to print out the
 state of the digital GPIOs and the analog input lines.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o io_input io_input.c -lpruio`
 
+\since 0.0
 */
 
 

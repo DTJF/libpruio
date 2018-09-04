@@ -1,4 +1,4 @@
-/*! \file button.c
+/*! \file button2.c
 \brief Example: get state of a button.
 
 This file contains an example on how to use libpruio to get the state
@@ -6,9 +6,7 @@ of a button connetect to a GPIO pin on the beaglebone board. Here pin 7
 on header P8 is used as input with pullup resistor. Connect the button
 between P8_07 (GPIO input) and P8_01 (GND).
 
-Licence: GPLv3
-
-Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o button2 button2.c -lpruio`
 

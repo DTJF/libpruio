@@ -347,7 +347,7 @@ to the running PRU software
 
 ## Destructor ## {#sSecMemDTOR}
 
-The destructor PruIo::~PruIo restores the subsystems before the PruIo
+The destructor PruIo::~PruIo() restores the subsystems before the PruIo
 structure gets destroyed. It load the initial configuration data block
 to the DRam and executes the configuration instruction on the PRU.
 Therefor it prepares the DRam area as in the following table:

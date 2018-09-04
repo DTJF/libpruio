@@ -579,7 +579,7 @@ one PruIo instance at the same time.
 */
 pruIo* pruio_new(uint16 Act, uint8 Av, uint32 OpD, uint8 SaD);
 
-/** \brief Wrapper function for the destructor PruIo::~PruIo.
+/** \brief Wrapper function for the destructor PruIo::~PruIo().
 \param Io The pointer of the instance.
 
 \since 0.0

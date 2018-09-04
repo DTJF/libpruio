@@ -88,7 +88,7 @@ C wrapper equivalent gpioUdt.
 TYPE GpioUdt
   AS  Pruio_ PTR Top      '*< Pointer to the calling PruIo instance.
   AS GpioSet PTR _
-    Init(PRUIO_AZ_GPIO) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
+    Init(PRUIO_AZ_GPIO) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo().
   , Conf(PRUIO_AZ_GPIO)   '*< Current subsystem configuration, used in PruIo::config().
   AS GpioArr PTR _
     Raw(PRUIO_AZ_GPIO)    '*< Pointer to current raw subsystem data (IO), all 32 bits.

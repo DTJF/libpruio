@@ -1,3 +1,13 @@
+/'* \file pruio_intc.bi
+\brief FreeBASIC header file for interrupt controller defines.
+
+Header file containing the defines and data types used for the
+interrupt controller setting.
+
+\since 0.6
+'/
+
+
 #DEFINE PRU0_PRU1_INTERRUPT 17
 #DEFINE PRU1_PRU0_INTERRUPT 18
 #DEFINE PRU0_ARM_INTERRUPT 19
@@ -59,28 +69,51 @@
   '(PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK) _
   ')
 
+'*
 #DEFINE NUM_PRU_HOSTIRQS 8
+'*
 #DEFINE NUM_PRU_HOSTS 10
+'*
 #DEFINE NUM_PRU_CHANNELS 10
+'*
 #DEFINE NUM_PRU_SYS_EVTS 64
-#DEFINE PRUSS0_PRU0_DATARAM 0
-#DEFINE PRUSS0_PRU1_DATARAM 1
+'* ID for PRU-0 data ram
+#DEFINE PRUSS0_PRU0_DRAM 0
+'* ID for PRU-1 data ram
+#DEFINE PRUSS0_PRU1_DRAM 1
+'* ID for PRU-0 instruction ram
 #DEFINE PRUSS0_PRU0_IRAM 2
+'* ID for PRU-1 instruction ram
 #DEFINE PRUSS0_PRU1_IRAM 3
-#DEFINE PRUSS0_SHARED_DATARAM 4
-#DEFINE PRUSS0_CFG 5
-#DEFINE PRUSS0_UART 6
-#DEFINE PRUSS0_IEP 7
-#DEFINE PRUSS0_ECAP 8
-#DEFINE PRUSS0_MII_RT 9
-#DEFINE PRUSS0_MDIO 10
+'* ID for PRUSS shared ram
+#DEFINE PRUSS0_SRAM 4
+''*
+'#DEFINE PRUSS0_CFG 5
+''*
+'#DEFINE PRUSS0_UART 6
+''*
+'#DEFINE PRUSS0_IEP 7
+''*
+'#DEFINE PRUSS0_ECAP 8
+''*
+'#DEFINE PRUSS0_MII_RT 9
+''*
+'#DEFINE PRUSS0_MDIO 10
+'*
 #DEFINE PRU_EVTOUT_0 0
+'*
 #DEFINE PRU_EVTOUT_1 1
+'*
 #DEFINE PRU_EVTOUT_2 2
+'*
 #DEFINE PRU_EVTOUT_3 3
+'*
 #DEFINE PRU_EVTOUT_4 4
+'*
 #DEFINE PRU_EVTOUT_5 5
+'*
 #DEFINE PRU_EVTOUT_6 6
+'*
 #DEFINE PRU_EVTOUT_7 7
 
 
@@ -97,6 +130,7 @@ TYPE __sysevt_to_channel_map
   , channel   '*< The mapped channel number
 END TYPE
 
+'* Forward declaration for event -> channel mapping type
 TYPE tsysevt_to_channel_map AS __sysevt_to_channel_map
 
 /'* \brief Mapping from interrupt channel to host ???
@@ -110,6 +144,7 @@ TYPE __channel_to_host_map
   AS SHORT host    '*< The host interrupt
 END TYPE
 
+'* Forward declaration for mapping type
 TYPE tchannel_to_host_map AS __channel_to_host_map
 
 /'* \brief Init data structure for the interrupt controller setting
@@ -126,5 +161,6 @@ TYPE __pruss_intc_initdata
   AS UINTEGER host_enable_bitmask '*< The mask of enabled host interrupts.
 END TYPE
 
+'* Forward declaration for interrupt controler data type
 TYPE tpruss_intc_initdata AS __pruss_intc_initdata
 

@@ -40,8 +40,8 @@ calling code may or may not handle the error message. When the code
 tries to continue, it should reset the pointer to 0 (zero) to avoid
 blocking further function calls due to former errors.
 
-There's a last exception: The main destructor PruIo::~PruIo cannot use
-the variable PruIo::Errr, since it isn't available after the
+There's a last exception: The main destructor PruIo::~PruIo() cannot
+use the variable PruIo::Errr, since it isn't available after the
 destructor has finished. Instead, the destructor writes error messages
 (if any) directly to stderr.
 

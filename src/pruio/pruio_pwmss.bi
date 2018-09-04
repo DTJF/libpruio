@@ -170,7 +170,7 @@ C wrapper equivalent: pwmssUdt.
 TYPE PwmssUdt
   AS Pruio_ PTR Top        '*< Pointer to the calling PruIo instance.
   AS PwmssSet PTR _
-    Init(PRUIO_AZ_PWMSS) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo.
+    Init(PRUIO_AZ_PWMSS) _ '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo().
   , Conf(PRUIO_AZ_PWMSS)   '*< Current subsystem configuration, used in PruIo::config().
   AS PwmssArr PTR _
     Raw(PRUIO_AZ_PWMSS)    '*< Pointer to current raw subsystem data (IO).

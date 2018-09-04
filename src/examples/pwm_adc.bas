@@ -7,10 +7,7 @@ eHRPWM module and an eCAP module (in PWM) mode generate the PWM
 signals. The output gets measured by the ADC subsystem at channels
 AIN-0 to AIN-2, and shown as a line graf in a graphics windows.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
-
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all pwm_adc.bas`
 

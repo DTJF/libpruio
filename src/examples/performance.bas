@@ -20,9 +20,7 @@ by
   - Input Adc->Value, output direct GPIO
   - Input Adc->Value, output function Gpio->Value
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `fbc -w all performance.bas`
 

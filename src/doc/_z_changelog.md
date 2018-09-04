@@ -12,7 +12,7 @@ Feel free to send further ideas to the author (\Email).
 
 # libpruio-0.6.0 # {#SecV-0-6-0}
 
-Released in 2018, August.
+Released in 2018, September.
 
 ## New:
 
@@ -33,7 +33,9 @@ Released in 2018, August.
 
 ## Bugfixes:
 
-- build system hierarchy and messages
+- examples source code reviewed
+- documentation source code reviewed
+- build system hierarchy and messages optimized
 - kernel 4.x problem with PWMSS.Pwm outputs fixed by LKM
 
 

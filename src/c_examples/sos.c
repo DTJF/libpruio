@@ -6,12 +6,11 @@ user LED 3 (near ethernet connector) on the beaglebone board. It shows
 how to unlock a CPU ball that is used by the system. And it shows how
 to control the unlocked ball.
 
-Licence: GPLv3
-
-Copyright 2014-\Year by \Mail
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o sos sos.c -lpruio`
 
+\since 0.0
 */
 
 //! Message for the compiler.

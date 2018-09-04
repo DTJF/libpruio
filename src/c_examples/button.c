@@ -6,12 +6,11 @@ of a button connetect to a GPIO pin on the beaglebone board. Here pin 7
 on header P8 is used as input with pullup resistor. Connect the button
 between P8_07 (GPIO input) and P8_01 (GND).
 
-Licence: GPLv3
-
-Copyright 2014-\Year by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o button button.c -lpruio`
 
+\since 0.0
 */
 
 
