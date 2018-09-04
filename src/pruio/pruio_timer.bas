@@ -219,8 +219,6 @@ FUNCTION TimerUdt.setValue CDECL( _
           .TCRR = .TMAR
           .TCLR OR= PwmMode
         END IF
-
-?"HIER: ";bin(.TCLR, 16)
       END WITH
     END IF
 

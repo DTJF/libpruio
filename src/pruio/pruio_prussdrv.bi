@@ -21,33 +21,34 @@ supports pinmuxing and PWM features.
 #DEFINE PAGE_SIZE 4096
 
 ' PRUSS INTC register offsets
+'* Global interrupt enable register
 #DEFINE PRU_INTC_GER_REG     &h010
-'*
+'* Host interrupt enable indexed set register
 #DEFINE PRU_INTC_HIEISR_REG  &h034
-'*
-#DEFINE PRU_INTC_SRSR1_REG   &h200
-'*
-#DEFINE PRU_INTC_SRSR2_REG   &h204
-'*
-#DEFINE PRU_INTC_SECR1_REG   &h280
-'*
-#DEFINE PRU_INTC_SECR2_REG   &h284
-'*
-#DEFINE PRU_INTC_ESR1_REG    &h300
-'*
-#DEFINE PRU_INTC_ESR2_REG    &h304
-'*
-#DEFINE PRU_INTC_CMR1_REG    &h400
-'*
-#DEFINE PRU_INTC_HMR1_REG    &h800
-'*
-#DEFINE PRU_INTC_SIPR1_REG   &hD00
-'*
-#DEFINE PRU_INTC_SIPR2_REG   &hD04
-'*
-#DEFINE PRU_INTC_SITR1_REG   &hD80
-'*
-#DEFINE PRU_INTC_SITR2_REG   &hD84
+'* System event status register 0-31
+#DEFINE PRU_INTC_SRSR0_REG   &h200
+'* System event status register 32-63
+#DEFINE PRU_INTC_SRSR1_REG   &h204
+'* System event enable/clear register 0-31
+#DEFINE PRU_INTC_SECR0_REG   &h280
+'* System event enable/clear register 32-63
+#DEFINE PRU_INTC_SECR1_REG   &h284
+'* System event enable set register 0-31
+#DEFINE PRU_INTC_ESR0_REG    &h300
+'* System event enable set register 0-31
+#DEFINE PRU_INTC_ESR1_REG    &h304
+'* The channel map register
+#DEFINE PRU_INTC_CMR0_REG    &h400
+'* Host interrupt map register, channels 0 to 3
+#DEFINE PRU_INTC_HMR0_REG    &h800
+'* System event polarity register, events 0 to 31
+#DEFINE PRU_INTC_SIPR0_REG   &hD00
+'* System event polarity register, events 32 to 63
+#DEFINE PRU_INTC_SIPR1_REG   &hD04
+'* System event type register, events 0 to 31
+#DEFINE PRU_INTC_SITR0_REG   &hD80
+'* System event type register, events 31 to 63
+#DEFINE PRU_INTC_SITR1_REG   &hD84
 
 '* The maximal number of host events
 #DEFINE MAX_HOSTS_SUPPORTED 10

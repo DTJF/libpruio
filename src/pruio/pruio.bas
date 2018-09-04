@@ -83,7 +83,7 @@ that PRU-0 is free for other software.
 \note libpruio always uses ARM_PRU1_INTERRUPT on channel PRU_EVTOUT_1
       to trigger a measurement in RB or MM mode, even if it's running
       on PRU-0. So when you execute further software on PRU-1, you
-      should use ARM_PRU0_INTERRUPT on channel PRU_EVTOUT_0 to notify
+      should use ARM_PRU0_INTERRUPT on channel PRU_EVTOUT_1 to notify
       this code, and test for R31.t30.
 
 The other parameters `Av`, `OpD` and `SaD` are used to create a default

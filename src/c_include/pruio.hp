@@ -1,6 +1,6 @@
-#ifdef FOR_DOXYGEN_ONLY
+#ifdef ONLY_DOXYGEN_SHOULD_SEE_THIS
 /*!
-\file pruio.hp
+\file ../src/pruio/pruio.hp
 \brief This file synchronizes parameters between FreeBASIC, C and PASM source code.
 
 This file is used in FreeBASIC, C and PASM source code to synchonize
@@ -12,7 +12,9 @@ use 'normal' comments here. We've to enclose the comment text in
 preprocessor blocks that never get parsed.
 
 \note We cannot use hexadecimal numbers here since syntaxes are different.
+*/
 
+/*!
 \def PRUIO_IRPT
 \brief The interrupt number to use (25 => /dev/uio5, adapt constructor PruIo::PruIo() in case of changes).
 
@@ -24,71 +26,76 @@ pruio.bi in case of any change here.
 \def CTBIR
 \brief Adress in constant table
 \def CONST_PRUCFG
-\brief Constant table entry for config (to enable OCP master port).
+\brief Constant table entry for config (to enable OCP master port)
 \def DRam
-\brief Constant table entry for DRam.
+\brief Constant table entry for DRam
 
 \def PRUIO_AZ_BALL
-\brief The number of CPU balls to handle (minus one).
+\brief The number of CPU balls to handle (minus one)
 \def PRUIO_AZ_GPIO
-\brief The number of GPIO subsystems (minus one).
+\brief The number of GPIO subsystems (minus one)
 \def PRUIO_AZ_PWMSS
-\brief The number of PWM subsystems (minus one).
+\brief The number of PWM subsystems (minus one)
 \def PRUIO_AZ_TIMER
-\brief The number of TIMER subsystems (minus one).
+\brief The number of TIMER subsystems (minus one)
 
+\def PRUIO_COM_PEEK
+\brief The command number to peek a value from memory
+\def PRUIO_COM_POKE
+\brief The command number to poke a value to memory
 \def PRUIO_COM_GPIO_CONF
-\brief The command number to re-configure a GPIO.
+\brief The command number to re-configure a GPIO
 \def PRUIO_COM_GPIO_OUT
-\brief The command number to re-configure a GPIO output state.
+\brief The command number to re-configure a GPIO output state
 \def PRUIO_COM_PWM
-\brief Command number to re-configure frequency and duty cycle for a PWM module.
+\brief Command number to re-configure frequency and duty cycle for a PWM module
 \def PRUIO_COM_CAP_PWM
-\brief Command number to re-configure frequency and duty cycle for a CAP module in PWM output mode.
+\brief Command number to re-configure frequency and duty cycle for a CAP module in PWM output mode
 \def PRUIO_COM_CAP
-\brief Command number to re-configure a CAP module.
+\brief Command number to re-configure a CAP module
 \def PRUIO_COM_QEP
-\brief The command number to re-configure a QEP parameter change for a QEP module.
+\brief The command number to re-configure a QEP parameter change for a QEP module
 \def PRUIO_COM_TIM_PWM
-\brief The command number to re-configure a TIMER in PWM mode.
+\brief The command number to re-configure a TIMER in PWM mode
 \def PRUIO_COM_TIM_CAP
-\brief The command number to re-configure a TIMER in CAP mode.
+\brief The command number to re-configure a TIMER in CAP mode
 \def PRUIO_COM_ADC
-\brief The command number to re-configure a ADC-mask in IO run mode.
+\brief The command number to re-configure a ADC-mask in IO run mode
 
 \def PRUIO_DAT_GPIO
-\brief The offset to store GPIO data in PruIo::DRam (`4*4*4` bytes).
+\brief The offset to store GPIO data in PruIo::DRam (`4*4*4` bytes)
 \def PRUIO_DAT_PWM
-\brief The offset to store PWM data in PruIo::DRam (`3*8*4` bytes).
+\brief The offset to store PWM data in PruIo::DRam (`3*8*4` bytes)
 \def PRUIO_DAT_TIMER
-\brief The offset to store TIMER data in PruIo::DRam (`4*4*4` bytes).
+\brief The offset to store TIMER data in PruIo::DRam (`4*4*4` bytes)
 \def PRUIO_DAT_ADC
-\brief The offset to store ADC data in PruIo::DRam (always last, `4+2*17` bytes).
+\brief The offset to store ADC data in PruIo::DRam (always last, `4+2*17` bytes)
 \def PRUIO_DAT_ALL
-\brief The offset to store the data block in PruIo::DRam (AdcSet + 4*GpioSet + BallSet + 3*PwmssSet + 4*TimerSet).
+\brief The offset to store the data block in PruIo::DRam
+Minimal value is AdcSet + 4 x GpioSet + BallSet + 3 x PwmssSet + 4 x TimerSet.
 
 \def PRUIO_MSG_INIT_RUN
-\brief Message send by PruIo::PruIo().
+\brief Message send by PruIo::PruIo()
 \def PRUIO_MSG_CONF_RUN
-\brief Message send by PruIo::PruIo().
+\brief Message send by PruIo::PruIo()
 \def PRUIO_MSG_INIT_OK
-\brief Message send after constructor PruIo::~PruIo.
+\brief Message send after constructor PruIo::~PruIo()
 \def PRUIO_MSG_CONF_OK
-\brief Message send after PruIo::config() when no mode is set (`parameter Samp = 0`).
+\brief Message send after PruIo::config() when no mode is set (`parameter Samp = 0`)
 \def PRUIO_MSG_ADC_ERRR
-\brief Message send in case of error in PruIo::config().
+\brief Message send in case of error in PruIo::config()
 \def PRUIO_MSG_MM_WAIT
-\brief Message send by PruIo::config() in RB and MM mode and after each call to PruIo::mm_start().
+\brief Message send by PruIo::config() in RB and MM mode and after each call to PruIo::mm_start()
 \def PRUIO_MSG_MM_TRG1
-\brief Message send by PruIo::mm_start() while waiting for trigger 1 event.
+\brief Message send by PruIo::mm_start() while waiting for trigger 1 event
 \def PRUIO_MSG_MM_TRG2
-\brief Message send by PruIo::mm_start() while waiting for trigger 2 event.
+\brief Message send by PruIo::mm_start() while waiting for trigger 2 event
 \def PRUIO_MSG_MM_TRG3
-\brief Message send by PruIo::mm_start() while waiting for trigger 3 event.
+\brief Message send by PruIo::mm_start() while waiting for trigger 3 event
 \def PRUIO_MSG_MM_TRG4
-\brief Message send by PruIo::mm_start() while waiting for trigger 4 event.
+\brief Message send by PruIo::mm_start() while waiting for trigger 4 event
 \def PRUIO_MSG_IO_OK
-\brief Message send after PruIo::config() in IO mode.
+\brief Message send after PruIo::config() in IO mode
 
 */
 #endif

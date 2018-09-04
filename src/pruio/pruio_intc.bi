@@ -8,42 +8,78 @@ interrupt controller setting.
 '/
 
 
+'* System event PRU-0 -> PRU-1
 #DEFINE PRU0_PRU1_INTERRUPT 17
+'* System event PRU-1 -> PRU-0
 #DEFINE PRU1_PRU0_INTERRUPT 18
+'* System event PRU-0 -> ARM
 #DEFINE PRU0_ARM_INTERRUPT 19
+'* System event PRU-1 -> ARM
 #DEFINE PRU1_ARM_INTERRUPT 20
+'* System event ARM -> PRU-0
 #DEFINE ARM_PRU0_INTERRUPT 21
+'* System event ARM -> PRU-1
 #DEFINE ARM_PRU1_INTERRUPT 22
 
+'* ID for channel 0
 #DEFINE CHANNEL0 0
+'* ID for channel 1
 #DEFINE CHANNEL1 1
+'* ID for channel 2
 #DEFINE CHANNEL2 2
+'* ID for channel 3
 #DEFINE CHANNEL3 3
+'* ID for channel 4
 #DEFINE CHANNEL4 4
+'* ID for channel 5
 #DEFINE CHANNEL5 5
+'* ID for channel 6
 #DEFINE CHANNEL6 6
+'* ID for channel 7
 #DEFINE CHANNEL7 7
+'* ID for channel 8
 #DEFINE CHANNEL8 8
+'* ID for channel 9
 #DEFINE CHANNEL9 9
+'* ID for PRU-0
 #DEFINE PRU0 0
+'* ID for PRU-1
 #DEFINE PRU1 1
+'* ID for event 0
 #DEFINE PRU_EVTOUT0 2
+'* ID for event 1
 #DEFINE PRU_EVTOUT1 3
+'* ID for event 2
 #DEFINE PRU_EVTOUT2 4
+'* ID for event 3
 #DEFINE PRU_EVTOUT3 5
+'* ID for event 4
 #DEFINE PRU_EVTOUT4 6
+'* ID for event 5
 #DEFINE PRU_EVTOUT5 7
+'* ID for event 6
 #DEFINE PRU_EVTOUT6 8
+'* ID for event 7
 #DEFINE PRU_EVTOUT7 9
+'* Interrupt host enable mask for PRU-0
 #DEFINE PRU0_HOSTEN_MASK &h0001
+'* Interrupt host enable mask for PRU-1
 #DEFINE PRU1_HOSTEN_MASK &h0002
+'* Event 0 host enable mask
 #DEFINE PRU_EVTOUT0_HOSTEN_MASK &h0004
+'* Event 1 host enable mask
 #DEFINE PRU_EVTOUT1_HOSTEN_MASK &h0008
+'* Event 2 host enable mask
 #DEFINE PRU_EVTOUT2_HOSTEN_MASK &h0010
+'* Event 3 host enable mask
 #DEFINE PRU_EVTOUT3_HOSTEN_MASK &h0020
+'* Event 4 host enable mask
 #DEFINE PRU_EVTOUT4_HOSTEN_MASK &h0040
+'* Event 5 host enable mask
 #DEFINE PRU_EVTOUT5_HOSTEN_MASK &h0080
+'* Event 6 host enable mask
 #DEFINE PRU_EVTOUT6_HOSTEN_MASK &h0100
+'* Event 7 host enable mask
 #DEFINE PRU_EVTOUT7_HOSTEN_MASK &h0200
 
 '#DEFINE PRUSS_INTC_INITDATA TYPE<tpruss_intc_initdata>( _
@@ -69,13 +105,13 @@ interrupt controller setting.
   '(PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK) _
   ')
 
-'*
+'* Number of PRU host interrupts
 #DEFINE NUM_PRU_HOSTIRQS 8
-'*
+'* Number of hosts
 #DEFINE NUM_PRU_HOSTS 10
-'*
+'* Number of interrupt channels
 #DEFINE NUM_PRU_CHANNELS 10
-'*
+'* number of system events
 #DEFINE NUM_PRU_SYS_EVTS 64
 '* ID for PRU-0 data ram
 #DEFINE PRUSS0_PRU0_DRAM 0
@@ -99,21 +135,21 @@ interrupt controller setting.
 '#DEFINE PRUSS0_MII_RT 9
 ''*
 '#DEFINE PRUSS0_MDIO 10
-'*
+'* ID for host interrupt 0
 #DEFINE PRU_EVTOUT_0 0
-'*
+'* ID for host interrupt 1
 #DEFINE PRU_EVTOUT_1 1
-'*
+'* ID for host interrupt 2
 #DEFINE PRU_EVTOUT_2 2
-'*
+'* ID for host interrupt 3
 #DEFINE PRU_EVTOUT_3 3
-'*
+'* ID for host interrupt 4
 #DEFINE PRU_EVTOUT_4 4
-'*
+'* ID for host interrupt 5
 #DEFINE PRU_EVTOUT_5 5
-'*
+'* ID for host interrupt 6
 #DEFINE PRU_EVTOUT_6 6
-'*
+'* ID for host interrupt 7
 #DEFINE PRU_EVTOUT_7 7
 
 

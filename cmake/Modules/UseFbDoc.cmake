@@ -93,7 +93,7 @@ ALIASES += \"Mail=${PROJ_MAIL}\" \\
   FILE(WRITE ${doxyext} #                           write extension file
 "
 @INCLUDE = ${ARG_DOXYFILE}
-EXTENSION_MAPPING      = bi=C++ bas=C++
+EXTENSION_MAPPING      += bi=C++ bas=C++
 OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
 FILTER_PATTERNS        = \"*.bas=\\\"${filt_cmd}\\\"\" \\
                           \"*.bi=\\\"${filt_cmd}\\\"\"

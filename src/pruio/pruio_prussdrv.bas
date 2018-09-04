@@ -115,7 +115,7 @@ This is an internal service function.
 \since 0.6
 '/
 SUB __prussintc_set_cmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Event AS USHORT, BYVAL Ch AS USHORT)
-  Intc[(PRU_INTC_CMR1_REG + (Event AND NOT(&b11))) SHR 2] _
+  Intc[(PRU_INTC_CMR0_REG + (Event AND NOT(&b11))) SHR 2] _
       OR= ((Ch AND &b1111) SHL ((Event AND &b11) SHL 3))
 END SUB
 
@@ -130,8 +130,8 @@ This is an internal service function.
 \since 0.6
 '/
 SUB __prussintc_set_hmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Ch AS USHORT, BYVAL Host AS USHORT)
-  Intc[(PRU_INTC_HMR1_REG     + (Ch AND NOT(&b11))) SHR 2] _
-    = Intc[(PRU_INTC_HMR1_REG + (Ch AND NOT(&b11))) SHR 2] _
+  Intc[(PRU_INTC_HMR0_REG     + (Ch AND NOT(&b11))) SHR 2] _
+    = Intc[(PRU_INTC_HMR0_REG + (Ch AND NOT(&b11))) SHR 2] _
      OR (((Host) AND &b1111) SHL (((Ch) AND &b11) SHL 3))
 END SUB
 
@@ -313,11 +313,11 @@ FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata 
     VAR intc = CAST(ULONG PTR, .intc_base)
     DIM AS ULONG i, mask1, mask2
 
+    intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFF
     intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFF
-    intc[PRU_INTC_SIPR2_REG SHR 2] = &hFFFFFFFF
 
     FOR i = 0 TO ((NUM_PRU_SYS_EVTS + 3) SHR 2) - 1
-      intc[(PRU_INTC_CMR1_REG SHR 2) + i] = 0
+      intc[(PRU_INTC_CMR0_REG SHR 2) + i] = 0
     NEXT
 
     i = 0
@@ -329,7 +329,7 @@ FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata 
       i += 1
     WEND
     FOR i = 0 TO ((NUM_PRU_HOSTS + 3) SHR 2) - 1
-      intc[(PRU_INTC_HMR1_REG SHR 2) + i] = 0
+      intc[(PRU_INTC_HMR0_REG SHR 2) + i] = 0
     NEXT
 
     i = 0
@@ -341,8 +341,8 @@ FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata 
       i += 1
     WEND
 
+    intc[PRU_INTC_SITR0_REG SHR 2] = 0
     intc[PRU_INTC_SITR1_REG SHR 2] = 0
-    intc[PRU_INTC_SITR2_REG SHR 2] = 0
 
     i = 0 : mask1 = 0 : mask2 = 0
     WHILE DatIni->sysevts_enabled(i) <> -1
@@ -353,10 +353,10 @@ FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata 
       END SELECT : i += 1
     WEND
 
-    intc[PRU_INTC_ESR1_REG  SHR 2] = mask1
-    intc[PRU_INTC_SECR1_REG SHR 2] = mask1
-    intc[PRU_INTC_ESR2_REG  SHR 2] = mask2
-    intc[PRU_INTC_SECR2_REG SHR 2] = mask2
+    intc[PRU_INTC_ESR0_REG  SHR 2] = mask1
+    intc[PRU_INTC_SECR0_REG SHR 2] = mask1
+    intc[PRU_INTC_ESR1_REG  SHR 2] = mask2
+    intc[PRU_INTC_SECR1_REG SHR 2] = mask2
 
     FOR i = 0 TO MAX_HOSTS_SUPPORTED - 1
       IF DatIni->host_enable_bitmask AND (1 SHL i) _
@@ -379,8 +379,8 @@ PRUSS.
 '/
 SUB prussdrv_pru_send_event CDECL(BYVAL Event AS ULONG)
   VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
-  IF Event < 32 THEN intc[PRU_INTC_SRSR1_REG SHR 2] = 1 SHL Event _
-                ELSE intc[PRU_INTC_SRSR2_REG SHR 2] = 1 SHL (Event - 32)
+  IF Event < 32 THEN intc[PRU_INTC_SRSR0_REG SHR 2] = 1 SHL Event _
+                ELSE intc[PRU_INTC_SRSR1_REG SHR 2] = 1 SHL (Event - 32)
 END SUB
 
 
@@ -411,8 +411,8 @@ order to get ready for the next event.
 '/
 SUB prussdrv_pru_clear_event CDECL(BYVAL Irq AS ULONG, BYVAL Event AS ULONG)
   VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
-  IF Event < 32 THEN intc[PRU_INTC_SECR1_REG SHR 2] = 1 SHL Event _
-                ELSE intc[PRU_INTC_SECR2_REG SHR 2] = 1 SHL (Event - 32)
+  IF Event < 32 THEN intc[PRU_INTC_SECR0_REG SHR 2] = 1 SHL Event _
+                ELSE intc[PRU_INTC_SECR1_REG SHR 2] = 1 SHL (Event - 32)
   intc[PRU_INTC_HIEISR_REG SHR 2] = Irq + 2 ' after clear Event!
 END SUB
 

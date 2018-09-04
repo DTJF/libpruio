@@ -209,13 +209,13 @@ the pasm_run.p instructions get executed, the DRam area contains
 The PRU software reads these parameters and writes the configuration to
 the subsystem registers. Then it prepares the DRam area as follows
 
-|   Value  | Description             |
+|  Value   | Description             |
 | -------: | : --------------------- |
 |  DRam[0] | PRUIO_MSG_xxx           |
-| DRam[16] | 4xGpioArr (64 bytes)    |
-| DRam[32] | 3xPwmssArr (96 bytes)   |
-| DRam[56] | ADC data (38 bytes)     |
-| DRam[32] | 4xTimerssArr ??? bytes) |
+| DRam[16] | 4xGpioArr (4*16 bytes)  |
+| DRam[64] | 3xPwmssArr (3*32 bytes) |
+| DRam[72] | ADC data (38 bytes)     |
+| DRam[89] | 4xTimerArr (4*16 bytes) |
 
 The type of PRUIO_MSG_xxx depends on the required run mode. It's either
 \ref PRUIO_MSG_IO_OK in case of IO mode (parameter *Samp* = 1) or \ref
@@ -274,7 +274,7 @@ to the running PRU software
 - PRU command \ref PRUIO_COM_GPIO_CONF (set GPIO direction and value)
   |  Value  | Description                              |
   | ------: | : -------------------------------------- |
-  | DRam[1] | PRUIO_COM_GPIO_CONF `shl 24`             |
+  | DRam[1] | PRUIO_COM_GPIO_CONF `SHL 24`             |
   | DRam[2] | GPIO subsystem adress (+ &h100)          |
   | DRam[3] | Value for GpioSet::CLEARDATAOUT register |
   | DRam[4] | Value for GpioSet::SETDATAOUT register   |
@@ -283,7 +283,7 @@ to the running PRU software
 - PRU command \ref PRUIO_COM_GPIO_OUT (set GPIO outputs)
   |  Value  | Description                              |
   | ------: | : -------------------------------------- |
-  | DRam[1] | PRUIO_COM_GPIO_OUT `shl 24`              |
+  | DRam[1] | PRUIO_COM_GPIO_OUT `SHL 24`              |
   | DRam[2] | GPIO subsystem adress (+ &h100)          |
   | DRam[3] | Value for GpioSet::CLEARDATAOUT register |
   | DRam[4] | Value for GpioSet::SETDATAOUT register   |
@@ -291,7 +291,7 @@ to the running PRU software
 - PRU command \ref PRUIO_COM_PWM (set PWM frequency and duty cycle)
   |  Value  | Description                                             |
   | ------: | : ----------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_PWM `shl 24`                                  |
+  | DRam[1] | PRUIO_COM_PWM `SHL 24`                                  |
   | DRam[2] | PWMSS subsystem adress (+ &h200)                        |
   | DRam[3] | Value for PwmssSet::CMPA & PwmssSet::CMPB registers     |
   | DRam[4] | Value for PwmssSet::AQCTLA & PwmssSet::AQCTLB registers |
@@ -301,7 +301,7 @@ to the running PRU software
   and set frequency and duty cycle)
   |  Value  | Description                                                  |
   | ------: | : ---------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_CAP_PWM `shl 24` + PwmssSet::ECCTL2 register value |
+  | DRam[1] | PRUIO_COM_CAP_PWM `SHL 24` + PwmssSet::ECCTL2 register value |
   | DRam[2] | PWMSS subsystem adress (+ &h100)                             |
   | DRam[3] | Value for PwmssSet::CAP3 register (counter shadow)           |
   | DRam[4] | Value for PwmssSet::CAP4 register (period shadow)            |
@@ -309,13 +309,13 @@ to the running PRU software
 - PRU command \ref PRUIO_COM_CAP (switch PWMSS-CAP module in CAP mode)
   |  Value  | Description                                              |
   | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_CAP `shl 24` + PwmssSet::ECCTL2 register value |
+  | DRam[1] | PRUIO_COM_CAP `SHL 24` + PwmssSet::ECCTL2 register value |
   | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
 
 - PRU command \ref PRUIO_COM_QEP (switch PWMSS-QEP module in QEP mode)
   |  Value  | Description                                              |
   | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_QEP `shl 24`                                   |
+  | DRam[1] | PRUIO_COM_QEP `SHL 24`                                   |
   | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
   | DRam[3] | Value for PwmssSet::QPOSMAX register                     |
   | DRam[4] | Value for PwmssSet::QUPRD register                       |
@@ -323,21 +323,18 @@ to the running PRU software
   | DRam[6] | Value for PwmssSet::QCAPCTL register                     |
 
 - PRU command \ref PRUIO_COM_TIM_PWM (switch TIMERSS in PWM mode)
-  |  Value  | Description                                              |
-  | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_TIM_PWM `shl 24` + ???PwmssSet::ECCTL2 register value |
-  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
-
-- PRU command \ref PRUIO_COM_TIM_CAP (switch TIMERSS in CAP mode)
-  |  Value  | Description                                              |
-  | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_TIM_CAP `shl 24` + ???PwmssSet::ECCTL2 register value |
-  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+  |  Value  | Description                                                |
+  | ------: | : -------------------------------------------------------- |
+  | DRam[1] | PRUIO_COM_TIM_PWM `SHL 24` + TimerSet::TCLR register value |
+  | DRam[2] | TIMER subsystem adress                                     |
+  | DRam[3] | timer load register value                                  |
+  | DRam[4] | timer match register value                                 |
+  | DRam[5] | timer counter register value                               |
 
 - PRU command \ref PRUIO_COM_ADC (set a new step mask in IO mode)
   |  Value  | Description                                                |
   | ------: | : -------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_ADC `shl 24` + AdcSet::STEPENABLE register value |
+  | DRam[1] | PRUIO_COM_ADC `SHL 24` + AdcSet::STEPENABLE register value |
 
 \note PRU commands are valid in IO and RB mode. After a PRU command
       execution the DRam[1] value gets set to 0 (zero). You must wait

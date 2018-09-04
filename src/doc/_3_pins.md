@@ -485,9 +485,9 @@ get you what you need. In order to set a header pin in an other mode,
 or just configure a pull-up or pull-down resistor, there're three
 methods:
 
--# \ref sSecCustom: configure at boot time the desired mode in an overlay
--# \ref sSecUniversal: configure at boot time multiple custom modes in an overlay, and switch at runtime
--# \ref sSecLKM: load the kernel module, and switch at runtime
+-# \ref sSecCustom -> configure at boot time the desired mode in an overlay
+-# \ref sSecUniversal -> configure at boot time multiple custom modes in an overlay, and switch at runtime
+-# \ref sSecLKM -> load the kernel module, and switch at runtime
 
 Each method has its advantages and downsides. The first two are save
 and documented, but unflexible. There is no fixed border between them,
