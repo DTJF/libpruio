@@ -14,8 +14,7 @@ Compile by: `fbc -w all 1.bas`
 '/
 
 
-'#INCLUDE ONCE "../pruio/pruio.bas" '   include source
-#INCLUDE ONCE "../pruio/pruio.bi" '   include header
+#INCLUDE ONCE "BBB/pruio.bi" '   include header
 VAR io = NEW PruIo()              '*< create new driver UDT
 
 IF io->config() THEN '          upload (default) settings, start IO mode

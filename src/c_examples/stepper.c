@@ -28,8 +28,8 @@ Compile by: `gcc -Wall -o stepper stepper.c -lpruio`
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "../c_include/pruio.h"
-#include "../c_include/pruio_pins.h"
+#include "libpruio/pruio.h"
+#include "libpruio/pruio_pins.h"
 
 //! The first pin of the stepper.
 #define P1 P8_08

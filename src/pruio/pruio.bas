@@ -173,6 +173,7 @@ CONSTRUCTOR PruIo( _
 ' order must match the order in
 '   pruio_init.p xxx_Init and in
 '   pruio_run.p  xxx_Config macro calls
+'& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt(); /*
   Adc = NEW AdcUdt(@THIS)
   Gpio = NEW GpioUdt(@THIS)
 
@@ -181,7 +182,6 @@ CONSTRUCTOR PruIo( _
 
   PwmSS = NEW PwmssUdt(@THIS)
   TimSS = NEW TimerUdt(@THIS)
-  '& AdcUdt::AdcUdt(); GpioUdt::GpioUdt(); PwmssUdt::PwmssUdt(); TimerUdt::TimerUdt();
 
   ASSERT(ParOffs < DRam[1] SHR 4)
   VAR l = ArrayBytes(Pru_Init)
@@ -190,7 +190,6 @@ CONSTRUCTOR PruIo( _
   prussdrv_pruintc_init(@IntcInit) '          get interrupts initialized
   prussdrv_pru_enable(PruNo)
 
-'& /* Doxygen doesn't like this, but we need it:
   Pwm = NEW PwmMod(@THIS)
   Cap = NEW CapMod(@THIS)
   Qep = NEW QepMod(@THIS)

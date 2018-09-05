@@ -22,8 +22,8 @@ Compile by: `gcc -Wall -o button button.c -lpruio`
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "../c_include/pruio.h"
-#include "../c_include/pruio_pins.h"
+#include "libpruio/pruio.h"
+#include "libpruio/pruio_pins.h"
 
 //! The header pin to use.
 #define PIN P8_07

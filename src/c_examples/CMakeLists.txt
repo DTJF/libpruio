@@ -11,6 +11,10 @@ SET(c_tar
   "stepper"
   )
 
+#SET(CMAKE_VERBOSE_MAKEFILE 1)
+
+INCLUDE_DIRECTORIES(../c_include)
+
 FOREACH(tar ${c_tar})
   ADD_EXECUTABLE(${tar}_c EXCLUDE_FROM_ALL ${tar}.c)
   TARGET_LINK_LIBRARIES(${tar}_c pruio)

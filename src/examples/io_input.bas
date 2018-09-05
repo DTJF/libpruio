@@ -12,7 +12,7 @@ Compile by: `fbc -w all io_input.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 
 
 ' *****  main  *****

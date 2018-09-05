@@ -16,9 +16,9 @@ Compile by: `fbc -w all pwm_cap.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 ' include the convenience macros for header pins
-#INCLUDE ONCE "../pruio/pruio_pins.bi"
+#INCLUDE ONCE "BBB/pruio_pins.bi"
 
 '* The pin for PWM output.
 #DEFINE P_OUT P9_21

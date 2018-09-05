@@ -61,4 +61,3 @@ ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
   COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/changelog.${osvers} ${debdir}/changelog
   COMMAND cd ${bdir} && ${deb_exe} ${DEBUILD_FLAGS}
   )
-

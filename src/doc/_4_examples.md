@@ -50,7 +50,7 @@ simple.
   Return key. The output is a table containing 13 lines of all analog
   inputs. It looks like
 ~~~{.txt}
-D530 E0C0 DE20 CEE0 0080 0780 1850 EE20
+D530 E0C0 DE20 0000 0000 0000 0000 0000
 E990 E150 DD80 D010 0000 07A0 1770 EE00
 E980 E230 DE70 CEE0 0070 07B0 17A0 EE30
 E9C0 E110 DD50 CF00 0090 08C0 18D0 EE40
@@ -69,6 +69,9 @@ E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
   is connected to ground (P9_34 = AGND) during the test. The other
   channels are open ended.
 
+  \note In the first line you may get some 0 (zero) values. This is
+        because the ARM CPU reads values before the ADC sequence
+        finished (avaraging 4, open delay &h98).
 
 \Item{Source Code}
 

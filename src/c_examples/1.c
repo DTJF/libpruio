@@ -15,7 +15,7 @@ Compile by: `gcc -Wall -o 1 1.c -lpruio`
 
 
 #include "stdio.h"
-#include "../c_include/pruio.h" // include header
+#include "libpruio/pruio.h" // include header
 
 //! The main function.
 int main(int argc, char **argv)

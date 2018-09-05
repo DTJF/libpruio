@@ -21,8 +21,8 @@ Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio`
 #include <termios.h>
 #include <unistd.h>
 #include <errno.h>
-#include "../c_include/pruio.h"
-#include "../c_include/pruio_pins.h"
+#include "libpruio/pruio.h"
+#include "libpruio/pruio_pins.h"
 
 //! The pin for PWM output.
 #define P_OUT P9_21

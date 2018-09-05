@@ -19,6 +19,10 @@ FOREACH(bi ${SRC_BI})
   LIST(APPEND bideb ../src/pruio/${bi})
 ENDFOREACH()
 
+SET(CMAKE_VERBOSE_MAKEFILE 1)
+
+ADD_CUSTOM_TARGET(rem_bbb_dir rm BBB || echo > /dev/null
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/examples)
 
 FB_DOCUMENTATION(
 BAS_SRC
@@ -38,6 +42,7 @@ DEPENDS
   libpruio.css
   libpruio.xml
   ${C_HEADERS}
+  rem_bbb_dir
   )
 
 #INSTALL(

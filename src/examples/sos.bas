@@ -15,7 +15,7 @@ Compile by: `fbc -w all sos.bas`
 
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 
 '* The CPU ball to control (user LED 3).
 #DEFINE PIN 24

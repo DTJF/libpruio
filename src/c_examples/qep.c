@@ -19,8 +19,8 @@ Compile by: `gcc -Wall -o qep qep.c -lpruio`
 #include <termios.h>
 #include <unistd.h>
 #include <errno.h>
-#include "../c_include/pruio.h"
-#include "../c_include/pruio_pins.h"
+#include "libpruio/pruio.h"
+#include "libpruio/pruio_pins.h"
 
 //! Default PMax value.
 #define PMX 4095

@@ -15,12 +15,11 @@ Compile by: `fbc -w all analyse.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
-'~ #INCLUDE ONCE "../pruio/pruio.bas"
+#INCLUDE ONCE "BBB/pruio.bi"
 ' include the convenience macros for header pins
-#INCLUDE ONCE "../pruio/pruio_pins.bi"
+#INCLUDE ONCE "BBB/pruio_pins.bi"
 ' include macros to print out register context
-#INCLUDE ONCE "../pruio/pruio_out.bi"
+#INCLUDE ONCE "BBB/pruio_out.bi"
 
 '' Output all CPU balls or just header pins?
 '#DEFINE __ALL_BALLS__

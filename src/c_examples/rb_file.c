@@ -18,7 +18,7 @@ Compile by: `gcc -Wall -o rb_file rb_file.c -lpruio`
 #include "unistd.h"
 #include "time.h"
 #include "stdio.h"
-#include "../c_include/pruio.h"
+#include "libpruio/pruio.h"
 
 //! The main function.
 int main(int argc, char **argv)

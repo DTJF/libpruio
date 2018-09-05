@@ -15,7 +15,7 @@ Compile by: `fbc -w all rb_file.bas`
 
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 
 CONST tSamp = 123401 _  '*< The number of samples in the files (per step).
       , tmr = 20000 _   '*< The sampling rate in ns (20000 -> 50 kHz).

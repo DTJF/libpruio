@@ -20,7 +20,7 @@ Compile by: `gcc -Wall -o io_input io_input.c -lpruio`
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "../c_include/pruio.h"
+#include "libpruio/pruio.h"
 
 
 /*! \brief Wait for keystroke or timeout.

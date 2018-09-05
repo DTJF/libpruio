@@ -31,8 +31,8 @@ Compile by: `gcc -Wall -o performance performance.c -lpruio`
 #define _GNU_SOURCE 1
 #include "stdio.h"
 #include "time.h"
-#include "../c_include/pruio.h"
-#include "../c_include/pruio_pins.h"
+#include "libpruio/pruio.h"
+#include "libpruio/pruio_pins.h"
 
 //! The pin to use for CAP input.
 #define C_IN P9_42

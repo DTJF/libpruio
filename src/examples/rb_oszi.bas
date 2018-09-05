@@ -14,7 +14,7 @@ Compile by: `fbc -w all rb_oszi.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 ' include FreeBASIC grafics
 #INCLUDE ONCE "fbgfx.bi"
 

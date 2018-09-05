@@ -21,9 +21,9 @@ Compile by: `fbc -w all stepper.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 ' include the convenience macros for header pins
-#INCLUDE ONCE "../pruio/pruio_pins.bi"
+#INCLUDE ONCE "BBB/pruio_pins.bi"
 
 '* The first pin of the stepper.
 #DEFINE P1 P8_08

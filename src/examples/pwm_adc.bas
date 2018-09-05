@@ -15,9 +15,9 @@ Compile by: `fbc -w all pwm_adc.bas`
 '/
 
 ' include libpruio
-#INCLUDE ONCE "../pruio/pruio.bi"
+#INCLUDE ONCE "BBB/pruio.bi"
 ' include the convenience macros for header pins
-#INCLUDE ONCE "../pruio/pruio_pins.bi"
+#INCLUDE ONCE "BBB/pruio_pins.bi"
 ' include FB grafics
 #INCLUDE ONCE "fbgfx.bi"
 
