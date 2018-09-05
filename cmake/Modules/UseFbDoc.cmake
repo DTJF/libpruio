@@ -95,11 +95,11 @@ ALIASES += \"Mail=${PROJ_MAIL}\" \\
 @INCLUDE = ${ARG_DOXYFILE}
 EXTENSION_MAPPING      += bi=C++ bas=C++
 OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
-FILTER_PATTERNS        = \"*.bas=\\\"${filt_cmd}\\\"\" \\
-                          \"*.bi=\\\"${filt_cmd}\\\"\"
+FILTER_PATTERNS        = *.bas=\"${filt_cmd}\" \\
+                          *.bi=\"${filt_cmd}\"
 FILTER_SOURCE_FILES    = YES
-FILTER_SOURCE_PATTERNS = \"*.bas=\\\"${filt_cmd}\\\"\" \\
-                          \"*.bi=\\\"${filt_cmd}\\\"\"
+FILTER_SOURCE_PATTERNS = *.bas=\"${filt_cmd}\" \\
+                          *.bi=\"${filt_cmd}\"
 "
     ${projconf}
     "\n"

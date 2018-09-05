@@ -31,7 +31,7 @@ programming language and Python are included.
 
 Find more information in the online documentation at
 
-- http://users.freebasic-portal.de/tjf/Projekte/libpruio/doc/html/
+- http://users.freebasic-portal.de/tjf/Projekte/libpruio/doc/html/index.html
 
 or at related forum pages:
 
