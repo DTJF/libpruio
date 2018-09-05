@@ -5,35 +5,121 @@ Preparation {#ChaPreparation}
 This chapter describes how to get libpruio working on your system. The
 easy way is to install the Debian packages. They're not in mainline,
 yet. So you have to add a PPA (Personal Package Archive) to your
-package management sources:
+package management sources. Edit the file `sudo nano
+/etc/apt/sources.list` and add the lines:
 
-~~~{.txt}
-sudo add-apt-repository     "deb http://beagle.tuks.nl/debian unstable main"
-sudo add-apt-repository "deb-src http://beagle.tuks.nl/debian unstable main"
-wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
-~~~
+    deb http://beagle.tuks.nl/debian jessie/
+    deb-src http://beagle.tuks.nl/debian jessie/
 
-or manually add the text in double quotes to your
-`/etc/apt/sources.list` file. Once prepared, you can download and
-install the library, the header files and the documentation by
-executing (example for FreeBASIC source)
+Then grep the keyring by
+
+    wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
+
+Once prepared, you can update your package manager database
 
     sudo apt-get update
+
+and finaly download and install the packages for your prefered
+programming language:
+
+ Size | Name                         | Description
+----: | :--------------------------- | :--------------------------
+1.2MB | libpruio_0.6.0.tar.xz        | source code
+ 45kB | libpruio_0.6.0_armhf.deb     | shared lib binary and LKM
+ 80kB | libpruio-bin_0.6.0_armhf.deb | executable examples
+ 18kB | libpruio-dev_0.6.0_armhf.deb | examples/bindings C
+ 27kB | libpruio-bas_0.6.0_armhf.deb | examples/bindings FreeBASIC
+ 18kB | python-pruio_0.6.0_armhf.deb | examples/bindings Python
+4.1MB | libpruio-doc_0.6.0_all.deb   | documentation (html-tree)
+
+The first package contains the shared library and the loadable kernel
+module (LKM). It installs a `systemd` script to start or stop the LKM
+service, see section \ref sSecLKM. And
+
+
+## C programming language ## {sSecDev}
+
+For C programming language execute
+
+    sudo apt-get install libpruio-dev libpruio-doc
+
+to install the shared library, the header files, the example source
+code and the html documentation. The documentation is optional. When
+you're short of memory, you can install the package on the PC as well.
+Or use [this online
+version.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
+Then copy the example code to your working directory
+
+    cp -r /usr/shared/doc/libpruio-dev/examples .
+
+and you're ready to start.
+
+
+## FreeBASIC programming language ## {sSecBas}
+
+Ie. for FreeBASIC programming language execute
+
     sudo apt-get install libpruio-bas libpruio-doc
 
-In case of C programming language replace `libpruio-bas` by
-`libpruio-dev`, and for Python choose `python-pruio`. There's also an
-examples package containing precompiled binaries, that you can install
-and run without dealing with source code (mind the wiring descriptions
-in chapter \ref ChaExamples).
+to install the shared library, the header files, the example source
+code and the html documentation. The documentation is optional. When
+you're short of memory, you can install the package on the PC as well.
+Or use [this online
+version.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
+Then copy the example code to your working directory
 
-??? Tabelle
+    cp -r /usr/shared/doc/libpruio-bas/examples .
 
-The further stuff in this chapter is for advanced users who want to
-adapt the source code and recompile the binary.
+and you're ready to start.
 
 
-# Tools # {#SecTools}
+## Python programming language ## {sSecPy}
+
+Ie. for Python programming language execute
+
+    sudo apt-get install python-pruio libpruio-doc
+
+to install the shared library, the bindings folder, the example source
+code and the html documentation. The documentation is optional. When
+you're short of memory, you can install the package on the PC as well.
+Or use [this online
+version.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
+Then copy the example code to your working directory
+
+    cp -r /usr/shared/doc/python-pruio/examples .
+
+and you're ready to start.
+
+
+## Example Binaries ## {sSecBin}
+
+There's also an examples package containing precompiled binaries. No
+compiler nor interpreter is necessary, just install by
+
+    sudo apt-get install libpruio-bin
+
+and start the executables. The programm names are prepended by
+`pruio_`. Ie. in order to start example `sos` type
+
+    pruio_sos
+
+\note Some of the examples need custom wiring on the headers. Ie.
+      `pruio_performance` does nothing without the related wiring, so
+      mind the wiring descriptions in chapter \ref ChaExamples.
+
+
+# Source Tree # {#SecSourceTree}
+
+The following section describes the source tree and its build
+management system. People who want to contribute to the project,
+experiment with the source code or build Debian packages will find
+detailed information on internals. If you don't belong to that group
+you can skip this section, and continue at chapter \ref ChaPins.
+
+
+## Build Dependencies ## {#sSecBuildDeps}
+
+FIXME
 
 The further files in this package are related to the version control
 system GIT and to automatical builds of the examples and the
@@ -53,18 +139,18 @@ this mandatory (M) tools, the others are optional. Some are recommended
 packages in their distrubution management system (D), or pre-installed
 (I).
 
-|                                               Name  | Type |  Function                                                      |
-| --------------------------------------------------: | :--: | :------------------------------------------------------------- |
-| [fbc](http://www.freebasic.net)                     | M    | FreeBASIC compiler to compile the source code                  |
-| [fb_prussdrv](https://github.com/DTJF/fb_prussdrv)  | M    | PRU assembler to compile PRU code and libprussdrv              |
-| [dtc](https://git.kernel.org/cgit/utils/dtc/dtc.git)| M  I | Device tree compiler to create overlays                        |
-| [GIT](http://git-scm.com/)                          | R  D | Version control system to organize the files                   |
-| [CMake](http://www.cmake.org)                       | R  D | Build management system to build executables and documentation |
-| [cmakefbc](http://github.com/DTJF/cmakefbc)         | R    | FreeBASIC extension for CMake                                  |
-| [fbdoc](http://github.com/DTJF/fbdoc)               | R    | FreeBASIC extension tool for Doxygen                           |
-| [Doxygen](http://www.doxygen.org/)                  | R  D | Documentation generator (for html output)                      |
-| [Graphviz](http://www.graphviz.org/)                | R  D | Graph Visualization Software (caller/callee graphs)            |
-| [LaTeX](https://latex-project.org/ftp.html)         | R  D | A document preparation system (for PDF output)                 |
+|                                                                Name  | Type |  Function                                                      |
+| -------------------------------------------------------------------: | :--: | :------------------------------------------------------------- |
+| [fbc](http://www.freebasic.net)                                      | M    | FreeBASIC compiler to compile the source code                  |
+| [am335x-pru-package](https://github.com/DTJF/fb_prussdrv)            | M    | PRU assembler to compile PRU code and libprussdrv              |
+| [device-tree-compiler](https://git.kernel.org/cgit/utils/dtc/dtc.git)| M  I | Device tree compiler to create overlays                        |
+| [GIT](http://git-scm.com/)                                           | R  D | Version control system to organize the files                   |
+| [CMake](http://www.cmake.org)                                        | R  D | Build management system to build executables and documentation |
+| [cmakefbc](http://github.com/DTJF/cmakefbc)                          | R    | FreeBASIC extension for CMake                                  |
+| [fbdoc](http://github.com/DTJF/fbdoc)                                | R    | FreeBASIC extension tool for Doxygen                           |
+| [Doxygen](http://www.doxygen.org/)                                   | R  D | Documentation generator (for html output)                      |
+| [Graphviz](http://www.graphviz.org/)                                 | R  D | Graph Visualization Software (caller/callee graphs)            |
+| [LaTeX](https://latex-project.org/ftp.html)                          | R  D | A document preparation system (for PDF output)                 |
 
 It's beyond the scope of this guide to describe the installation for
 those tools. Find detailed installation instructions on the related
@@ -76,7 +162,7 @@ websides, linked by the name in the first column.
    ~~~
    or full install (recommended)
    ~~~{.txt}
-   sudo apt-get install dtc git cmake doxygen graphviz doxygen-latex texlive
+   sudo apt-get install device-tree-compiler git cmake doxygen graphviz linux-headers-`uname -r `
    ~~~
 
 -# Then make the FB compiler working:
@@ -84,20 +170,6 @@ websides, linked by the name in the first column.
    wget https://www.freebasic-portal.de/dlfiles/625/freebasic_1.06.0debian7_armhf.deb
    sudo dpkg --install freebasic_1.06.0debian7_armhf.deb
    sudo apt-get -f install
-   ~~~
-
--# Then make the FB version of prussdrv working:
-   ~~~{.txt}
-   git clone https://github.com/DTJF/fb_prussdrv
-   cd fb_prussdrv
-   sudo su
-   cp bin/libprussdrv.* /usr/local/lib
-   ldconfig
-   mkdir /usr/local/include/freebasic/BBB
-   cp include/* /usr/local/include/freebasic/BBB
-   cp bin/pasm /usr/local/bin
-   exit
-   cd ..
    ~~~
 
 -# Continue by installing cmakefbc (if wanted). That's easy, when you
@@ -246,28 +318,12 @@ pinmuxing privileges. For this type of installation execute
     make lkm-glob-install
 
 From the next boot on the LKM will be auto-loaded, and you can use
-`systemctl` features for further handling. At runtime for the current
-session, execute
+`systemctl` features for further handling. See section \ref sSecLKM for
+further details.
 
-    sudo systemctl stop libpruio.service
-
-to unload the module, and
-
-    sudo systemctl start libpruio.service
-
-to re-load it again. Or generally for the next boots, execute
-
-    sudo systemctl disable libpruio.service
-
-to disable auto-loading at boot-time, and
-
-    sudo systemctl enable libpruio.service
-
-to enable auto-loading at boot-time. To uninstall that service and the
-LKM execute
+To uninstall that service and the LKM, execute
 
     make lkm-glob-uninstall
-
 
 \note The user group `pruio` doesn't get removed, it's still existent
       after uninstall. To remove it execute `sudo nano /etc/group` and

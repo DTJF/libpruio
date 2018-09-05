@@ -660,6 +660,33 @@ which are not claimed by other subsystems by the kernel. However, this
 safety feature can get disabled in the constructor PruIo::PruIo()
 parameters.
 
+At runtime for the current
+session, execute
+
+    sudo systemctl stop libpruio.service
+
+to unload the module, and
+
+    sudo systemctl start libpruio.service
+
+to re-load it again. Or generally for the next boots, execute
+
+    sudo systemctl disable libpruio.service
+
+to disable auto-loading at boot-time, and
+
+    sudo systemctl enable libpruio.service
+
+to enable auto-loading at boot-time.
+
+\note The user group `pruio` doesn't get removed, it's still existent
+      after uninstall. To remove it execute `sudo nano /etc/group` and
+      remove the related line `pruio:x:...` from that file (change is
+      effective after next logout or boot). That way you can also
+      remove a user from that group by deleting only his name in the
+      line.
+
+
 FIXME
 
 In contrast the second solution is easy and powerfull at the same time.
