@@ -31,6 +31,7 @@ CONFIGURE_FILE(systemctl.service.in ${serv_deb} @ONLY)
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
   COMMAND "${CMAKE_COMMAND}" -E copy ${src} ${wdir}
   COMMAND make clean && make
+  COMMAND gzip -c ${lkm} > loveNpeace
   WORKING_DIRECTORY ${wdir}
   #VERBATIM
   )
