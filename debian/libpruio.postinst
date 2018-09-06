@@ -1,6 +1,0 @@
-addgroup --system pruio
-cd /usr/share/doc/libpruio
-mv loveNpeace libpruio.ko.gz
-gzip -d libpruio*.gz
-mv libpruio* /lib/modules/
-#DEBHELPER#

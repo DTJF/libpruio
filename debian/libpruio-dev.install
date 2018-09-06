@@ -1,3 +1,2 @@
 usr/lib/*.so
 usr/include/libpruio
-#usr/src/libpruio.examples/*.c

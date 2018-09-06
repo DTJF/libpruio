@@ -1,2 +1,0 @@
-#DEBHELPER#
-rm /lib/modules/libpruio*

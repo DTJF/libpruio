@@ -14,24 +14,22 @@ ENDIF()
 
 
 # use a subfolder x in order to avoid CMake overriding our Makefile
-IF(NOT (${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
-  SET(wdir ${CMAKE_CURRENT_BINARY_DIR}/x)
-ELSE()
+IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
   SET(wdir ${CMAKE_CURRENT_SOURCE_DIR}/x)
+ELSE()
+  SET(wdir ${CMAKE_CURRENT_BINARY_DIR}/x)
 ENDIF()
 
-SET(serv_nam ${PROJ_NAME}.service)
+SET(serv_nam ${PROJ_NAME}-lkm.service)
 SET(lkm ${wdir}/${PROJ_NAME}.ko)
 SET(src ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_NAME}.c)
 SET(serv_deb ${CMAKE_SOURCE_DIR}/debian/${serv_nam})
+FILE(COPY ${src} DESTINATION ${wdir})
 CONFIGURE_FILE(Makefile.in ${wdir}/Makefile @ONLY)
-CONFIGURE_FILE(systemctl.service.in ${wdir}/${serv_nam} @ONLY)
 CONFIGURE_FILE(systemctl.service.in ${serv_deb} @ONLY)
 
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
-  COMMAND "${CMAKE_COMMAND}" -E copy ${src} ${wdir}
   COMMAND make clean && make
-  COMMAND gzip -c ${lkm} > loveNpeace
   WORKING_DIRECTORY ${wdir}
   #VERBATIM
   )

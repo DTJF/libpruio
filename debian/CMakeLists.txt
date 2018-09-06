@@ -29,11 +29,6 @@ IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     COMMAND cp changelog.${osvers} changelog
     COMMAND cd ${CMAKE_SOURCE_DIR} && ${deb_exe} ${DEBUILD_FLAGS}
     )
-  INSTALL(FILES ${CMAKE_BINARY_DIR}/src/lkm/x/${PROJ_NAME}.ko
-    DESTINATION /lib/modules/
-    )
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/lkm/systemctl.service.in ${PROJ_NAME}.service @ONLY)
-
   FOREACH(tar ${FB_EXAMPLES})
     INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION bin RENAME pruio_${tar})
   ENDFOREACH(tar)
