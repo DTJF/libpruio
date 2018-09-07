@@ -2,10 +2,10 @@ Memory Organisation  {#ChaMemory}
 ===================
 \tableofcontents
 
-libpruio uses three blocks of memory to organize its data
+\Proj uses three blocks of memory to organize its data
 
 - PruIo::DInit : A memory block of variable size, allocated by
-  libpruio, containing the data arrays PruIo::Init and PruIo::Conf.
+  \Proj, containing the data arrays PruIo::Init and PruIo::Conf.
 
 - PruIo::DRam : A memory block of 2 x 8 kB, allocated by the kernel
   driver uio_pruss and mapped to the PRUSS DRam.
@@ -44,7 +44,7 @@ The first copy is used by the destructor PruIo::~PruIo() to restore the
 original configuration. The second block is used for customized
 configurations and gets transfered back to the subsystem registers in
 the call to function PruIo::config(). The initialize member function of
-the libpruio subsystems code (like GpioUdt::initialize() or
+the \Proj subsystems code (like GpioUdt::initialize() or
 PwmssUdt::initialize() ) prepare further pointers for direct access to
 the data block sections:
 
@@ -79,7 +79,7 @@ the data block sections:
 | TimerUdt::Conf (2) | Custom TIMER6 configuration              |
 | TimerUdt::Conf (3) | Custom TIMER7 configuration              |
 
-In order to minimize memory consumption libpruio may generate
+In order to minimize memory consumption \Proj may generate
 uncomplete subsystem sets. In such a set only the first four member
 variables are valid (DeAd, ClAd, ClVa, [REVISION, IDVER]). Such reduced
 sets get generated
@@ -120,7 +120,7 @@ sample (in RB or MM mode).
 
 The rest of the DRam area is used for exchanging parameters between the
 host (ARM) and the PRU software. The context changes, depending on the
-current operational state of libpruio.
+current operational state of \Proj.
 
 
 ## Constructor ## {#sSecMemCTOR}
@@ -187,7 +187,7 @@ AdcUdt::initialize(), GpioSet::initialize() ), where the pointers (ie.
 AdcUdt::Init and AdcUdt::Conf) to the individual register sets (ie.
 AdcSet, GpioSet) get initialized.
 
-This method allows to extend libpruio by new subsystem code with
+This method allows to extend \Proj by new subsystem code with
 minimal adaption in the existing source.
 
 
@@ -366,7 +366,7 @@ When the PRU finished successfully the DRam area contains
 
 The ERam area (external memory) is the biggest memory block in use.
 It's allocated by the kernel driver when loaded. The default size is
-256 kB (= 128 kSamples). libpruio uses the external memory in RB and MM
+256 kB (= 128 kSamples). \Proj uses the external memory in RB and MM
 mode to store the ADC samples.
 
 - In RB mode the size of the ring buffer is limited by the size of the

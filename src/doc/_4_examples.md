@@ -7,7 +7,7 @@ working example shows that the installation of the library components
 is OK. And by adapting the example source code you can easily find out
 if your understanding of the documentation matches reality.
 
-So libpruio includes a bunch of examples, all of them less than 200
+So \Proj includes a bunch of examples, all of them less than 200
 lines of code and some of them in FreeBASIC and in C syntax. Since C
 doesn't support native grafics output, C examples are only available
 with console text output. For all examples there're pre-compiled
@@ -34,7 +34,7 @@ simple.
 
   This is a minimal example printing a table of some analog samples
   from the ADC subsystem. It illustrates the principle usage of
-  libpruio described in section \ref SecOperation by a minimal number
+  \Proj described in section \ref SecOperation by a minimal number
   of code lines.
 
 \Item{Preparation}
@@ -358,7 +358,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 
   This examples demonstrates how to perform pulse width modulated (PWM)
   output and how to measure such a pulse train (CAP = Capture and
-  Analyse a Pulsetrain) with libpruio. The code creates a PruIo
+  Analyse a Pulsetrain) with \Proj. The code creates a PruIo
   instance configured in IO mode. One header pin (P9_21) gets
   configured as PWM output and an other (P9_42) as CAP input. When both
   pins get connected, the measured pulse train data get shown in a
@@ -546,7 +546,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 \Item{Description}
 
   This file contains an example on how to use the ring buffer mode of
-  libpruio. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
+  \Proj. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
   for maximum speed, sampled in to the ring buffer and from there saved
   as raw data to some files.
 
@@ -634,7 +634,7 @@ press any key to quit
 \Item{Description}
 
   This example shows how to control a unipolar stepper motor by
-  libpruio. It creates a PruIo instance configured in IO mode and
+  \Proj. It creates a PruIo instance configured in IO mode and
   prepares four GPIO lines as output. You can change motor direction
   and speed, stop the motor and switch of all pins.
 

@@ -25,10 +25,12 @@ rb_oszi
 sos
 stepper
 triggers
+
 pasm_init.bi
 pasm_run.bi
 libpruio.so
 
+src/python/libpruio/pruio.py
 debian/libpruio-lkm.service
 doxy/fbdoc.lfn
 src/config/*.dtbo

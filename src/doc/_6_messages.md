@@ -2,7 +2,7 @@ Messages  {#ChaMessages}
 ========
 \tableofcontents
 
-libpruio contains two types of software
+\Proj contains two types of software
 
 - software running on the host (ARM), reporting human readable messages, and
 - software running on the PRUSS, reporting its state in form of a number code.
@@ -18,7 +18,7 @@ host software. Most of this functions are designed to return 0 (zero)
 on success or an error text (`ZSTRING PTR` in FB, `char*` in C) in
 case of an error. Additionaly the member variable PruIo::Errr gets
 set to the same message text. You can use either of them to handle the
-error message. The texts are always internal strings owned by libpruio
+error message. The texts are always internal strings owned by \Proj
 and must not be freed.
 
 Just a few functions do not follow this principle
@@ -35,7 +35,7 @@ Just a few functions do not follow this principle
 For those functions the error message (if any) is only available in
 variable PruIo::Errr.
 
-In all cases, libpruio just sets the pointer PruIo::Errr. The
+In all cases, \Proj just sets the pointer PruIo::Errr. The
 calling code may or may not handle the error message. When the code
 tries to continue, it should reset the pointer to 0 (zero) to avoid
 blocking further function calls due to former errors.
@@ -70,7 +70,7 @@ fixing.
 \Item{"failed executing Pru_Init instructions"} The constructor failed
 to execute the init instructions on the PRU. -> There's some internal
 error in the PRU instructions due to customization. Re-install or
-re-compile the libpruio library.
+re-compile the \Proj library.
 
 \Item{"out of memory"} The constructor failed to allocate memory for
 the configurations (Init and Conf). -> Make sure that you have at least
@@ -111,7 +111,7 @@ PRU. -> Make sure that the library libprussdrv is working properly.
 \Item{"failed executing Pru_Exit instructions"} The destructor failed
 to execute instructions to restore the subsystems initial state on the
 PRU. -> There's some internal error in the PRU instructions due to
-customization. Re-install or re-compile the libpruio library.
+customization. Re-install or re-compile the \Proj library.
 
 \Item{"destructor warning: subsystems are NOT restored"} This is not an
 error but just a warning. The destructor didn't restore the subsystems
@@ -160,7 +160,7 @@ documentation and test some examples.)
 \Item{"failed executing Pru_Run instructions"} The function failed to
 execute the PRU instructions on the PRU. -> There's some internal error
 in the PRU instructions due to customization. Re-install or re-compile
-the libpruio library.
+the \Proj library.
 
 
 ## rb_start ## {#sSecErrRbStart}
@@ -179,7 +179,7 @@ required, but the PRU software isn't ready. -> First, call function
 PruIo::config().
 
 \Item{"Trg...: too much pre-trigger samples"} (... replaced by trigger
-number) The number of pre-trigger samples is too big. libpruio uses
+number) The number of pre-trigger samples is too big. \Proj uses
 the DRam area as ring buffer for pre-trigger values. Its maximun size
 is `16 kB - PRUIO_DAT_ADC` -> Either reduce parameter `Samp` in the
 previous call to AdcUdt::mm_trg_pre(). Or reduce the number of active
@@ -218,7 +218,7 @@ PRUIO_AZ_BALL.
 \Item{"unknown setPin ball number"}
 
 \Item{"no ocp access"} The CPU ball isn't in the required modus and
-needs a new pinmux setting, but libpruio has no access to the sysfs
+needs a new pinmux setting, but \Proj has no access to the sysfs
 folders. -> Either load the universal device tree overlay and execute
 the code with administrator privileges. Or make sure that digital lines
 are set to the required modi before you execute the code. Or consider
@@ -228,9 +228,9 @@ privileges.
 \Item{"pinmux failed: P._.. -> x.." (points replaced by numbers)} The
 CPU ball isn't in the required modus and needs a new pinmux setting,
 but the required CPU ball (parameter `Ball`) is not specified in the
-libpruio device tree overlay, or the overlay isn't loaded, or pinmuxing
+\Proj device tree overlay, or the overlay isn't loaded, or pinmuxing
 isn't supported for that state. -> Check the parameters `Ball` and
-`Mo`. Make sure that the required modus is defined in the libpruio
+`Mo`. Make sure that the required modus is defined in the \Proj
 device tree overlay and that overlay is loaded. Or consider to use the
 loadable kernel module and execute with administrator privileges.
 
@@ -344,7 +344,7 @@ first.
 but the specified mode in parameter `Mo` is not a GPIO mode. -> Make
 sure to specify a valid GPIO mode (ie. from enumerators PinMuxing).
 
-\note When the pin (CPU ball) is not in the matching mode, libpruio
+\note When the pin (CPU ball) is not in the matching mode, \Proj
       tries to configure it. In that case you also may get error
       messages as described in \ref sSecPruIoSetPin.
 
@@ -397,7 +397,7 @@ pins listed in section \ref sSecPwm.
 required, but the related header pin (CPU ball) isn't in PWM mode.
 libruio tried to configure the CPU ball, but the call to function
 PruIo::setPin() failed. -> Check the parameter `Ball`. Check if the CPU
-ball is specified in the libpruio device tree overlay. Extend the
+ball is specified in the \Proj device tree overlay. Extend the
 device tree overlay if you need access to further CPU balls.
 
 \Item{"PWMSS not enabled"} Setting a PWM output is required, but the
@@ -464,7 +464,7 @@ capable to generate output at the required time periods. -> Check the
 parameters `Dur1` and `Dur2`, and set an appropriate value (TIMER and
 CAP modules have different ranges).
 
-\note When the pin (CPU ball) is not in the matching mode, libpruio
+\note When the pin (CPU ball) is not in the matching mode, \Proj
       tries to configure it. In that case you also may get error
       messages as described in \ref sSecPruIoSetPin.
 
@@ -504,7 +504,7 @@ related PWMSS subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\note When the pin (CPU ball) is not in the matching mode, libpruio
+\note When the pin (CPU ball) is not in the matching mode, \Proj
       tries to configure it. In that case you also may get error
       messages as described in \ref sSecPruIoSetPin.
 
@@ -545,7 +545,7 @@ first.
 measurement is out of the supported range -> Specify a frequency in the
 range of 12 to 50e6 Hz, see \ref sSecQep for details.
 
-\note When the pin (CPU ball) is not in the matching mode, libpruio
+\note When the pin (CPU ball) is not in the matching mode, \Proj
       tries to configure it. In that case you also may get error
       messages as described in \ref sSecPruIoSetPin.
 

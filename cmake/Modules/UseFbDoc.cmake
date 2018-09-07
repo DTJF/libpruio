@@ -86,7 +86,7 @@ ALIASES += \"Mail=${PROJ_MAIL}\" \\
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       )
     LIST(APPEND msg "LFN")
-    SET(filt_cmd "${FbDoc_EXECUTABLE} -L ${lfn}")
+    SET(filt_cmd "\\\"${FbDoc_EXECUTABLE} -L ${lfn}\\\"")
   ELSE()
     SET(filt_cmd "${FbDoc_EXECUTABLE}")
   ENDIF()

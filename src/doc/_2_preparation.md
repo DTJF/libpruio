@@ -2,16 +2,29 @@ Preparation {#ChaPreparation}
 ===========
 \tableofcontents
 
-This chapter describes how to get libpruio working on your system. The
-easy way is to install the Debian packages. They're not in mainline,
-yet. So you have to add a PPA (Personal Package Archive) to your
-package management sources. Edit the file `sudo nano
+This chapter describes several methods to get \Proj working on your
+system:
+
+-# \ref SevDebPac installing, or
+-# \ref SecSourceTree compilation and installing
+
+The first one is for easy consuming the software service "as is", the
+last offers the chance to partizipate in development and optimize the
+software to your custom needs, but is less convenient.
+
+
+# Debian Packages # {#SevDebPac}
+
+The easy way to benefit from \Proj is to install the Debian packages.
+They're not in mainline, yet. So you have to add a PPA (Personal
+Package Archive) to your package management sources. On the default
+Debian operating system, edit the file `sudo nano
 /etc/apt/sources.list` and add the lines:
 
     deb http://beagle.tuks.nl/debian jessie/
     deb-src http://beagle.tuks.nl/debian jessie/
 
-Then grep the keyring by
+Then grep the keyring by (mind the '-' character at the ende)
 
     wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
 
@@ -26,29 +39,44 @@ programming language:
 ----: | :--------------------------- | :--------------------------
 1.2MB | libpruio_0.6.0.tar.xz        | source code
  45kB | libpruio_0.6.0_armhf.deb     | shared lib binary and LKM
- 80kB | libpruio-bin_0.6.0_armhf.deb | executable examples
  18kB | libpruio-dev_0.6.0_armhf.deb | examples/bindings C
  27kB | libpruio-bas_0.6.0_armhf.deb | examples/bindings FreeBASIC
  18kB | python-pruio_0.6.0_armhf.deb | examples/bindings Python
+ 80kB | libpruio-bin_0.6.0_armhf.deb | executable examples
+  8kB | libpruio-lkm_0.6.0_armhf.deb | loadable kernel module
 4.1MB | libpruio-doc_0.6.0_all.deb   | documentation (html-tree)
 
-The first package contains the shared library and the loadable kernel
-module (LKM). It installs a `systemd` script to start or stop the LKM
-service, see section \ref sSecLKM. And
+The first package contains all source code, and the second contains the
+binary executable of the shared library, which gets linked at runtime
+to related programs. The tripple -dev, -bas and python-pruio contain
+language bindings for C, FreeBASIC and Python programming languages,
+and example source code. The -bas package contains additional examples
+with graphical output. In order to use the
+library for your projrect, you'll need at least a language binding for
+your prefered programming language and the shared library package.
+
+The remaining packages are optional. All -bas examples are alsp
+available as pre-compiled executable binaries in package -bin. The -lkm
+package helps a lot for pinmuxing and to get PWM signals working on
+kernel 4.x. And the -doc package contains the documaentation in html
+format for off-line reading, which is also [available
+on-line.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
+It's recommended to use the off-line version, because it's garantied to
+match the binaries. The on-line version may be behind or even beofre
+the current binaries. When you're short of memory at the Beaglebone,
+you can install the documentation on the PC as well.
 
 
 ## C programming language ## {sSecDev}
 
 For C programming language execute
 
-    sudo apt-get install libpruio-dev libpruio-doc
+    sudo apt-get install libpruio-dev libpruio-lkm libpruio-doc
 
 to install the shared library, the header files, the example source
-code and the html documentation. The documentation is optional. When
-you're short of memory, you can install the package on the PC as well.
-Or use [this online
-version.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
-Then copy the example code to your working directory
+code, the loadable kernel module and the html documentation.
+Documentation and LKM are optional. Then copy the example code to your
+working directory
 
     cp -r /usr/shared/doc/libpruio-dev/examples .
 
@@ -280,7 +308,7 @@ uio                    20480  2 uio_pruss,uio_pdrv_genirq
 
 ## LKM ## {#sSecLkmBuild}
 
-The loadable kernel module (LKM) for libpruio has three purposes
+The loadable kernel module (LKM) for \Proj has three purposes
 
 -# enable the PRUSS, if not running
 -# fix a kernel 4.x problem (PWMSS-Pwm output disabled)
@@ -400,7 +428,7 @@ Find the resulting file `pruio.py` in folder `src/python/libpruio`.
 
 # DTBO File # {#sSecDtboFile}
 
-The device tree blob (DTBO) for libpruio has two purposes
+The device tree blob (DTBO) for \Proj has two purposes
 
 -# enable the PRUSS
 -# set pinmuxing
@@ -437,14 +465,15 @@ In the that same build folder, build the Debian packages by:
 
     make deb
 
-This will create the packages
+This will create the Debian packages
 
 - libpruio.deb containing the runtime binary and the LKM
 - libpruio-doc.deb containing HTML documentation tree
 - libpruio-examples.deb containing precompiled binaries to execute
 - libpruio-dev.deb containing the C header files and C examples
 - libpruio-bas.deb containing the FreeBASIC header files and examples
-- python-pruio containing the Python binding and example source
+- libpruio-lkm.deb containing the FreeBASIC header files and examples
+- python-pruio.deb containing the Python binding and example source
 
 and the auxiliary file to upload them to a PPA. Find the output in
 folder `debian/packages`.

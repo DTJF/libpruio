@@ -72,7 +72,7 @@ Released in 2017, Nov.
 
 ## Bugfixes:
 
-- RB and MM modes are working now, even when libpruio is configured to use PRU-0.
+- RB and MM modes are working now, even when \Proj is configured to use PRU-0.
 - C-Wrapper missing enumerators pinMuxing added.
 - C-Wrapper function pruio_gpio_config() implemented now.
 - pruio.h: minor improvements in structure pruIo.
@@ -130,21 +130,6 @@ Released on 2014 May, 9.
 
 # References # {#SecReferences}
 
-Here's some feedback about the \Proj project. [lejan
-wrote](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p217404)
-
-~~~{.txt}
-Dear TJF,
-
-I just wanted to thank you for sharing such a great library! I have
-been using this in C for a robotics project and this library really
-took the hassle out of a lot of the programming work. The Beaglebone is
-not as well supported as Arduino or Rasp Pi so your library is very
-much appreciated.
-
-Peter
-~~~
-
 Meanwhile \Proj is used in many projects all over the world. Here're some of them
 
 - [Using low cost single-board microcontrollers to record underwater acoustical data](http://www.acoustics.asn.au/conference_proceedings/INTERNOISE2014/papers/p236.pdf)
@@ -184,7 +169,7 @@ Thanks go to:
 - Arend Lammertink for providing Debian packages and hosting them on
   his server.
 
-- The libpruio users for testing, reporting bugs and sending ideas
+- The \Proj users for testing, reporting bugs and sending ideas
   to improve it. Especially
 
   - [Rafael Vega](http://www.freebasic.net/forum/viewtopic.php?p=198419#p198419)

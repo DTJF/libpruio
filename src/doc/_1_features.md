@@ -2,7 +2,24 @@ Features  {#ChaFeatures}
 ========
 \tableofcontents
 
-libpruio is designed to enable fast (faster than sysfs), flexible
+Here's some feedback about the \Proj project. [lejan
+wrote:](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p217404)
+
+~~~{.txt}
+Dear TJF,
+
+I just wanted to thank you for sharing such a great library! I have
+been using this in C for a robotics project and this library really
+took the hassle out of a lot of the programming work. The Beaglebone is
+not as well supported as Arduino or Rasp Pi so your library is very
+much appreciated.
+
+Peter
+~~~
+
+Thanks, for the feedback! It seems that I reached my major gaol.
+
+\Proj is designed to enable fast (faster than sysfs), flexible
 (customizable) and easy (single source) access to the AM33xx CPU
 subsystems. Its features in short
 
@@ -25,9 +42,9 @@ subsystems. Its features in short
 
 # PRUSS # {#SecPruss}
 
-libpruio contains software running on the host system (ARM) and
+\Proj contains software running on the host system (ARM) and
 software running on a Programable Realtime Unit SubSystem (PRUSS). The
-AM33xx CPU on Beaglebone hardware contains two PRU subsystems. libpruio
+AM33xx CPU on Beaglebone hardware contains two PRU subsystems. \Proj
 can either use PRU-0 or PRU-1 (the later is the default). To use PRU-0,
 just clear bit 0 in parameter *Act* when calling the constructor
 PruIo::PruIo().
@@ -35,7 +52,7 @@ PruIo::PruIo().
 
 # Operation # {#SecOperation}
 
-libpruio controls the AM33xx CPU subsystems
+\Proj controls the AM33xx CPU subsystems
 
 - TSC_ADCSS (Touch Screen Controler and Analog to Digital Converter
   SubSystem)
@@ -61,21 +78,21 @@ by a sequence of these three steps
 
 \note Create and use just one PruIo structure at a time.
 
-libpruio offers a set of API functions to do simple IO task at a
+\Proj offers a set of API functions to do simple IO task at a
 reasonable speed. They may be inefficient in case of advanced
-requirements. Therefor libpruio allows direct access to all register
+requirements. Therefor \Proj allows direct access to all register
 configurations of the subsystems. This is for experts only. Further
 customization of the subsystems configuration for analog and digital
 lines can get done by adapting the subsystem registers before step 2.
 
-\note It's save to control the Beaglebone hardware by the libpruio API
+\note It's save to control the Beaglebone hardware by the \Proj API
       functions. In contrast accessing the register sets directly is
       for experts only and may cause non-revisible hardware damages.
 
 
 # Modi # {#SecModi}
 
-libpruio supports three run modi. They differ in the priority of the
+\Proj supports three run modi. They differ in the priority of the
 timing of the ADC subsystem restarts:
 
 -# IO mode (inaccurate ADC timing): the PRU is running in an endless
@@ -106,14 +123,14 @@ function PruIo::config()
   PruIo::mm_start(), stoping after measurement is done.
 
 To stop an endless mode (IO or RB) call function PruIo::config() again.
-Or destroy the libpruio structure when done by calling the destructor
+Or destroy the \Proj structure when done by calling the destructor
 PruIo::~PruIo().
 
 
 # Pinmuxing # {#SecPinmuxingIntro}
 
 A digital line of the AM33xx CPU needs to be configured before use (see
-section \ref SecPinmuxing for details). libpruio checks the pin
+section \ref SecPinmuxing for details). \Proj checks the pin
 configuration at run-time, and tries to adapt it if necessary.
 
 - An input line gets configured by a call to the config member function
@@ -124,7 +141,7 @@ configuration at run-time, and tries to adapt it if necessary.
   GpioUdt::setValue() or PwmMod::setValue() ).
 
 Pinmuxing at run-time requires administrator privileges. To run your
-libpruio application with user privileges, make sure that digital lines
+\Proj application with user privileges, make sure that digital lines
 are in the required state (configuration) before executing the code.
 
 
@@ -168,7 +185,7 @@ case of no input.
 # PWM # {#SecPwm}
 
 Generating a Pulse Width Modulated output is available by the PwmMod
-member functions (in IO and RB mode). Therefor libpruio uses different
+member functions (in IO and RB mode). Therefor \Proj uses different
 subsystems: the PWM modules and the CAP modules in the PWMSS
 subsystems, as well as the `TIMER [4-7]` subsystems. All modules are
 supported in a transparent API. See section \ref sSecPwm for further
@@ -235,7 +252,7 @@ AIN-7 is connected by a voltage divider on board to the 3V3 power
 supply, the other lines (AIN-0 to AIN-6) are free available.
 
 The ADC subsystem can use up to `16` step configurations (and an
-additional charge step) to perform a measurement. libpruio
+additional charge step) to perform a measurement. \Proj
 pre-configures steps `1` to `8` by default to sample lines AIN-0 to
 AIN-7.
 
@@ -246,7 +263,7 @@ AIN-7.
   (optional).
 
 - Read array AdcUdt::Value to get the sampled values. The context
-  depends on the run mode of libpruio, specified by the parameter
+  depends on the run mode of \Proj, specified by the parameter
   *Samp* in the most recent call to function PruIo::config().
 
 
@@ -255,7 +272,7 @@ AIN-7.
 The Beaglebone ADC subsystem samples 12 bit values in the range of `0` to
 `4095`. Most other devices (ie. like sound cards) use `16` bit encoding
 (in the range of `0` to `65535`) and the values cannot get compared
-directly. Therefor libpruio can left shift the samples internaly. By
+directly. Therefor \Proj can left shift the samples internaly. By
 default the output is 16 bit encoded (range 0 to 65520).
 
 - Adapt parameter *Mds* in the call to function PruIo::config() to
@@ -317,7 +334,7 @@ triggers.bas.
 
 # Subsystem Control # {#SecSubSysCont}
 
-libpruio controls several subsystems, listed in section \ref
+\Proj controls several subsystems, listed in section \ref
 SecOperation. Each of these subsystems can either
 
 - get configured and used (the default), or
@@ -328,7 +345,7 @@ SecOperation. Each of these subsystems can either
 
 To ignore a subsystem, clear its status bit in parameter *Act* when
 calling the constructor PruIo::PruIo(). Each subsystem gets controlled
-by its own status bit. When a system is set to be ignored, libpruio
+by its own status bit. When a system is set to be ignored, \Proj
 cannot access it. There's no configuration data and there's no reset to
 the initial state for the subsystem by the destructor PruIo::~PruIo().
 
@@ -344,7 +361,7 @@ fails). Check
   enabled after the constructor call (ie. AdcSet::REVISION or
   PwmssSet::IDVER have values of `0` (zero) if wakeup failed).
 
-libpruio stores a complete set of configuration data for active
+\Proj stores a complete set of configuration data for active
 subsystems and restores their state by the destructor when finished.
 Active subsystems can get enabled or disabled at run-time. Each call to
 function PruIo::config() can change a subsystem state.
@@ -364,16 +381,16 @@ function PruIo::config() can change a subsystem state.
 
 # Overlays # {#SecOverlays}
 
-The libpruio package contains tools to create, compile and install
+The \Proj package contains tools to create, compile and install
 device tree overlays in folder src/config.
 
 - Either an overlay with fixed pin configuration. This overlay type
-  configures the pins to a certain state before the libpruio code gets
+  configures the pins to a certain state before the \Proj code gets
   executed. The code can run with user privileges.
 
 - Or an universal overlay, that provide run-time pinmuxing capability.
   That means the pin mode and resistor / receiver configuration can get
-  changed when the libpruio code is running. The later needs admin
+  changed when the \Proj code is running. The later needs admin
   privileges.
 
 For a customized overlay adapt the source code, compile and execute it:
