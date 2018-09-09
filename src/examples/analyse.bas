@@ -46,6 +46,9 @@ WITH *io
     FOR i AS LONG = 0 TO UBOUND(P9_Pins)
       ?"  " & *.Pin(P9_Pins(i))
     NEXT
+    FOR i AS LONG = 0 TO UBOUND(SD_Pins)
+      ?"  " & *.Pin(SD_Pins(i))
+    NEXT
     ?"  " & *.Pin(JT_04)
     ?"  " & *.Pin(JT_05)
 #ENDIF

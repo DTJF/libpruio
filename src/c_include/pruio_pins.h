@@ -172,6 +172,23 @@ static uint8 P9_Pins[] = {
 , P9_42
   };
 
+//! CPU ball numbers for all digital pins on header J1
+static uint8 JT_Pins[] = {
+  JT_04
+, JT_05
+  };
+
+//! CPU ball numbers for all digital pins on SD slot
+static uint8 SD_Pins[] = {
+  SD_01
+, SD_02
+, SD_03
+, SD_05
+, SD_07
+, SD_08
+, SD_10
+  };
+
 //! CPU ball numbers for emmc2 pin group on header P8 (locked on BBB)
 static uint8 EMMC2_Pins[] = {
   P8_03

@@ -106,7 +106,8 @@ VAR COMPATIBL = ""
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"
 #INCLUDE ONCE "P9.bi"
-#INCLUDE ONCE "JTag.bi"
+#INCLUDE ONCE "JT.bi"
+#INCLUDE ONCE "SD.bi"
 
 ''''''''''''''''''' ... then delete unwanted pin groups (or single pins)
 SELECT CASE UCASE(COMMAND(2))

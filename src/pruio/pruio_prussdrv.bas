@@ -534,6 +534,7 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
   FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL   : m[i] = toffs : NEXT
   FOR i AS INTEGER = 0 TO UBOUND(P8_Pins) : m[P8_Pins(i)] = 0 : NEXT
   FOR i AS INTEGER = 0 TO UBOUND(P9_Pins) : m[P9_Pins(i)] = 0 : NEXT
+  FOR i AS INTEGER = 0 TO UBOUND(SD_Pins) : m[SD_Pins(i)] = 0 : NEXT
   m[JT_04] = 0 : m[JT_05] = 0
   VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _
     , c = CVL("pin ") _

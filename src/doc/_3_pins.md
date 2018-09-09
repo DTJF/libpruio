@@ -588,7 +588,8 @@ configurations are prepared in header files, and can get loaded by
     ' quick & dirty: first create settings for all pins ...
     #INCLUDE ONCE "P8.bi"
     #INCLUDE ONCE "P9.bi"
-    #INCLUDE ONCE "JTag.bi"
+    #INCLUDE ONCE "JT.bi"
+    #INCLUDE ONCE "SD.bi"
 
 Afterwards you can (and should) reduce the configurations to the set of
 desired pins. Therefor just empty the entries in array `M(...)` for the
@@ -663,19 +664,19 @@ parameters.
 At runtime for the current
 session, execute
 
-    sudo systemctl stop libpruio.service
+    sudo systemctl stop libpruio-lkm.service
 
 to unload the module, and
 
-    sudo systemctl start libpruio.service
+    sudo systemctl start libpruio-lkm.service
 
 to re-load it again. Or generally for the next boots, execute
 
-    sudo systemctl disable libpruio.service
+    sudo systemctl disable libpruio-lkm.service
 
 to disable auto-loading at boot-time, and
 
-    sudo systemctl enable libpruio.service
+    sudo systemctl enable libpruio-lkm.service
 
 to enable auto-loading at boot-time.
 

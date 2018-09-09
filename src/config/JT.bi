@@ -19,7 +19,7 @@ Copyright 2014-\Year by \Mail
 ' pin 2, -
 ' pin 3, -
 
-' ZCZ ball E15 (RXD 5V)
+' ZCZ ball E15 (RXD)
 M(JT_04) = CHR( _
     0 + _I_ _ ' uart0_rxd
   , 1 + I_O _ ' spi1_cs0
@@ -30,7 +30,7 @@ M(JT_04) = CHR( _
   , 6 + _I_ _ ' pr1_pru1_pru_r31_14
   ) & GPIO_DEF
 
-' ZCZ ball E16 (TXD 5V)
+' ZCZ ball E16 (TXD)
 M(JT_05) = CHR( _
     0 + _O_ _ ' uart0_txd
   , 1 + I_O _ ' spi1_cs1

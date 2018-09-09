@@ -23,6 +23,7 @@ Released in 2018, September.
 - constructor mode PRUIO_ACT_FREMUX for free pinmuxing
 - function PwmUdt::sync() for synchonization of PWMSS.Pwm outputs
 - pinmuxing with loadable kernel module, no more overlays, easy install
+- pins on SD slot added
 
 ## Changes:
 
