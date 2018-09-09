@@ -5,7 +5,7 @@ SET(CMAKE_VERBOSE_MAKEFILE 1)
 
 # constants
 SET(PROJ_NAME "libpruio" CACHE STRING "project name" FORCE)
-SET(PROJ_DESC "Fast and easy Input/Output for digital/analog on Beagleboard" CACHE STRING "project description" FORCE)
+SET(PROJ_DESC "Fast and easy Digital/Analog Input/Output for Beaglebones" CACHE STRING "project description" FORCE)
 SET(PROJ_VERS "0.6.0"   CACHE STRING "project version" FORCE)
 SET(PROJ_AUTH "DTJF"    CACHE STRING "project authors" FORCE)
 SET(PROJ_MAIL "Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net"  CACHE STRING "project mail address" FORCE)

@@ -2,7 +2,8 @@
 \brief Example: draw a graph of analog inputs.
 
 This file contains an example on how to use libpruio to continuously
-draw a graph of the sampled data from the analog input lines.
+draw a graph of the sampled data from the analog input lines. Find a
+functional description in section \ref sSecExaOszi.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

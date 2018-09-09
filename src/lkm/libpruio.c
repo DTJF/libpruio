@@ -1,3 +1,22 @@
+/*! \file libpruio.c
+\brief Source code of loadable kernel module (LKM)
+
+When tainted to the kernel, the LKM checks for the TI-AM335x CPU and
+the PRUSS version. In case of a missmatch or other problems, an error
+message gets placed in the kernel log `dmesg`. In case of a match it
+
+-# enables the PWMSS clocks (tbclk in CM)
+-# creates a sysfs file for pinmuxing and tbclk settings
+
+When untainted, it restores the original tbclk value.
+
+The pinmuxing feature is save for Beaglebone double pins `P9_41` and
+`P9_42`. Before the related CPU ball gets configured into the desired
+mode, the other CPU ball gets set to the save `PRUIO_GPIO_IN` mode.
+
+\since 0.6
+*/
+
 #include <linux/init.h>             // Macros used to mark up functions e.g., __init __exit
 #include <linux/module.h>           // Core header for loading LKMs into the kernel
 #include <linux/kernel.h>           // Contains types, macros, functions for the kernel
@@ -6,15 +25,13 @@
 #include <linux/platform_device.h>
 
 MODULE_LICENSE("GPL");              ///< The license type -- this affects runtime behavior
-MODULE_AUTHOR("TJF");               ///< The author -- visible when you use modinfo
-MODULE_DESCRIPTION("pinmuxing feature for libpruio");  ///< The description -- see modinfo
+MODULE_AUTHOR("TJF");               ///< The author -- visible when using modinfo
+MODULE_DESCRIPTION("pinmuxing for libpruio");  ///< The description -- see modinfo
 MODULE_VERSION("0.0");              ///< The version of the module
-//MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
+MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
 
 static struct platform_device *pdev;
-//static   void __iomem *mem0, *mem1, *mem2;
 static   void __iomem *mem1, *mem2;
-//static unsigned int pruss_mem, tbclk_org;
 static unsigned int tbclk_org;
 
 
@@ -27,10 +44,7 @@ static unsigned char hex1(char t){
 static ssize_t state_read(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "tbclk=%u/%u (orig/curr)"
-               , tbclk_org, ioread16(mem1));
-	//return sprintf(buf, "tbclk=%u/%u (orig/curr)\nprclk=%u/%u (orig/curr)"
-               //, tbclk_org, ioread16(mem1), pruss_mem, ioread32(mem0));
+	return sprintf(buf, "tbclk=%u/%u (orig/curr)", tbclk_org, ioread16(mem1));
 }
 
 static ssize_t state_write(struct device *dev,
@@ -92,35 +106,32 @@ static int fail(int N, char* Text, int Ret){
   if(N >= 5) sysfs_remove_group(&(&pdev->dev)->kobj, &libpruio_attr_group);
   if(N >= 4) platform_device_unregister(pdev);
   if(N >= 3) iounmap(mem2);
-  if(N >= 2) {iowrite16(tbclk_org, mem1); iounmap(mem1);}
-  //if(N >= 1) {iowrite32(pruss_mem, mem0); iounmap(mem0);}
-	if(Text) printk(KERN_ALERT "libpruioInit: failed %s\n", Text);
+  if(N >= 2) iowrite16(tbclk_org, mem1);
+  if(N >= 1) iounmap(mem1);
+	if( Text ) printk(KERN_ALERT "libpruioInit: failed %s\n", Text);
   return Ret;
 }
 
 static int __init libpruio_init(void){
-  //mem0 = ioremap(0x44e00c00uL, 0x10uL);
-	//if (!mem0) return fail(0, "ioremap pruss_clk", -ENODEV);
+  mem1 = ioremap(0x44e26000uL, 0x10uL);
+	if (!mem1)                         return fail(0, "ioremap PRUSS-ID", -ENODEV);
 
-  //pruss_mem = ioread32(mem0);
-  //if (0xE0 != (pruss_mem & 0xE0))
-    //iowrite32((pruss_mem & 0xFFFFFF1F) | 0xE0, mem0);
+  if (ioread32(mem1) != 0x47000000) return fail(1, "ckecking PRUSS-ID", -ENODEV);
+  iounmap(mem1);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);
-	if (!mem1) return fail(1, "ioremap PWM_tbclk", -ENODEV);
+	if (!mem1)                        return fail(0, "ioremap PWM_tbclk", -ENODEV);
   tbclk_org = ioread16(mem1);
   iowrite16(tbclk_org | 0x7, mem1);
 
   mem2 = ioremap(0x44e10800uL, 0x200uL);
-	if (!mem2) return fail(2, "ioremap CM pinmux", -ENODEV);
+	if (!mem2)                        return fail(2, "ioremap CM pinmux", -ENODEV);
 
   pdev = platform_device_register_simple("libpruio", -1, NULL, 0);
-  if (IS_ERR(pdev)) fail(3, "register pdev", PTR_ERR(pdev));
+  if (IS_ERR(pdev))                     return fail(3, "register pdev",  PTR_ERR(pdev));
 
-	/* Register sysfs hooks */
 	if (sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group))
-	  return fail(4, "create sysfs group", -ENODEV);
-
+	                                 return fail(4, "create sysfs group", -ENODEV);
   return 0;
 }
 
@@ -128,5 +139,5 @@ static void __exit libpruio_exit(void){
   fail(99, NULL, 0);
 }
 
-module_init(libpruio_init);
-module_exit(libpruio_exit);
+module_init(libpruio_init); //!< The constructor function
+module_exit(libpruio_exit); //!< The destructor

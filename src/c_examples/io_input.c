@@ -2,7 +2,8 @@
 \brief Example: print digital and analog inputs.
 
 This file contains an example on how to use libpruio to print out the
-state of the digital GPIOs and the analog input lines.
+state of the digital GPIOs and the analog input lines. Find a
+functional description in section \ref sSecExaIoInput.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

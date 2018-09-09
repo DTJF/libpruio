@@ -3,8 +3,9 @@
 
 This file contains an example on how to use the ring buffer mode of
 libpruio. A fixed step mask of AIN-4 and AIN-7 get sampled and drawn as
-a line graf to a grafic window. Unlike IO mode, the step
-mask cannot get changed in RB mode at run-time.
+a line graf to a grafic window. Unlike IO mode, the step mask cannot
+get changed in RB mode at run-time. Find a functional description in
+section \ref sSecExaRbOszi.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

@@ -20,12 +20,11 @@ that you can use them. Some header pins are connected to two CPU balls
 (and both CPU balls must not be set in contrary output states, in order
 to avoid hardware damages).
 
-Here's an overview of the Beaglebone Black default configuration (the
-Beaglebone White setting is different). \Proj can operate on all
-colored pins
+Here's an overview of the Beaglebone Black default configuration. The
+settings for other Beaglebones (White, Green, Blue, Pocket-, ...) are
+different. \Proj can operate on all colored pins
 
 ![Header pins controllable by libpruio](pins.png)
-
 
 This section explains the different functions the header pins can work
 in and gives detailed information about the limits.

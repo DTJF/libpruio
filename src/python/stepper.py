@@ -4,10 +4,10 @@ from libpruio import *
 import time
 
 def stepper(stdscr):
-  P1 = P8_08 #//! The first pin of the stepper.
-  P2 = P8_10 #//! The second pin of the stepper.
-  P3 = P8_12 #//! The third pin of the stepper.
-  P4 = P8_14 #//! The fourth pin of the stepper.
+  P1 = P8_08 # The first pin of the stepper.
+  P2 = P8_10 # The second pin of the stepper.
+  P3 = P8_12 # The third pin of the stepper.
+  P4 = P8_14 # The fourth pin of the stepper.
 
   # Create a ctypes pointer to the pruio structure
   io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
@@ -34,18 +34,18 @@ def stepper(stdscr):
     else:               PIN_OUT(1,0,0,1)
 
   move.pos = 0 # initialize func attribute
-  ## Clear and refresh the screen for a blank canvas
+  # Clear and refresh the screen for a blank canvas
   stdscr.clear()
   stdscr.nodelay(1)
   try:
     if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 
-    PIN_OUT(1,0,0,1) #//                            initialize pin config
+    PIN_OUT(1,0,0,1) #                             initialize pin config
 
     if pruio_config(io, 1, 0x1FE, 0,     4): #             start IO mode
       raise AssertionError("config failed (%s)" % IO.Errr)
 
-    #//                                           print user informations
+    #                                             print user informations
     stdscr.addstr(0,0, "Controls: (other keys quit, 1 and 3 only when Direction = 0)\n")
     stdscr.addstr(1,0, "                       8 = faster\n")
     stdscr.addstr(2,0, "  4 = rotate CW        5 = stop, hold position   6 = rotate CCW\n")
@@ -61,7 +61,7 @@ def stepper(stdscr):
           pruio_gpio_Value(io, P1)
         , pruio_gpio_Value(io, P2)
         , pruio_gpio_Value(io, P3)
-        , pruio_gpio_Value(io, P4))) # //              user information
+        , pruio_gpio_Value(io, P4))) #                  user information
       stdscr.refresh()
 
       stdscr.timeout(w)

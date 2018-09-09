@@ -4,13 +4,13 @@ from libpruio import *
 import time
 
 def qep(stdscr):
-  ## Clear and refresh the screen for a blank canvas
+  # Clear and refresh the screen for a blank canvas
   stdscr.clear()
   stdscr.nodelay(1)
 
-  PMX = 4095 #//! Default PMax value.
-  VHz = 25 #//! The frequency for speed measurement.
-  PINS = (P8_12, P8_11, P8_16) #//! The header pins to use for input (PWMSS-1).
+  PMX = 4095 # Default PMax value.
+  VHz = 25 #   The frequency for speed measurement.
+  PINS = (P8_12, P8_11, P8_16) # The header pins to use for input (PWMSS-1).
 
   # Create a ctypes pointer to the pruio structure
   io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
@@ -18,7 +18,7 @@ def qep(stdscr):
     IO = io.contents #  the pointer dereferencing, using contents member
     if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 
-    #// configure PWM-1 for symetric output duty 50% and phase shift 1 / 4
+    # configure PWM-1 for symetric output duty 50% and phase shift 1 / 4
     IO.Pwm.contents.ForceUpDown = 1 << 1
     AqCtl = IO.Pwm.contents.AqCtl
     AqC_A = 3+1 #     offset index [0][1][1]
@@ -43,7 +43,7 @@ def qep(stdscr):
     pmax = PMX
     if pruio_qep_config(io, PINS[0], pmax, VHz, 1., 0):
       raise AssertionError("QEP pin configuration failed (%s)" % IO.Errr)
-    if pruio_config(io, 1, 0, 0, 4): #             start IO mode
+    if pruio_config(io, 1, 0, 0, 4): #                     start IO mode
       raise AssertionError("config failed (%s)" % IO.Errr)
 
     t = ("       A", "   A & B", "A, B & I")
@@ -59,9 +59,9 @@ def qep(stdscr):
     stdscr.addstr(4,0, "  %s input" % t[1])
     stdscr.addstr(5,0, "  %s input" % t[2])
     while True:
-      if pruio_qep_Value(io, PINS[p], byref(posi), byref(velo)): #// get new input
+      if pruio_qep_Value(io, PINS[p], byref(posi), byref(velo)): # get new input
         raise AssertionError("failed getting QEP Value (%s)" % IO.Errr)
-      stdscr.addstr(7,0, "Position: %8X , Speed: %7.2f" % (posi.value, velo.value)) # // info
+      stdscr.addstr(7,0, "Position: %8X , Speed: %7.2f" % (posi.value, velo.value)) # info
       stdscr.timeout(200)
       c = stdscr.getch()
       if c != -1:
@@ -95,7 +95,7 @@ def qep(stdscr):
             raise AssertionError("failed getting PWM value (%s)" % IO.Errr)
         else:
           p = m
-          if pruio_qep_config(io, PINS[p], pmax, VHz, 1., 0): # { //reconfigure QEP pins
+          if pruio_qep_config(io, PINS[p], pmax, VHz, 1., 0): # reconfigure QEP pins
             raise AssertionError("QEP pin reconfiguration failed (%s)" % IO.Errr)
         stdscr.addstr(7,50, "%s input, %10f Hz (%10f), PMax=%u" % (t[p], freq, realfreq.value, pmax))
   finally:

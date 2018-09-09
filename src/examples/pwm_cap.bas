@@ -6,7 +6,8 @@ cycle of a pulse train with a eCAP module input. The program sets
 another pin as eHRPWM output to generate a pulse width modulated signal
 as source for the measurement. The output can be changed by some keys,
 the frequency and duty cycle of the input is shown continuously in the
-terminal output.
+terminal output. Find a functional description in section \ref
+sSecExaPwmCap.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

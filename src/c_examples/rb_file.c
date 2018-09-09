@@ -4,7 +4,8 @@
 This file contains an example on how to use the ring buffer mode of
 libpruio. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
 for maximum speed, sampled in to the ring buffer and from there saved
-as raw data to some files.
+as raw data to some files. Find a functional description in section
+\ref sSecExaRbFile.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

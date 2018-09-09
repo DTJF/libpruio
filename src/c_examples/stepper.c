@@ -13,6 +13,8 @@ This file contains an example on how to use libpruio to control a
 - move a single step (in holded mode)
 - quit
 
+Find a functional description in section \ref sSecExaStepper.
+
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 
 Compile by: `gcc -Wall -o stepper stepper.c -lpruio`

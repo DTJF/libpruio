@@ -4,14 +4,13 @@ Examples  {#ChaExamples}
 
 The best way to learn a new library API is to test out some examples. A
 working example shows that the installation of the library components
-is OK. And by adapting the example source code you can easily find out
-if your understanding of the documentation matches reality.
+is OK. And by adapting the example source code you can most efficiently
+find out if your understanding of the documentation matches reality.
 
-So \Proj includes a bunch of examples, all of them less than 200
-lines of code and some of them in FreeBASIC and in C syntax. Since C
-doesn't support native grafics output, C examples are only available
-with console text output. For all examples there're pre-compiled
-executables in folder src/examples.
+So \Proj ships with a bunch of example codes. All of them have less
+than 200 lines of code, and most of them are available in FreeBASIC,
+Python and in C syntax. Just a few examples generate grafical output
+and are available in FreeBASIC systax only.
 
 Some examples need wiring to work and show the desired effect. Therefor
 a minimal knowlege on electronics is required to avoid damaging your
@@ -22,11 +21,11 @@ testing.
 
 # Text # {#SecExaText}
 
-The examples in this section produce console text output. The source
-code is available in FreeBASIC (folder src/examples) and C syntax
-(folder src/c_examples). The output between both versions may vary a
-bit, in order to keep the examples informative, but the C example code
-simple.
+The examples in this section all produce console text output. The
+source code is available in FreeBASIC (folder `src/examples`), Python
+(folder `src/python`) and C (folder `src/c_examples`) syntax. The
+output between the versions may vary a bit, in order to keep the
+examples informative, but the C example code simple.
 
 ## Simple (1) ## {#sSecExaSimple}
 
@@ -143,7 +142,7 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 
   src/examples/analyse.bas
 
-  No C source available
+  No Python nor C source available
 
 
 ## button ## {#sSecExaButton}
@@ -540,6 +539,8 @@ Closed loop, Adc->Value to function Gpio->Value:
 
   src/c_examples/qep.c
 
+  src/python/qep.py
+
 
 ## rb_file ## {#sSecExaRbFile}
 
@@ -562,19 +563,11 @@ Closed loop, Adc->Value to function Gpio->Value:
 ~~~{.txt}
 Creating file output.0
   writing samples 0-65534
-  writing samples 65535-131069
-  writing samples 131070-196604
-  writing samples 196605-262139
-  writing samples 262140-327674
-  writing samples 327675-370202
+  writing samples 65535-123401
 Finished file output.0
 Creating file output.1
   writing samples 0-65534
-  writing samples 65535-131069
-  writing samples 131070-196604
-  writing samples 196605-262139
-  writing samples 262140-327674
-  writing samples 327675-370202
+  writing samples 65535-123401
 Finished file output.1
 ~~~
 
@@ -587,6 +580,8 @@ Finished file output.1
   src/examples/rb_file.bas
 
   src/c_examples/rb_file.c
+
+  src/python/rb_file.py
 
 
 ## sos ## {#sSecExaSos}
@@ -627,6 +622,8 @@ press any key to quit
   src/examples/sos.bas
 
   src/c_examples/sos.c
+
+  src/python/sos.py
 
 
 ## stepper ## {#sSecExaStepper}
@@ -695,12 +692,13 @@ Pins            Key        Direction        Sleep
 
   src/c_examples/stepper.c
 
+  src/python/stepper.py
+
 
 # Grafic # {#SecExaGrafic}
 
-The examples in this section produce grafic output. The source code is
-available only in FreeBASIC syntax (folder src/examples), since C has
-no support for native grafics.
+The examples in this section all produce grafic output. The source code
+is available only in FreeBASIC syntax (folder `src/examples`).
 
 ## pwm_adc ## {#sSecExaPwmAdc}
 

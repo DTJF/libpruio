@@ -4,7 +4,8 @@
 This file contains an example on how to use libpruio to control the
 user LED 3 (near ethernet connector) on the beaglebone board. It shows
 how to unlock a CPU ball that is used by the system. And it shows how
-to control the unlocked ball.
+to control the unlocked ball. Find a functional description in
+section \ref sSecExaSos.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

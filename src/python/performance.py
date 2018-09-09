@@ -17,7 +17,7 @@ desc = [
 , "Closed loop, Adc->Value to function Gpio->Value"
 ]
 
-f0 = c_float(0.) #     //!< The current measurement result.
+f0 = c_float(0.) # The current measurement result.
 nf = [100e6,100e6,100e6,100e6,100e6,100e6,100e6]
 sf = [0.,0.,0.,0.,0.,0.,0.]
 xf = [0.,0.,0.,0.,0.,0.,0.]

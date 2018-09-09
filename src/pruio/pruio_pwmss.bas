@@ -578,10 +578,12 @@ FUNCTION PwmMod.setValue CDECL( _
       RETURN .PwmSS->pwm_pwm_set(0, Hz, Du, -1.)
     CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
       RETURN .PwmSS->cap_pwm_set(2, Hz, Du)
-    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
-      RETURN .PwmSS->cap_pwm_set(1, Hz, Du)
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
       RETURN .PwmSS->cap_pwm_set(0, Hz, Du)
+    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+      RETURN .PwmSS->cap_pwm_set(1, Hz, Du)
+    CASE SD_10 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+      RETURN .PwmSS->cap_pwm_set(1, Hz, Du)
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D)
       'RETURN pru_cap_set(Hz, Du)
     END SELECT :                       .Errr = .PwmSS->E4 : RETURN .Errr ' pin has no PWM capability
@@ -683,6 +685,8 @@ FUNCTION CapMod.config CDECL( _
     CASE JT_04 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h24)
       m = 2
     CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h20)
+    CASE SD_10 : IF ModeCheck(Ball,1) THEN ModeSet(Ball, &h22)
+      m = 1
     'CASE P8_15 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h25) ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
     'CASE    88 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h22)
       'm = 1

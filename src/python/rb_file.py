@@ -17,11 +17,11 @@ try:
   IO = io.contents #    the pointer dereferencing, using contents member
   if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 
-  if pruio_adc_setStep(io, 9, 0, 0, 0, 0): # //            step 9, AIN-0
+  if pruio_adc_setStep(io, 9, 0, 0, 0, 0): #               step 9, AIN-0
     raise AssertionError("step 9 configuration failed: (%s)" % IO.Errr)
-  if pruio_adc_setStep(io,10, 1, 0, 0, 0): # //            step 9, AIN-1
+  if pruio_adc_setStep(io,10, 1, 0, 0, 0): #               step 9, AIN-1
     raise AssertionError("step 10 configuration failed: (%s)" % IO.Errr)
-  if pruio_adc_setStep(io,11, 2, 0, 0, 0): # //            step 9, AIN-2
+  if pruio_adc_setStep(io,11, 2, 0, 0, 0): #               step 9, AIN-2
     raise AssertionError("step 11 configuration failed: (%s)" % IO.Errr)
 
   mask = 0b111 << 9 #                         The active steps (9 to 11)

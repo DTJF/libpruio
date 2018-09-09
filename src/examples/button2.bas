@@ -4,7 +4,8 @@
 This file contains an example on how to use libpruio to get the state
 of a button connetect to a GPIO pin on the beaglebone board. Here pin 7
 on header P8 is used as input with pullup resistor. Connect the button
-between P8_07 (GPIO input) and P8_01 (GND).
+between P8_07 (GPIO input) and P8_01 (GND). Find a functional
+description in section \ref sSecExaButton.
 
 Licence: GPLv3, Copyright 2014-\Year by \Mail
 

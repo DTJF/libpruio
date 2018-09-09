@@ -105,9 +105,9 @@ header), because only header pins are prepared for pinmuxing in the
 libpruio device tree overlay.
 
 Parameter `Modus` specifies the pinmux mode for the ARM control module
-(see \ArmRef{9} for details). By default the pin gets configured as input pin
-with pulldown resistor. Other configurations are prepared
-as enumerators PruIo::PinMuxing :
+(see \ArmRef{9} for details). By default the pin gets configured as
+input pin with pulldown resistor. Other configurations are prepared as
+enumerators \ref PinMuxing :
 
 | macro name       | Description                              |
 | ---------------: | :--------------------------------------- |
