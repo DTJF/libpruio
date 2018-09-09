@@ -1,3 +1,9 @@
+libpruio (0.6.0) wheezy; urgency=low
+
+  * Fixed header paths in C/FB examples
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Wed, 05 Sep 2018 06:37:08 +0200
+
 libpruio (0.4) wheezy; urgency=low
 
   * First build of debian packages for wheezy

@@ -1,4 +1,4 @@
-/'* \file SDslot.bi
+/'* \file SD.bi
 \brief Pin settings for SD slot pins.
 
 This files gets included by dts_universal.bas. It declares the pin

@@ -1,4 +1,4 @@
-/'* \file JTag.bi
+/'* \file JT.bi
 \brief Pin settings for JTag header pins.
 
 This files gets included by dts_universal.bas. It declares the pin
