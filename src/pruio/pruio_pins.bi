@@ -279,7 +279,7 @@ DIM SHARED AS UInt8 P9_Pins(...) = { _
 '* Array of CPU ball numbers for all digital pins on header P9.
 DIM SHARED AS UInt8 JT_Pins(...) = { _
   JT_04 _
-, JT_05
+, JT_05 _
   }
 
 '* Array of CPU ball numbers for all digital pins on header P9.
@@ -290,7 +290,7 @@ DIM SHARED AS UInt8 SD_Pins(...) = { _
 , SD_05 _
 , SD_07 _
 , SD_08 _
-, SD_10
+, SD_10 _
   }
 
 '* Array of CPU ball numbers for emmc2 pin group on header P8.

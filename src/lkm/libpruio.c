@@ -113,25 +113,27 @@ static int fail(int N, char* Text, int Ret){
 }
 
 static int __init libpruio_init(void){
-  mem1 = ioremap(0x44e26000uL, 0x10uL);
-	if (!mem1)                         return fail(0, "ioremap PRUSS-ID", -ENODEV);
-
-  if (ioread32(mem1) != 0x47000000) return fail(1, "ckecking PRUSS-ID", -ENODEV);
+  mem1 = ioremap(0x44e10600uL, 0x10uL);
+	if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENODEV);
+  if ((ioread32(mem1) & 0xB94402EuL) != 0xB94402EuL)
+                                     return fail(1, "ckecking CPU-ID", -ENODEV);
+  if ((ioread32(mem1+4) & 0x10003uL) != 0x10003uL)
+                               return fail(1, "ckecking CPU features", -ENODEV);
   iounmap(mem1);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);
-	if (!mem1)                        return fail(0, "ioremap PWM_tbclk", -ENODEV);
+	if (!mem1)                       return fail(0, "ioremap PWM_tbclk", -ENODEV);
   tbclk_org = ioread16(mem1);
   iowrite16(tbclk_org | 0x7, mem1);
 
   mem2 = ioremap(0x44e10800uL, 0x200uL);
-	if (!mem2)                        return fail(2, "ioremap CM pinmux", -ENODEV);
+	if (!mem2)                       return fail(2, "ioremap CM pinmux", -ENODEV);
 
   pdev = platform_device_register_simple("libpruio", -1, NULL, 0);
-  if (IS_ERR(pdev))                     return fail(3, "register pdev",  PTR_ERR(pdev));
+  if (IS_ERR(pdev))                    return fail(3, "register pdev",  PTR_ERR(pdev));
 
 	if (sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group))
-	                                 return fail(4, "create sysfs group", -ENODEV);
+	                                return fail(4, "create sysfs group", -ENODEV);
   return 0;
 }
 
