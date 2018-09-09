@@ -7,27 +7,34 @@ pins. That is 92 pins in total. Most of them have input / output
 capabilities, while just a few are related to other features (such as
 RESET, GND or power supply lines). Input / output pins are either
 analog or digital lines, free or unfree (used by the system in default
-configuration). All can get controled by \Proj.
+configuration). All input / output pins can get controlled by \Proj, as
+well as further pins on the J1 header and the SD card slot. And it can
+also controll internal lines, not wired to any connector (example \ref
+sSecExaSos demonstrates that).
 
 Analog lines always operate as input. In contrast, digital lines can
 either operate as input or output. Some digital lines have several
 features at the same pin and need to get configured to the matching
 mode before usage (pinmuxing). In addition, some lines are used to
 control the boot sequence and mustn't be connected at boot-time. Others
-are reserved to be used by the system (e. g. for HDMI or MCASP), but
-they can get freed by massive re-configuration of the boot sequence, so
-that you can use them. Some header pins are connected to two CPU balls
-(and both CPU balls must not be set in contrary output states, in order
-to avoid hardware damages).
+are reserved to be used by the system (ie. for HDMI or MCASP), but they
+can get freed by re-configurations of the boot sequence, so that you
+can use them. Some header pins are connected to two CPU balls (and both
+CPU balls must not be set in contrary output states, in order to avoid
+hardware damages). It's beyond the scope of this documentation to cover
+all details. Find further information in the SRM (system reference
+manual) shipped with your board.
 
 Here's an overview of the Beaglebone Black default configuration. The
 settings for other Beaglebones (White, Green, Blue, Pocket-, ...) are
-different. \Proj can operate on all colored pins
+different. The colored pins by default are free for \Proj operations:
 
 ![Header pins controllable by libpruio](pins.png)
 
-This section explains the different functions the header pins can work
-in and gives detailed information about the limits.
+This section explains the different features available on the header
+pins, and serves detailed information about the limits. In the second
+section \ref SecPinmuxing you'll learn how to get a pin in the desired
+mode.
 
 
 # Analog # {#SecAnalog}
@@ -477,7 +484,7 @@ Find example code in qep.bas.
 
 At boot time the operating system sets all pins in a save mode. You can
 output the default settings by executing the example
-[analyse.bas](sSecExaAnalyse) after power on reset.
+\ref sSecExaAnalyse after power on reset.
 
 When you use a header pin in your code, \Proj first checks its mode,
 and just continues in case of a match. Otherwise action is necessary to
