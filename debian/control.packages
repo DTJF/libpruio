@@ -11,8 +11,10 @@ Description: DKMS source for libpruio driver
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains a loadable kernel module to support the
- shared library in case of PWM features and pinmuxing.
+ TIMERS.
+ .
+ This package contains a loadable kernel module to support the shared
+ library in case of PWM features and pinmuxing.
 
 Package: libpruio
 Section: libs
@@ -27,7 +29,9 @@ Description: PRUSS driver for BB A/D-IO
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains the binaries of the shared library.
+ TIMERS.
+ .
+ This package contains the binaries of the shared library.
 
 Package: libpruio-bin
 #Section: libs
@@ -42,9 +46,11 @@ Description: PRUSS driver for BB A/D-IO
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains precompiled executable binaries from
- the examples code. The names are prepended by 'pruio_', so type
- 'pruio_1' in order to start example '1'.
+ TIMERS.
+ .
+ This package contains precompiled executable binaries from the
+ examples code. The names are prepended by 'pruio_', so type 'pruio_1'
+ in order to start example '1'.
 
 Package: libpruio-dev
 Section: libdevel
@@ -59,9 +65,10 @@ Description: PRUSS driver for BB A/D-IO
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains the header files for C programming
- language, and example source code in folder
- /usr/share/doc/libpruio-dev/examples.
+ TIMERS.
+ .
+ This package contains the header files for C programming language, and
+ example source code in folder /usr/share/doc/libpruio-dev/examples.
 
 Package: libpruio-bas
 Section: libdevel
@@ -76,8 +83,10 @@ Description: PRUSS driver for BB A/D-IO
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains the header files for FreeBASIC
- programming language, and example source code in folder
+ TIMERS.
+ .
+ This package contains the header files for FreeBASIC programming
+ language, and example source code in folder
  /usr/share/doc/libpruio-bas/examples.
 
 Package: python-pruio
@@ -85,7 +94,6 @@ Section: python
 Architecture: any
 Recommends: libpruio-lkm (>= ${binary:Version})
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}
-#, ${python:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in
  Beaglebone[Black|White|Green|Blue|Pocket-] hardware. Its purpose is to
@@ -94,24 +102,13 @@ Description: PRUSS driver for BB A/D-IO
  libpruio software runs on the host CPU (ARM), and in parallel on a
  Programmable Realtime Unit SubSystem (= PRUSS or just PRU), and
  controls multiple CPU subsystems, like PWM, eCAP, eQEP, ADC, GPIO,
- TIMERS.  This package contains the binding files for Python
- programming language, and example source code in folder
- /usr/share/doc/python-pruio/examples.  Sorry, the author isn't keen on
- maintaining polyglot python bindings. For now, you have to copy the
- example folder to your working directory, and execute the code at user
- space. (Proposals for optimization are welcome.)
-
-Package: libpruio-doc
-Section: doc
-Suggests: libpruio-dev (>= 0.6), fbdoc (>= 0.4), freebasic (>= 1.0.0)
-Architecture: all
-Recommends: libpruio (>= ${binary:Version}), libpruio-lkm (>= ${binary:Version})
-Depends: ${misc:Depends}
-Description: HTML-documentation for libpruio-dev packages
- libpruio is a hardware driver for
- Beaglebone[Black|White|Green|Blue|Pocket-] hardware, providing
- features like PWM, eCAP, eQEP, ADC, GPIO, Timers. This package
- contains the documentation for using the library in your own projects
- (see also examples in packages libpruio-dev, libpruio-bas or
- python-pruio).  The docs install as HTML tree, starting at
- /usr/share/doc/libpruio/index.html.
+ TIMERS.
+ .
+ This package contains the binding files for Python programming
+ language, and example source code in folder
+ /usr/share/doc/python-pruio/examples.
+ .
+ Sorry, the author isn't keen on maintaining polyglot python bindings.
+ For now, you have to copy the example folder to your working
+ directory, and execute the code at user space. (Proposals for
+ optimization are welcome.)

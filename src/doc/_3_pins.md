@@ -3,38 +3,59 @@ Pins  {#ChaPins}
 \tableofcontents
 
 The Beaglebone hardware contains two header connectors, each with 46
-pins. That is 92 pins in total. Most of them have input / output
-capabilities, while just a few are related to other features (such as
-RESET, GND or power supply lines). Input / output pins are either
-analog or digital lines, free or unfree (used by the system in default
-configuration). All input / output pins can get controlled by \Proj, as
-well as further pins on the J1 header and the SD card slot. And it can
-also controll internal lines, not wired to any connector (example \ref
-sSecExaSos demonstrates that).
+pins, 92 pins in total. Just a few are related to special features
+(such as RESET, GND or power supply lines), while most of them are
+lines with input / output capabilities, either for analog or digital
+signals. Some of them are free, others are unfree (used by the system
+in default configuration). All input / output header pins can get
+controlled by \Proj, as well as further pins on the J1 header and the
+SD card slot. Furthermore \Proj can controll internal lines, not wired
+to any connector (ie. the onboard user leds, example \ref sSecExaSos
+demonstrates that).
 
 Analog lines always operate as input. In contrast, digital lines can
-either operate as input or output. Some digital lines have several
-features at the same pin and need to get configured to the matching
-mode before usage (pinmuxing). In addition, some lines are used to
-control the boot sequence and mustn't be connected at boot-time. Others
-are reserved to be used by the system (ie. for HDMI or MCASP), but they
-can get freed by re-configurations of the boot sequence, so that you
-can use them. Some header pins are connected to two CPU balls (and both
-CPU balls must not be set in contrary output states, in order to avoid
-hardware damages). It's beyond the scope of this documentation to cover
-all details. Find further information in the SRM (system reference
-manual) shipped with your board.
+either operate as input or output, ie. as a simple switch (called
+general purpose input/output = GPIO). Some digital lines have further
+features at the same pin, ie. for generating a pulse train. In order to
+use that features, the pin has to get configured to the matching mode
+before usage (pinmuxing).
 
-Here's an overview of the Beaglebone Black default configuration. The
-settings for other Beaglebones (White, Green, Blue, Pocket-, ...) are
-different. The colored pins by default are free for \Proj operations:
+Here's an overview of the Beaglebone Black pins. The settings for other
+Beaglebone hardware (White, Green, Blue, Pocket-, ...) are different.
 
 ![Header pins controllable by libpruio](pins.png)
 
-This section explains the different features available on the header
-pins, and serves detailed information about the limits. In the second
-section \ref SecPinmuxing you'll learn how to get a pin in the desired
-mode.
+The pins are sorted into four categories:
+
+-# Green pins are analog input lines.
+
+-# Orange pins are GPIO only pins. They may provide other features like
+   UART, MMC, HDMI, ... But \Proj doesn't support them, so from our
+   point of view they are GPIO only.
+
+-# Blue pins provide beside GPIO further features, like PWM, TIMER,
+   CAP, QEP. Those are rare and valuable, arrange them carefully.
+
+-# Brown pins are used by the BeagleboneBlack operating system, try to
+   avoid them.
+
+When planing a new project, concentrate on the category 1 to 3 pins,
+and try to avoid the brown pins. Some of them are used to control the
+boot sequence and mustn't be connected at boot-time. Others are
+reserved to be used by the system (ie. for HDMI or MCASP), but they can
+get freed by re-configurations of the boot sequence, so that you can
+use them. It's beyond the scope of this documentation to cover
+all details. Find further information in the SRM (system reference
+manual) shipped with your board.
+
+\note Some header pins (`P9_41` and `P9_42`) are connected to two CPU
+      balls. Both CPU balls must not be set in contrary output states,
+      in order to avoid hardware damages.
+
+In the first part this chapter explains the different features
+available on the header pins, and serves detailed information about the
+hardware limits. In the second part in section \ref SecPinmuxing you'll
+learn how to get a pin in your custom mode.
 
 
 # Analog # {#SecAnalog}
@@ -486,13 +507,13 @@ At boot time the operating system sets all pins in a save mode. You can
 output the default settings by executing the example
 \ref sSecExaAnalyse after power on reset.
 
-When you use a header pin in your code, \Proj first checks its mode,
-and just continues in case of a match. Otherwise action is necessary to
-get you what you need. In order to set a header pin in an other mode,
-or just configure a pull-up or pull-down resistor, there're three
-methods:
+When you configure a header pin in your code, \Proj first checks its
+current mode, and just continues in case of a match. Otherwise action
+is required to get you what you need. In order to set a header pin in
+an other mode, or just configure a pull-up or pull-down resistor,
+there're three methods:
 
--# \ref sSecCustom -> configure at boot time the desired mode in an overlay
+-# \ref sSecCustom -> configure at boot time the desired mode by an custom overlay
 -# \ref sSecUniversal -> configure at boot time multiple custom modes in an overlay, and switch at runtime
 -# \ref sSecLKM -> load the kernel module, and switch at runtime
 
@@ -500,14 +521,20 @@ Each method has its advantages and downsides. The first two are save
 and documented, but unflexible. There is no fixed border between them,
 ie. you can prepare multiple settings for some pins, and single
 settings for the others. Anyway, you have to know each pin
-configuration before boot. The tools (device tree compiler) are not
-very reliable. Debuggung is a mess.
+configuration before boot. And the necessary tools (device tree
+compiler, capemgr) are not very reliable. Debuggung is a mess.
 
 In contrast the loadable kernel module (LKM) is flexible and fast in
 executation speed. You need not prepare the pins before boot. Instead
-you can access all pins at runtime. It shortens the boot time and has a
-small memory footprint. But you can more easy raise conflicts with
-other systems, and a false configuration may damage your CPU.
+you can access all pins at runtime. You can switch on or off that
+feature at run-time. It has a short boot time and a small memory
+footprint. But you can more easy raise conflicts with other systems.
+
+\Proj checks in the constructor PruIo:PruIo() if the LKM is available,
+and uses it when found. Otherwise it checks for settings provided by an
+universal overlay. If neither of them are present, it works with the
+current pin settings and throughs errors when the programm tries to
+change them.
 
 
 ## Custom overlay ## {#sSecCustom}
@@ -643,10 +670,115 @@ splitting in multiple files.
 
 This method has no restriction to pre-prepared pin configurations. Each
 pin (or CPU ball) can get configured at runtime to any mode. No device
-tree overlay for pinmuxing is necessary at boot time (exept
-`AM335X-PRU-UIO` that loads `uio_pruss` kernel driver and enables the
-PRUSS). And the feature can get enabled or disabled at runtime during a
-session (without re-booting).
+tree overlay with `pinctrl-single` or `bone-pinmux-helper` features is
+necessary at boot time. The LKM features can get enabled (loaded) or
+disabled (unloaded) at runtime during a session (without re-booting).
+
+You can install the LKM either by the package management system, see
+chapter \ref ChaPreparation for details. Or you can compile and install
+it from the GitHub source tree, see section \ref sSecLkmBuild for
+details. Bothe method provide a systemd service name
+`libpruio-lkm.service`, which loads the LKM at boot time and makes the
+pinmuxing feature available for all users of the newly created system
+group `prui`. So when you make yourself a member of that group by
+executing
+
+    sudo adduser <YourUserID> pruio
+
+you can do pinmuxing from user space (without `sudo`, no administrator
+privileges).
+
+\note The user group `pruio` doesn't get removed when uninstalling.
+      It's still existent after uninstall. To remove it edit the file
+      `sudo nano /etc/group` and remove the related line `pruio:x:...`
+      from that file (change is effective after next logout or boot).
+      That way you can also remove a user from that group by deleting
+      only his name in the line. Fancy things may happen when files or
+      folders were created with the ownership of that group.
+
+The systemd service handles LKM loading and unloading. You can switch
+off the LKM at runtime for the current session by executing
+
+    sudo systemctl stop libpruio-lkm.service
+
+The service gets stopped for the rest of the session and will start
+again after next boot. To re-start during the current session execute
+
+    sudo systemctl start libpruio-lkm.service
+
+If you don't want auto-loading at boot time execute
+
+    sudo systemctl disable libpruio-lkm.service
+
+And to re-enable the boot auto-load execute
+
+    sudo systemctl enable libpruio-lkm.service
+
+
+
+
+
+Allthough it's not necessary, it's still recommended to load a minimal
+device tree blob along with the LKM, just to claim the used subsystems
+and set of pins. That way the kernel prohibits other software using
+that pins and subsystems. The source of such a minimal overlay may get
+named `libpruio-00A0.dts` and may look like
+
+~~~{.txt}
+// dts file auto generated by pruio_config (don't edit)
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "ti,beaglebone-black", "ti,beaglebone";
+
+    // identification
+    board-name = "libpruio";
+    manufacturer = "TJF";
+    part-number = "PruIoBBB";
+    version = "00A0";
+
+    // state the resources this cape uses
+    exclusive-use =
+      "P8.07",
+      ...
+      "P9.42",
+      "adc",
+      "timer4",
+      "timer5",
+      "timer6",
+      "timer7",
+      "epwmss0",
+      "epwmss1",
+      "epwmss2",
+      "pruss";
+
+    fragment@0 {
+      target = <&pruss>;
+      __overlay__ {
+          status = "okay";
+      };
+    };
+  };
+~~~
+
+Replace the dots by further pins you want to use. But keep in mind, the
+overlays won't load if you try to reserve pins claimed previously by
+other systems, ie. like HDMI or MMC. The set of free pins vary on
+Beaglebone hardware. Find further information in the system reference
+manual shipped with your board.
+
+Once you finished the overlay source, compile and install it by executing
+
+    sudo dtc -@ -I dts -O dtb -o /lib/firmware/libpruio-00A0.dtbo  libpruio-00A0.dts
+
+Then load the overlay either as uBoot overlay in file `/boot/uEnv.txt`,
+or by the capemgr (add `libpruio` to file `/etc/default/capemgr`). In
+case of trouble check the kernel log output (`dmesg | grep uio`).
+
+
+
+
 
 As always, when the pins are prepared in the matching mode before
 starting the \Proj application, it runs with user privileges. In
@@ -667,32 +799,6 @@ By default, the pinmuxing feature is limited to the free header pins,
 which are not claimed by other subsystems by the kernel. However, this
 safety feature can get disabled in the constructor PruIo::PruIo()
 parameters.
-
-At runtime for the current
-session, execute
-
-    sudo systemctl stop libpruio-lkm.service
-
-to unload the module, and
-
-    sudo systemctl start libpruio-lkm.service
-
-to re-load it again. Or generally for the next boots, execute
-
-    sudo systemctl disable libpruio-lkm.service
-
-to disable auto-loading at boot-time, and
-
-    sudo systemctl enable libpruio-lkm.service
-
-to enable auto-loading at boot-time.
-
-\note The user group `pruio` doesn't get removed, it's still existent
-      after uninstall. To remove it execute `sudo nano /etc/group` and
-      remove the related line `pruio:x:...` from that file (change is
-      effective after next logout or boot). That way you can also
-      remove a user from that group by deleting only his name in the
-      line.
 
 
 FIXME

@@ -17,11 +17,12 @@ mode, the other CPU ball gets set to the save `PRUIO_GPIO_IN` mode.
 \since 0.6
 */
 
-#include <linux/init.h>             // Macros used to mark up functions e.g., __init __exit
-#include <linux/module.h>           // Core header for loading LKMs into the kernel
-#include <linux/kernel.h>           // Contains types, macros, functions for the kernel
+#include <linux/init.h>   // Macros used to mark up functions e.g., __init __exit
+#include <linux/module.h> // Core header for loading LKMs into the kernel
+#include <linux/kernel.h> // Contains types, macros, functions for the kernel
 #include <linux/io.h>
 #include <linux/err.h>
+//#include <linux/errno.h>
 #include <linux/platform_device.h>
 
 MODULE_LICENSE("GPL");              ///< The license type -- this affects runtime behavior
@@ -114,20 +115,20 @@ static int fail(int N, char* Text, int Ret){
 
 static int __init libpruio_init(void){
   mem1 = ioremap(0x44e10600uL, 0x10uL);
-	if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENODEV);
+	if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENOMEM);
   if ((ioread32(mem1) & 0xB94402EuL) != 0xB94402EuL)
-                                     return fail(1, "ckecking CPU-ID", -ENODEV);
+                                     return fail(1, "ckecking CPU-ID", -ENOTSUP);
   if ((ioread32(mem1+4) & 0x10003uL) != 0x10003uL)
-                               return fail(1, "ckecking CPU features", -ENODEV);
+                               return fail(1, "ckecking CPU features", -ENOTSUP);
   iounmap(mem1);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);
-	if (!mem1)                       return fail(0, "ioremap PWM_tbclk", -ENODEV);
+	if (!mem1)                       return fail(0, "ioremap PWM_tbclk", -ENOMEM);
   tbclk_org = ioread16(mem1);
   iowrite16(tbclk_org | 0x7, mem1);
 
   mem2 = ioremap(0x44e10800uL, 0x200uL);
-	if (!mem2)                       return fail(2, "ioremap CM pinmux", -ENODEV);
+	if (!mem2)                       return fail(2, "ioremap CM pinmux", -ENOMEM);
 
   pdev = platform_device_register_simple("libpruio", -1, NULL, 0);
   if (IS_ERR(pdev))                    return fail(3, "register pdev",  PTR_ERR(pdev));
