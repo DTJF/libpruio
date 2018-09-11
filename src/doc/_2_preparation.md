@@ -527,3 +527,4 @@ Even in case of an out-of-source build, some files get created in-source:
 - src/pruio/pasm_run.bi
 - src/examples/BBB
 - debian/libpruio-lkm.service
+- src/python/libpruio/pruio.py

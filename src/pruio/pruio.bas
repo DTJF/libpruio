@@ -12,8 +12,6 @@ wrapper functions are not included as in the original version).
 '* Tell the header pruio.bi that we won't include libpruio.so.
 #DEFINE __PRUIO_COMPILING__
 
-' Header for interrupt controller.
-#INCLUDE ONCE "pruio_intc.bi"
 ' uio driver header file
 #INCLUDE ONCE "pruio_prussdrv.bi"
 ' driver header file
@@ -55,27 +53,28 @@ case).
 Otherwise (PruIo::Errr = 0) the constructor tries to enable the
 subsystems and read their configurations. This gets done for the active
 subsystems only. Use bitmask parameter `Act` to specify active systems
-and the PRU number to run the software:
+and the PRU number to run the software. For convenience, use
+enumerators defined in ActivateDevice:
 
-| Bit | Function                         |
-| --: | :------------------------------- |
-|  12 | TIMER-7: 0 = inactiv, 1 = active |
-|  11 | TIMER-6: 0 = inactiv, 1 = active |
-|  10 | TIMER-5: 0 = inactiv, 1 = active |
-|   9 | TIMER-4: 0 = inactiv, 1 = active |
-|   8 | PWMSS-2: 0 = inactiv, 1 = active |
-|   7 | PWMSS-1: 0 = inactiv, 1 = active |
-|   6 | PWMSS-0: 0 = inactiv, 1 = active |
-|   5 | GPIO-3: 0 = inactiv, 1 = active  |
-|   4 | GPIO-2: 0 = inactiv, 1 = active  |
-|   3 | GPIO-1: 0 = inactiv, 1 = active  |
-|   2 | GPIO-0: 0 = inactiv, 1 = active  |
-|   1 | ADC: 0 = inactiv, 1 = active     |
-|   0 | 0 = PRU-0, 1 = PRU-1             |
+| Bit | Function                         | Enum default     |
+| --: | :------------------------------- | :--------------- |
+|   0 | 0 = PRU-0, 1 = PRU-1             | PRUIO_ACT_PRU1   |
+|   1 | ADC: 0 = inactiv, 1 = active     | PRUIO_ACT_ADC    |
+|   2 | GPIO-0: 0 = inactiv, 1 = active  | PRUIO_ACT_GPIO0  |
+|   3 | GPIO-1: 0 = inactiv, 1 = active  | PRUIO_ACT_GPIO1  |
+|   4 | GPIO-2: 0 = inactiv, 1 = active  | PRUIO_ACT_GPIO2  |
+|   5 | GPIO-3: 0 = inactiv, 1 = active  | PRUIO_ACT_GPIO3  |
+|   6 | PWMSS-0: 0 = inactiv, 1 = active | PRUIO_ACT_PWM0   |
+|   7 | PWMSS-1: 0 = inactiv, 1 = active | PRUIO_ACT_PWM1   |
+|   8 | PWMSS-2: 0 = inactiv, 1 = active | PRUIO_ACT_PWM2   |
+|   9 | TIMER-4: 0 = inactiv, 1 = active | PRUIO_ACT_TIM4   |
+|  10 | TIMER-5: 0 = inactiv, 1 = active | PRUIO_ACT_TIM5   |
+|  11 | TIMER-6: 0 = inactiv, 1 = active | PRUIO_ACT_TIM6   |
+|  12 | TIMER-7: 0 = inactiv, 1 = active | PRUIO_ACT_TIM7   |
+|  15 | free pinmuxing active            | PRUIO_ACT_FREMUX |
 
-For convenience, use enumerators PruIo::ActivateDevice. By default
-all subsystems are activated. (A subsystem has to be active before it
-can get disabled.)
+By default all subsystems are activated (a subsystem has to be active
+before it can get disabled), and free pinmuxing is disabled.
 
 The first bit desides which PRU to use. By default PRU-1 is used, so
 that PRU-0 is free for other software.
