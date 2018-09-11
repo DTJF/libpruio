@@ -677,16 +677,16 @@ disabled (unloaded) at runtime during a session (without re-booting).
 You can install the LKM either by the package management system, see
 chapter \ref ChaPreparation for details. Or you can compile and install
 it from the GitHub source tree, see section \ref sSecLkmBuild for
-details. Bothe method provide a systemd service name
+details. Both methods provide a systemd service named
 `libpruio-lkm.service`, which loads the LKM at boot time and makes the
 pinmuxing feature available for all users of the newly created system
-group `prui`. So when you make yourself a member of that group by
-executing
+group `prui` (GID < 1000). So when you make yourself a member of that
+group by executing
 
     sudo adduser <YourUserID> pruio
 
 you can do pinmuxing from user space (without `sudo`, no administrator
-privileges).
+privileges necessary).
 
 \note The user group `pruio` doesn't get removed when uninstalling.
       It's still existent after uninstall. To remove it edit the file
@@ -695,6 +695,17 @@ privileges).
       That way you can also remove a user from that group by deleting
       only his name in the line. Fancy things may happen when files or
       folders were created with the ownership of that group.
+
+By default, the pinmuxing feature is limited to the free header pins,
+which are not claimed for other subsystems by the kernel. However, this
+safety feature can get disabled in the constructor PruIo::PruIo()
+parameters.
+
+\note On kernel 3.x there's no user access to files in folder
+      `/sys/kernel/debug`. \Proj cannot determin the current kernel
+      claims. For user space pinmuixing you have to disable that
+      feature by seting bit 15 in your constructor PruIo:PruIo() call
+      (parameter Act ored by PRUIO_ACT_FREMUX -> no safety feature).
 
 The systemd service handles LKM loading and unloading. You can switch
 off the LKM at runtime for the current session by executing
@@ -713,10 +724,6 @@ If you don't want auto-loading at boot time execute
 And to re-enable the boot auto-load execute
 
     sudo systemctl enable libpruio-lkm.service
-
-
-
-
 
 Allthough it's not necessary, it's still recommended to load a minimal
 device tree blob along with the LKM, just to claim the used subsystems
@@ -770,45 +777,10 @@ manual shipped with your board.
 
 Once you finished the overlay source, compile and install it by executing
 
-    sudo dtc -@ -I dts -O dtb -o /lib/firmware/libpruio-00A0.dtbo  libpruio-00A0.dts
+    sudo dtc -@ -I dts -O dtb -o /lib/firmware/libpruio-00A0.dtbo libpruio-00A0.dts
 
-Then load the overlay either as uBoot overlay in file `/boot/uEnv.txt`,
-or by the capemgr (add `libpruio` to file `/etc/default/capemgr`). In
-case of trouble check the kernel log output (`dmesg | grep uio`).
-
-
-
-
-
-As always, when the pins are prepared in the matching mode before
-starting the \Proj application, it runs with user privileges. In
-contrast it stops, when pinmuxing is required. The application needs
-special privileges, similar to the method described in section \ref
-sSecUniversal. So you can either execute the application with `sudo`.
-That method has the disadvantage that any file written by the code
-usually needs administrator privileges for read access.
-
-Therefor \Proj offers a further method. It installs a new user group
-named `pruio` in the system area (GID < 1000). All users who are member
-in this group have pinmuxing privileges. So make yourself a member of
-this group, and you can change pinmuxing configuration without `sudo`:
-
-    sudo adduser YOUR_USER_NAME pruio
-
-By default, the pinmuxing feature is limited to the free header pins,
-which are not claimed by other subsystems by the kernel. However, this
-safety feature can get disabled in the constructor PruIo::PruIo()
-parameters.
-
-
-FIXME
-
-In contrast the second solution is easy and powerfull at the same time.
-\Proj ships with a loadable kernel module (LKM). When this module is
-taint to the kernel and you run your program with administrator
-privileges, then \Proj can override any pinmux setting at runtime, even
-CPU balls claimed by other systems and restricted by the kernel. (So be
-careful what you're doing!). This solution gives you all freedom to
-focus on you target and get the best out of your system, without
-dealing with kernel qircks and pitfalls. Find details on how to setup
-your system in section \ref sSecLkmBuild.
+Then load the overlay by the capemgr (add `libpruio` to file
+`/etc/default/capemgr`). In case of trouble check the kernel log output
+(`dmesg | grep uio`). (I'm not sure if loading as uBoot overlay in file
+`/boot/uEnv.txt` will be also sufficient, the capemgr full sure
+evaluates the `exclusive-use` tag.)

@@ -29,7 +29,7 @@ MODULE_LICENSE("GPL");              ///< The license type -- this affects runtim
 MODULE_AUTHOR("TJF");               ///< The author -- visible when using modinfo
 MODULE_DESCRIPTION("pinmuxing for libpruio");  ///< The description -- see modinfo
 MODULE_VERSION("0.0");              ///< The version of the module
-MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
+//MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
 
 static struct platform_device *pdev;
 static   void __iomem *mem1, *mem2;
@@ -45,7 +45,7 @@ static unsigned char hex1(char t){
 static ssize_t state_read(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "tbclk=%u/%u (orig/curr)", tbclk_org, ioread16(mem1));
+	return sprintf(buf, "tbclk=%u/%u (orig/curr)\n", tbclk_org, ioread16(mem1));
 }
 
 static ssize_t state_write(struct device *dev,
@@ -117,9 +117,9 @@ static int __init libpruio_init(void){
   mem1 = ioremap(0x44e10600uL, 0x10uL);
 	if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENOMEM);
   if ((ioread32(mem1) & 0xB94402EuL) != 0xB94402EuL)
-                                     return fail(1, "ckecking CPU-ID", -ENOTSUP);
+                                     return fail(1, "ckecking CPU-ID", -ENODEV);
   if ((ioread32(mem1+4) & 0x10003uL) != 0x10003uL)
-                               return fail(1, "ckecking CPU features", -ENOTSUP);
+                               return fail(1, "ckecking CPU features", -ENODEV);
   iounmap(mem1);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);

@@ -5,19 +5,17 @@ Features  {#ChaFeatures}
 Here's some feedback about the \Proj project. [lejan
 wrote:](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p217404)
 
-~~~{.txt}
-Dear TJF,
+    Dear TJF,
 
-I just wanted to thank you for sharing such a great library! I have
-been using this in C for a robotics project and this library really
-took the hassle out of a lot of the programming work. The Beaglebone is
-not as well supported as Arduino or Rasp Pi so your library is very
-much appreciated.
+    I just wanted to thank you for sharing such a great library! I have
+    been using this in C for a robotics project and this library really
+    took the hassle out of a lot of the programming work. The Beaglebone is
+    not as well supported as Arduino or Rasp Pi so your library is very
+    much appreciated.
 
-Peter
-~~~
+    Peter
 
-Thanks, for the feedback! It seems that I reached my major gaol.
+Thanks, for the feedback! It seems that the major goal is reached.
 
 \Proj is designed to enable fast (faster than sysfs), flexible
 (customizable) and easy (single source) access to the AM33xx CPU

@@ -118,7 +118,7 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
       "Analysing the Fbc compiler passed with "
       "the following output:\n${log}\n\n")
     UNSET(CMAKE_Fbc_COMPILER_WORKS CACHE)
-    SET(CMAKE_Fbc_COMPILER_WORKS 1)
+    SET(CMAKE_Fbc_COMPILER_WORKS 1 CACHE INTERNAL "Fbc compiler working" FORCE)
 
     EXECUTE_PROCESS(
       COMMAND ./${testfile}

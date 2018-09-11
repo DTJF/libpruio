@@ -13,9 +13,8 @@ supports pinmuxing and PWM features.
 \since 0.6
 '/
 
-
+' driver header file
 #INCLUDE ONCE "pruio.bi"
-#INCLUDE ONCE "pruio_intc.bi"
 
 '* The page size for memory maps
 #DEFINE PAGE_SIZE 4096

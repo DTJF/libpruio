@@ -596,7 +596,7 @@ just a warning information, no action is required. Find details in the
 # make # {#SecMake}
 
 Make errors occur after you installed and prepared the source tree, and
-when you start to use it.
+when you start building targets.
 
 \Item{file INSTALL cannot copy file} You executed a ` make install`
 instruction for a restricted location. The script has no permission to

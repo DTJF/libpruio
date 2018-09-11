@@ -27,10 +27,11 @@ IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     COMMAND cp   control.${osvers} control
     COMMAND cat   control.packages >> control
     COMMAND cp changelog.${osvers} changelog
+    COMMAND echo "doxy/html" > ${PROJ_NAME}-doc.docs
     COMMAND cd ${CMAKE_SOURCE_DIR} && ${deb_exe} ${DEBUILD_FLAGS}
     )
   FOREACH(tar ${FB_EXAMPLES})
-    INSTALL(PROGRAMS ../src/examples/${tar}  DESTINATION bin RENAME pruio_${tar})
+    INSTALL(PROGRAMS ../src/examples/${tar} DESTINATION bin RENAME pruio_${tar})
   ENDFOREACH(tar)
   RETURN()
 ENDIF()
@@ -54,5 +55,6 @@ ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
   COMMAND cp   ${CMAKE_CURRENT_SOURCE_DIR}/control.${osvers} ${debdir}/control
   COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/control.packages >> ${debdir}/control
   COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/changelog.${osvers} ${debdir}/changelog
+  COMMAND echo "../../doxy/html" > ${debdir}/${PROJ_NAME}-doc.docs
   COMMAND cd ${bdir} && ${deb_exe} ${DEBUILD_FLAGS}
   )

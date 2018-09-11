@@ -399,40 +399,28 @@ Build the LKM by executing
 
     make lkm
 
-Installation is a bit more difficult. The official way is to install
-the module in folder `/lib/modules/$(uname -r)/extra`, where `$(uname
--r)` is the version of the current kernel running. This has the
-advantage that the module exactly matches the kernel specifications and
-the tool `modprobe` can handle loading intelligently. But the downside
-is that you have to re-build and re-install the module each time when
-the kernel changes (ie. when `apt upgrade` installs a kernel update).
-For this type of installation execute
+Installation is a bit more difficult. The module gets installed in
+folder `/lib/modules/$(uname -r)/extra`, where `$(uname -r)` is the
+version of the current kernel running. This has the advantage that the
+module exactly matches the kernel specifications and the tool
+`modprobe` can handle loading intelligently. But the downside is that
+you have to re-build and re-install the module each time when the
+kernel changes (ie. when `apt upgrade` installs a kernel update).
+Anyway, that' the Debian policy. Execute
 
-    make lkm-vers-install
+    sudo make lkm-install
 
-Afterwards the LKM can get loaded by `sudo modprobe libpruio` and
-unloaded by `sudo modprobe -r libpruio`. To uninstall that the LKM
-execute
+to install the module and a systemd service to load it. Additionally a
+new seystem group named `pruio` gets created. See section \ref sSecLkm
+for further information.
 
-    make lkm-vers-uninstall
+Afterwards the LKM will be tainted to the kernel and the pinmuxing
+features are ready to use. The systemd service will auto-load the
+module in further bootings.
 
-Alternatively \Proj provides a further install method where the binary
-is located in folder `/lib/modules` and doesn't get affected by kernel
-updates, but cannot get reached by the tool `modprobe` at this
-location. Consequently a `systemctl` service gets installed and enabled
-to load the module for you at boot time. The service also adds a
-system user group named `pruio`. All members of this group have
-pinmuxing privileges. For this type of installation execute
+To uninstall that the LKM execute
 
-    make lkm-glob-install
-
-From the next boot on the LKM will be auto-loaded, and you can use
-`systemctl` features for further handling. See section \ref sSecLKM for
-further details.
-
-To uninstall that service and the LKM, execute
-
-    make lkm-glob-uninstall
+    sudo make lkm-uninstall
 
 \note The user group `pruio` doesn't get removed, it's still existent
       after uninstall. To remove it execute `sudo nano /etc/group` and
@@ -528,3 +516,14 @@ This will create the Debian packages
 and further auxiliary files containing the source code and information
 for uploading the packages to a repository. Find the output in folder
 `debian/packages`.
+
+
+## In-Source Files ## {#SecInSourceFiles}
+
+Even in case of an out-of-source build, some files get created in-source:
+
+- ReadMe.md
+- src/pruio/pasm_init.bi
+- src/pruio/pasm_run.bi
+- src/examples/BBB
+- debian/libpruio-lkm.service
