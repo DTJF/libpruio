@@ -33,7 +33,7 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
     COMMAND ${CMAKE_Fbc_COMPILER} -v -m ${testfile} ${testfile}.bas
     WORKING_DIRECTORY ${testpath}
     RESULT_VARIABLE compiler_error
-	  OUTPUT_VARIABLE output
+    OUTPUT_VARIABLE output
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   FILE(REMOVE ${testpath}/${testfile}.bas)
@@ -124,7 +124,7 @@ IF(NOT CMAKE_Fbc_COMPILER_WORKS)
       COMMAND ./${testfile}
       WORKING_DIRECTORY ${testpath}
       RESULT_VARIABLE CMAKE_Fbc_SIZEOF_DATA_PTR
-	    OUTPUT_VARIABLE CMAKE_Fbc_COMPILER_ID
+      OUTPUT_VARIABLE CMAKE_Fbc_COMPILER_ID
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
     FILE(REMOVE ${testpath}/${testfile})
