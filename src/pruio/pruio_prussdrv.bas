@@ -193,7 +193,7 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
 
     .pru0_dataram_base = mmap( _
         0, .pruss_map_size, PROT_READ OR PROT_WRITE, _
-        MAP_SHARED, .mmap_fd, 0*PAGE_SIZE)
+        MAP_SHARED, .mmap_fd, 0 * PAGE_SIZE)
 
     .pru1_dataram_base = .pru0_dataram_base _
                        + .pru1_dataram_phy_base - .pru0_dataram_phy_base
@@ -222,7 +222,7 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
 
     .extram_base = mmap( _
          0, .extram_map_size, PROT_READ OR PROT_WRITE, _
-         MAP_SHARED, .mmap_fd, 1*PAGE_SIZE)
+         MAP_SHARED, .mmap_fd, 1 * PAGE_SIZE)
   END WITH : RETURN 0
 END FUNCTION
 

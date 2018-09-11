@@ -31,26 +31,26 @@ ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
   COMMAND cp ${src} ${wdir}
   COMMAND make clean && make
   WORKING_DIRECTORY ${wdir}
+  DEPENDS ${src}
   #VERBATIM
   )
 ADD_CUSTOM_TARGET(lkm DEPENDS
   ${lkm}
-  ${src}
   Makefile.in
   )
 
 
 SET(lkm_vers /lib/modules/${CMAKE_SYSTEM_VERSION}/extra/${PROJ_NAME}.ko)
-SET(lkm_glob /lib/modules/${PROJ_NAME}.ko)
 SET(serv_tar /etc/systemd/system/${serv_nam})
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm_vers}
   COMMAND "${CMAKE_COMMAND}" -E copy ${lkm} ${lkm_vers}
-  COMMAND depmod
+  COMMAND depmod -a
   COMMAND addgroup --system pruio > /dev/null
   COMMAND "${CMAKE_COMMAND}" -E copy ${serv_deb} ${serv_tar}
   COMMAND systemctl daemon-reload
   COMMAND systemctl enable ${serv_nam}
   COMMAND systemctl start ${serv_nam}
+  DEPENDS ${lkm} ${serv_deb}
   #VERBATIM
   )
 ADD_CUSTOM_TARGET(lkm-install DEPENDS ${lkm_vers} )

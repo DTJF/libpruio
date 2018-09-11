@@ -19,7 +19,7 @@ Description: DKMS source for libpruio driver
 Package: libpruio-bin
 Architecture: armhf
 Section: libs
-Recommends: libpruio-lkm (>= ${binary:Version})
+Suggests: libpruio-lkm (>= ${binary:Version})
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in
@@ -38,7 +38,7 @@ Description: PRUSS driver for BB A/D-IO
 Package: libpruio-dev
 Section: libdevel
 Architecture: any
-Recommends: libpruio-lkm (>= ${binary:Version})
+Suggests: libpruio-lkm (>= ${binary:Version})
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in
@@ -56,7 +56,7 @@ Description: PRUSS driver for BB A/D-IO
 Package: libpruio-bas
 Section: libdevel
 Architecture: any
-Recommends: freebasic (>= 1.0.0), libpruio-lkm (>= ${binary:Version})
+Suggests: freebasic (>= 1.0.0), libpruio-lkm (>= ${binary:Version})
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in
@@ -75,7 +75,7 @@ Description: PRUSS driver for BB A/D-IO
 Package: libpruio-doc
 Section: doc
 Architecture: all
-Recommends: libpruio (>= ${binary:Version}), libpruio-lkm (>= ${binary:Version})
+Suggests: libpruio (>= ${binary:Version}), libpruio-lkm (>= ${binary:Version})
 Priority: extra
 Homepage: https://github.com/DTJF/libpruio
 Description: HTML-documentation for libpruio-dev packages
@@ -91,7 +91,7 @@ Description: HTML-documentation for libpruio-dev packages
 Package: libpruio
 Section: libs
 Architecture: armhf
-Recommends: libpruio-lkm (>= ${binary:Version})
+Suggests: libpruio-lkm (>= ${binary:Version})
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in
@@ -108,7 +108,7 @@ Description: PRUSS driver for BB A/D-IO
 Package: python-pruio
 Section: python
 Architecture: any
-Recommends: libpruio-lkm (>= ${binary:Version})
+Suggests: libpruio-lkm (>= ${binary:Version})
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}
 Description: PRUSS driver for BB A/D-IO
  libpruio is a driver for ARM33xx micro processors, which are used in

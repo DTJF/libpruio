@@ -28,7 +28,7 @@ triggers
 
 pasm_init.bi
 pasm_run.bi
-libpruio.so
+libpruio.so*
 
 src/python/libpruio/pruio.py
 debian/libpruio-lkm.service

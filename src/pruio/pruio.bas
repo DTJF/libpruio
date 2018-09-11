@@ -131,9 +131,10 @@ CONSTRUCTOR PruIo( _
     ELSE
       setPin = @setPin_save
       Errr = setPin(@THIS, 255, 0)
-      IF Errr THEN CLOSE #fnr                         : EXIT CONSTRUCTOR
+      IF Errr THEN CLOSE #fnr : setPin = @setPin_nogo : fnr = 0
     END IF : MuxFnr = fnr
-  ELSE
+  END IF
+  IF 0 = MuxFnr THEN
     VAR p = "/sys/devices/" _
       , n = DIR(p & "ocp.*", fbDirectory)
     IF LEN(n) THEN ' old kernel 3.x
@@ -142,9 +143,9 @@ CONSTRUCTOR PruIo( _
       p &= "platform/ocp/ocp:"
       IF LEN(DIR(p & "pruio-*", fbDirectory)) THEN mux = p & PMUX_NAME : MuxFnr = 257
     END IF
-    IF LEN(mux) THEN setPin = @setPin_dtbo : MuxAcc = SADD(mux) _
+    IF LEN(mux) THEN setPin = @setPin_dtbo : MuxAcc = SADD(mux) : Errr = 0 _
                 ELSE setPin = @setPin_nogo : MuxFnr = 0
- END IF
+  END IF
 
   IF Act AND PRUIO_ACT_PRU1 THEN
     PruIRam = PRUSS0_PRU1_IRAM

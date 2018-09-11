@@ -77,11 +77,15 @@ the configurations (Init and Conf). -> Make sure that you have at least
 5 kB free.
 
 \Item{"parsing kernel claims"} The constructor failed to scan for
-kernel pinmux claims. This error only occurs when you use the loadable
-kernel module for pinmuxing, and you didn't enable the free pinmux
-feature (= not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ). In that
-case the file KERNEL_PINMUX_PINS wasn't found. The most likly reason is
-that the path to that sysfs file changed, due to kernel developments.
+kernel pinmux claims. This is not an error, but a warning. It occurs
+when you loaded the kernel module for pinmuxing on kernel 3.8, and
+\Proj cannot read in directory `/sys/kernel/debug`. Anyway, your
+programm will run unless it tries to change a pin configuration. (Like
+on a no-pinmux configuration, In contrast, when an universal overlay is
+loaded, you won't see this message. The constructor auto-switches the
+overlay pinmuxing method.) -> Either execute the program with `sudo`,
+or enable the free pinmux feature (= calling constructor
+PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ).
 
 \Item{"segfault"} There are lots of reasons for this kind of message.
 When you're sure that it happens in the constructor, then it's most

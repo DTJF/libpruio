@@ -23,6 +23,7 @@ ADD_CUSTOM_TARGET(Install-Debian
 # in-source: create target deb for in-source debuild
 IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   ADD_CUSTOM_TARGET(deb
+    COMMAND rm ${CMAKE_SOURCE_DIR}/src/examples/BBB ${CMAKE_SOURCE_DIR}/src/pruio/pruio
     COMMAND cp    compat.${osvers} compat
     COMMAND cp   control.${osvers} control
     COMMAND cat   control.packages >> control
@@ -49,6 +50,7 @@ SET(src # files & dirs to copy from root dir
 SET(bdir ${CMAKE_CURRENT_BINARY_DIR}/${PROJ_NAME})
 SET(debdir ${bdir}/debian)
 ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
+  COMMAND rm ${CMAKE_SOURCE_DIR}/src/examples/BBB ${CMAKE_SOURCE_DIR}/src/pruio/pruio
   COMMAND mkdir -p ${bdir}
   COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${bdir}
   COMMAND cp    ${CMAKE_CURRENT_SOURCE_DIR}/compat.${osvers} ${debdir}/compat
