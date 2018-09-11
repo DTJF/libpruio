@@ -58,3 +58,9 @@ ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
   COMMAND echo "../../doxy/html" > ${debdir}/${PROJ_NAME}-doc.docs
   COMMAND cd ${bdir} && ${deb_exe} ${DEBUILD_FLAGS}
   )
+
+# Package building
+#
+# 1) update build tree on PC, make doc_htm, make doc_www
+# 2) update build tree on 3.8, copy html(PC) -> build/doxy, make deb, dput
+# 3) update build tree on 4.4, copy html(PC) -> build/doxy, make deb, dput

@@ -25,6 +25,42 @@ module are included.
 '* \brief The data structure, global at module level.
 DIM SHARED AS tprussdrv PRUSSDRV
 
+'* The page size for memory maps
+#DEFINE PAGE_SIZE 4096
+
+' PRUSS INTC register offsets
+'* Global interrupt enable register
+#DEFINE PRU_INTC_GER_REG     &h010
+'* Host interrupt enable indexed set register
+#DEFINE PRU_INTC_HIEISR_REG  &h034
+'* System event status register 0-31
+#DEFINE PRU_INTC_SRSR0_REG   &h200
+'* System event status register 32-63
+#DEFINE PRU_INTC_SRSR1_REG   &h204
+'* System event enable/clear register 0-31
+#DEFINE PRU_INTC_SECR0_REG   &h280
+'* System event enable/clear register 32-63
+#DEFINE PRU_INTC_SECR1_REG   &h284
+'* System event enable set register 0-31
+#DEFINE PRU_INTC_ESR0_REG    &h300
+'* System event enable set register 0-31
+#DEFINE PRU_INTC_ESR1_REG    &h304
+'* The channel map register
+#DEFINE PRU_INTC_CMR0_REG    &h400
+'* Host interrupt map register, channels 0 to 3
+#DEFINE PRU_INTC_HMR0_REG    &h800
+'* System event polarity register, events 0 to 31
+#DEFINE PRU_INTC_SIPR0_REG   &hD00
+'* System event polarity register, events 32 to 63
+#DEFINE PRU_INTC_SIPR1_REG   &hD04
+'* System event type register, events 0 to 31
+#DEFINE PRU_INTC_SITR0_REG   &hD80
+'* System event type register, events 31 to 63
+#DEFINE PRU_INTC_SITR1_REG   &hD84
+
+'* The maximal number of host events
+#DEFINE MAX_HOSTS_SUPPORTED 10
+
 '* The size of the read buffer.
 #DEFINE PRUSS_UIO_PARAM_VAL_LEN 20
 '* The file with pinmux information.
@@ -150,14 +186,14 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
     DIM AS STRING*PRUSS_UIO_PARAM_VAL_LEN buff = ""
     .mmap_fd = IrqFd
 
-    VAR fd = open_(PRUSS_UIO_DRV_PRUSS_SIZE, O_RDONLY) : IF fd < 0 THEN RETURN -11
+    VAR fd = open_("/sys/class/uio/uio0/maps/map0/size", O_RDONLY) : IF fd < 0 THEN RETURN -11
     read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
     .pruss_map_size = VALINT("&h" + MID(buff, 3))
     close_(fd)
 
     .pru0_dataram_base = mmap( _
         0, .pruss_map_size, PROT_READ OR PROT_WRITE, _
-        MAP_SHARED, .mmap_fd, PRUSS_UIO_MAP_OFFSET_PRUSS)
+        MAP_SHARED, .mmap_fd, 0*PAGE_SIZE)
 
     .pru1_dataram_base = .pru0_dataram_base _
                        + .pru1_dataram_phy_base - .pru0_dataram_phy_base
@@ -174,19 +210,19 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
     .pruss_sharedram_base = .pru0_dataram_base _
                        + .pruss_sram_phy_base   - .pru0_dataram_phy_base
 
-    fd = open_(PRUSS_UIO_DRV_EXTRAM_BASE, O_RDONLY) : IF fd < 0 THEN RETURN -12
+    fd = open_("/sys/class/uio/uio0/maps/map1/addr", O_RDONLY) : IF fd < 0 THEN RETURN -12
     read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
     .extram_phys_base = VALINT("&h" + MID(buff, 3))
     close_(fd)
 
-    fd = open_(PRUSS_UIO_DRV_EXTRAM_SIZE, O_RDONLY) : IF fd < 0 THEN RETURN -13
+    fd = open_("/sys/class/uio/uio0/maps/map1/size", O_RDONLY) : IF fd < 0 THEN RETURN -13
     read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
     .extram_map_size = VALINT("&h" + MID(buff, 3))
     close_(fd)
 
     .extram_base = mmap( _
          0, .extram_map_size, PROT_READ OR PROT_WRITE, _
-         MAP_SHARED, .mmap_fd, PRUSS_UIO_MAP_OFFSET_EXTRAM)
+         MAP_SHARED, .mmap_fd, 1*PAGE_SIZE)
   END WITH : RETURN 0
 END FUNCTION
 

@@ -16,58 +16,6 @@ supports pinmuxing and PWM features.
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
 
-'* The page size for memory maps
-#DEFINE PAGE_SIZE 4096
-
-' PRUSS INTC register offsets
-'* Global interrupt enable register
-#DEFINE PRU_INTC_GER_REG     &h010
-'* Host interrupt enable indexed set register
-#DEFINE PRU_INTC_HIEISR_REG  &h034
-'* System event status register 0-31
-#DEFINE PRU_INTC_SRSR0_REG   &h200
-'* System event status register 32-63
-#DEFINE PRU_INTC_SRSR1_REG   &h204
-'* System event enable/clear register 0-31
-#DEFINE PRU_INTC_SECR0_REG   &h280
-'* System event enable/clear register 32-63
-#DEFINE PRU_INTC_SECR1_REG   &h284
-'* System event enable set register 0-31
-#DEFINE PRU_INTC_ESR0_REG    &h300
-'* System event enable set register 0-31
-#DEFINE PRU_INTC_ESR1_REG    &h304
-'* The channel map register
-#DEFINE PRU_INTC_CMR0_REG    &h400
-'* Host interrupt map register, channels 0 to 3
-#DEFINE PRU_INTC_HMR0_REG    &h800
-'* System event polarity register, events 0 to 31
-#DEFINE PRU_INTC_SIPR0_REG   &hD00
-'* System event polarity register, events 32 to 63
-#DEFINE PRU_INTC_SIPR1_REG   &hD04
-'* System event type register, events 0 to 31
-#DEFINE PRU_INTC_SITR0_REG   &hD80
-'* System event type register, events 31 to 63
-#DEFINE PRU_INTC_SITR1_REG   &hD84
-
-'* The maximal number of host events
-#DEFINE MAX_HOSTS_SUPPORTED 10
-
-' UIO driver expects user space to map PRUSS_UIO_MAP_OFFSET_XXX to
-' access corresponding memory regions - region offset is N*PAGE_SIZE
-'* The offset for PRUSS register adresses
-#DEFINE PRUSS_UIO_MAP_OFFSET_PRUSS 0*PAGE_SIZE
-'* The base adress file of the memory area for PRUSS registers
-#DEFINE PRUSS_UIO_DRV_PRUSS_BASE "/sys/class/uio/uio0/maps/map0/addr"
-'* The size file of the memory area for PRUSS registers
-#DEFINE PRUSS_UIO_DRV_PRUSS_SIZE "/sys/class/uio/uio0/maps/map0/size"
-
-'* Mapping offset for external ram (ERam)
-#DEFINE PRUSS_UIO_MAP_OFFSET_EXTRAM 1*PAGE_SIZE
-'* The base adress file of the external ram (ERam)
-#DEFINE PRUSS_UIO_DRV_EXTRAM_BASE "/sys/class/uio/uio0/maps/map1/addr"
-'* The size file of the external ram (ERam)
-#DEFINE PRUSS_UIO_DRV_EXTRAM_SIZE "/sys/class/uio/uio0/maps/map1/size"
-
 
 /'* \brief Date structure for the `uio_pruss` kernel driver.
 
