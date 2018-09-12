@@ -1,5 +1,6 @@
 libpruio (0.6.0b) wheezy; urgency=low
 
+  * NUM new sources
   * new: debian packaging
   * new: python bindings and examples
   * new: example button2 demonstrates pinmuxing
@@ -9,9 +10,9 @@ libpruio (0.6.0b) wheezy; urgency=low
   * new: pinmuxing with loadable kernel module, no more overlays, easy install
   * new: pins on SD slot added
   * cha: easy installation due to debian packages
-  * cha: PruIo::setPin() function implemented as callback for use in C and Python
-  * cha: no restrictions in case of LKM pinmuxing, smaller memory footprint, faster boot
-  * cha: pinmuxing either by dtbo overlay (compatible) or by loadable kernel module (powerful)
+  * cha: PruIo::setPin() function implemented as callback (C and Python)
+  * cha: no restrictions LKM pinmuxing, smaller memory footprint, faster boot
+  * cha: pinmuxing either by dtbo overlay or by loadable kernel module
   * fix: examples source code reviewed
   * fix: source code documentation reviewed
   * fix: build system hierarchy and messages optimized
