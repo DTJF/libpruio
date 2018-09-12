@@ -1,3 +1,24 @@
+libpruio (0.6.0b) wheezy; urgency=low
+
+  * new: debian packaging
+  * new: python bindings and examples
+  * new: example button2 demonstrates pinmuxing
+  * new: in build prussdrv driver, less dependencies
+  * new: constructor mode PRUIO_ACT_FREMUX for free pinmuxing
+  * new: function PwmUdt::sync() for synchonization of PWMSS.Pwm outputs
+  * new: pinmuxing with loadable kernel module, no more overlays, easy install
+  * new: pins on SD slot added
+  * cha: easy installation due to debian packages
+  * cha: PruIo::setPin() function implemented as callback for use in C and Python
+  * cha: no restrictions in case of LKM pinmuxing, smaller memory footprint, faster boot
+  * cha: pinmuxing either by dtbo overlay (compatible) or by loadable kernel module (powerful)
+  * fix: examples source code reviewed
+  * fix: source code documentation reviewed
+  * fix: build system hierarchy and messages optimized
+  * fix: kernel 4.x problem with PWMSS.Pwm outputs fixed by LKM
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Wed, 12 Sep 2018 09:48:49 +0200
+
 libpruio (0.6.0a) jessie; urgency=low
 
   * Fixed header paths in C/FB examples

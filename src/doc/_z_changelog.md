@@ -35,7 +35,7 @@ Released in 2018, September.
 ## Bugfixes:
 
 - examples source code reviewed
-- documentation source code reviewed
+- source code documentation reviewed
 - build system hierarchy and messages optimized
 - kernel 4.x problem with PWMSS.Pwm outputs fixed by LKM
 
