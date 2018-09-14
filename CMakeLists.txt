@@ -42,7 +42,6 @@ ELSE()
     ADD_DEPENDENCIES(pruio pruiofbcode)
     SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -z,relro") # must be global
     SET_TARGET_PROPERTIES(pruio PROPERTIES
-      #LINK_FLAGS "-Wl -z,relro"
       SOVERSION "o" # adapt <Package: ...> in debian/control
       #NO_SONAME "YES"
       )
@@ -67,18 +66,6 @@ ELSE()
     ENDIF()
   ENDIF()
   ADD_SUBDIRECTORY(src/config)
-
-  ## install the header files (*.bi)
-  #SET(bifiles)
-  #FOREACH(bi ${SRC_BI} ${SRC_BI_EXTRA})
-    #LIST(APPEND bifiles src/pruio/${bi})
-  #ENDFOREACH()
-
-  #GET_FILENAME_COMPONENT(fbpath ${CMAKE_Fbc_COMPILER} PATH)
-  #INSTALL(FILES ${bifiles}
-    #DESTINATION ${fbpath}/../include/freebasic/BBB
-    #COMPONENT dev
-    #)
 ENDIF()
 
 ADD_SUBDIRECTORY(doxy)       # targets <doc> <doc_htm> <doc_pdf> <doc_www>
