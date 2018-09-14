@@ -104,7 +104,7 @@ code, the loadable kernel module and the html documentation
 (documentation and LKM are optional). Then copy the example code to
 your working directory
 
-    cp -r /usr/shared/doc/libpruio-dev/examples .
+    cp -r /usr/share/doc/libpruio-dev/examples .
 
 and you're ready to start.
 
@@ -120,7 +120,7 @@ code, the loadable kernel module and the html documentation
 (documentation and LKM are optional). Then copy the example code to
 your working directory
 
-    cp -r /usr/shared/doc/libpruio-bas/examples .
+    cp -r /usr/share/doc/libpruio-bas/examples .
 
 and you're ready to start.
 
@@ -136,7 +136,7 @@ code, the loadable kernel module and the html documentation
 (documentation and LKM are optional). Then copy the example code to
 your working directory
 
-    cp -r /usr/shared/doc/python-pruio/examples .
+    cp -r /usr/share/doc/python-pruio/examples .
 
 and you're ready to start.
 
