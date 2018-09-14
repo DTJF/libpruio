@@ -411,7 +411,7 @@ Anyway, that' the Debian policy. Execute
     sudo make lkm-install
 
 to install the module and a systemd service to load it. Additionally a
-new seystem group named `pruio` gets created. See section \ref sSecLkm
+new seystem group named `pruio` gets created. See section \ref sSecLKM
 for further information.
 
 Afterwards the LKM will be tainted to the kernel and the pinmuxing

@@ -12,11 +12,38 @@ than 200 lines of code, and most of them are available in FreeBASIC,
 Python and in C syntax. Just a few examples generate grafical output
 and are available in FreeBASIC systax only.
 
-Some examples need wiring to work and show the desired effect. Therefor
-a minimal knowlege on electronics is required to avoid damaging your
-Beaglebone board when doing the wiring. The circuits are designed for
-minimal hardware requirements, so you need not spend a lot of money for
-testing.
+In order to work and show the desired effect, some examples need
+pinmuxing configuration on your system, see section \ref SecPinmuxing
+for details. Others need custom wiring on the header pins. Therefor a
+minimal knowlege on electronics is required to avoid damaging your
+Beaglebone board when doing the wiring. Avoid electrostatic charging
+and connect the wires only when the Beaglebone board is switched off.
+The circuits are designed for minimal hardware requirements, so you
+need not spend a lot of money for testing.
+
+If you don't like to compile source code on your box, you can also
+install the `libpruio-bin` package (see section \ref SecDebPac) and run
+pre-compiled binaries instead.
+
+Here's an overview of all shipped examples
+
+|                Name     | Output | Pinmux | Wiring | Description          | src/examples    | src/c_examples | src/python     | libpruio-bin      |
+| ----------------------: | :----: | :----: | :----: | :------------------- | :-------------- | :------------- | :------------- | :---------------- |
+| \ref sSecExaSimple      |  Text  |   No   |   No   | Simple ADC input     | 1.bas           | 1.c            | 1.py           | pruio_1           |
+| \ref sSecExaAnalyse     |  Text  |   No   |   No   | Output system config | analyse.bas     |                |                | pruio_analyse     |
+| \ref sSecExaButton      |  Text  |   No   |   Yes  | Simple Button        | button.bas      | button.c       | button.py      | pruio_button      |
+| \ref sSecExaButton      |  Text  |   Yes  |   Yes  | Simple Button invers | button2.bas     | button2.c      | button2.py     | pruio_button2     |
+| \ref sSecExaIoInput     |  Text  |   No   |   No   | GPIO/ADC input       | io_input.bas    | io_input.c     | io_input.py    | pruio_io_input    |
+| \ref sSecExaPerformance |  Text  |   Yes  |   Yes  | Pin toggling tests   | performance.bas | performance.c  | performance.py | pruio_performance |
+| \ref sSecExaPwmCap      |  Text  |   Yes  |   Yes  | CAP/PWM input/output | pwm_cap.bas     | pwm_cap.c      | pwm_cap.py     | pruio_pwm_cap     |
+| \ref sSecExaQep         |  Text  |   Yes  |   Yes  | QEP input            | qep.bas         | qep.c          | qep.py         | pruio_qep         |
+| \ref sSecExaRbFile      |  Text  |   No   |   No   | Fast ADC file output | rb_file.bas     | rb_file.c      | rb_file.py     | pruio_rb_file     |
+| \ref sSecExaSos         |  Text  |   No   |   No   | User LED access      | sos.bas         | sos.c          | sos.py         | pruio_sos         |
+| \ref sSecExaStepper     |  Text  |   Yes  |   Yes  | Uni-P stepper motor  | stepper.bas     | stepper.c      | stepper.py     | pruio_stepper     |
+| \ref sSecExaPwmAdc      | Grafic |   Yes  |   Yes  | Compare PWM outputs  | pwm_adc.bas     |                |                | pruio_pwm_adc     |
+| \ref sSecExaOszi        | Grafic |   No   |   No   | IO ADC input grafic  | oszi.bas        |                |                | pruio_oszi        |
+| \ref sSecExaRbOszi      | Grafic |   No   |   No   | RB ADC input grafic  | rb_oszi.bas     |                |                | pruio_rb_oszi     |
+| \ref sSecExaTriggers    | Grafic |   No   |   Yes  | RB ADC input grafic  | triggers.bas    |                |                | pruio_triggers    |
 
 
 # Text # {#SecExaText}
