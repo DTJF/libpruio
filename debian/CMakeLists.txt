@@ -49,8 +49,9 @@ SET(src # files & dirs to copy from root dir
 # create target deb for out-of-source debuild
 SET(bdir ${CMAKE_CURRENT_BINARY_DIR}/${PROJ_NAME})
 SET(debdir ${bdir}/debian)
+SET(bbbdir ${CMAKE_SOURCE_DIR}/src/examples/BBB)
 ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
-  COMMAND rm ${CMAKE_SOURCE_DIR}/src/examples/BBB ${CMAKE_SOURCE_DIR}/src/pruio/pruio
+  COMMAND ${CMAKE_COMMAND} -E remove ${bbbdir}
   COMMAND mkdir -p ${bdir}
   COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${bdir}
   COMMAND cp    ${CMAKE_CURRENT_SOURCE_DIR}/compat.${osvers} ${debdir}/compat

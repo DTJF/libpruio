@@ -76,6 +76,7 @@ Package: libpruio-doc
 Section: doc
 Architecture: all
 Suggests: libpruio (>= ${binary:Version}), libpruio-lkm (>= ${binary:Version})
+Depends: ${misc:Depends}
 Priority: extra
 Homepage: https://github.com/DTJF/libpruio
 Description: HTML-documentation for libpruio-dev packages
