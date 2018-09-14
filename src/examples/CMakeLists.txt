@@ -32,7 +32,7 @@ FOREACH(tar ${FB_EXAMPLES})
   ADD_EXECUTABLE(${tar} EXCLUDE_FROM_ALL ${tar}.bas BBB)
   TARGET_LINK_LIBRARIES(${tar} pruio fbgfx X11 Xext Xpm Xrandr)
   SET_TARGET_PROPERTIES(${tar} PROPERTIES
-    COMPILE_FLAGS "-m ${tar}")
+    COMPILE_FLAGS "-m ${tar} -gen gcc -Wc -O2,-D_FORTIFY_SOURCE=2,-fstack-protector-strong,-Wformat,-Werror=format-security")
   #ADD_DEPENDENCIES(${tar} gen_bbb_dir)
   ADD_DEPENDENCIES(fb_examples ${tar})
 ENDFOREACH(tar)
