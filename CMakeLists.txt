@@ -78,6 +78,8 @@ SET(C_HEADERS
   "src/pruio/pruio.hp"
   "src/c_include/pruio.h"
   "src/c_include/pruio_pins.h"
+  "src/c_include/pruio_intc.h"
+  "src/c_include/pruio_prussdrv.h"
   )
 INSTALL(FILES ${C_HEADERS}
   DESTINATION include/${PROJ_NAME}

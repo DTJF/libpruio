@@ -29,10 +29,10 @@ Copyright 2014-\Year by \Email
 // common declarations
 #include "pruio.hp"
 
-//#include "../pruio/pruio.bi" (transformed)
 //! version string
-#define PRUIO_VERSION "0.4"
+#define PRUIO_VERSION "0.6"
 
+//#include "../pruio/pruio.bi" (transformed)
 typedef signed char int8;      //!< 8 bit signed integer data type.
 typedef short int16;           //!< 16 bit signed integer data type.
 typedef int int32;             //!< 32 bit signed integer data type.
@@ -461,10 +461,10 @@ typedef struct qepMod{
 } qepMod;
 
 
-// the PRUSS driver library
-#include "prussdrv.h"
+//// the PRUSS driver library
+//#include "pruio_prussdrv.h"
 // PRUSS driver interrupt settings
-#include "pruss_intc_mapping.h"
+#include "pruio_intc.h"
 
 /** \brief Wrapper enumerators for PinMuxing.
 

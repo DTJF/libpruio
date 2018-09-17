@@ -315,6 +315,7 @@ frequency range vary between the pins.
 | P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
 | JT_05 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
+| SD_10 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | SD card in button |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
@@ -379,6 +380,7 @@ range vary between the pins.
 | P9_28 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
 | P9_42 | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
 | JT_04 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | JTag (UART0_RXD)  |
+| SD_10 | PWMSS-1, CAP   | 0.0233 to 50e6 Hz      | SD card in button |
 
 The measurement results get available by calling function
 CapMod::Value(). Before, you have to configure the pin for CAP input by
