@@ -461,8 +461,6 @@ typedef struct qepMod{
 } qepMod;
 
 
-//// the PRUSS driver library
-//#include "pruio_prussdrv.h"
 // PRUSS driver interrupt settings
 #include "pruio_intc.h"
 

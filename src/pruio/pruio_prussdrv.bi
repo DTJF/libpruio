@@ -26,7 +26,7 @@ memory registers.
 \since 0.6
 '/
 TYPE __prussdrv
-  AS LONG _
+  AS Int32 _
       mmap_fd _ '*< file descriptor for memory mappings.
     , fd(0 TO NUM_PRU_HOSTIRQS - 1) '*< Array for Irq file descriptors.
   AS ANY PTR _
@@ -39,7 +39,7 @@ TYPE __prussdrv
     , pru1_iram_base _     '*< Mapped start address instruction ram PRU1
     , extram_base _        '*< Mapped start address external memory block
     , pruss_sharedram_base '*< Mapped start address shared memory
-  AS ULONG _
+  AS UInt32 _
     pru0_dataram_phy_base = &h4a300000 _ '*< Physical address DRam PRU0
   , pru1_dataram_phy_base = &h4a302000 _ '*< Physical address DRam PRU1
   ,         intc_phy_base = &h4a320000 _ '*< Physical address interrupt controller
@@ -57,24 +57,24 @@ END TYPE
 '* Forward declaration for `uio_pruss` data
 TYPE AS __prussdrv tprussdrv
 
-DECLARE FUNCTION prussdrv_open CDECL(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_enable CDECL(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_disable CDECL(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_reset CDECL(BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pru_write_memory CDECL( _
-  BYVAL AS ULONG _
-, BYVAL AS ULONG _
-, BYVAL AS CONST ULONG PTR _
-, BYVAL AS ULONG) AS LONG
-DECLARE FUNCTION prussdrv_pruintc_init CDECL(BYVAL AS CONST tpruss_intc_initdata PTR) AS LONG
-DECLARE SUB prussdrv_pru_send_event CDECL(BYVAL AS ULONG)
-DECLARE FUNCTION prussdrv_pru_wait_event CDECL(BYVAL AS ULONG) AS ULONG
-DECLARE SUB prussdrv_pru_clear_event CDECL(BYVAL AS ULONG, BYVAL AS ULONG)
-DECLARE SUB prussdrv_map_extmem CDECL(BYVAL AS ANY PTR PTR)
-DECLARE FUNCTION prussdrv_extmem_size CDECL() AS ULONG
-DECLARE FUNCTION prussdrv_map_prumem CDECL(BYVAL AS ULONG, BYVAL AS ANY PTR PTR) AS LONG
-DECLARE FUNCTION prussdrv_get_phys_addr CDECL(BYVAL AS CONST ANY PTR) AS ULONG
-DECLARE SUB prussdrv_exit CDECL()
+DECLARE FUNCTION prussdrv_open CDECL ALIAS "prussdrv_open"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_disable CDECL ALIAS "prussdrv_pru_disable"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_reset CDECL ALIAS "prussdrv_pru_reset"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_write_memory CDECL ALIAS "prussdrv_pru_write_memory"( _
+  BYVAL AS UInt32 _
+, BYVAL AS UInt32 _
+, BYVAL AS CONST UInt32 PTR _
+, BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL AS CONST tpruss_intc_initdata PTR) AS Int32
+DECLARE SUB prussdrv_pru_send_event CDECL ALIAS "prussdrv_pru_send_event"(BYVAL AS UInt32)
+DECLARE FUNCTION prussdrv_pru_wait_event CDECL ALIAS "prussdrv_pru_wait_event"(BYVAL AS UInt32) AS UInt32
+DECLARE SUB prussdrv_pru_clear_event CDECL ALIAS "prussdrv_pru_clear_event"(BYVAL AS UInt32, BYVAL AS UInt32)
+DECLARE SUB prussdrv_map_extmem CDECL ALIAS "prussdrv_map_extmem"(BYVAL AS ANY PTR PTR)
+DECLARE FUNCTION prussdrv_extmem_size CDECL ALIAS "prussdrv_extmem_size"() AS UInt32
+DECLARE FUNCTION prussdrv_map_prumem CDECL ALIAS "prussdrv_map_prumem"(BYVAL AS UInt32, BYVAL AS ANY PTR PTR) AS Int32
+DECLARE FUNCTION prussdrv_get_phys_addr CDECL ALIAS "prussdrv_get_phys_addr"(BYVAL AS CONST ANY PTR) AS UInt32
+DECLARE SUB prussdrv_exit CDECL ALIAS "prussdrv_exit"()
 
 DECLARE FUNCTION setPin_save CDECL( _
     BYVAL AS Pruio_ PTR _

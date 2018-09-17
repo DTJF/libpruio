@@ -1,11 +1,11 @@
-/'* \file pruio_intc.h
+/*! \file pruio_intc.h
 \brief FreeBASIC header file for interrupt controller defines.
 
 Header file containing the defines and data types used for the
 interrupt controller setting.
 
 \since 0.6
-'/
+*/
 
 
 #define PRU0_PRU1_INTERRUPT 17
@@ -81,18 +81,18 @@ interrupt controller setting.
 #define PRU_EVTOUT_7 7
 
 typedef struct __sysevt_to_channel_map {
-  short sysevt; //!< The number of the system event
-  short channel; //!< The mapped channel number
+  int16 sysevt; //!< The number of the system event
+  int16 channel; //!< The mapped channel number
 } tsysevt_to_channel_map;
 
 typedef struct __channel_to_host_map {
-  short channel; //!< The channel number
-  short host; //!< The host interrupt
+  int16 channel; //!< The channel number
+  int16 host; //!< The host interrupt
 } tchannel_to_host_map;
 
 typedef struct __pruss_intc_initdata {
-  char sysevts_enabled[NUM_PRU_SYS_EVTS]; //!< The list of enabled system events
+  int8 sysevts_enabled[NUM_PRU_SYS_EVTS]; //!< The list of enabled system events
   tsysevt_to_channel_map sysevt_to_channel_map[NUM_PRU_SYS_EVTS]; //!< Mapping from system event to interrupt channel.
   tchannel_to_host_map channel_to_host_map[NUM_PRU_CHANNELS]; //!< Mapping from interrupt channel to host
-  unsigned int host_enable_bitmask; //!< The mask of enabled host interrupts
+  uint32 host_enable_bitmask; //!< The mask of enabled host interrupts
 } tpruss_intc_initdata;

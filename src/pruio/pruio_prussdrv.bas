@@ -68,9 +68,9 @@ DIM SHARED AS tprussdrv PRUSSDRV
 
 '#include once "crt/fcntl.bi" ' from: bits/fnctl-linux.h
 '* The size type
-TYPE AS ULONG size_t
+TYPE AS UInt32 size_t
 '* The signed size type
-TYPE AS LONG ssize_t
+TYPE AS Int32 ssize_t
 
 '* File acess mode
 #DEFINE O_ACCMODE  &o003
@@ -121,24 +121,24 @@ TYPE AS LONG ssize_t
 #ENDIF
 
 '* The offset type
-TYPE AS LONG off_t
+TYPE AS Int32 off_t
 '* The adress type
 TYPE AS ANY PTR addr_t
 '* The character adress type
-TYPE AS UBYTE PTR caddr_t
+TYPE AS UInt8 PTR caddr_t
 
 '* \brief Declaration for C runtime function mmap().
-DECLARE FUNCTION mmap CDECL ALIAS "mmap"(BYVAL AS addr_t, BYVAL AS size_t, BYVAL AS LONG, BYVAL AS LONG, BYVAL AS LONG, BYVAL AS off_t) AS caddr_t
+DECLARE FUNCTION mmap CDECL ALIAS "mmap"(BYVAL AS addr_t, BYVAL AS size_t, BYVAL AS Int32, BYVAL AS Int32, BYVAL AS Int32, BYVAL AS off_t) AS caddr_t
 '* \brief Declaration for C runtime function memcpy().
 DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR
 '* \brief Declaration for C runtime function munmap().
-DECLARE FUNCTION munmap CDECL ALIAS "munmap"(BYVAL AS ANY PTR, BYVAL AS size_t) AS LONG
+DECLARE FUNCTION munmap CDECL ALIAS "munmap"(BYVAL AS ANY PTR, BYVAL AS size_t) AS Int32
 '* \brief Declaration for C runtime function open().
-DECLARE FUNCTION open_ CDECL ALIAS "open"(BYVAL AS CONST ZSTRING PTR, BYVAL AS LONG, ...) AS LONG
+DECLARE FUNCTION open_ CDECL ALIAS "open"(BYVAL AS CONST ZSTRING PTR, BYVAL AS Int32, ...) AS Int32
 '* \brief Declaration for C runtime function read().
-DECLARE FUNCTION read_ CDECL ALIAS "read"(BYVAL AS LONG, BYVAL AS ANY PTR, BYVAL AS size_t) AS ssize_t
+DECLARE FUNCTION read_ CDECL ALIAS "read"(BYVAL AS Int32, BYVAL AS ANY PTR, BYVAL AS size_t) AS ssize_t
 '* \brief Declaration for C runtime function close().
-DECLARE FUNCTION close_ CDECL ALIAS "close"(BYVAL AS LONG) AS LONG
+DECLARE FUNCTION close_ CDECL ALIAS "close"(BYVAL AS Int32) AS Int32
 
 
 /'* \brief Set CMR register.
@@ -150,7 +150,7 @@ This is an internal service function.
 
 \since 0.6
 '/
-SUB __prussintc_set_cmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Event AS USHORT, BYVAL Ch AS USHORT)
+SUB __prussintc_set_cmr CDECL(BYVAL Intc AS UInt32 PTR, BYVAL Event AS UInt16, BYVAL Ch AS UInt16)
   Intc[(PRU_INTC_CMR0_REG + (Event AND NOT(&b11))) SHR 2] _
       OR= ((Ch AND &b1111) SHL ((Event AND &b11) SHL 3))
 END SUB
@@ -165,7 +165,7 @@ This is an internal service function.
 
 \since 0.6
 '/
-SUB __prussintc_set_hmr CDECL(BYVAL Intc AS ULONG PTR, BYVAL Ch AS USHORT, BYVAL Host AS USHORT)
+SUB __prussintc_set_hmr CDECL(BYVAL Intc AS UInt32 PTR, BYVAL Ch AS UInt16, BYVAL Host AS UInt16)
   Intc[(PRU_INTC_HMR0_REG     + (Ch AND NOT(&b11))) SHR 2] _
     = Intc[(PRU_INTC_HMR0_REG + (Ch AND NOT(&b11))) SHR 2] _
      OR (((Host) AND &b1111) SHL (((Ch) AND &b11) SHL 3))
@@ -181,7 +181,7 @@ original libprussdrv code, the function here gets called only once.
 
 \since 0.6
 '/
-FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS LONG) AS LONG
+FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS Int32) AS Int32
   WITH PRUSSDRV
     DIM AS STRING*PRUSS_UIO_PARAM_VAL_LEN buff = ""
     .mmap_fd = IrqFd
@@ -241,8 +241,8 @@ prussdrv_exit() closes all open files.
 
 \since 0.6
 '/
-FUNCTION prussdrv_open CDECL(BYVAL Irq AS ULONG) AS LONG
-  WITH PRUSSDRV                                  : IF .fd(Irq) THEN RETURN -1 ' already open
+FUNCTION prussdrv_open CDECL ALIAS "prussdrv_open"(BYVAL Irq AS UInt32) AS Int32 EXPORT
+  WITH PRUSSDRV                                 : IF .fd(Irq) THEN RETURN -1 ' already open
     VAR nam = "/dev/uio" & HEX(Irq, 1)
     .fd(Irq) = open_(nam, O_RDWR OR O_SYNC) : IF .fd(Irq) < 0 THEN RETURN -2 ' open failed
     RETURN IIF(.mmap_fd, 0, __prussdrv_memmap_init(.fd(Irq)))
@@ -258,10 +258,10 @@ Disable a PRU subsystem, by starting its clock.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_enable CDECL(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL PruId AS UInt32) AS Int32 EXPORT
   SELECT CASE AS CONST PruId
-  CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 2 : RETURN 0
-  CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 2 : RETURN 0
+  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 2 : RETURN 0
+  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 2 : RETURN 0
   END SELECT : RETURN -1
 END FUNCTION
 
@@ -274,10 +274,10 @@ Disable a PRU subsystem, by stopping its clock.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_disable CDECL(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_disable CDECL ALIAS "prussdrv_pru_disable"(BYVAL PruId AS UInt32) AS Int32 EXPORT
   SELECT CASE AS CONST PruId
-  CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 1 : RETURN 0
-  CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 1 : RETURN 0
+  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 1 : RETURN 0
+  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 1 : RETURN 0
   END SELECT: RETURN -1
 END FUNCTION
 
@@ -290,10 +290,10 @@ Force a reset at a PRU subsystem.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_reset CDECL(BYVAL PruId AS ULONG) AS LONG
+FUNCTION prussdrv_pru_reset CDECL ALIAS "prussdrv_pru_reset"(BYVAL PruId AS UInt32) AS Int32 EXPORT
   SELECT CASE AS CONST PruId
-  CASE 0 : *CAST(ULONG PTR, PRUSSDRV.pru0_control_base) = 0 : RETURN 0
-  CASE 1 : *CAST(ULONG PTR, PRUSSDRV.pru1_control_base) = 0 : RETURN 0
+  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 0 : RETURN 0
+  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 0 : RETURN 0
   END SELECT: RETURN -1
 END FUNCTION
 
@@ -311,22 +311,22 @@ specified by parameter Offs.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_write_memory CDECL( _
-  BYVAL RamId AS ULONG _
-, BYVAL Offs AS ULONG _
-, BYVAL Dat AS CONST ULONG PTR _
-, BYVAL Size AS ULONG) AS LONG
+FUNCTION prussdrv_pru_write_memory CDECL ALIAS "prussdrv_pru_write_memory"( _
+  BYVAL RamId AS UInt32 _
+, BYVAL Offs AS UInt32 _
+, BYVAL Dat AS CONST UInt32 PTR _
+, BYVAL Size AS UInt32) AS Int32 EXPORT
 
-  DIM AS ULONG PTR m
+  DIM AS UInt32 PTR m
   SELECT CASE AS CONST RamId
-  CASE PRUSS0_PRU0_DRAM : m = CAST(ULONG PTR, PRUSSDRV.pru0_dataram_base   ) + Offs
-  CASE PRUSS0_PRU1_DRAM : m = CAST(ULONG PTR, PRUSSDRV.pru1_dataram_base   ) + Offs
-  CASE PRUSS0_PRU0_IRAM : m = CAST(ULONG PTR, PRUSSDRV.pru0_iram_base      ) + Offs
-  CASE PRUSS0_PRU1_IRAM : m = CAST(ULONG PTR, PRUSSDRV.pru1_iram_base      ) + Offs
-  CASE PRUSS0_SRAM      : m = CAST(ULONG PTR, PRUSSDRV.pruss_sharedram_base) + Offs
+  CASE PRUSS0_PRU0_DRAM : m = CAST(UInt32 PTR, PRUSSDRV.pru0_dataram_base   ) + Offs
+  CASE PRUSS0_PRU1_DRAM : m = CAST(UInt32 PTR, PRUSSDRV.pru1_dataram_base   ) + Offs
+  CASE PRUSS0_PRU0_IRAM : m = CAST(UInt32 PTR, PRUSSDRV.pru0_iram_base      ) + Offs
+  CASE PRUSS0_PRU1_IRAM : m = CAST(UInt32 PTR, PRUSSDRV.pru1_iram_base      ) + Offs
+  CASE PRUSS0_SRAM      : m = CAST(UInt32 PTR, PRUSSDRV.pruss_sharedram_base) + Offs
   CASE ELSE : RETURN -1
   END SELECT : VAR l = (Size + 3) SHR 2 ' Adjust length as multiple of 4 bytes
-  FOR i as long = 0 TO l - 1
+  FOR i AS Int32 = 0 TO l - 1
     m[i] = Dat[i]
   NEXT : RETURN l
 END FUNCTION
@@ -344,10 +344,10 @@ custom configuration must get compiled in the binary.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pruintc_init CDECL(BYVAL DatIni AS CONST tpruss_intc_initdata PTR) AS LONG
+FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL DatIni AS CONST tpruss_intc_initdata PTR) AS Int32 EXPORT
   WITH PRUSSDRV
-    VAR intc = CAST(ULONG PTR, .intc_base)
-    DIM AS ULONG i, mask1, mask2
+    VAR intc = CAST(UInt32 PTR, .intc_base)
+    DIM AS UInt32 i, mask1, mask2
 
     intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFF
     intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFF
@@ -413,8 +413,8 @@ PRUSS.
 
 \since 0.6
 '/
-SUB prussdrv_pru_send_event CDECL(BYVAL Event AS ULONG)
-  VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
+SUB prussdrv_pru_send_event CDECL ALIAS "prussdrv_pru_send_event"(BYVAL Event AS UInt32) EXPORT
+  VAR intc = CAST(UInt32 PTR, PRUSSDRV.intc_base)
   IF Event < 32 THEN intc[PRU_INTC_SRSR0_REG SHR 2] = 1 SHL Event _
                 ELSE intc[PRU_INTC_SRSR1_REG SHR 2] = 1 SHL (Event - 32)
 END SUB
@@ -429,9 +429,9 @@ input occurs.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_wait_event CDECL(BYVAL Irq AS ULONG) AS ULONG
-  DIM AS ULONG event_count
-  read_(PRUSSDRV.fd(Irq), @event_count, SIZEOF(ULONG))
+FUNCTION prussdrv_pru_wait_event CDECL ALIAS "prussdrv_pru_wait_event"(BYVAL Irq AS UInt32) AS UInt32 EXPORT
+  DIM AS UInt32 event_count
+  read_(PRUSSDRV.fd(Irq), @event_count, SIZEOF(UInt32))
   RETURN event_count
 END FUNCTION
 
@@ -445,8 +445,8 @@ order to get ready for the next event.
 
 \since 0.6
 '/
-SUB prussdrv_pru_clear_event CDECL(BYVAL Irq AS ULONG, BYVAL Event AS ULONG)
-  VAR intc = CAST(ULONG PTR, PRUSSDRV.intc_base)
+SUB prussdrv_pru_clear_event CDECL ALIAS "prussdrv_pru_clear_event"(BYVAL Irq AS UInt32, BYVAL Event AS UInt32) EXPORT
+  VAR intc = CAST(UInt32 PTR, PRUSSDRV.intc_base)
   IF Event < 32 THEN intc[PRU_INTC_SECR0_REG SHR 2] = 1 SHL Event _
                 ELSE intc[PRU_INTC_SECR1_REG SHR 2] = 1 SHL (Event - 32)
   intc[PRU_INTC_HIEISR_REG SHR 2] = Irq + 2 ' after clear Event!
@@ -461,7 +461,7 @@ input pointer. Memory is then accessed by an array.
 
 \since 0.6
 '/
-SUB prussdrv_map_extmem CDECL(BYVAL Addr AS ANY PTR PTR)
+SUB prussdrv_map_extmem CDECL ALIAS "prussdrv_map_extmem"(BYVAL Addr AS ANY PTR PTR) EXPORT
   *Addr = PRUSSDRV.extram_base
 END SUB ' -> property
 
@@ -475,7 +475,7 @@ for details.
 
 \since 0.6
 '/
-FUNCTION prussdrv_extmem_size CDECL() AS ULONG
+FUNCTION prussdrv_extmem_size CDECL ALIAS "prussdrv_extmem_size"() AS UInt32 EXPORT
   RETURN PRUSSDRV.extram_map_size
 END FUNCTION ' -> property
 
@@ -493,7 +493,7 @@ accessed by an array.
 
 \since 0.6
 '/
-FUNCTION prussdrv_map_prumem CDECL(BYVAL RamId AS ULONG, BYVAL Addr AS ANY PTR PTR) AS LONG
+FUNCTION prussdrv_map_prumem CDECL ALIAS "prussdrv_map_prumem"(BYVAL RamId AS UInt32, BYVAL Addr AS ANY PTR PTR) AS Int32 EXPORT
   SELECT CASE AS CONST RamId
   CASE PRUSS0_PRU0_DRAM : *Addr = PRUSSDRV.pru0_dataram_base    : RETURN 0
   CASE PRUSS0_PRU1_DRAM : *Addr = PRUSSDRV.pru1_dataram_base    : RETURN 0
@@ -514,13 +514,13 @@ value returned form a mmap() call.
 
 \since 0.6
 '/
-FUNCTION prussdrv_get_phys_addr CDECL(BYVAL Addr AS CONST ANY PTR) AS ULONG
+FUNCTION prussdrv_get_phys_addr CDECL ALIAS "prussdrv_get_phys_addr"(BYVAL Addr AS CONST ANY PTR) AS UInt32 EXPORT
   WITH PRUSSDRV
     SELECT CASE Addr
     CASE .pru0_dataram_base TO .pru0_dataram_base + .pruss_map_size - 1
-      RETURN CAST(ULONG, Addr - .pru0_dataram_base) + .pru0_dataram_phy_base
+      RETURN CAST(UInt32, Addr - .pru0_dataram_base) + .pru0_dataram_phy_base
     CASE       .extram_base TO .extram_base + .extram_map_size - 1
-      RETURN CAST(ULONG, Addr - .extram_base) + .extram_phys_base
+      RETURN CAST(UInt32, Addr - .extram_base) + .extram_phys_base
     END SELECT : RETURN 0
   END WITH
 END FUNCTION ' -> property
@@ -534,7 +534,7 @@ The procedure unmaps the memory and closes the interrupt file.
 
 \since 0.6
 '/
-SUB prussdrv_exit CDECL()
+SUB prussdrv_exit CDECL ALIAS "prussdrv_exit"() EXPORT
   WITH PRUSSDRV
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)
@@ -566,7 +566,7 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
   close_(fd)
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1
   mux = STRING(toffs, 0) & "internal CPU ball" & CHR(0)
-  VAR m = CAST(SHORT PTR, SADD(mux))
+  VAR m = CAST(Int16 PTR, SADD(mux))
   FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL   : m[i] = toffs : NEXT
   FOR i AS INTEGER = 0 TO UBOUND(P8_Pins) : m[P8_Pins(i)] = 0 : NEXT
   FOR i AS INTEGER = 0 TO UBOUND(P9_Pins) : m[P9_Pins(i)] = 0 : NEXT
@@ -577,7 +577,7 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
     , a = 1, e = INSTR(t, !"\n")
 ' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
   WHILE e
-    IF *CAST(LONG PTR, p + a - 4) = c THEN ' check "pin "
+    IF *CAST(Int32 PTR, p + a - 4) = c THEN ' check "pin "
       VAR n = VALINT(*(p + a)) : IF n > PRUIO_AZ_BALL    THEN EXIT WHILE
       VAR p1 = INSTR(a, t, "): ") + 3
       IF p1 > 3 THEN
@@ -586,7 +586,7 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
            , own = MID(t, p1, IIF(p2, p2, e) - p1) & CHR(0) _
              , x = INSTRREV(mux, CHR(0) & own)
           IF x < toffs THEN x = LEN(mux) : mux &= own
-          CAST(SHORT PTR, SADD(mux))[n] = x
+          CAST(Int16 PTR, SADD(mux))[n] = x
         END IF
       END IF
     END IF : a = e + 1 : e = INSTR(a, t, !"\n")
@@ -660,7 +660,7 @@ FUNCTION setPin_save CDECL( _
                   THEN m = find_claims() : .Errr = IIF(m, 0, p) : RETURN .Errr
     IF 0 = m THEN m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
 
-    VAR o = CAST(SHORT PTR, m)
+    VAR o = CAST(Int16 PTR, m)
     IF 0 = o[Ball] THEN                                           RETURN setPin_lkm(Top, Ball, Mo)
     VAR x = .nameBall(Ball)
     IF x THEN e = "pin " & *x ELSE e = "ball " & HEX(Ball, 2)

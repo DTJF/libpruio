@@ -208,7 +208,7 @@ FUNCTION pruio_pwm_setValue CDECL ALIAS "pruio_pwm_setValue"( _
 END FUNCTION
 
 
-'* \brief Wrapper function for Timer::Value().
+'* \brief Wrapper function for TimerUdt::Value().
 FUNCTION pruio_tim_Value CDECL ALIAS "pruio_tim_Value"( _
     BYVAL Io AS PruIo PTR _
   , BYVAL Ball AS UInt8 _
@@ -219,7 +219,7 @@ FUNCTION pruio_tim_Value CDECL ALIAS "pruio_tim_Value"( _
   RETURN Io->Tim->Value(Ball, Dur1, Dur2, Mode)
 END FUNCTION
 
-'* \brief Wrapper function for Timer::setValue().
+'* \brief Wrapper function for TimerUdt::setValue().
 FUNCTION pruio_tim_setValue CDECL ALIAS "pruio_tim_setValue"( _
     BYVAL Io AS PruIo PTR _
   , BYVAL Ball AS UInt8 _

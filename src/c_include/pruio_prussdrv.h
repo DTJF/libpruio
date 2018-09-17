@@ -1,4 +1,4 @@
-/'* \file pruio_prussdrv.h
+/*! \file pruio_prussdrv.h
 \brief Header file for kernel drivers.
 
 The header contains declarations to bind the user space part of the
@@ -11,7 +11,7 @@ The first controls memory mapping and interrupt handling, the second
 supports pinmuxing and PWM features.
 
 \since 0.6
-'/
+*/
 
 
 #ifndef _PRUSSDRV_H
@@ -23,36 +23,36 @@ supports pinmuxing and PWM features.
 extern "C" {
 #endif
 
-int prussdrv_open(unsigned int host_interrupt);
+int32 prussdrv_open(uint32 host_interrupt);
 
-int prussdrv_pru_reset(unsigned int prunum);
+int32 prussdrv_pru_reset(uint32 prunum);
 
-int prussdrv_pru_disable(unsigned int prunum);
+int32 prussdrv_pru_disable(uint32 prunum);
 
-int prussdrv_pru_enable(unsigned int prunum);
+int32 prussdrv_pru_enable(uint32 prunum);
 
-int prussdrv_pru_write_memory(unsigned int pru_ram_id,
-                              unsigned int wordoffset,
-                              const unsigned int *memarea,
-                              unsigned int bytelength);
+int32 prussdrv_pru_write_memory(uint32 pru_ram_id,
+                                uint32 wordoffset,
+                                const uint32 *memarea,
+                                uint32 bytelength);
 
-int prussdrv_pruintc_init(const tpruss_intc_initdata *prussintc_init_data);
+int32 prussdrv_pruintc_init(const tpruss_intc_initdata *prussintc_init_data);
 
-int prussdrv_map_extmem(void **address);
+void prussdrv_map_extmem(void **address);
 
-unsigned int prussdrv_extmem_size(void);
+uint32 prussdrv_extmem_size(void);
 
-int prussdrv_map_prumem(unsigned int pru_ram_id, void **address);
+int32 prussdrv_map_prumem(uint32 pru_ram_id, void **address);
 
-unsigned int prussdrv_get_phys_addr(const void *address);
+uint32 prussdrv_get_phys_addr(const void *address);
 
-unsigned int prussdrv_pru_wait_event(unsigned int host_interrupt);
+uint32 prussdrv_pru_wait_event(uint32 host_interrupt);
 
-int prussdrv_pru_send_event(unsigned int eventnum);
+void prussdrv_pru_send_event(uint32 eventnum);
 
-int prussdrv_pru_clear_event(unsigned int host_interrupt, unsigned int sysevent);
+void prussdrv_pru_clear_event(uint32 host_interrupt, uint32 sysevent);
 
-int prussdrv_exit(void);
+void prussdrv_exit(void);
 
 #if defined (__cplusplus)
 }
