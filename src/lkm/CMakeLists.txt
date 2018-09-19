@@ -26,9 +26,10 @@ SET(src ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_NAME}.c)
 SET(serv_deb ${CMAKE_SOURCE_DIR}/debian/${serv_nam})
 CONFIGURE_FILE(Makefile.in ${wdir}/Makefile @ONLY)
 CONFIGURE_FILE(systemctl.service.in ${serv_deb} @ONLY)
+FILE(COPY ${src} DESTINATION ${wdir})
 
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
-  COMMAND cp ${src} ${wdir}
+  COMMAND "${CMAKE_COMMAND}" -E copy ${src} ${wdir}
   COMMAND make clean && make
   WORKING_DIRECTORY ${wdir}
   DEPENDS ${src}

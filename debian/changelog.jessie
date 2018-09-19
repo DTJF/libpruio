@@ -1,3 +1,9 @@
+libpruio (0.6.2a) jessie; urgency=low
+
+  * fix: lkm source included
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Thu, 20 Sep 2018 00:34:30 +0200
+
 libpruio (0.6.2) jessie; urgency=low
 
   * new: Overview table for examples requirements
