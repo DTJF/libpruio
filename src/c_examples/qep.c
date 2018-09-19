@@ -20,6 +20,7 @@ Compile by: `gcc -Wall -o qep qep.c -lpruio`
 #include <termios.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/types.h>
 #include "libpruio/pruio.h"
 #include "libpruio/pruio_pins.h"
 

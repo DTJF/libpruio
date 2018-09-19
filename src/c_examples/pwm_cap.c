@@ -22,6 +22,7 @@ Compile by: `gcc -Wall -o pwm_cap pwm_cap.c -lpruio`
 #include <termios.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/types.h>
 #include "libpruio/pruio.h"
 #include "libpruio/pruio_pins.h"
 

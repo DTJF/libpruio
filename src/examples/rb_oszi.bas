@@ -79,7 +79,7 @@ WITH *io
     S_H -= 1
     VAR scale = S_H / 65520 '*< The scaling factor.
 
-    IF .config(samp, &b100100000, 1e5) THEN _ '      configure steps 5+8
+    IF .config(samp, &b100100000, 4e5) THEN _ '      configure steps 5+8
                                    ?"config failed: " & *.Errr : EXIT DO
 
     VAR half = .Adc->Samples SHR 1 _ '*<    half size of the ring buffer
