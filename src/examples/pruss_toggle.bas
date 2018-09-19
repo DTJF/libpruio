@@ -11,7 +11,7 @@ Licence: GPLv3, Copyright 2018-\Year by \Mail
 
 Compile by: `fbc -Wall pruss_toggle.bas`
 
-\since 0.6
+\since 0.6.2
 '/
 
 #include ONCE "BBB/pruio.bi" ' the library (for pinmuxing)
@@ -19,7 +19,7 @@ Compile by: `fbc -Wall pruss_toggle.bas`
 #include ONCE "BBB/pruio_prussdrv.bi" ' user space part of uio_pruss
 
 
-/'! \brief load firmware to PRU
+/'* \brief load firmware to PRU
 \param IRam The IRam ID for the PRU to use
 \returns Zero on success, otherwise -1
 
@@ -48,7 +48,7 @@ from source code (named pruss_toggle.p)
       HALT
       JMP start
 
-\since 0.6
+\since 0.6.2
 '/
 FUNCTION load_firmware(BYVAL IRam AS UInt32) AS Int32
   DIM AS CONST UInt32 PRUcode(...) =  { _
@@ -66,18 +66,23 @@ FUNCTION load_firmware(BYVAL IRam AS UInt32) AS Int32
   , &h2A000000 _
   , &h21000400 }
   VAR l = (UBOUND(PRUcode) + 1) * SIZEOF(PRUcode)
-  IF 0 >= prussdrv_pru_write_memory(IRam, 0, @PRUcode(0), l) THEN _
-                              ?"failed loading instructions" : RETURN -1
-  RETURN 0
+  RETURN 0 >= prussdrv_pru_write_memory(IRam, 0, @PRUcode(0), l)
+  'IF 0 >= prussdrv_pru_write_memory(IRam, 0, @PRUcode(0), l) THEN _
+                              '?"failed loading instructions" : RETURN -1
+  'RETURN 0
 END FUNCTION
 
 
 ' our configuration is for PUR-0, so PRU-1 for libpruio
-VAR io = NEW PruIo(PRUIO_ACT_PRU1 OR PRUIO_ACT_PWM0) ' create new driver structure
+VAR io = NEW PruIo(PRUIO_ACT_PRU1 OR PRUIO_ACT_PWM0) '*< create new driver structure
 DO
-  DIM AS UInt32 pru_num, pru_iram, pru_dram, pru_intr
+  DIM AS UInt32 _
+      pru_num _  '*< which pru to use
+    , pru_iram _ '*< ID of its instruction ram
+    , pru_dram _ '*< ID of its data ram
+    , pru_intr   '*< ID of its interrupt
 '
-' Check libpruio init success
+' Check init success
 '
   IF io->Errr THEN _
                   ?"initialisation failed (" & *io->Errr & ")" : EXIT DO
@@ -91,7 +96,7 @@ DO
     pru_num = 1
     pru_iram = PRUSS0_PRU1_IRAM
     pru_dram = PRUSS0_PRU1_DRAM
-    pru_intr = PRU1_ARM_INTERRUPT
+    pru_intr = PRU0_ARM_INTERRUPT ' libpruio uses PRU1_ARM_INTERRUPT!
   END IF
 '
 ' Now prepare the other PRU
@@ -100,7 +105,8 @@ DO
                                        ?"prussdrv_open failed" : EXIT DO
   ' Note: no prussdrv_pruintc_init(), libpruio did it already
 
-  IF load_firmware(pru_iram) < 0                            THEN EXIT DO
+  IF load_firmware(pru_iram) < 0 THEN _
+                          ?"failed loading PRUSS instructions" : EXIT DO
 '
 ' Pinmuxing
 '
@@ -129,13 +135,13 @@ DO
   IF io->config(1, 0, 0, 0) THEN _
                           ?"config failed (" & *io->Errr & ")" : EXIT DO
   DIM AS float_t _
-    f _ ' the measured frequency.
-  , d '   the measured duty cycle.
+    f _ '*< the measured frequency
+  , d   '*< the measured duty cycle
 '
 ' Pass parameters to PRU
 '
-  DIM AS UInt32 PTR dram
-  prussdrv_map_prumem(pru_dram, CAST(ANY PTR, @dram)) ' get dran pointer
+  DIM AS UInt32 PTR dram '*< a pointer to PRU data ram
+  prussdrv_map_prumem(pru_dram, CAST(ANY PTR, @dram)) ' get dram pointer
   dram[0] = 15 ' bit number, must match configured pin (P8_11)
   dram[1] = 16 ' loop count (max 16 bit = 65535)
   dram[2] = pru_intr + 16 ' the interrupt we're waiting for

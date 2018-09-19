@@ -127,21 +127,21 @@ TYPE AS ANY PTR addr_t
 '* The character adress type
 TYPE AS UInt8 PTR caddr_t
 
-'* \brief Declaration for C runtime function mmap().
+'* \brief Internal: declaration for C runtime function mmap().
 DECLARE FUNCTION mmap CDECL ALIAS "mmap"(BYVAL AS addr_t, BYVAL AS size_t, BYVAL AS Int32, BYVAL AS Int32, BYVAL AS Int32, BYVAL AS off_t) AS caddr_t
-'* \brief Declaration for C runtime function memcpy().
+'* \brief Internal: declaration for C runtime function memcpy().
 DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS size_t) AS ANY PTR
-'* \brief Declaration for C runtime function munmap().
+'* \brief Internal: declaration for C runtime function munmap().
 DECLARE FUNCTION munmap CDECL ALIAS "munmap"(BYVAL AS ANY PTR, BYVAL AS size_t) AS Int32
-'* \brief Declaration for C runtime function open().
+'* \brief Internal: declaration for C runtime function open().
 DECLARE FUNCTION open_ CDECL ALIAS "open"(BYVAL AS CONST ZSTRING PTR, BYVAL AS Int32, ...) AS Int32
-'* \brief Declaration for C runtime function read().
+'* \brief Internal: declaration for C runtime function read().
 DECLARE FUNCTION read_ CDECL ALIAS "read"(BYVAL AS Int32, BYVAL AS ANY PTR, BYVAL AS size_t) AS ssize_t
-'* \brief Declaration for C runtime function close().
+'* \brief Internal: declaration for C runtime function close().
 DECLARE FUNCTION close_ CDECL ALIAS "close"(BYVAL AS Int32) AS Int32
 
 
-/'* \brief Set CMR register.
+/'* \brief Internal: set CMR register.
 \param Intc The interrupt controller number.
 \param Event The event number.
 \param Ch The channel to set
@@ -156,7 +156,7 @@ SUB __prussintc_set_cmr CDECL(BYVAL Intc AS UInt32 PTR, BYVAL Event AS UInt16, B
 END SUB
 
 
-/'* \brief Set HMR register.
+/'* \brief Internal: set HMR register.
 \param Intc The interrupt controller number.
 \param Ch The channel to set
 \param Host The host number.
@@ -172,7 +172,7 @@ SUB __prussintc_set_hmr CDECL(BYVAL Intc AS UInt32 PTR, BYVAL Ch AS UInt16, BYVA
 END SUB
 
 
-/'* \brief Initialize memory pointers.
+/'* \brief Internal: initialize memory pointers.
 \returns 0 (zero) on success, otherwise a negative error number.
 
 This internal function reads the files from `uio_pruss` kernel driver
@@ -237,7 +237,7 @@ negative error number gets returned.
 
 At least one call to that function is mandatory, since it initializes
 the memory. Call it again for each interrupt you need. A single call to
-prussdrv_exit() closes all open files.
+prussdrv_exIt() closes all open files.
 
 \since 0.6
 '/
@@ -476,7 +476,7 @@ for details.
 
 \since 0.6
 '/
-FUNCTION prussdrv_extmem_size CDECL ALIAS "prussdrv_extmem_size"() AS UInt32 EXPORT
+FUNCTION prussdrv_extmem_sIze CDECL ALIAS "prussdrv_extmem_size"() AS UInt32 EXPORT
   RETURN PRUSSDRV.extram_map_size
 END FUNCTION ' -> property
 
@@ -535,7 +535,7 @@ The procedure unmaps the memory and closes the interrupt file.
 
 \since 0.6
 '/
-SUB prussdrv_exit CDECL ALIAS "prussdrv_exit"() EXPORT
+SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"() EXPORT
   WITH PRUSSDRV
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)

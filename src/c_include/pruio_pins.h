@@ -1,4 +1,4 @@
-/** \file pruio_pins.h
+/* * \ file pruio_pins.h
 \brief Pre-defined macros to handle the beagle bone header pins.
 
 This file contains macros and arrays to easy handle the header pins and
@@ -11,10 +11,13 @@ beaglebone black hardware. These contain all pins that belong to a
 device like the EMMC2 or HDMI and can be used ie. to lock or unlock
 these pins as one group.
 
+See src/pruio/pruio_pins.bi for details.
+
 Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
 
 Copyright 2014-\Year by \Email
 
+\since 0.0.0
 */
 
 #define P8_03  6  // emmc2

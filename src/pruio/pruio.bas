@@ -79,6 +79,12 @@ before it can get disabled), and free pinmuxing is disabled.
 The first bit desides which PRU to use. By default PRU-1 is used, so
 that PRU-0 is free for other software.
 
+\note libpruio always uses ARM_PRU1_INTERRUPT on channel PRU_EVTOUT_5
+      to trigger a measurement in RB or MM mode, even if it's running
+      on PRU-0. So when you execute further software on the other PRU,
+      you should use ARM_PRU0_INTERRUPT on any other channel (ie.
+      PRU_EVTOUT_0) to notify this code, and test for R31.t30.
+
 The other parameters `Av`, `OpD` and `SaD` are used to create a default
 step configuration for analog input. They get passed to function
 AdcUdt::initialize() to generate default step configuration data for
@@ -157,7 +163,7 @@ CONSTRUCTOR PruIo( _
 
   prussdrv_map_prumem(PruDRam, CAST(ANY PTR, @DRam))
   prussdrv_map_extmem(@ERam)
-  ESize = prussdrv_extmem_size()
+  ESize = prussdrv_extmem_sIze()
   EAddr = prussdrv_get_phys_addr(ERam)
 
   prussdrv_pru_disable(PruNo) '          disable PRU (if running before)

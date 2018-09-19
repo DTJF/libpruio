@@ -25,6 +25,11 @@ If you don't like to compile source code on your box, you can also
 install the `libpruio-bin` package (see section \ref SecDebPac) and run
 pre-compiled binaries instead.
 
+\note In the descript the programm start is described using `sudo` in
+      case of pinmuxing requirements. You can omit `sudo` when you use
+      the LKM pinmuxing as a member of group `pruio`, see section \ref
+      SecPinmuxing for details.
+
 Here's an overview of all shipped examples
 
 |                Name     | Output | Pinmux | Wiring | Mode | Description          | src/examples     | src/c_examples | src/python     | libpruio-bin       |
@@ -36,7 +41,7 @@ Here's an overview of all shipped examples
 | \ref sSecExaIoInput     |  Text  |   No   |   No   |  IO  | GPIO/ADC input       | io_input.bas     | io_input.c     | io_input.py    | pruio_io_input     |
 | \ref sSecExaPerformance |  Text  |   Yes  |   Yes  |  IO  | Pin toggling tests   | performance.bas  | performance.c  | performance.py | pruio_performance  |
 | \ref sSecExaPwmCap      |  Text  |   Yes  |   Yes  |  IO  | CAP/PWM input/output | pwm_cap.bas      | pwm_cap.c      | pwm_cap.py     | pruio_pwm_cap      |
-| \ref sSecExaPruAdd      |  Text  |   No   |   No   |  IO  | PRUSS firmware       | pruss_add.bas    | pruss_add.c    |                | pruio_pruss_add    |
+| \ref sSecExaPruAdd      |  Text  |   No   |   No   |  --  | PRUSS firmware       | pruss_add.bas    | pruss_add.c    |                | pruio_pruss_add    |
 | \ref sSecExaPruToggle   |  Text  |   Yes  |   Yes  |  IO  | GPIO->CAP with PRUSS | pruss_toggle.bas | pruss_toggle.c |                | pruio_pruss_toggle |
 | \ref sSecExaQep         |  Text  |   Yes  |   Yes  |  IO  | QEP input            | qep.bas          | qep.c          | qep.py         | pruio_qep          |
 | \ref sSecExaRbFile      |  Text  |   No   |   No   |  RB  | Fast ADC file output | rb_file.bas      | rb_file.c      | rb_file.py     | pruio_rb_file      |
@@ -479,11 +484,23 @@ Closed loop, Adc->Value to function Gpio->Value:
 
 \Item{Description}
 
-  This examples demonstrates how to load and run firmware on a PRU. The firmware FIXME.
+  This examples demonstrates how to load and run firmware on a PRU by
+  \Proj functions. The firmware multiplies two numbers and adds the
+  result to a start value. The code demonstrates how to
+
+  - prepare the other PRU (not running libpruio firmware)
+  - load firmware in to the instruction ram
+  - pass parameters to PRU firmware
+  - start execution of firmware
+  - get finished notification
+  - read return value from PRU
+
+  The \Proj PRUSS mainloop is not running (no call to PruIo::config()
+  ), just the other PRUSS executes the loaded firmware.
 
 \Item{Preparation}
 
-  No pinmuxing is required for this example.
+  No pinmuxing nor wiring is required for this example.
 
 \Item{Operation}
 
@@ -506,7 +523,18 @@ Test OK 492 = 23 + (7 * 67)
 
 \Item{Description}
 
-  This examples demonstrates how to FIXME.
+  This examples demonstrates how to load and run firmware on a PRU by
+  \Proj functions. The firmware toggles a GPIO output pin at high speed
+  and the \Proj CAP feature is used to measure the pulse train
+  frequency. The code demonstrates how to
+
+  - prepare the other PRU (not running libpruio firmware)
+  - load firmware in to the instruction ram
+  - pass parameters to PRU firmware
+  - start execution of firmware
+  - get finished notification
+  - re-start execution of firmware
+  - measure the output by \Proj CAP feature
 
 \Item{Preparation}
 
@@ -545,7 +573,17 @@ instructions loaded, starting PRU-0
 --> Frequency: 20 MHz, Duty:40 %
 --> Frequency: 20 MHz, Duty:40 %
 ~~~
-  FIXME
+
+  The CAP counter works at 100 MHz, so 50 MHz is the maximum frequency.
+  In contrast the PRUSS are clocked at 200 MHz and toggle at that
+  speed, so a pulse train of 100 MHz is maximum - twice the maximum CAP
+  frequency. Therefor the firmware toggling loop contains some NOOP
+  instructions, in order to reduce the pulse train frequency. One
+  toggle and four NOOP instructions are used, so toggling frequency is
+  40 MHz = 200 MHz / (1 + 4), which results in a pulse train of 20 MHz.
+  The CAP counter runs up to 5 each time (20 MHz = 100 MHz / 5), and
+  the intermediate pin toggling happens at counter values of 2 or 3,
+  leading in random duty values of either 40 % or 60 %.
 
 \Item{Source Code}
 

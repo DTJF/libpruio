@@ -71,10 +71,10 @@ DECLARE SUB prussdrv_pru_send_event CDECL ALIAS "prussdrv_pru_send_event"(BYVAL 
 DECLARE FUNCTION prussdrv_pru_wait_event CDECL ALIAS "prussdrv_pru_wait_event"(BYVAL AS UInt32) AS UInt32
 DECLARE SUB prussdrv_pru_clear_event CDECL ALIAS "prussdrv_pru_clear_event"(BYVAL AS UInt32, BYVAL AS UInt32)
 DECLARE SUB prussdrv_map_extmem CDECL ALIAS "prussdrv_map_extmem"(BYVAL AS ANY PTR PTR)
-DECLARE FUNCTION prussdrv_extmem_size CDECL ALIAS "prussdrv_extmem_size"() AS UInt32
+DECLARE FUNCTION prussdrv_extmem_sIze CDECL ALIAS "prussdrv_extmem_size"() AS UInt32
 DECLARE FUNCTION prussdrv_map_prumem CDECL ALIAS "prussdrv_map_prumem"(BYVAL AS UInt32, BYVAL AS ANY PTR PTR) AS Int32
 DECLARE FUNCTION prussdrv_get_phys_addr CDECL ALIAS "prussdrv_get_phys_addr"(BYVAL AS CONST ANY PTR) AS UInt32
-DECLARE SUB prussdrv_exit CDECL ALIAS "prussdrv_exit"()
+DECLARE SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"()
 
 DECLARE FUNCTION setPin_save CDECL( _
     BYVAL AS Pruio_ PTR _

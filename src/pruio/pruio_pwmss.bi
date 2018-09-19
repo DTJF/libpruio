@@ -92,7 +92,7 @@ TYPE PwmssSet
     QEP_REV     '*< Revision ID (see \ArmRef{15.4.3.25} ).
 
   AS UInt16 _  '' ePWM registers (&h200)
-_ '*< Time-Base Submodule Registers (see \ArmRef{15.2.4.1} ).
+_ '' Time-Base Submodule Registers (see \ArmRef{15.2.4.1} ).
     TBCTL _     '*< Time-Base Control Register
   , TBSTS _     '*< Time-Base Status Register
   , TBPHSHR _   '*< Extension for HRPWM Phase Register

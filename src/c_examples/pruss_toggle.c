@@ -5,13 +5,13 @@ This file contains an example for parallel usage of the other PRUSS.
 The firmware toggles a GPIO pin at reduced speed. (Maximum is 100 MHz
 pulse train, we add 4 NOOPs to reduce it to 20 MHz for better
 measurments.) Find a functional description in section \ref
-sSecExaPrussToggle.
+sSecExaPruToggle.
 
 Licence: GPLv3, Copyright 2018-\Year by \Mail
 
 Compile by: `gcc -Wall -o pruss_toggle pruss_toggle.c -lpruio`
 
-\since 0.6
+\since 0.6.2
 */
 
 #include "stdio.h"
@@ -50,7 +50,7 @@ from source code (named pruss_toggle.p)
       HALT
       JMP start
 
-\since 0.6
+\since 0.6.2
 */
 int32 load_firmware(uint32 IRam)
 {
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 // Pass parameters to PRU
 //
     uint32 *dram;
-    prussdrv_map_prumem(pru_dram, (void *) &dram); // get dran pointer
+    prussdrv_map_prumem(pru_dram, (void *) &dram); // get dram pointer
     dram[0] = 15; // bit number, must match configured pin (P8_11)
     dram[1] = 16; // loop count (max 16 bit = 65535)
     dram[2] = pru_intr + 16; // the interrupt we're waiting for

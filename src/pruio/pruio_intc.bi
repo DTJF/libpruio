@@ -16,9 +16,9 @@ interrupt controller setting.
 #DEFINE PRU0_ARM_INTERRUPT 19
 '* System event PRU-1 -> ARM
 #DEFINE PRU1_ARM_INTERRUPT 20
-'* System event ARM -> PRU-0
+'* System event ARM -> PRU  (R31.t30)
 #DEFINE ARM_PRU0_INTERRUPT 21
-'* System event ARM -> PRU-1
+'* System event ARM -> PRU  (R31.t31)
 #DEFINE ARM_PRU1_INTERRUPT 22
 
 '* ID for channel 0
@@ -107,11 +107,11 @@ interrupt controller setting.
 
 '* Number of PRU host interrupts
 #DEFINE NUM_PRU_HOSTIRQS 8
-'* Number of hosts
+'* Number of hosts mapping channels
 #DEFINE NUM_PRU_HOSTS 10
-'* Number of interrupt channels
+'* Number of PRU interrupt channels
 #DEFINE NUM_PRU_CHANNELS 10
-'* number of system events
+'* Number of PRU system events
 #DEFINE NUM_PRU_SYS_EVTS 64
 '* ID for PRU-0 data ram
 #DEFINE PRUSS0_PRU0_DRAM 0
@@ -160,28 +160,30 @@ specified interrupt channel.
 
 \since 0.6
 '/
-TYPE __sysevt_to_channel_map
-  AS SHORT _
+TYPE __Sysevt_to_Channel_map
+  AS Int16 _
      sysevt _ '*< The number of the system event
   , channel   '*< The mapped channel number
 END TYPE
 
 '* Forward declaration for event -> channel mapping type
-TYPE tsysevt_to_channel_map AS __sysevt_to_channel_map
+TYPE tsysevt_to_channel_map AS __Sysevt_to_Channel_map
 
-/'* \brief Mapping from interrupt channel to host ???
+/'* \brief Mapping from interrupt channel to host event
 
-The stucture contains a single mapping from an interrupt channel to ???.
+The stucture contains a single mapping from an interrupt channel to an
+host event.
 
 \since 0.6
 '/
-TYPE __channel_to_host_map
-  AS SHORT channel '*< The channel number
-  AS SHORT host    '*< The host interrupt
+TYPE __Channel_to_Host_map
+  AS Int16 _
+    channel _ '*< The channel number
+     , host   '*< The host interrupt
 END TYPE
 
 '* Forward declaration for mapping type
-TYPE tchannel_to_host_map AS __channel_to_host_map
+TYPE tchannel_to_host_map AS __Channel_to_Host_map
 
 /'* \brief Init data structure for the interrupt controller setting
 
@@ -190,13 +192,13 @@ in the first call to prussdrv_open().
 
 \since 0.6
 '/
-TYPE __pruss_intc_initdata
-  AS BYTE sysevts_enabled(NUM_PRU_SYS_EVTS-1) '*< The list of enabled system events.
+TYPE __Pruss_intc_Initdata
+  AS Int8 sysevts_enabled(NUM_PRU_SYS_EVTS-1) '*< The list of enabled system events.
   AS tsysevt_to_channel_map sysevt_to_channel_map(NUM_PRU_SYS_EVTS-1) '*< Mappings event -> interrupt channel.
   AS   tchannel_to_host_map channel_to_host_map(NUM_PRU_CHANNELS-1) '*< Mappings interrupt channel -> host ???.
-  AS UINTEGER host_enable_bitmask '*< The mask of enabled host interrupts.
+  AS UInt32 host_enable_bitmask '*< The mask of enabled host interrupts.
 END TYPE
 
 '* Forward declaration for interrupt controler data type
-TYPE tpruss_intc_initdata AS __pruss_intc_initdata
+TYPE tpruss_intc_initdata AS __Pruss_intc_Initdata
 

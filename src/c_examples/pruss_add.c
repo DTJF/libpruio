@@ -3,13 +3,13 @@
 
 This file contains an short and simple example for parallel usage of
 the other PRUSS. Find a functional description in section \ref
-sSecExaPrussAdd.
+sSecExaPruAdd.
 
 Licence: GPLv3, Copyright 2018-\Year by \Mail
 
 Compile by: `gcc -Wall -o pruss_add pruss_add.c -lpruio`
 
-\since 0.6
+\since 0.6.2
 */
 
 
@@ -44,7 +44,7 @@ from source code (named pruss_add.p)
       HALT
       JMP start
 
-\since 0.6
+\since 0.6.2
 */
 int32 load_firmware(uint32 IRam)
 {
