@@ -777,7 +777,7 @@ FUNCTION CapMod.Value CDECL( _
   WITH *Top->PwmSS->Raw(m)
     IF .CMax THEN
       IF Hz THEN *Hz = IIF(.C2, PWMSS_CLK / .C2, 0.)
-      IF Du THEN *Du = IIF(.C2, (.C2 - .C1) / .C2, 0.)
+      IF Du THEN *Du = IIF(.C2, (.C2 - .C1 - 1) / .C2, 0.)
                                                                 RETURN 0
     END IF
     IF Hz THEN *Hz = 0

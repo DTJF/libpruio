@@ -548,7 +548,8 @@ typedef struct pruIo{
     DSize,         //!< The size of a data block (DInit or DConf).
     PruNo,         //!< The PRU number to use (defaults to 1).
     PruIRam,       //!< The PRU instruction ram to load.
-    PruDRam;       //!< The PRU data ram.
+    PruDRam,       //!< The PRU data ram.
+    PruIntNo;      //!< The PRU interrupt number.
   int16
     ParOffs,       //!< The offset for the parameters of a module.
     DevAct;        //!< Active subsystems.

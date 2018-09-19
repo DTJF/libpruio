@@ -8,6 +8,8 @@ SET(FB_EXAMPLES
   "performance"
   "pwm_adc"
   "pwm_cap"
+  "pruss_add"
+  "pruss_toggle"
   "qep"
   "rb_file"
   "rb_oszi"

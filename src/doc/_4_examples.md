@@ -27,23 +27,25 @@ pre-compiled binaries instead.
 
 Here's an overview of all shipped examples
 
-|                Name     | Output | Pinmux | Wiring | Description          | src/examples    | src/c_examples | src/python     | libpruio-bin      |
-| ----------------------: | :----: | :----: | :----: | :------------------- | :-------------- | :------------- | :------------- | :---------------- |
-| \ref sSecExaSimple      |  Text  |   No   |   No   | Simple ADC input     | 1.bas           | 1.c            | 1.py           | pruio_1           |
-| \ref sSecExaAnalyse     |  Text  |   No   |   No   | Output system config | analyse.bas     |                |                | pruio_analyse     |
-| \ref sSecExaButton      |  Text  |   No   |   Yes  | Simple Button        | button.bas      | button.c       | button.py      | pruio_button      |
-| \ref sSecExaButton      |  Text  |   Yes  |   Yes  | Simple Button invers | button2.bas     | button2.c      | button2.py     | pruio_button2     |
-| \ref sSecExaIoInput     |  Text  |   No   |   No   | GPIO/ADC input       | io_input.bas    | io_input.c     | io_input.py    | pruio_io_input    |
-| \ref sSecExaPerformance |  Text  |   Yes  |   Yes  | Pin toggling tests   | performance.bas | performance.c  | performance.py | pruio_performance |
-| \ref sSecExaPwmCap      |  Text  |   Yes  |   Yes  | CAP/PWM input/output | pwm_cap.bas     | pwm_cap.c      | pwm_cap.py     | pruio_pwm_cap     |
-| \ref sSecExaQep         |  Text  |   Yes  |   Yes  | QEP input            | qep.bas         | qep.c          | qep.py         | pruio_qep         |
-| \ref sSecExaRbFile      |  Text  |   No   |   No   | Fast ADC file output | rb_file.bas     | rb_file.c      | rb_file.py     | pruio_rb_file     |
-| \ref sSecExaSos         |  Text  |   No   |   No   | User LED access      | sos.bas         | sos.c          | sos.py         | pruio_sos         |
-| \ref sSecExaStepper     |  Text  |   Yes  |   Yes  | Uni-P stepper motor  | stepper.bas     | stepper.c      | stepper.py     | pruio_stepper     |
-| \ref sSecExaPwmAdc      | Grafic |   Yes  |   Yes  | Compare PWM outputs  | pwm_adc.bas     |                |                | pruio_pwm_adc     |
-| \ref sSecExaOszi        | Grafic |   No   |   No   | IO ADC input grafic  | oszi.bas        |                |                | pruio_oszi        |
-| \ref sSecExaRbOszi      | Grafic |   No   |   No   | RB ADC input grafic  | rb_oszi.bas     |                |                | pruio_rb_oszi     |
-| \ref sSecExaTriggers    | Grafic |   No   |   Yes  | RB ADC input grafic  | triggers.bas    |                |                | pruio_triggers    |
+|                Name     | Output | Pinmux | Wiring | Description          | src/examples     | src/c_examples | src/python     | libpruio-bin       |
+| ----------------------: | :----: | :----: | :----: | :------------------- | :--------------- | :------------- | :------------- | :----------------- |
+| \ref sSecExaSimple      |  Text  |   No   |   No   | Simple ADC input     | 1.bas            | 1.c            | 1.py           | pruio_1            |
+| \ref sSecExaAnalyse     |  Text  |   No   |   No   | Output system config | analyse.bas      |                |                | pruio_analyse      |
+| \ref sSecExaButton      |  Text  |   No   |   Yes  | Simple Button        | button.bas       | button.c       | button.py      | pruio_button       |
+| \ref sSecExaButton      |  Text  |   Yes  |   Yes  | Simple Button invers | button2.bas      | button2.c      | button2.py     | pruio_button2      |
+| \ref sSecExaIoInput     |  Text  |   No   |   No   | GPIO/ADC input       | io_input.bas     | io_input.c     | io_input.py    | pruio_io_input     |
+| \ref sSecExaPerformance |  Text  |   Yes  |   Yes  | Pin toggling tests   | performance.bas  | performance.c  | performance.py | pruio_performance  |
+| \ref sSecExaPwmCap      |  Text  |   Yes  |   Yes  | CAP/PWM input/output | pwm_cap.bas      | pwm_cap.c      | pwm_cap.py     | pruio_pwm_cap      |
+| \ref sSecExaPruAdd      |  Text  |   No   |   No   | PRUSS firmware       | pruss_add.bas    | pruss_add.c    |                | pruio_pruss_add    |
+| \ref sSecExaPruToggle   |  Text  |   Yes  |   Yes  | GPIO->CAP with PRUSS | pruss_toggle.bas | pruss_toggle.c |                | pruio_pruss_toggle |
+| \ref sSecExaQep         |  Text  |   Yes  |   Yes  | QEP input            | qep.bas          | qep.c          | qep.py         | pruio_qep          |
+| \ref sSecExaRbFile      |  Text  |   No   |   No   | Fast ADC file output | rb_file.bas      | rb_file.c      | rb_file.py     | pruio_rb_file      |
+| \ref sSecExaSos         |  Text  |   No   |   No   | User LED access      | sos.bas          | sos.c          | sos.py         | pruio_sos          |
+| \ref sSecExaStepper     |  Text  |   Yes  |   Yes  | Uni-P stepper motor  | stepper.bas      | stepper.c      | stepper.py     | pruio_stepper      |
+| \ref sSecExaPwmAdc      | Grafic |   Yes  |   Yes  | Compare PWM outputs  | pwm_adc.bas      |                |                | pruio_pwm_adc      |
+| \ref sSecExaOszi        | Grafic |   No   |   No   | IO ADC input grafic  | oszi.bas         |                |                | pruio_oszi         |
+| \ref sSecExaRbOszi      | Grafic |   No   |   No   | RB ADC input grafic  | rb_oszi.bas      |                |                | pruio_rb_oszi      |
+| \ref sSecExaTriggers    | Grafic |   No   |   Yes  | RB ADC input grafic  | triggers.bas     |                |                | pruio_triggers     |
 
 
 # Text # {#SecExaText}
@@ -471,6 +473,87 @@ Closed loop, Adc->Value to function Gpio->Value:
   src/c_examples/pwm_cap.c
 
   src/python/pwm_cap.py
+
+
+## pruss_add ## {#sSecExaPruAdd}
+
+\Item{Description}
+
+  This examples demonstrates how to load and run firmware on a PRU. The firmware FIXME.
+
+\Item{Preparation}
+
+  No pinmuxing is required for this example.
+
+\Item{Operation}
+
+  Start the program by `./pruss_add` and you should see console output like
+~~~{.txt}
+instructions loaded, starting PRU-0
+Test OK 492 = 23 + (7 * 67)
+~~~
+
+\Item{Source Code}
+
+  src/examples/pruss_add.bas
+
+  src/c_examples/pruss_add.c
+
+  No Python source yet
+
+
+## pruss_toggle ## {#sSecExaPruToggle}
+
+\Item{Description}
+
+  This examples demonstrates how to FIXME.
+
+\Item{Preparation}
+
+  Pinmuxing is required for this example, since the output from the
+  PRU-GPIO should get measured by the CAP input. Therefor use a simple
+  wire  to connect pin P8_11 (GPIO output) to P9_42 (CAP input).
+
+  Here's the wiring diagram
+
+  ![Wiring diagram for pruss_toggle example](pruss_toggle_circuit.png)
+
+\Item{Operation}
+
+  Start the program by `sudo ./pruss_toggle` and you should see console output like
+~~~{.txt}
+instructions loaded, starting PRU-0
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:60 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+--> Frequency: 20 MHz, Duty:40 %
+~~~
+  FIXME
+
+\Item{Source Code}
+
+  src/examples/pruss_toggle.bas
+
+  src/c_examples/pruss_toggle.c
+
+  No Python source yet
 
 
 ## qep ## {#sSecExaQep}

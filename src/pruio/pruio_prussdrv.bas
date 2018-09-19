@@ -243,6 +243,7 @@ prussdrv_exit() closes all open files.
 '/
 FUNCTION prussdrv_open CDECL ALIAS "prussdrv_open"(BYVAL Irq AS UInt32) AS Int32 EXPORT
   WITH PRUSSDRV                                 : IF .fd(Irq) THEN RETURN -1 ' already open
+    ' ToDo: find correct /dev/uioX in case of multiple uio drivers
     VAR nam = "/dev/uio" & HEX(Irq, 1)
     .fd(Irq) = open_(nam, O_RDWR OR O_SYNC) : IF .fd(Irq) < 0 THEN RETURN -2 ' open failed
     RETURN IIF(.mmap_fd, 0, __prussdrv_memmap_init(.fd(Irq)))

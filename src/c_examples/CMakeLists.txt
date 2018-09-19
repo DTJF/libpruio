@@ -5,6 +5,8 @@ SET(c_tar
   "io_input"
   "performance"
   "pwm_cap"
+  "pruss_add"
+  "pruss_toggle"
   "qep"
   "rb_file"
   "sos"

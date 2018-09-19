@@ -135,7 +135,8 @@ TYPE PruIo
   , DSize     _ '*< The size of a data block (DInit or DConf).
   , PruNo     _ '*< The PRU number to use (defaults to 1).
   , PruIRam   _ '*< The PRU instruction ram to load.
-  , PruDRam     '*< The PRU data ram.
+  , PruDRam   _ '*< The PRU data ram.
+  , PruIntNo    '*< The PRU interrupt number.
   AS Int16 _
     ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.

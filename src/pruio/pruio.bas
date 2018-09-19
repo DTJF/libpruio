@@ -79,12 +79,6 @@ before it can get disabled), and free pinmuxing is disabled.
 The first bit desides which PRU to use. By default PRU-1 is used, so
 that PRU-0 is free for other software.
 
-\note libpruio always uses ARM_PRU1_INTERRUPT on channel PRU_EVTOUT_1
-      to trigger a measurement in RB or MM mode, even if it's running
-      on PRU-0. So when you execute further software on PRU-1, you
-      should use ARM_PRU0_INTERRUPT on channel PRU_EVTOUT_1 to notify
-      this code, and test for R31.t30.
-
 The other parameters `Av`, `OpD` and `SaD` are used to create a default
 step configuration for analog input. They get passed to function
 AdcUdt::initialize() to generate default step configuration data for
@@ -124,7 +118,7 @@ CONSTRUCTOR PruIo( _
                       Errr = @"cannot open /dev/uio5" : EXIT CONSTRUCTOR
   CLOSE #fnr
 
-  STATIC AS STRING mux
+  STATIC AS STRING mux '                    check for pinmuxing features
   IF 0 = OPEN("/sys/devices/platform/libpruio/state" FOR OUTPUT AS fnr) THEN
     IF Act AND PRUIO_ACT_FREMUX THEN
       setPin = @setPin_lkm
@@ -134,7 +128,7 @@ CONSTRUCTOR PruIo( _
       IF Errr THEN CLOSE #fnr : setPin = @setPin_nogo : fnr = 0
     END IF : MuxFnr = fnr
   END IF
-  IF 0 = MuxFnr THEN
+  IF 0 = MuxFnr THEN '       no LKM, test old style device tree overlays
     VAR p = "/sys/devices/" _
       , n = DIR(p & "ocp.*", fbDirectory)
     IF LEN(n) THEN ' old kernel 3.x
@@ -148,13 +142,15 @@ CONSTRUCTOR PruIo( _
   END IF
 
   IF Act AND PRUIO_ACT_PRU1 THEN
-    PruIRam = PRUSS0_PRU1_IRAM
-    PruDRam = PRUSS0_PRU1_DRAM
-    PruNo = 1
+    PruIntNo = ARM_PRU1_INTERRUPT
+     PruIRam = PRUSS0_PRU1_IRAM
+     PruDRam = PRUSS0_PRU1_DRAM
+       PruNo = PRU1
   ELSE
-    PruIRam = PRUSS0_PRU0_IRAM
-    PruDRam = PRUSS0_PRU0_DRAM
-    PruNo = 0
+    PruIntNo = ARM_PRU0_INTERRUPT
+     PruIRam = PRUSS0_PRU0_IRAM
+     PruDRam = PRUSS0_PRU0_DRAM
+       PruNo = PRU0
   END IF
   IF prussdrv_open(PRUIO_EVNT) THEN _  '              open PRU Interrupt
             Errr = @"failed opening prussdrv library" : EXIT CONSTRUCTOR
@@ -431,7 +427,7 @@ FUNCTION PruIo.config CDECL( _
   IF Samp < 2 THEN RETURN 0
 
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT)
-  prussdrv_pru_send_event(ARM_PRU1_INTERRUPT) '    prepare fast MM start
+  prussdrv_pru_send_event(PruIntNo) '              prepare fast MM start
                                                                   RETURN 0
 END FUNCTION
 
@@ -621,7 +617,7 @@ FUNCTION PruIo.rb_start CDECL() AS ZSTRING PTR
   DRam[3] = 0
   DRam[4] = 1 SHL 4
 
-  prussdrv_pru_clear_event(PRU_EVTOUT_1, ARM_PRU1_INTERRUPT) ' off we go
+  prussdrv_pru_clear_event(PRU_EVTOUT_1, PruIntNo) '           off we go
   RETURN 0
 END FUNCTION
 
@@ -723,10 +719,10 @@ FUNCTION PruIo.mm_start CDECL( _
   DRam[6] = Trg3
   DRam[7] = Trg4
 
-  prussdrv_pru_clear_event(PRU_EVTOUT_1, ARM_PRU1_INTERRUPT) ' off we go
+  prussdrv_pru_clear_event(PRU_EVTOUT_1, PruIntNo) '           off we go
 
   prussdrv_pru_wait_event(PRUIO_EVNT) '      wait for end of measurement
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT) '     clear interrupt
-  prussdrv_pru_send_event(ARM_PRU1_INTERRUPT) '       prepare next start
+  prussdrv_pru_send_event(PruIntNo) '                 prepare next start
   RETURN 0
 END FUNCTION

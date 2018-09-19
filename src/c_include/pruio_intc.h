@@ -60,11 +60,11 @@ interrupt controller setting.
 #define NUM_PRU_CHANNELS 10
 #define NUM_PRU_SYS_EVTS 64
 
-#define PRUSS0_PRU0_DATARAM 0
-#define PRUSS0_PRU1_DATARAM 1
-#define PRUSS0_PRU0_IRAM    2
-#define PRUSS0_PRU1_IRAM    3
-#define PRUSS0_SRAM         4
+#define PRUSS0_PRU0_DRAM 0
+#define PRUSS0_PRU1_DRAM 1
+#define PRUSS0_PRU0_IRAM 2
+#define PRUSS0_PRU1_IRAM 3
+#define PRUSS0_SRAM      4
 //#define	PRUSS0_CFG     5
 //#define	PRUSS0_UART    6
 //#define	PRUSS0_IEP     7

@@ -10,6 +10,30 @@ Changelog & Credits {#ChaChangelog}
 Feel free to send further ideas to the author (\Email).
 
 
+# libpruio-0.6.2 # {#SecV-0-6-2}
+
+Released in 2018, Oktober.
+
+## New:
+
+- Overview table for examples requirements
+- Examples pruss_add and pruss_toggle (C and FreeBASIC)
+- Symbol export for prussdrv functions (use driver for second PRU)
+
+## Changes:
+
+- Correct ARM_PRUx_INTERRUPT usage (by new member PruIo::PruIntNo)
+
+## Bugfixes:
+
+- Optimized compile flags
+- Paths in _2_preparation.md fixed
+- Optimized CAP duty cycle computation
+- Congruent types in new prussdrv files
+- File src/python/libpruio/pruio.py removed from GIT
+- Correct handling for symbolic link (folder BBB in src/examples)
+
+
 # libpruio-0.6.0 # {#SecV-0-6-0}
 
 Released in 2018, September.
