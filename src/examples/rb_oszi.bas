@@ -68,7 +68,7 @@ DIM AS UInt32 _
   NEXT
 #ENDMACRO
 
-VAR io = NEW PruIo '*< Create a PruIo structure, wakeup subsystems.
+VAR io = NEW PruIo() '*< Create a PruIo structure, wakeup subsystems.
 
 WITH *io
   DO
@@ -79,21 +79,20 @@ WITH *io
     S_H -= 1
     VAR scale = S_H / 65520 '*< The scaling factor.
 
-    IF .config(samp, &b100100000, 4e5) THEN _ '      configure steps 5+8
+    IF .config(samp, &b100100000, 1e5) THEN _ '      configure steps 5+8
                                    ?"config failed: " & *.Errr : EXIT DO
 
-    VAR half = .Adc->Samples SHR 1 _ '*< The half size of the ring buffer.
-         , p = .Adc->Value           '*< A (local) pointer to the samples.
+    VAR half = .Adc->Samples SHR 1 _ '*<    half size of the ring buffer
+         , p = .Adc->Value           '*<    local pointer to the samples
     IF .rb_start() THEN _ '                       start ring buffer mode
                                  ?"rb_start failed: " & *.Errr : EXIT DO
-
     DO '                                  read ring buffer and draw graf
-      WHILE .DRam[0] < half : WEND
+      WHILE .DRam[0] < half : SLEEP 1 : WEND
       DRAW_GRAF()
       p += half
       SCREENSET 0, 1
 
-      WHILE .DRam[0] > half : WEND
+      WHILE .DRam[0] > half : SLEEP 1 : WEND
       DRAW_GRAF()
       p -= half
       SCREENSET 1, 0

@@ -147,7 +147,7 @@ CONSTRUCTOR PruIo( _
      PruDRam = PRUSS0_PRU1_DRAM
        PruNo = PRU1
   ELSE
-    PruIntNo = ARM_PRU0_INTERRUPT
+    PruIntNo = ARM_PRU1_INTERRUPT
      PruIRam = PRUSS0_PRU0_IRAM
      PruDRam = PRUSS0_PRU0_DRAM
        PruNo = PRU0
@@ -424,7 +424,7 @@ FUNCTION PruIo.config CDECL( _
   CASE ELSE : l = DRam[0] <> PRUIO_MSG_MM_WAIT
   END SELECT
   IF l THEN     Errr = @"failed executing Pru_Run instructions" : RETURN Errr
-  IF Samp < 2 THEN RETURN 0
+  IF Samp < 2                                                THEN RETURN 0
 
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT)
   prussdrv_pru_send_event(PruIntNo) '              prepare fast MM start
@@ -617,7 +617,7 @@ FUNCTION PruIo.rb_start CDECL() AS ZSTRING PTR
   DRam[3] = 0
   DRam[4] = 1 SHL 4
 
-  prussdrv_pru_clear_event(PRU_EVTOUT_1, PruIntNo) '           off we go
+  prussdrv_pru_clear_event(PRUIO_EVNT, PruIntNo) '             off we go
   RETURN 0
 END FUNCTION
 
@@ -719,7 +719,7 @@ FUNCTION PruIo.mm_start CDECL( _
   DRam[6] = Trg3
   DRam[7] = Trg4
 
-  prussdrv_pru_clear_event(PRU_EVTOUT_1, PruIntNo) '           off we go
+  prussdrv_pru_clear_event(PRUIO_EVNT, PruIntNo) '           off we go
 
   prussdrv_pru_wait_event(PRUIO_EVNT) '      wait for end of measurement
   prussdrv_pru_clear_event(PRUIO_EVNT, PRUIO_IRPT) '     clear interrupt
