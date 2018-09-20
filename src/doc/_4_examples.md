@@ -529,12 +529,13 @@ Test OK 492 = 23 + (7 * 67)
   frequency. The code demonstrates how to
 
   - prepare the other PRU (not running libpruio firmware)
+  - adapt PRU pinmuxing (GPIO output + further examples as comment)
   - load firmware in to the instruction ram
   - pass parameters to PRU firmware
   - start execution of firmware
   - get finished notification
   - re-start execution of firmware
-  - measure the output by \Proj CAP feature
+  - interact between \Proj and other firmware (CAP feature)
 
 \Item{Preparation}
 

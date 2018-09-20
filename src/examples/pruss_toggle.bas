@@ -67,9 +67,6 @@ FUNCTION load_firmware(BYVAL IRam AS UInt32) AS Int32
   , &h21000400 }
   VAR l = (UBOUND(PRUcode) + 1) * SIZEOF(PRUcode)
   RETURN 0 >= prussdrv_pru_write_memory(IRam, 0, @PRUcode(0), l)
-  'IF 0 >= prussdrv_pru_write_memory(IRam, 0, @PRUcode(0), l) THEN _
-                              '?"failed loading instructions" : RETURN -1
-  'RETURN 0
 END FUNCTION
 
 
@@ -167,3 +164,7 @@ DO
 LOOP UNTIL 1
 
 DELETE io ' destroy driver structure
+
+'' help Doxygen to document the main code
+'&/** The main function. */
+'&int main() {PruIo::PruIo(); PruIo::setPin(); PruIo::config(); CapMod::vonfig(); CapMod::Value(); PruIo::~PruIo();}

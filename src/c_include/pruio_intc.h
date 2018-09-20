@@ -9,6 +9,10 @@ Copyright 2018-\Year by \Email
 \since 0.6.0
 */
 
+#ifdef __cplusplus
+ extern "C" {
+#endif /* __cplusplus */
+
 #define PRU0_PRU1_INTERRUPT 17 //!< System event PRU-0 -> PRU-1
 #define PRU1_PRU0_INTERRUPT 18 //!< System event PRU-1 -> PRU-0
 #define PRU0_ARM_INTERRUPT  19 //!< System event PRU-0 -> ARM
@@ -82,13 +86,13 @@ Copyright 2018-\Year by \Email
 #define PRU_EVTOUT_7 7 //!< ID for host interrupt 7
 //! Mapping from system event to interrupt channel
 typedef struct __sysevt_to_channel_map {
-  int16 sysevt; //!< The number of the system event
+  int16 sysevt;  //!< The number of the system event
   int16 channel; //!< The mapped channel number
 } tsysevt_to_channel_map;
 //! Mapping from interrupt channel to host event
 typedef struct __channel_to_host_map {
   int16 channel; //!< The channel number
-  int16 host; //!< The host interrupt
+  int16 host;    //!< The host interrupt
 } tchannel_to_host_map;
 //! Init data structure for the interrupt controller setting
 typedef struct __pruss_intc_initdata {
@@ -97,3 +101,7 @@ typedef struct __pruss_intc_initdata {
   tchannel_to_host_map channel_to_host_map[NUM_PRU_CHANNELS]; //!< Mapping from interrupt channel to host
   uint32 host_enable_bitmask; //!< The mask of enabled host interrupts
 } tpruss_intc_initdata;
+
+#if defined (__cplusplus)
+}
+#endif
