@@ -167,4 +167,4 @@ DELETE io ' destroy driver structure
 
 '' help Doxygen to document the main code
 '&/** The main function. */
-'&int main() {PruIo::PruIo(); PruIo::setPin(); PruIo::config(); CapMod::vonfig(); CapMod::Value(); PruIo::~PruIo();}
+'&int main() {PruIo::PruIo(); PruIo::setPin(); PruIo::config(); CapMod::config(); CapMod::Value(); PruIo::~PruIo();}
