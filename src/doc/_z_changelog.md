@@ -10,6 +10,25 @@ Changelog & Credits {#ChaChangelog}
 Feel free to send further ideas to the author (\Email).
 
 
+# libpruio-0.6.4 # {#SecV-0-6-4}
+
+Released in 2018, Oktober.
+
+## New:
+
+- Pocket Beagle hardware supported
+- Header file src/pruio/pruio_pins_pocket.bi for Pocket Beagle hardware
+- Header file src/c_include/pruio_pins_pocket.h for Pocket Beagle hardware
+
+## Changes:
+
+- Double pin check moved from LKM to function setPin()
+
+## Bugfixes:
+
+- Python apt command in ChaPreparation
+
+
 # libpruio-0.6.2 # {#SecV-0-6-2}
 
 Released in 2018, Oktober.

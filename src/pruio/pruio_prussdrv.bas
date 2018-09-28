@@ -604,11 +604,18 @@ END FUNCTION
 \param Mo The new modus to set.
 \returns Zero on success (otherwise a string with an error message).
 
-Callback function for PruIo::setPin() interface to set a new pin
-(or CPU ball) configuration, using the new style LKM (loadable kernel
-module) method. It's used when the constructor PruIo::PruIo() finds the
-SysFs entry from the LKM, and has write access (needs administrator
-privileges = `sudo ...`).
+Callback function for PruIo::setPin() interface to set a new pin (or
+CPU ball) configuration on BeagleBone hardware (Black, BlackWireless,
+Green, White), using the new style LKM (loadable kernel module) method.
+
+Since this hardware has some digital header pins with double CPU ball
+connections, both CPU ball have to be set. First, the unused CPU ball
+gets configured to gpio input mode without pull-up/pull-down resistor,
+before the other pin gets set to the desired mode.
+
+It's used when the constructor PruIo::PruIo() finds the SysFs entry
+from the LKM, and has write access (needs administrator privileges =
+`sudo ...` or membership in user group 'pruio').
 
 There're no restriction for pinmuxing. Each CPU ball in the range zero
 to PRUIO_AZ_BALL can get set to any mode. Even claimed pins or CPU
@@ -623,25 +630,16 @@ FUNCTION setPin_lkm_bb CDECL( _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
   WITH *Top
-
     IF Ball > PRUIO_AZ_BALL THEN _
                           .Errr = @"unknown setPin ball number" : RETURN .Errr
 
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
     IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
     SELECT CASE AS CONST Ball
-    CASE P9_41
-      PUT  #.MuxFnr, , HEX((106 SHL 8) + &h27, 4)
-      SEEK #.MuxFnr, 1 : .BallConf[106] = &h27
-    CASE P9_42
-      PUT  #.MuxFnr, , HEX((93 SHL 8) + &h27, 4)
-      SEEK #.MuxFnr, 1 : .BallConf[93] = &h27
-    CASE 93
-      PUT  #.MuxFnr, , HEX((P9_42 SHL 8) + &h27, 4)
-      SEEK #.MuxFnr, 1 : .BallConf[P9_42] = &h27
-    CASE 106
-      PUT  #.MuxFnr, , HEX((P9_41 SHL 8) + &h27, 4)
-      SEEK #.MuxFnr, 1 : .BallConf[P9_41] = &h27
+    CASE P9_41 : IF .Gpio->config( 106 , PRUIO_GPIO_IN)      THEN RETURN .Errr
+    CASE P9_42 : IF .Gpio->config(  93 , PRUIO_GPIO_IN)      THEN RETURN .Errr
+    CASE   106 : IF .Gpio->config(P9_41, PRUIO_GPIO_IN)      THEN RETURN .Errr
+    CASE    93 : IF .Gpio->config(P9_42, PRUIO_GPIO_IN)      THEN RETURN .Errr
     END SELECT
     PUT  #.MuxFnr, , HEX((Ball SHL 8) + m, 4)
     SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
@@ -655,11 +653,17 @@ END FUNCTION
 \param Mo The new modus to set.
 \returns Zero on success (otherwise a string with an error message).
 
-Callback function for PruIo::setPin() interface to set a new pin
-(or CPU ball) configuration, using the new style LKM (loadable kernel
-module) method. It's used when the constructor PruIo::PruIo() finds the
-SysFs entry from the LKM, and has write access (needs administrator
-privileges = `sudo ...`).
+Callback function for PruIo::setPin() interface to set a new pin (or
+CPU ball) configuration on PocketBeagleBone hardware, using the new
+style LKM (loadable kernel module) method.
+
+Since the double pins at this hardware are connections between digital
+and analog pins, no special action is required regarding pinmuxing (as
+in for BeagleBone hardware).
+
+It's used when the constructor PruIo::PruIo() finds the SysFs entry
+from the LKM, and has write access (needs administrator privileges =
+`sudo ...`). Since
 
 There're no restriction for pinmuxing. Each CPU ball in the range zero
 to PRUIO_AZ_BALL can get set to any mode. Even claimed pins or CPU
@@ -712,14 +716,11 @@ FUNCTION setPin_save CDECL( _
   WITH *Top
     STATIC AS ZSTRING PTR m, p = @"parsing kernel claims"
     STATIC AS STRING e
-    static set_func AS setPinFuncFUNCTION CDECL( _
-       BYVAL Top AS Pruio_ PTR _
-     , BYVAL Ball AS UInt8 _
-     , BYVAL Mo AS UInt8) AS ZSTRING PTR
+    STATIC set_func AS setPinFunc
     IF Ball > PRUIO_AZ_BALL _
                   THEN m = find_claims() : .Errr = IIF(m, 0, p) : RETURN .Errr
     IF 0 = m THEN set_func = IIF(Top->BbType, @setPin_lkm, @setPin_lkm_bb) _
-      m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
+      : m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
 
     VAR o = CAST(Int16 PTR, m)
     IF 0 = o[Ball] THEN                                           RETURN set_func(Top, Ball, Mo)

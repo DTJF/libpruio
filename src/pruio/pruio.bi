@@ -234,11 +234,7 @@ TYPE PruIo
 
   \since 0.6
   '/ '& FUNCTION_CDECL_AS_ZSTRING_PTR (setPin) (BYVAL_AS_Pruio__PTR Top, BYVAL_AS_UInt8 Ball, BYVAL_AS_UInt8 Mo); /*
-  setPin AS FUNCTION CDECL( _
-    BYVAL Top AS Pruio_ PTR _
-  , BYVAL Ball AS UInt8 _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR '&  */
-  'setPin AS setPinFunc
+  setPin AS setPinFunc
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _
