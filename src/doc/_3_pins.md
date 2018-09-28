@@ -23,7 +23,7 @@ before usage (pinmuxing).
 Here's an overview of the Beaglebone Black pins. The settings for other
 Beaglebone hardware (White, Green, Blue, Pocket-, ...) are different.
 
-![Header pins controllable by libpruio](pins.png)
+![Header pins on BeagleBone Black boards](pins_bbb.png)
 
 The pins are sorted into four categories:
 
@@ -48,6 +48,10 @@ use them. It's beyond the scope of this documentation to cover
 all details. Find further information in the SRM (system reference
 manual) shipped with your board.
 
+\note In the following tables the column named `BB` contains pin
+      specifications for BeagleBone boards while `PB` contains the
+      similar PocketBeagle board specification.
+
 \note Some header pins (`P9_41` and `P9_42`) are connected to two CPU
       balls. Both CPU balls must not be set in contrary output states,
       in order to avoid hardware damages.
@@ -64,10 +68,11 @@ Analog lines work always as input line. Analog output isn't supported
 by the Beaglebone hardware (but can get achieved by a combination of a
 PWM output and a hardware filter).
 
-Analog inputs operate in the range of 0 to 1V8. The header pins are
-directly connected to the CPU connectors. There's no overvoltage
-protection, so in order to avoid hardware damages you mustn't trespass
-the maximum voltage range.
+Analog inputs operate in the range of 0 to 1V8 on Beaglebone hardware.
+On PocketBeagle boards some pins operate in the range of 0 to 3V3. The
+header pins are directly connected to the CPU connectors. There's no
+overvoltage protection, so in order to avoid hardware damages you
+mustn't trespass the maximum voltage range.
 
 In addition to the seven analog lines available on the header pins
 (see table below), \Proj can also receive samples from the AIN-7
@@ -75,15 +80,16 @@ line, which is internal connected to the board power line (3V3) by a
 50/50 voltage divider. This may be useful to measure the on board
 voltage, in oder to control the power supply.
 
-| Ball  | Description                            |
-| ----- | :------------------------------------- |
-| P9_39 | AIN-0 (default configuration in step 1 |
-| P9_40 | AIN-1 (default configuration in step 2 |
-| P9_37 | AIN-2 (default configuration in step 3 |
-| P9_38 | AIN-3 (default configuration in step 4 |
-| P9_33 | AIN-4 (default configuration in step 5 |
-| P9_36 | AIN-5 (default configuration in step 6 |
-| P9_35 | AIN-6 (default configuration in step 7 |
+|  BB   |  PB       | Description                            |
+| ----: | :-------- | :------------------------------------- |
+| P9_39 | P1_19     | AIN-0 (default configuration in step 1 |
+| P9_40 | P1_21     | AIN-1 (default configuration in step 2 |
+| P9_37 | P1_23     | AIN-2 (default configuration in step 3 |
+| P9_38 | P1_25     | AIN-3 (default configuration in step 4 |
+| P9_33 | P1_27     | AIN-4 (default configuration in step 5 |
+| P9_36 | P2_35 3V3 | AIN-5 (default configuration in step 6 |
+| P9_35 | P1_02 3V3 | AIN-6 (default configuration in step 7 |
+|       | P2_36     | AIN-7 (default configuration in step 8 |
 
 The ADC subsystem samples the input with 12 bit resolution. The minimum
 input (0V) gets sampled as 0 (zero) and the maximum input (1V8) gets
@@ -135,29 +141,10 @@ description in the CPU documentation \MpuRef{2.2} .
 Before a digital header pin gets used, \Proj checks its mode. When the
 current setting matches the required feature, \Proj just continues and
 operates the pin. Otherwise it tries to change the pinmuxing
-appropriately, first. This needs the `libpruio-00A0.dtbo` device tree
-overlay loaded, and the program has to be executed with admin
-privileges for write access to the pinmuxing folders in
-
-- `/sys/devices/ocp.?/pruio-??.*` (kernel 3.8)
-- `/sys/devices/platform/ocp/ocp:pruio-??` (kernel >3.8)
-
-The overlay contains pre-defined modes for a certain set of CPU balls.
-By default the overlay claims all the free pins on the BBB headers.
-Those are the orange and blue pins in the above image. When you're
-using a Beaglebone White or Green, or when you free further pins on the
-BBB, ie. by disabling HDMI or other features on the board, you can
-create an universal overlay with adapted pin claiming. This can get
-easily done by using the tool dts_universal.bas.
-
-If you don't want to execute the program under admin privileges, you've
-to ensure that all used digital header pins are in the appropriate mode
-before you start the program (so that the initial checks succeed). This
-can get achieved by loading a customized overlay. In contrast to the
-universal overlay, the customized contains only one configuration for
-each used header pin and \Proj cannot change the mode at run-time. You
-can easily create a customized overlay with fixed pinmuxing by using
-the tool dts_custom.bas.
+appropriately, first. This needs pinmuxing capabilities, see section
+\ref SecPinmuxing for details. Otherwise you've to ensure that all used
+digital header pins are in the appropriate mode before you start the
+program (so that the initial checks succeed).
 
 In any case, all digital lines operates in the range of 0 to 3V3. An
 input pin returns low in the range of 0 to 0V8 and high in the range of
@@ -169,18 +156,16 @@ current on an output pin shouldn't exceed 6 mA.
 | output | 0        | 3V3        | max. 6 mA                 |
 |  input | 0 to 0V8 | 1V8 to 3V3 | undefined from 0V8 to 1V8 |
 
-Two of the Beaglebone header pins are connected to multiple CPU balls.
-Those are P9_41 and P9_42. When changing the pinmuxing of any of the
-related CPU balls, it must be ensured that the second CPU ball doesn't
-operate in a contrary output state. Therefor the universal device tree
-overlay `libpruio-00A0.dtbo` (and all overlays generated by the tools
-dts_custom.bas and dts_universal.bas) always configures two CPU balls
-for those pins at once. First, the unused CPU ball gets set in a GPIO
-input mode (without resistor) and then the other ball gets set
-accordingly.
+On BeagleBone boards two of the header pins are connected to multiple
+CPU balls. Those are P9_41 and P9_42. When changing the pinmuxing of
+any of the related CPU balls, it must be ensured that the second CPU
+ball doesn't operate in a contrary output state. You need not care
+about that, \Proj handles that accordingly.
 
-Some pins are used to control the boot sequence and mustn't be
-connected at boot-time.
+On PocketBeagle boards there are also double pins, but one of the CPU
+balls is a AIN input. There is no safety issue here, but you may
+measure by the analog input some digital output from the connected
+digital pin.
 
 Depending on the pin mode the pin can act either as input or output
 pin. Here's the strategy to fetch digital input (after calling the
@@ -201,6 +186,9 @@ constructor PruIo::PruIo() )
 
 - set the required pin state by calling the related function
   (GpioUdt::setValue() or PwmUdt::setValue() ).
+
+\note Some pins are used to control the boot sequence and mustn't be
+      connected at boot-time.
 
 
 ## GPIO ## {#sSecGpio}
@@ -256,23 +244,25 @@ starts at low state and generates a high pulse. In contrast, when bit
 PRUIO_TIMER_INVERS is set, the signal starts at high state and
 generates a low pulse.
 
-The TIMER feature is available on a subset of header pins. A TIMER pin
-is configured as an output pin without resistor connection. This pin
-gets auto-set to high or low state, depending on a counter running on a
-certain clock rate. When the counter matches specified values, the
-state of the output toggles. Since TIMER output can get generated by
-different subsystems (and \Proj supports some of them), the resolution
-is 32 bit and the duration range in [s] vary between the pins.
+The TIMER feature is available on a subset of header pins. By default a
+TIMER pin is configured as an output pin without resistor connection.
+This pin gets auto-set to high or low state, depending on a counter
+running on a certain clock rate. When the counter matches specified
+values, the state of the output toggles. Since TIMER output can get
+generated by different subsystems (and \Proj supports some of them),
+the resolution is 32 bit and the duration range in [s] vary between the
+pins.
 
-| Pin   | Subsystem       | Max Dur |   Min Dur   | Notice            |
-| ----- | :-------------: | :-----: | :---------: | :---------------- |
-| P8_07 | TIMER-4         | 45812   | 0,000000167 | free              |
-| P8_09 | TIMER-5         | 45812   | 0,000000167 | free              |
-| P8_10 | TIMER-6         | 45812   | 0,000000167 | free              |
-| P8_08 | TIMER-7         | 45812   | 0,000000167 | free              |
-| P9_28 | PWMSS-2, CAP    | 42,94   | 0,00000002  | MCASP0            |
-| P9_42 | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
-| JT_05 | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+|  BB   |  PB   | Subsystem       | Max Dur |   Min Dur   | Notice            |
+| ----: | :---- | :-------------: | :-----: | :---------: | :---------------- |
+| P8_07 |       | TIMER-4         | 45812   | 0,000000167 | free              |
+| P8_09 | P1_28 | TIMER-5         | 45812   | 0,000000167 | free              |
+| P8_10 | P1_26 | TIMER-6         | 45812   | 0,000000167 | free              |
+| P8_08 | P2_28 | TIMER-7         | 45812   | 0,000000167 | free              |
+| P9_42 |       | PWMSS-0, CAP    | 42,94   | 0,00000002  | free (double pin) |
+| SD_10 | SD_10 | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+| JT_05 |       | PWMSS-1, CAP    | 42,94   | 0,00000002  | JTag (UART0_TXD)  |
+| P9_28 | P2_30 | PWMSS-2, CAP    | 42,94   | 0,00000002  | MCASP0            |
 
 The output gets specified by calling function TimerUdt::setValue().
 Since the output timing may vary from the specified parameters due to
@@ -294,28 +284,28 @@ output toggles. Since PWM output can get generated by different
 subsystems (and \Proj supports many of them), the resolution and the
 frequency range vary between the pins.
 
-| Pin   | Subsystem       | Frequency Range        | Notice            |
-| ----- | :-------------: | ---------------------: | :---------------- |
-| P8_07 | TIMER-4         | 0.000010914 to 6e6 Hz  | free              |
-| P8_09 | TIMER-5         | 0.000010914 to 6e6 Hz  | free              |
-| P8_10 | TIMER-6         | 0.000010914 to 6e6 Hz  | free              |
-| P8_08 | TIMER-7         | 0.000010914 to 6e6 Hz  | free              |
-| P8_13 | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | free              |
-| P8_19 | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | free              |
-| P9_14 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | free              |
-| P9_16 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | free              |
-| P9_21 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | free              |
-| P9_22 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | free              |
-| P8_34 | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
-| P8_36 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | HDMI              |
-| P8_45 | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
-| P8_46 | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | HDMI              |
-| P9_29 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | MCASP0            |
-| P9_31 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
-| P9_28 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
-| P9_42 | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
-| JT_05 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
-| SD_10 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | SD card in button |
+|   BB  |  PB   | Subsystem       | Frequency Range        | Notice BBB        |
+| ----: | :---- | :-------------: | ---------------------: | :---------------- |
+| P8_07 |       | TIMER-4         | 0.000010914 to 6e6 Hz  | free              |
+| P8_09 | P1_28 | TIMER-5         | 0.000010914 to 6e6 Hz  | free              |
+| P8_10 | P1_26 | TIMER-6         | 0.000010914 to 6e6 Hz  | free              |
+| P8_08 | P2_28 | TIMER-7         | 0.000010914 to 6e6 Hz  | free              |
+| P9_22 | P1_08 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | free              |
+| P9_21 | P1_10 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | free              |
+| P9_31 | P1_36 | PWMSS-0, PWM A  | 0.42 to 50e6 Hz        | MCASP0            |
+| P9_29 | P1_33 | PWMSS-0, PWM B  | 0.42 to 50e6 Hz        | MCASP0            |
+| P9_14 | P2_01 | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | free              |
+| P9_16 |       | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | free              |
+| P8_36 |       | PWMSS-1, PWM A  | 0.42 to 50e6 Hz        | HDMI              |
+| P8_34 |       | PWMSS-1, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
+| P8_19 |       | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | free              |
+| P8_13 | P2_03 | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | free              |
+| P8_46 |       | PWMSS-2, PWM A  | 0.42 to 50e6 Hz        | HDMI              |
+| P8_45 |       | PWMSS-2, PWM B  | 0.42 to 50e6 Hz        | HDMI              |
+| P9_42 |       | PWMSS-0, CAP    | 0.0233 to 50e6 Hz      | free (double pin) |
+| JT_05 |       | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | JTag (UART0_TXD)  |
+| SD_10 | SD_10 | PWMSS-1, CAP    | 0.0233 to 50e6 Hz      | SD card in button |
+| P9_28 | P2_30 | PWMSS-2, CAP    | 0.0233 to 50e6 Hz      | MCASP0            |
 
 The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
@@ -375,12 +365,12 @@ positive transition resets the couter. Since CAP input can get analysed
 by different subsystems (and \Proj support some of them), the frequency
 range vary between the pins.
 
-| Pin   |   Subsystem    | Frequency Range        | Notice            |
-| ----- | :------------: | :--------------------- | :---------------- |
-| P9_28 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
-| P9_42 | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
-| JT_04 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | JTag (UART0_RXD)  |
-| SD_10 | PWMSS-1, CAP   | 0.0233 to 50e6 Hz      | SD card in button |
+|   BB  |  PB   |   Subsystem    | Frequency Range        | Notice            |
+| ----: | :---- | :------------: | :--------------------- | :---------------- |
+| P9_42 |       | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
+| SD_10 | SD_10 | PWMSS-1, CAP   | 0.0233 to 50e6 Hz      | SD card in button |
+| P9_28 | P2_30 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
+| JT_04 |       | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | JTag (UART0_RXD)  |
 
 The measurement results get available by calling function
 CapMod::Value(). Before, you have to configure the pin for CAP input by
@@ -414,20 +404,23 @@ information is available when calling function QepMod::Value(). The
 accuracy of the position information can get improved by using an index
 signal that resets the position counter.
 
-| Ball  | Type    | Subsystem | Speed | Direction | Position | Index | Further Pins | Notice            |
-| ----- | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
-| P8_12 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
-| P8_11 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_12        | free              |
-| P8_16 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
-| P8_35 | A input |  PWMSS-1  |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_33 | B input |  PWMSS-1  |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
-| P8_31 | I input |  PWMSS-1  |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
-| P8_41 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_42 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
-| P8_39 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
-| P9_42 | A input |  PWMSS-0  |   X   |     -     |     -    |   -   |              | free (double pin) |
-| P9_27 | B input |  PWMSS-0  |   X   |     X     |     X    |   -   | P9_42        | free              |
-| P9_41 | I input |  PWMSS-0  |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
+|   BB  | PB    | Type    | Subsystem | Speed | Direction | Position | Index | Further Pins | Notice BBB        |
+| ----: | :---- | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
+| P9_42 |       | A input |  PWMSS-0  |   X   |     -     |     -    |   -   |              | free (double pin) |
+| P9_27 | P2_34 | B input |  PWMSS-0  |   X   |     X     |     X    |   -   | P9_42        | free              |
+| P9_41 |       | I input |  PWMSS-0  |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
+| P8_35 |       | A input |  PWMSS-1  |   X   |     -     |     -    |   -   |              | HDMI              |
+| P8_33 |       | B input |  PWMSS-1  |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
+| P8_31 |       | I input |  PWMSS-1  |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
+| P8_12 |       | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
+| P8_11 |       | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_12        | free              |
+| P8_16 |       | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
+| P8_41 |       | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | HDMI              |
+| P8_42 |       | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
+| P8_39 |       | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
+|       | P2_24 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
+|       | P2_33 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P2_24        | free              |
+|       | P2_22 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P2_24, P2_33 | free              |
 
 Direction information is derived from two different signals that "look"
 at the sensor lines with a mechanical shift of 1 / 4 of the pitch. So

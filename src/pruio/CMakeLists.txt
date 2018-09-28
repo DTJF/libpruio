@@ -34,7 +34,8 @@ SET(SRC_BI
   )
 
 SET(SRC_BI_EXTRA
-    "pruio_out.bi"
+  "pruio_out.bi"
+  "pruio_pins_pocket.bi"
   )
 
 # Check the PRU assembler pasm (presence and version):

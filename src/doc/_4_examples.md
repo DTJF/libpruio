@@ -30,6 +30,14 @@ pre-compiled binaries instead.
       the LKM pinmuxing as a member of group `pruio`, see section \ref
       SecPinmuxing for details.
 
+\note The examples source code is designed for and tested on BeagleBone
+      hardware. It also should run on Pocket-Beagle hardware, but since
+      this board contains different headers, the pin declarations need
+      adaptions. Therefor include the matching header (`# include
+      "[...]/pruio_pins.[h|bi]"` -> `# include
+      "[...]/pruio_pins_pocket.[h|bi]"`) and adapt the pin numbers (ie.
+      `P8_11` -> `P2_33`).
+
 Here's an overview of all shipped examples
 
 |                Name     | Output | Pinmux | Wiring | Mode | Description          | src/examples     | src/c_examples | src/python     | libpruio-bin       |

@@ -17,8 +17,8 @@ Released in 2018, Oktober.
 ## New:
 
 - Pocket Beagle hardware supported
-- Header file src/pruio/pruio_pins_pocket.bi for Pocket Beagle hardware
-- Header file src/c_include/pruio_pins_pocket.h for Pocket Beagle hardware
+- Header file src/pruio/pruio_pins_pocket.bi for Pocket Beagle
+- Header file src/c_include/pruio_pins_pocket.h for Pocket Beagle
 
 ## Changes:
 
@@ -27,6 +27,7 @@ Released in 2018, Oktober.
 ## Bugfixes:
 
 - Python apt command in ChaPreparation
+- Documentation adapted for PocketBeagle (please report erata)
 
 
 # libpruio-0.6.2 # {#SecV-0-6-2}
