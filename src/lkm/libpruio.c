@@ -69,18 +69,18 @@ static ssize_t state_write(struct device *dev,
         } else {
           switch(offs) {
             case 128: iowrite16(mode, mem1); break;
-            case  89:
-              iowrite16(0x2f, mem2 + 0x1a0);
-              iowrite16(mode, mem2 + (offs << 2)); break;
-            case 104:
-              iowrite16(0x2f, mem2 + 0x164);
-              iowrite16(mode, mem2 + (offs << 2)); break;
-            case 106:
-              iowrite16(0x2f, mem2 + 0x1b4);
-              iowrite16(mode, mem2 + (offs << 2)); break;
-            case 108:
-              iowrite16(0x2f, mem2 + 0x1a8);
-              iowrite16(mode, mem2 + (offs << 2)); break;
+            //case  89:
+              //iowrite16(0x2f, mem2 + 0x1a0);
+              //iowrite16(mode, mem2 + (offs << 2)); break;
+            //case 104:
+              //iowrite16(0x2f, mem2 + 0x164);
+              //iowrite16(mode, mem2 + (offs << 2)); break;
+            //case 106:
+              //iowrite16(0x2f, mem2 + 0x1b4);
+              //iowrite16(mode, mem2 + (offs << 2)); break;
+            //case 108:
+              //iowrite16(0x2f, mem2 + 0x1a8);
+              //iowrite16(mode, mem2 + (offs << 2)); break;
             default:
               iowrite16(mode, mem2 + (offs << 2));
           }

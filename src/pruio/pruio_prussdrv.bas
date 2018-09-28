@@ -3,10 +3,13 @@
 
 In previous versions \Proj was dependant on libprussdrv, a driver
 library for the `uio_pruss` kernel module. Since this driver isn't
-available in the Debian package management, compiling from source was
-required for users. Once I started to fix some downsides in the
+available in the upstream Debian repositories, compiling from source
+was required for users. Once I started to fix some downsides in the
 original library code, I came up with this code here, reduced to the
-bare minimum and mostly compatible to the original API.
+bare minimum and mostly compatible to the original API. Find further
+information on the PRUSS, the pasm assembler and the original prussdrv
+function in the [am335x_pru_package at
+GitHub.](https://github.com/beagleboard/am335x_pru_package/tree/master/Documentation)
 
 In the second part the utility functions for the new loadable kernel
 module are included.
@@ -595,7 +598,58 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
 END FUNCTION
 
 
-/'* \brief Set a new pin configuration (internal).
+/'* \brief Set a new pin configuration for BeagleBone boards(internal).
+\param Top The toplevel PruIo instance.
+\param Ball The CPU ball number (use macros from pruio_pins.bi).
+\param Mo The new modus to set.
+\returns Zero on success (otherwise a string with an error message).
+
+Callback function for PruIo::setPin() interface to set a new pin
+(or CPU ball) configuration, using the new style LKM (loadable kernel
+module) method. It's used when the constructor PruIo::PruIo() finds the
+SysFs entry from the LKM, and has write access (needs administrator
+privileges = `sudo ...`).
+
+There're no restriction for pinmuxing. Each CPU ball in the range zero
+to PRUIO_AZ_BALL can get set to any mode. Even claimed pins or CPU
+balls can get set to defined or undefined modes. The function executes
+faster than device tree pinmuxing (no `OPEN ... CLOSE`), boot-time is
+shorter (no overlay loading) and less memory is used.
+
+\since 0.6.4
+'/
+FUNCTION setPin_lkm_bb CDECL( _
+    BYVAL Top AS Pruio_ PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+  WITH *Top
+
+    IF Ball > PRUIO_AZ_BALL THEN _
+                          .Errr = @"unknown setPin ball number" : RETURN .Errr
+
+    VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
+    IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
+    SELECT CASE AS CONST Ball
+    CASE P9_41
+      PUT  #.MuxFnr, , HEX((106 SHL 8) + &h27, 4)
+      SEEK #.MuxFnr, 1 : .BallConf[106] = &h27
+    CASE P9_42
+      PUT  #.MuxFnr, , HEX((93 SHL 8) + &h27, 4)
+      SEEK #.MuxFnr, 1 : .BallConf[93] = &h27
+    CASE 93
+      PUT  #.MuxFnr, , HEX((P9_42 SHL 8) + &h27, 4)
+      SEEK #.MuxFnr, 1 : .BallConf[P9_42] = &h27
+    CASE 106
+      PUT  #.MuxFnr, , HEX((P9_41 SHL 8) + &h27, 4)
+      SEEK #.MuxFnr, 1 : .BallConf[P9_41] = &h27
+    END SELECT
+    PUT  #.MuxFnr, , HEX((Ball SHL 8) + m, 4)
+    SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
+  END WITH
+END FUNCTION
+
+
+/'* \brief Set a new pin configuration for Pocket BeagleBone(internal).
 \param Top The toplevel PruIo instance.
 \param Ball The CPU ball number (use macros from pruio_pins.bi).
 \param Mo The new modus to set.
@@ -626,6 +680,7 @@ FUNCTION setPin_lkm CDECL( _
 
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
     IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
+
     PUT  #.MuxFnr, , HEX((Ball SHL 8) + m, 4)
     SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
   END WITH
@@ -657,12 +712,17 @@ FUNCTION setPin_save CDECL( _
   WITH *Top
     STATIC AS ZSTRING PTR m, p = @"parsing kernel claims"
     STATIC AS STRING e
+    static set_func AS setPinFuncFUNCTION CDECL( _
+       BYVAL Top AS Pruio_ PTR _
+     , BYVAL Ball AS UInt8 _
+     , BYVAL Mo AS UInt8) AS ZSTRING PTR
     IF Ball > PRUIO_AZ_BALL _
                   THEN m = find_claims() : .Errr = IIF(m, 0, p) : RETURN .Errr
-    IF 0 = m THEN m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
+    IF 0 = m THEN set_func = IIF(Top->BbType, @setPin_lkm, @setPin_lkm_bb) _
+      m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
 
     VAR o = CAST(Int16 PTR, m)
-    IF 0 = o[Ball] THEN                                           RETURN setPin_lkm(Top, Ball, Mo)
+    IF 0 = o[Ball] THEN                                           RETURN set_func(Top, Ball, Mo)
     VAR x = .nameBall(Ball)
     IF x THEN e = "pin " & *x ELSE e = "ball " & HEX(Ball, 2)
     e &= " claimed by: " & *(m + o[Ball])     : .Errr = SADD(e) : RETURN .Errr

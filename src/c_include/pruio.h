@@ -557,7 +557,9 @@ typedef struct pruIo{
   uint8 BallGpio[PRUIO_AZ_BALL + 1];
 //! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
   struct __pruss_intc_initdata IntcInit;
-  uint32 MuxFnr; //!< FreeBASIC file number for LKM pinmuxing
+  uint32
+    BbType, //!< Type of Beaglebone board (1 = Pocket-, 0 = others)
+    MuxFnr; //!< FreeBASIC file number for LKM pinmuxing
   char
     *MuxAcc,     //!< pathfile for dtbo pinmuxing
     (*setPin)(pruIo*, uint8, uint8); //!< callback function for LKM/dtbo pinmuxing

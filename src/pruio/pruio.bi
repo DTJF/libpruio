@@ -94,6 +94,13 @@ TYPE BallSet
 END TYPE
 
 
+'* \brief Alias for pinmuxing signature
+TYPE setPinFunc AS FUNCTION CDECL( _
+    BYVAL Top AS Pruio_ PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+
+
 /'* \brief Main structure, binding all components together.
 
 This UDT glues all together. It downloads and start software on the
@@ -184,8 +191,10 @@ TYPE PruIo
        PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK OR PRUIO_MASK) _
       )
 
-  AS UInt32 MuxFnr      '*< Pinmuxing file number, if any
-  AS ZSTRING PTR MuxAcc '*< Pinmuxing file
+  AS UInt32 _
+    BbType _ '*< Type of Beaglebone board (1 = Pocket-, 0 = others)
+  , MuxFnr   '*< Pinmuxing file number, if any
+  AS ZSTRING PTR MuxAcc '*< Pinmuxing ocp path, if no LKM
 
   /'* \brief Interface for pinmuxing function (internal).
   \param Top The toplevel PruIo instance.
@@ -229,6 +238,7 @@ TYPE PruIo
     BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR '&  */
+  'setPin AS setPinFunc
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _

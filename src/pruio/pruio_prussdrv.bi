@@ -80,6 +80,10 @@ DECLARE FUNCTION setPin_save CDECL( _
     BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _
   , BYVAL AS UInt8) AS ZSTRING PTR
+DECLARE FUNCTION setPin_lkm_bb CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
 DECLARE FUNCTION setPin_lkm CDECL( _
     BYVAL AS Pruio_ PTR _
   , BYVAL AS UInt8 _

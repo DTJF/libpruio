@@ -129,7 +129,7 @@ and you're ready to start.
 
 For development in Python programming language execute
 
-    sudo apt-get install python-pruio libpruio-doc
+    sudo apt-get install python-pruio libpruio-klm libpruio-doc
 
 to install the shared library, the header files, the example source
 code, the loadable kernel module and the html documentation

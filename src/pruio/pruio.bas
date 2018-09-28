@@ -124,10 +124,16 @@ CONSTRUCTOR PruIo( _
                       Errr = @"cannot open /dev/uio5" : EXIT CONSTRUCTOR
   CLOSE #fnr
 
-  STATIC AS STRING mux '                    check for pinmuxing features
+  STATIC AS STRING mux, bbb '   check for BB type and pinmuxing features
+  IF 0 = OPEN("/proc/device-tree/model" FOR INPUT AS fnr) THEN
+    LINE INPUT #fnr, bbb
+    CLOSE #fnr
+    IF bbb = "TI_AM335x_PocketBeagle" THEN BbType = 1
+  END IF
+
   IF 0 = OPEN("/sys/devices/platform/libpruio/state" FOR OUTPUT AS fnr) THEN
     IF Act AND PRUIO_ACT_FREMUX THEN
-      setPin = @setPin_lkm
+      setPin = IIF(BbType, @setPin_lkm, @setPin_lkm_bb)
     ELSE
       setPin = @setPin_save
       Errr = setPin(@THIS, 255, 0)
