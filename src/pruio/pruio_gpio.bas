@@ -200,8 +200,8 @@ FUNCTION GpioUdt.setValue CDECL( _
       CASE 0: x = PRUIO_GPIO_OUT0
       CASE 1: x = PRUIO_GPIO_OUT1
       CASE ELSE : x = Mo
-      END SELECT :                                                return config(Ball, x)
-    end if
+      END SELECT :                                                RETURN config(Ball, x)
+    END IF
 
     IF Mo = 1 ORELSE BIT(Mo, 7) THEN
       Conf(i)->CLEARDATAOUT AND= NOT m

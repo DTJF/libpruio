@@ -717,12 +717,12 @@ FUNCTION setPin_save CDECL( _
     STATIC AS ZSTRING PTR m, p = @"parsing kernel claims"
     STATIC AS STRING e
     STATIC set_func AS setPinFunc
+    STATIC o = CAST(Int16 PTR, m)
     IF Ball > PRUIO_AZ_BALL _
                   THEN m = find_claims() : .Errr = IIF(m, 0, p) : RETURN .Errr
     IF 0 = m THEN set_func = IIF(Top->BbType, @setPin_lkm, @setPin_lkm_bb) _
       : m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
 
-    VAR o = CAST(Int16 PTR, m)
     IF 0 = o[Ball] THEN                                           RETURN set_func(Top, Ball, Mo)
     VAR x = .nameBall(Ball)
     IF x THEN e = "pin " & *x ELSE e = "ball " & HEX(Ball, 2)

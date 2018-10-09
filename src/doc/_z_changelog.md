@@ -17,17 +17,20 @@ Released in 2018, Oktober.
 ## New:
 
 - Pocket Beagle hardware supported
-- Header file src/pruio/pruio_pins_pocket.bi for Pocket Beagle
-- Header file src/c_include/pruio_pins_pocket.h for Pocket Beagle
+- Added documentation chapter Tips and Tricks
+- Header files for Pocket Beagle and BeagleBone Blue
 
 ## Changes:
 
-- Double pin check moved from LKM to function setPin()
+- Check for double pins moved from LKM to function setPin()
+- Removed pin arrays from files pruio_pins.[h|bi], and
+- Macros AINx replaced by enumerators AdcStepMask (new values)
+- Documentation adapted for [Pocket]Beagle[Blue] (please report erata)
 
 ## Bugfixes:
 
-- Python apt command in ChaPreparation
-- Documentation adapted for PocketBeagle (please report erata)
+- Macros for AIN pins removed (avoid false pinmuxing)
+- libpruio-lkm added to Python apt command in ChaPreparation
 
 
 # libpruio-0.6.2 # {#SecV-0-6-2}

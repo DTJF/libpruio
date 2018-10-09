@@ -1,7 +1,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
-IF(NOT FbDoc_WORKS)
+IF(NOT FbDoc_WORKS) # ToDo check version 1.0.2
   MSG_LOG("!! no target <python>! (missing fbdoc tool)")
+  RETURN()
+ENDIF()
+SET(fbdoc_min "1.0.2")
+IF(${FbDoc_VERSION} VERSION_LESS ${fbdoc_min})
+  MSG_LOG("!! no target <python>! (fbdoc < ${fbdoc_min})")
   RETURN()
 ENDIF()
 

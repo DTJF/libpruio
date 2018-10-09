@@ -35,6 +35,7 @@ SET(SRC_BI
 
 SET(SRC_BI_EXTRA
   "pruio_out.bi"
+  "pruio_pins_blue.bi"
   "pruio_pins_pocket.bi"
   )
 

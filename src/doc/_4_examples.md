@@ -31,9 +31,10 @@ pre-compiled binaries instead.
       SecPinmuxing for details.
 
 \note The examples source code is designed for and tested on BeagleBone
-      hardware. It also should run on Pocket-Beagle hardware, but since
-      this board contains different headers, the pin declarations need
-      adaptions. Therefor include the matching header (`# include
+      hardware. It also should run on Pocket-Beagle or BeagleBone Blue
+      hardware, but since this boards contains different
+      headers/connectors, the pin declarations need adaptions. Therefor
+      include the matching header (ie. replace `# include
       "[...]/pruio_pins.[h|bi]"` -> `# include
       "[...]/pruio_pins_pocket.[h|bi]"`) and adapt the pin numbers (ie.
       `P8_11` -> `P2_33`).

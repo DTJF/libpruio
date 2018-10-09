@@ -59,7 +59,7 @@ FUNCTION AdcUdt.initialize CDECL( _
   , BYVAL SaD AS UInt8  = PRUIO_DEF_SDELAY) AS ZSTRING PTR
 
   WITH *Top
-    var p = .MOffs + .DRam[InitParA]
+    VAR p = .MOffs + .DRam[InitParA]
     Init = p
     Conf = p + .DSize
   END WITH

@@ -11,6 +11,7 @@
       <tab type="user" url="@ref ChaExamples" title="Examples"/>
       <tab type="user" url="@ref ChaMemory" title="Memory Organisation"/>
       <tab type="user" url="@ref ChaMessages" title="Messages"/>
+      <tab type="user" url="@ref ChaTNT" title="Tips and Tricks"/>
       <tab type="user" url="@ref ChaChangelog" title="Changelog &amp; Credits"/>
     </tab>
     <tab type="modules" visible="yes" title="" intro=""/>

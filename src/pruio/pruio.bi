@@ -38,6 +38,38 @@ different components together and provides all declarations.
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
 
+/'* \brief Mask for ADC step enabling.
+
+This enumerators are for use in function PruIo::config() to enable
+single steps for the ADC sampling sequence. By default steps 1 to 8 are
+configured to measure AIN 0 to 7, using the values of Averaging,
+OpenDelay and SampleDelay passed as parameters to the constructor
+PruIo::PruIo().
+
+Example:
+
+    Io->config(AIN0 + AIN3 + AIN4, ...)
+
+\note A function call to AdcUdt::setStep() for steps 1 to 8 will
+      override the default configuration. Those masks get invalid when
+      you change the step channel.
+
+C wrapper equivalent ::adcStepmask.
+
+\since 0.6.4
+'/
+ENUM AdcStepMask
+  AIN0 = &b000000010 '*< Activate Step 1 (default config: AIN0)
+  AIN1 = &b000000100 '*< Activate Step 2 (default config: AIN1)
+  AIN2 = &b000001000 '*< Activate Step 3 (default config: AIN2)
+  AIN3 = &b000010000 '*< Activate Step 4 (default config: AIN3)
+  AIN4 = &b000100000 '*< Activate Step 5 (default config: AIN4)
+  AIN5 = &b001000000 '*< Activate Step 6 (default config: AIN5)
+  AIN6 = &b010000000 '*< Activate Step 7 (default config: AIN6)
+  AIN7 = &b100000000 '*< Activate Step 8 (default config: AIN7)
+END ENUM
+
+
 /'* \brief Mask for PRUSS number and divice enabling.
 
 This enumerators are used in the constructor PruIo::PruIo() to enable
@@ -55,7 +87,7 @@ The first enumerator PRUIO_ACT_PRU1 is used to specify the PRU
 subsystem to execute libpruio. By default the bit is set and libpruio
 runs on PRU-1. See PruIo::PruIo() for further information.
 
-C wrapper equivalent activateDevice.
+C wrapper equivalent ::activateDevice.
 
 \since 0.2
 '/
@@ -84,7 +116,7 @@ This UDT contains a set of all pad control registers. This is the
 muxing between CPU balls and the internal subsystem targets, the pullup
 or pulldown configuration and the receiver activation.
 
-C wrapper equivalent ballSet.
+C wrapper equivalent ::ballSet.
 
 \since 0.2
 '/
@@ -107,7 +139,7 @@ This UDT glues all together. It downloads and start software on the
 PRUSS, controls the initialisation and configuration processes and
 reads or writes the pinmux configurations.
 
-C wrapper equivalent pruIo.
+C wrapper equivalent ::pruIo.
 
 \since 0.0
 '/

@@ -77,8 +77,10 @@ SET_TARGET_PROPERTIES(examples PROPERTIES EXCLUDE_FROM_ALL 1)
 SET(C_HEADERS
   "src/pruio/pruio.hp"
   "src/c_include/pruio.h"
-  "src/c_include/pruio_pins.h"
   "src/c_include/pruio_intc.h"
+  "src/c_include/pruio_pins.h"
+  "src/c_include/pruio_pins_blue.h"
+  "src/c_include/pruio_pins_pocket.h"
   "src/c_include/pruio_prussdrv.h"
   )
 INSTALL(FILES ${C_HEADERS}

@@ -248,16 +248,18 @@ Wrapper function (C or Python): pruio_destroy().
 \since 0.0
 '/
 DESTRUCTOR PruIo()
-  VAR mux = ""
+  VAR mux = "" : Errr = 0
   IF DRam THEN
     IF DInit THEN
       prussdrv_pru_disable(PruNo)
 
-      IF MuxFnr THEN '                                   reset pinmuxing
-       FOR i AS LONG = 0 TO PRUIO_AZ_BALL
-          IF BallInit[i] = BallConf[i] THEN CONTINUE FOR
-          IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
-        NEXT
+      IF MuxFnr THEN '                                     close MuxFile
+        IF BallInit <> BallConf THEN '                   reset pinmuxing
+          FOR i AS LONG = 0 TO PRUIO_AZ_BALL
+            IF BallInit[i] = BallConf[i] THEN CONTINUE FOR
+            IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
+          NEXT
+        END IF
         IF MuxFnr < 256 THEN CLOSE #MuxFnr
       END IF
 
@@ -286,10 +288,9 @@ DESTRUCTOR PruIo()
                         Errr = @"destructor warning: constructor failed"
   END IF
 
+  IF Errr THEN mux &= !"\n" & *Errr
   IF LEN(mux) THEN _
     VAR fnr = FREEFILE : OPEN ERR AS fnr : PRINT #fnr, MID(mux, 2) : CLOSE #fnr
-  IF Errr THEN _
-    VAR fnr = FREEFILE : OPEN ERR AS fnr : PRINT #fnr, *Errr : CLOSE #fnr
 END DESTRUCTOR
 
 

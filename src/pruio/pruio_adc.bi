@@ -17,7 +17,7 @@ can get configured for a measurement (index 1 to 16). A further step
 
 Find further details in \ArmRef{12.5.1.17 ff.}.
 
-C wrapper equivalent adcSteps.
+C wrapper equivalent ::adcSteps.
 
 \since 0.0
 '/
@@ -33,7 +33,7 @@ This UDT contains a set of all ADC subsystem registers. It's used to
 store the initial configuration of the subsystem and to hold current
 configuration for the next call to function PruIo::config().
 
-C wrapper equivalent adcSet.
+C wrapper equivalent ::adcSet.
 
 \since 0.2
 '/
@@ -79,7 +79,7 @@ functions and variables to handle the subsystem.
 This UDT contains the member function to control the ADC features and
 the related variables.
 
-C wrapper equivalent adcUdt.
+C wrapper equivalent ::adcUdt.
 
 \since 0.2
 '/

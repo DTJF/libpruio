@@ -464,7 +464,7 @@ typedef struct qepMod{
 // PRUSS driver interrupt settings
 #include "pruio_intc.h"
 
-/** \brief Wrapper enumerators for PinMuxing.
+/** \brief Wrapper enumerators for ::PinMuxing.
 
 \since 0.2
 */
@@ -481,7 +481,22 @@ enum pinMuxing{
   PRUIO_PIN_RESET = 0xFF
 };
 
-/** \brief Wrapper enumerators for ActivateDevice.
+/** \brief Wrapper enumerators for ::AdcStepMask.
+
+\since 0.6.4
+*/
+enum adcStepmask{
+  AIN0 = 1 << 1   //!< Activate Step 1 (default config: AIN0)
+, AIN1 = 1 << 2   //!< Activate Step 2 (default config: AIN1)
+, AIN2 = 1 << 3   //!< Activate Step 3 (default config: AIN2)
+, AIN3 = 1 << 4   //!< Activate Step 4 (default config: AIN3)
+, AIN4 = 1 << 5   //!< Activate Step 5 (default config: AIN4)
+, AIN5 = 1 << 6   //!< Activate Step 6 (default config: AIN5)
+, AIN6 = 1 << 7   //!< Activate Step 7 (default config: AIN6)
+, AIN7 = 1 << 8   //!< Activate Step 8 (default config: AIN7)
+};
+
+/** \brief Wrapper enumerators for ::ActivateDevice.
 
 \since 0.2
 */

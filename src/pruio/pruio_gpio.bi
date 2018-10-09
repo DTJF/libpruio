@@ -16,7 +16,7 @@ store the initial configuration of the four subsystems in the AM33xx
 CPU, and to hold their current configurations for the next call to
 function PruIo::config().
 
-C wrapper equivalent gpioSet.
+C wrapper equivalent ::gpioSet.
 
 \since 0.2
 '/
@@ -60,7 +60,7 @@ END TYPE
 This UDT is used to fetch the current register data from the GPIO
 modules in IO and RB mode.
 
-C wrapper equivalent gpioArr.
+C wrapper equivalent ::gpioArr.
 
 \since 0.2
 '/
@@ -81,7 +81,7 @@ This UDT contains the member function to control the features in each
 of the four GPIO subsystems included in the AM33xx CPU and the related
 variables.
 
-C wrapper equivalent gpioUdt.
+C wrapper equivalent ::gpioUdt.
 
 \since 0.2
 '/

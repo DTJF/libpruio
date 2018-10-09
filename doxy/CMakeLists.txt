@@ -36,6 +36,7 @@ DEPENDS
   "../src/doc/_4_examples.md"
   "../src/doc/_5_memory.md"
   "../src/doc/_6_messages.md"
+  "../src/doc/_7_tipsntricks.md"
   "../src/doc/_z_changelog.md"
   ../CMakeLists.txt
   ../ReadMe.md
