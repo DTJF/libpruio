@@ -127,19 +127,12 @@ GpioDEnd:
 
 .macro GPIO_IO_Command
 //
-// handle subsystem command in IO mode
+// handle subsystem command
 //
   QBLT GpioCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip
-  QBNE GpioCCon, Comm.b3, PRUIO_COM_GPIO_OUT // if no GPIO_OUT command -> skip
-  LBCO U2, DRam, 4*2, 4*3  // get parameters
-  JMP  GpioCData           // write data in case of output
-
-GpioCCon:
-  QBLT IoCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip, invalid
+  QBLT IoCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO command -> skip, invalid
   LBCO U2, DRam, 4*2, 4*4  // get parameters
   SBBO U5, U2, 0x34, 4     // write OE
-
-GpioCData:
   SBBO U3, U2, 0x90, 4*2   // write CLEARDATAOUT & SETDATAOUT
   JMP  IoCEnd              // finish command
 

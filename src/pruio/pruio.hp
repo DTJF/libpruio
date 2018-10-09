@@ -45,8 +45,6 @@ pruio.bi in case of any change here.
 \brief The command number to poke a value to memory
 \def PRUIO_COM_GPIO_CONF
 \brief The command number to re-configure a GPIO
-\def PRUIO_COM_GPIO_OUT
-\brief The command number to re-configure a GPIO output state
 \def PRUIO_COM_PWM
 \brief Command number to re-configure frequency and duty cycle for a PWM module
 \def PRUIO_COM_CAP_PWM
@@ -114,7 +112,6 @@ Minimal value is AdcSet + 4 x GpioSet + BallSet + 3 x PwmssSet + 4 x TimerSet.
 #define PRUIO_COM_POKE 10
 #define PRUIO_COM_PEEK 9
 #define PRUIO_COM_GPIO_CONF 20
-#define PRUIO_COM_GPIO_OUT  19
 #define PRUIO_COM_PWM       30
 #define PRUIO_COM_CAP_PWM   29
 #define PRUIO_COM_CAP       28

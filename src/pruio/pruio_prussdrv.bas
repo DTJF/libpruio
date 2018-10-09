@@ -559,7 +559,7 @@ claimed pins get identified, and the owners of claimed pins get
 collected in a `STRING` variable in a condensed form. Each owner name
 is stored only once, no double entries.
 
-\since 0.6
+\since 0.6.0
 '/
 FUNCTION find_claims CDECL() AS ZSTRING PTR
 #DEFINE TBUFF_SIZE 32768
@@ -598,55 +598,6 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
 END FUNCTION
 
 
-/'* \brief Set a new pin configuration for BeagleBone boards(internal).
-\param Top The toplevel PruIo instance.
-\param Ball The CPU ball number (use macros from pruio_pins.bi).
-\param Mo The new modus to set.
-\returns Zero on success (otherwise a string with an error message).
-
-Callback function for PruIo::setPin() interface to set a new pin (or
-CPU ball) configuration on BeagleBone hardware (Black, BlackWireless,
-Green, White), using the new style LKM (loadable kernel module) method.
-
-Since this hardware has some digital header pins with double CPU ball
-connections, both CPU ball have to be set. First, the unused CPU ball
-gets configured to gpio input mode without pull-up/pull-down resistor,
-before the other pin gets set to the desired mode.
-
-It's used when the constructor PruIo::PruIo() finds the SysFs entry
-from the LKM, and has write access (needs administrator privileges =
-`sudo ...` or membership in user group 'pruio').
-
-There're no restriction for pinmuxing. Each CPU ball in the range zero
-to PRUIO_AZ_BALL can get set to any mode. Even claimed pins or CPU
-balls can get set to defined or undefined modes. The function executes
-faster than device tree pinmuxing (no `OPEN ... CLOSE`), boot-time is
-shorter (no overlay loading) and less memory is used.
-
-\since 0.6.4
-'/
-FUNCTION setPin_lkm_bb CDECL( _
-    BYVAL Top AS Pruio_ PTR _
-  , BYVAL Ball AS UInt8 _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR
-  WITH *Top
-    IF Ball > PRUIO_AZ_BALL THEN _
-                          .Errr = @"unknown setPin ball number" : RETURN .Errr
-
-    VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
-    IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
-    SELECT CASE AS CONST Ball
-    CASE P9_41 : IF .Gpio->config( 106 , PRUIO_GPIO_IN)      THEN RETURN .Errr
-    CASE P9_42 : IF .Gpio->config(  93 , PRUIO_GPIO_IN)      THEN RETURN .Errr
-    CASE   106 : IF .Gpio->config(P9_41, PRUIO_GPIO_IN)      THEN RETURN .Errr
-    CASE    93 : IF .Gpio->config(P9_42, PRUIO_GPIO_IN)      THEN RETURN .Errr
-    END SELECT
-    PUT  #.MuxFnr, , HEX((Ball SHL 8) + m, 4)
-    SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
-  END WITH
-END FUNCTION
-
-
 /'* \brief Set a new pin configuration for Pocket BeagleBone(internal).
 \param Top The toplevel PruIo instance.
 \param Ball The CPU ball number (use macros from pruio_pins.bi).
@@ -671,22 +622,60 @@ balls can get set to defined or undefined modes. The function executes
 faster than device tree pinmuxing (no `OPEN ... CLOSE`), boot-time is
 shorter (no overlay loading) and less memory is used.
 
-\since 0.6
+\since 0.6.0
 '/
 FUNCTION setPin_lkm CDECL( _
     BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
   WITH *Top
-
-    IF Ball > PRUIO_AZ_BALL THEN _
-                          .Errr = @"unknown setPin ball number" : RETURN .Errr
+    IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown ball number" : RETURN .Errr
 
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
     IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
 
-    PUT  #.MuxFnr, , HEX((Ball SHL 8) + m, 4)
+    PUT  #.MuxFnr, , HEX((Ball SHL 8) + (m AND &b1111111), 4)
     SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
+  END WITH
+END FUNCTION
+
+
+/'* \brief Set a new pin configuration for BeagleBone boards(internal).
+\param Top The toplevel PruIo instance.
+\param Ball The CPU ball number (use macros from pruio_pins.bi).
+\param Mo The new modus to set.
+\returns Zero on success (otherwise a string with an error message).
+
+Callback function for PruIo::setPin() interface to set a new pin (or
+CPU ball) configuration on BeagleBone hardware (Black, BlackWireless,
+Green, White), using the new style LKM (loadable kernel module) method.
+
+Since this hardware has some digital header pins with double CPU ball
+connections, both CPU balls have to be set. First, the unused CPU ball
+gets configured to gpio input mode without pull-up/pull-down resistor,
+before the other pin gets set to the desired mode.
+
+\since 0.6.4
+'/
+FUNCTION setPin_lkm_bb CDECL( _
+    BYVAL Top AS Pruio_ PTR _
+  , BYVAL Ball AS UInt8 _
+  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+  WITH *Top
+    STATIC AS UInt8 r
+    SELECT CASE AS CONST Ball
+    CASE P9_41 : r = .BallGpio(106)
+    CASE P9_42 : r = .BallGpio(93)
+    CASE   106 : r = .BallGpio(P9_41)
+    CASE    93 : r = .BallGpio(P9_42)
+    CASE ELSE                         : RETURN setPin_lkm(Top, Ball, Mo)
+    END SELECT
+    WITH *.Gpio
+      .Indx = r SHR 5
+      .Mode = PRUIO_GPIO_IN_0
+      .Mask = 1 SHL (r AND 31)
+      .setGpio()
+    END WITH                          : RETURN setPin_lkm(Top, Ball, Mo)
   END WITH
 END FUNCTION
 
@@ -707,23 +696,22 @@ invalid Ball parameter (> `PRUIO_AZ_BALL`). This gets executed by the
 constructor PruIo::PruIo(). The function doesn't notice changes in
 kernel claiming at runtime. You can re-fetch the claims when needed.
 
-\since 0.6
+\since 0.6.0
 '/
 FUNCTION setPin_save CDECL( _
     BYVAL Top AS Pruio_ PTR _
-  , BYVAL Ball AS UInt8 _
-  , BYVAL Mo AS UInt8) AS ZSTRING PTR
+  , BYVAL Ball AS UInt8, BYVAL Mo AS UInt8) AS ZSTRING PTR
+  STATIC AS ZSTRING PTR m
+  STATIC set_func AS setPinFunc
+  STATIC AS STRING e
   WITH *Top
-    STATIC AS ZSTRING PTR m, p = @"parsing kernel claims"
-    STATIC AS STRING e
-    STATIC set_func AS setPinFunc
-    STATIC o = CAST(Int16 PTR, m)
-    IF Ball > PRUIO_AZ_BALL _
-                  THEN m = find_claims() : .Errr = IIF(m, 0, p) : RETURN .Errr
-    IF 0 = m THEN set_func = IIF(Top->BbType, @setPin_lkm, @setPin_lkm_bb) _
-      : m = find_claims() : IF 0 = m THEN .Errr = p   : RETURN .Errr
+    IF 0 = m ORELSE Ball > PRUIO_AZ_BALL THEN ' init
+      set_func = IIF(Top->BbType, @setPin_lkm(), @setPin_lkm_bb())
+      m = find_claims()
+                    .Errr = IIF(m, 0, @"parsing kernel claims") : RETURN .Errr
+    END IF
 
-    IF 0 = o[Ball] THEN                                           RETURN set_func(Top, Ball, Mo)
+    VAR o = CAST(Int16 PTR, m) : IF 0 = o[Ball]              THEN RETURN set_func(Top, Ball, Mo)
     VAR x = .nameBall(Ball)
     IF x THEN e = "pin " & *x ELSE e = "ball " & HEX(Ball, 2)
     e &= " claimed by: " & *(m + o[Ball])     : .Errr = SADD(e) : RETURN .Errr
@@ -744,7 +732,7 @@ neither a universal device tree overlay was loaded, nor the loadable
 kernel module is available (may be loaded, but no administrator
 privileges). The function does nothing, but returns an error message.
 
-\since 0.6
+\since 0.6.0
 '/
 FUNCTION setPin_nogo CDECL( _
     BYVAL Top AS Pruio_ PTR _
@@ -772,7 +760,7 @@ pin (ball) isn't available in the overlay blob, an error message
 gets returned, containing the pin number (or CPU ball#) and the missing
 state.
 
-\since 0.6
+\since 0.6.0
 '/
 FUNCTION setPin_dtbo CDECL( _
     BYVAL Top AS Pruio_ PTR _

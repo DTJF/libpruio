@@ -29,10 +29,33 @@ wrapper functions are not included as in the original version).
 #DEFINE PMUX_NAME "pruio-"
 '* The constant number for no pinmux capability.
 #DEFINE PMUX_ERRR 258
+'* Macro to calculate the total size of an array in bytes.
+#DEFINE ArrayBytes(_A_) (UBOUND(_A_) + 1) * SIZEOF(_A_(0))
 
 '* \brief Declaration for C runtime function memcpy().
 DECLARE FUNCTION memcpy CDECL ALIAS "memcpy"(BYVAL AS ANY PTR, BYVAL AS ANY PTR, BYVAL AS ULONG /'size_t'/) AS ANY PTR
 
+' private functions from pruio_prussdrv.bas
+DECLARE FUNCTION setPin_save CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
+DECLARE FUNCTION setPin_lkm_bb CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
+DECLARE FUNCTION setPin_lkm CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
+DECLARE FUNCTION setPin_dtbo CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
+DECLARE FUNCTION setPin_nogo CDECL( _
+    BYVAL AS Pruio_ PTR _
+  , BYVAL AS UInt8 _
+  , BYVAL AS UInt8) AS ZSTRING PTR
 
 /'* \brief Constructor, initialize subsystems, create default configuration.
 \param Act Mask to specify active subsystems (defaults to all active).
@@ -127,17 +150,20 @@ CONSTRUCTOR PruIo( _
   STATIC AS STRING mux, bbb '   check for BB type and pinmuxing features
   IF 0 = OPEN("/proc/device-tree/model" FOR INPUT AS fnr) THEN
     LINE INPUT #fnr, bbb
+    'IF bbb = "TI_AM335x_PocketBeagle" THEN BbType = 1
+    'IF bbb = "TI AM335x BeagleBone Blue" THEN BbType = 2
+    IF INSTR(bbb, "Pocket") THEN BbType = 1
+    IF INSTR(bbb, "Blue") THEN BbType = 2
     CLOSE #fnr
-    IF bbb = "TI_AM335x_PocketBeagle" THEN BbType = 1
   END IF
 
   IF 0 = OPEN("/sys/devices/platform/libpruio/state" FOR OUTPUT AS fnr) THEN
     IF Act AND PRUIO_ACT_FREMUX THEN
-      setPin = IIF(BbType, @setPin_lkm, @setPin_lkm_bb)
+      setPin = IIF(BbType, @setPin_lkm(), @setPin_lkm_bb())
     ELSE
-      setPin = @setPin_save
+      setPin = @setPin_save()
       Errr = setPin(@THIS, 255, 0)
-      IF Errr THEN CLOSE #fnr : setPin = @setPin_nogo : fnr = 0
+      IF Errr THEN CLOSE #fnr : setPin = @setPin_nogo() : fnr = 0
     END IF : MuxFnr = fnr
   END IF
   IF 0 = MuxFnr THEN '       no LKM, test old style device tree overlays
@@ -149,8 +175,8 @@ CONSTRUCTOR PruIo( _
       p &= "platform/ocp/ocp:"
       IF LEN(DIR(p & "pruio-*", fbDirectory)) THEN mux = p & PMUX_NAME : MuxFnr = 257
     END IF
-    IF LEN(mux) THEN setPin = @setPin_dtbo : MuxAcc = SADD(mux) : Errr = 0 _
-                ELSE setPin = @setPin_nogo : MuxFnr = 0
+    IF MuxFnr THEN setPin = @setPin_dtbo() : MuxAcc = SADD(mux) : Errr = 0 _
+              ELSE setPin = @setPin_nogo()
   END IF
 
   IF Act AND PRUIO_ACT_PRU1 THEN

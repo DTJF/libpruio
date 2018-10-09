@@ -98,7 +98,7 @@ int main(int argc, char **argv)
       pru_num = 1;
       pru_iram = PRUSS0_PRU1_IRAM;
       pru_dram = PRUSS0_PRU1_DRAM;
-      pru_intr = PRU1_ARM_INTERRUPT; }
+      pru_intr = PRU0_ARM_INTERRUPT; } // libpruio uses PRU1_ARM_INTERRUPT!
 //
 // Now prepare the other PRU
 //

@@ -31,7 +31,7 @@ Header file for including global libpruio definitions and declarations.
 #DEFINE PRUIO_DEF_CLKDIV 0
 
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
-#DEFINE ModeCheck(_B_,_M_) (.BallConf[_B_] and &b111) <> _M_
+#DEFINE ModeCheck(_B_,_M_) (.BallConf[_B_] AND &b111) <> _M_
 '* Macro to check a CPU ball mode.
 #DEFINE ModeSet(_B_,_M_) IF .setPin(Top, _B_, _M_) THEN RETURN .Errr
 

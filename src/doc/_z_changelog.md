@@ -16,22 +16,27 @@ Released in 2018, Oktober.
 
 ## New:
 
-- Pocket Beagle hardware supported
+- Pocket and Blue hardware supported
 - Added documentation chapter Tips and Tricks
 - Header files for Pocket Beagle and BeagleBone Blue
+- Python pruss_xxx examples
 
 ## Changes:
 
-- Check for double pins moved from LKM to function setPin()
+- Double pin check moved from LKM to function setPin()
+- GPIO subsytem registers get written before pinmuxing
+- GPIO registers now manipulated by function new setGpio()
+- Define PRUIO_COM_GPIO_OUT removed (use PRUIO_COM_GPIO_CONF)
 - Removed pin arrays from files pruio_pins.[h|bi], and
 - Macros AINx replaced by enumerators AdcStepMask (new values)
 - Documentation adapted for [Pocket]Beagle[Blue] (please report erata)
 
 ## Bugfixes:
 
+- Python apt command in ChaPreparation
 - Macros for AIN pins removed (avoid false pinmuxing)
 - libpruio-lkm added to Python apt command in ChaPreparation
-
+- Documentation adapted for PocketBeagle (please report erata)
 
 # libpruio-0.6.2 # {#SecV-0-6-2}
 

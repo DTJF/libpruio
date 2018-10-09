@@ -32,8 +32,6 @@ different components together and provides all declarations.
 '* The event for PRU messages (must match PRUIO_IRPT).
 #DEFINE PRUIO_EVNT PRU_EVTOUT_5
 
-'* Macro to calculate the total size of an array in bytes.
-#DEFINE ArrayBytes(_A_) (UBOUND(_A_) + 1) * SIZEOF(_A_(0))
 '* Macro to check a CPU ball number (0 to 109 is valid range).
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
@@ -180,6 +178,68 @@ TYPE PruIo
     ParOffs _   '*< The offset for the parameters of a module.
   , DevAct      '*< Active subsystems.
 
+  AS UInt32 _
+    BbType _ '*< Type of Beaglebone board (1 = Pocket-, 0 = others)
+  , MuxFnr   '*< Pinmuxing file number, if any
+  AS ZSTRING PTR MuxAcc '*< Pinmuxing ocp path, if no LKM
+
+  /'* \brief Interface for pinmuxing function (internal).
+  \param Top The toplevel PruIo instance.
+  \param Ball The CPU ball number (use macros from pruio_pins.bi).
+  \param Mo The new modus to set.
+  \returns Zero on success (otherwise a string with an error message).
+
+  This is an internal function. It tries to set a new mode for a header
+  pin (or CPU ball number) configuration. Each digital header pin is
+  connected to a CPU ball. The CPU ball can get muxed to
+
+  - several internal features (like GPIO, CAP, PWM, ...),
+  - internal pullup or pulldown resistors, as well as
+  - an internal receiver module for input pins.
+
+  The function changes pinmuxing, and will fail if (depending on system
+  setup):
+
+  - the libpruio loadable kernel module isn't loaded, or
+  - the libpruio device tree overlays isn't loaded, or
+  - the required pin isn't defined in that overlay (ie HDMI), or
+  - the user has no write access to the state configuration files (see
+    section \ref SecPinmuxing for details), or
+  - the required mode isn't available in the overlay.
+
+  The function returns an error message in case of a failure, otherwise
+  0 (zero). The callback function gets connected in the constructor
+  PruIo::PruIo(), depending on the system setup and current write
+  privileges. The prefered method is the LKM method, which is used when
+  the SysFs entry from the LKM is present, and \Proj has write access
+  (needs administrator privileges = `sudo ...` or membership in user
+  group 'pruio'). Otherwise the old-style device tree pinmuxing gets
+  used, if present.
+
+  In case of LKM pinmuxing there're no restriction. Each CPU ball in
+  the range zero to PRUIO_AZ_BALL can get set to any mode. Even claimed
+  pins or CPU balls can get set to defined or undefined modes. The
+  function executes faster than device tree pinmuxing (no `OPEN ...
+  CLOSE`), boot-time is shorter (no overlay loading) and less memory is
+  used.
+
+  \note Don't use this function to set a pin for a libpruio feature.
+        Instead, call for input pins the feature config function (ie.
+        GpioUdt::config() or CapMod::config() ), and for output pins
+        just set the desired value (ie. PwmMod::setValue()). But you
+        can use the function to set pins in modes that are not
+        supported by libpruio (ie. like SPI or UART). In this case you
+        have to care about loading the matching driver by yourself.
+
+  \note In case of digital double pins (like P9_41 or P9_42 on
+        BeagleBone) this function sets the muxmodes of boths pins.
+        First the unused pin gets configured to Gpio input mode without
+        resistor. Then the related pin gets configured as specified.
+
+  \since 0.6
+  '/ '& FUNCTION_CDECL_AS_ZSTRING_PTR (setPin) (BYVAL_AS_Pruio__PTR Top, BYVAL_AS_UInt8 Ball, BYVAL_AS_UInt8 Mo); /*
+  setPin AS setPinFunc '& */
+
   '* list of GPIO numbers, corresponding to ball index
   AS UInt8 BallGpio(PRUIO_AZ_BALL) = { _
      32,  33,  34,  35,  36,   37,  38,  39,  22,  23 _
@@ -222,51 +282,6 @@ TYPE PruIo
       (PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR _
        PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK OR PRUIO_MASK) _
       )
-
-  AS UInt32 _
-    BbType _ '*< Type of Beaglebone board (1 = Pocket-, 0 = others)
-  , MuxFnr   '*< Pinmuxing file number, if any
-  AS ZSTRING PTR MuxAcc '*< Pinmuxing ocp path, if no LKM
-
-  /'* \brief Interface for pinmuxing function (internal).
-  \param Top The toplevel PruIo instance.
-  \param Ball The CPU ball number (use macros from pruio_pins.bi).
-  \param Mo The new modus to set.
-  \returns Zero on success (otherwise a string with an error message).
-
-  This is an internal function. It tries to set a new mode for a header
-  pin (or CPU ball number) configuration. Each digital header pin is
-  connected to a CPU ball. The CPU ball can get muxed to
-
-  - several internal features (like GPIO, CAP, PWM, ...),
-  - internal pullup or pulldown resistors, as well as
-  - an internal receiver module for input pins.
-
-  The function will fail if (depending on system setup):
-
-  - the libpruio loadable kernel module isn't loaded, or
-  - the libpruio device tree overlays isn't loaded, or
-  - the required pin isn't defined in that overlay (ie HDMI), or
-  - the user has no write access to the state configuration files (see
-    section \ref SecPinmuxing for details), or
-  - the required mode isn't available in the overlay.
-
-  The function returns an error message in case of a failure, otherwise
-  0 (zero). The callback function gets connected in the constructor
-  PruIo::PruIo(), depending on the system setup and current write
-  privileges.
-
-  \note Don't use this function to set a pin for a libpruio feature.
-        Instead, call for input pins the feature config function (ie.
-        GpioUdt::config() or CapMod::config() ), and for output pins
-        just set the desired value (ie. PwmMod::setValue()). But you
-        can use the function to set pins in modes that are not
-        supported by libpruio (ie. like SPI or UART). In this case you
-        have to care about loading the matching driver by yourself.
-
-  \since 0.6
-  '/ '& FUNCTION_CDECL_AS_ZSTRING_PTR (setPin) (BYVAL_AS_Pruio__PTR Top, BYVAL_AS_UInt8 Ball, BYVAL_AS_UInt8 Mo); /*
-  setPin AS setPinFunc '& */
 
   DECLARE CONSTRUCTOR( _
     BYVAL AS UInt16 = PRUIO_DEF_ACTIVE _
