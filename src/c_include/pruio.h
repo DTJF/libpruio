@@ -200,7 +200,14 @@ typedef struct gpioUdt{
     *Conf[PRUIO_AZ_GPIO + 1]; //!< Current subsystem configuration, used in  PruIo::config().
   gpioArr
     *Raw[PRUIO_AZ_GPIO + 1];  //!< Pointer to current raw subsystem data (IO), all 32 bits.
-  uint32 InitParA;            //!< Offset to read data block offset.
+  uint32
+    InitParA, //!< Offset to read data block offset.
+    Mask;     //!< The bit mask to manipulate.
+  uint8
+    Mode, //! The mode for pinmuxing
+    Indx, //! The GPIO subsystem index
+    Fe1,  //! Future expansion
+    Fe2;  //! Future expansion
 } gpioUdt;
 
 
@@ -553,16 +560,16 @@ typedef struct pruIo{
   int16
     ParOffs,       //!< The offset for the parameters of a module.
     DevAct;        //!< Active subsystems.
-//! List of GPIO numbers, corresponding to ball index.
-  uint8 BallGpio[PRUIO_AZ_BALL + 1];
-//! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
-  struct __pruss_intc_initdata IntcInit;
   uint32
     BbType, //!< Type of Beaglebone board (1 = Pocket-, 0 = others)
     MuxFnr; //!< FreeBASIC file number for LKM pinmuxing
   char
     *MuxAcc,     //!< pathfile for dtbo pinmuxing
     (*setPin)(pruIo*, uint8, uint8); //!< callback function for LKM/dtbo pinmuxing
+//! List of GPIO numbers, corresponding to ball index.
+  uint8 BallGpio[PRUIO_AZ_BALL + 1];
+//! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
+  struct __pruss_intc_initdata IntcInit;
 } pruIo;
 
 /** \brief Wrapper function for the constructor PruIo::PruIo().

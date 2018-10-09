@@ -28,7 +28,7 @@ memory registers.
 TYPE __prussdrv
   AS Int32 _
       mmap_fd _ '*< file descriptor for memory mappings.
-    , fd(0 TO NUM_PRU_HOSTIRQS - 1) '*< Array for Irq file descriptors.
+    , fd(NUM_PRU_HOSTIRQS - 1) '*< Array for Irq file descriptors.
   AS ANY PTR _
       pru0_dataram_base _  '*< Mapped start address DRam PRU0
     , pru1_dataram_base _  '*< Mapped start address DRam PRU1
@@ -75,24 +75,3 @@ DECLARE FUNCTION prussdrv_extmem_sIze CDECL ALIAS "prussdrv_extmem_size"() AS UI
 DECLARE FUNCTION prussdrv_map_prumem CDECL ALIAS "prussdrv_map_prumem"(BYVAL AS UInt32, BYVAL AS ANY PTR PTR) AS Int32
 DECLARE FUNCTION prussdrv_get_phys_addr CDECL ALIAS "prussdrv_get_phys_addr"(BYVAL AS CONST ANY PTR) AS UInt32
 DECLARE SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"()
-
-DECLARE FUNCTION setPin_save CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_lkm_bb CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_lkm CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_dtbo CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR
-DECLARE FUNCTION setPin_nogo CDECL( _
-    BYVAL AS Pruio_ PTR _
-  , BYVAL AS UInt8 _
-  , BYVAL AS UInt8) AS ZSTRING PTR

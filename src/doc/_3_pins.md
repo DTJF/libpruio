@@ -499,37 +499,38 @@ Find example code in qep.bas.
 # Pinmuxing # {#SecPinmuxing}
 
 At boot time the operating system sets all pins in a save mode. You can
-output the default settings by executing the example
-\ref sSecExaAnalyse after power on reset.
+list the default settings by executing the example \ref sSecExaAnalyse
+after power on reset.
 
 When you configure a header pin in your code, \Proj first checks its
 current mode, and just continues in case of a match. Otherwise action
 is required to get you what you need. In order to set a header pin in
 an other mode, or just configure a pull-up or pull-down resistor,
-there're three methods:
+there're three methods supported:
 
 -# \ref sSecCustom -> configure at boot time the desired mode by an custom overlay
 -# \ref sSecUniversal -> configure at boot time multiple custom modes in an overlay, and switch at runtime
 -# \ref sSecLKM -> load the kernel module, and switch at runtime
 
 Each method has its advantages and downsides. The first two are save
-and documented, but unflexible. There is no fixed border between them,
-ie. you can prepare multiple settings for some pins, and single
-settings for the others. Anyway, you have to know each pin
-configuration before boot. And the necessary tools (device tree
-compiler, capemgr) are not very reliable. Debuggung is a mess.
+and documented, but unflexible. There is no fixed border between them.
+Ie. you can prepare a mixed device tree blob with multiple settings for
+some pins, and single settings for the others. Anyway, you have to know
+and specify each pin configuration before boot. And the necessary tools
+(device tree compiler, capemgr) are not very reliable. Debuggung is a
+mess. Any change requires rebooting.
 
 In contrast the loadable kernel module (LKM) is flexible and fast in
 executation speed. You need not prepare the pins before boot. Instead
-you can access all pins at runtime. You can switch on or off that
-feature at run-time. It has a short boot time and a small memory
-footprint. But you can more easy raise conflicts with other systems.
+you can access all pins at runtime, and you can switch any feature at
+run-time. It has a short boot time and a small memory footprint. But
+you can more easy raise conflicts with other systems.
 
 \Proj checks in the constructor PruIo:PruIo() if the LKM is available,
-and uses it when found. Otherwise it checks for settings provided by an
-universal overlay. If neither of them are present, it works with the
-current pin settings and throughs errors when the programm tries to
-change them.
+and uses it when found. It's the prefered pinmuxing method. Otherwise
+it checks for settings provided by an universal overlay. If neither of
+them are present, it works with the current pin settings and throughs
+error messages when the programm tries to change oinmuxing.
 
 
 ## Custom overlay ## {#sSecCustom}
@@ -634,8 +635,8 @@ get loaded by the kernel.
 
 \note The device tree compiler has a bug (effective up to kernel
       version 4.4.x). When the source file contains a certain number of
-      pin configurations, the compiler stops compiling, without any
-      warning or error message. The resulting output file is validate,
+      pin configurations, the compiler stops compiling without any
+      warning or error message. The resulting output file is valid,
       but contains just a subset of the source file configuration.
 
 \note When your blob tries to use a pin claimed by another subsystem
@@ -652,12 +653,12 @@ containing long lists of text description. The code executes faster,
 consumes less memory, and is more easy to maintain.
 
 There's another difference. While `config-pin` allows to set double
-pins `P9_41` and `P9_42` in contrary output modes, \Proj handles taht
-pins savely, since there are no `P9_91` and `P9_92` pins.
+pins `P9_41` and `P9_42` in contrary output modes, \Proj handles that
+pins in a save manner, since there are no `P9_91` and `P9_92` pins.
 
 Anyway, the desired mode for the pins in use has to be prepared before
-boot. All prepared modes get loaded at boot time. This slows down boot
-time and consumes a lot of kernel space memory. Big overlays needs
+boot. All prepared modes get loaded at boot time. This increases down
+boot time and consumes a lot of kernel space memory. Big overlays needs
 splitting in multiple files.
 
 

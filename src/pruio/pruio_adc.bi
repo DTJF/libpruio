@@ -103,7 +103,7 @@ TYPE AdcUdt
   , E2 = @"too much values to skip" _     '*< Common error message.
   , E3 = @"trigger step not configured" _ '*< Common error message.
   , E4 = @"invalid step number" _         '*< Common error message.
-  , E5 = @!"ADC not enabled"               '*< Common error message.
+  , E5 = @"ADC not enabled"               '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR )
   DECLARE FUNCTION initialize CDECL( _

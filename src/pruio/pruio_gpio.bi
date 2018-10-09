@@ -8,7 +8,6 @@ for the GPIO component of the library.
 '/
 
 
-
 /'* \brief Structure for GPIO subsystem registers.
 
 This UDT contains a set of all GPIO subsystem registers. It's used to
@@ -92,16 +91,25 @@ TYPE GpioUdt
   , Conf(PRUIO_AZ_GPIO)   '*< Current subsystem configuration, used in PruIo::config().
   AS GpioArr PTR _
     Raw(PRUIO_AZ_GPIO)    '*< Pointer to current raw subsystem data (IO), all 32 bits.
-  AS UInt32 InitParA      '*< Offset to read data block offset.
+  AS UInt32 _
+    InitParA _  '*< Offset to read data block offset.
+  , Mask        '*< The bit mask to manipulate
+  AS UInt8 _
+    Mode _      '*< The mode for pinmuxing
+  , Indx _      '*< The GPIO subsystem index
+  , Fe1 _       '*< Future expansion
+  , Fe2         '*< Future expansion
   AS ZSTRING PTR _
     E0 = @"GPIO subsystem not enabled" _ '*< Common error message.
-  , E1 = @"no GPIO pin"                  '*< Common error message.
+  , E1 = @"no GPIO mode" _               '*< Common error message.
+  , E2 = @"no GPIO pin"                  '*< Common error message.
 
   DECLARE CONSTRUCTOR (BYVAL AS Pruio_ PTR)
   DECLARE FUNCTION initialize CDECL() AS ZSTRING PTR
   DECLARE FUNCTION config CDECL( _
     BYVAL AS UInt8 _
   , BYVAL AS UInt8 = CAST(UInt8, PRUIO_GPIO_IN_0)) AS ZSTRING PTR
+  DECLARE SUB setGpio CDECL()
   DECLARE FUNCTION Value CDECL( _
     BYVAL AS UInt8) AS Int32
   DECLARE FUNCTION setValue CDECL( _

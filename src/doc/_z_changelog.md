@@ -17,12 +17,16 @@ Released in 2018, Oktober.
 ## New:
 
 - Pocket Beagle hardware supported
+- Python pruss_xxx examples
 - Header file src/pruio/pruio_pins_pocket.bi for Pocket Beagle
 - Header file src/c_include/pruio_pins_pocket.h for Pocket Beagle
 
 ## Changes:
 
 - Double pin check moved from LKM to function setPin()
+- GPIO subsytem registers get written before pinmuxing
+- GPIO registers now manipulated by function new setGpio()
+- Define PRUIO_COM_GPIO_OUT removed (use PRUIO_COM_GPIO_CONF)
 
 ## Bugfixes:
 

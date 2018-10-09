@@ -69,19 +69,26 @@ FUNCTION GpioUdt.initialize CDECL() AS ZSTRING PTR
       Conf(i) = p_mem + .DSize
 
       WITH *Conf(i)
-        IF .ClAd = 0 ORELSE _
-           .REVISION = 0 THEN _ '                  subsystem not enabled
-             .DeAd = 0 : .ClVa = 0 : p_mem += 16 : CONTINUE FOR
+        IF .ClAd = 0 ORELSE .REVISION = 0 THEN _ ' subsystem not enabled
+                      .DeAd = 0 : .ClVa = 0 : p_mem += 16 : CONTINUE FOR
         .ClVa = 2
         .CLEARDATAOUT = 0
         .SETDATAOUT = 0
-        .DATAIN = Init(i)->DATAIN
-        .DATAOUT = Init(i)->DATAOUT
+        '.DATAIN = Init(i)->DATAIN
+        '.DATAOUT = Init(i)->DATAOUT
       END WITH
 
       WITH *Init(i)
         .CLEARDATAOUT = 0
         .SETDATAOUT = 0
+        var a = i * 32, e = a + 31
+        FOR b AS INTEGER = 0 TO PRUIO_AZ_BALL
+          var p = b - a
+          SELECT CASE Top->BallGpio(b)
+          CASE a TO e : if bit(.OE, p) then continue for ' input pin
+            if BIT(.DATAOUT, p) then Top->BallInit[b] OR= &b10000000
+          END SELECT
+        NEXT
       END WITH
 
       p_mem += SIZEOF(GpioSet)
@@ -126,45 +133,56 @@ FUNCTION GpioUdt.config CDECL( _
   , BYVAL Mo AS UInt8 = CAST(UInt8, PRUIO_GPIO_IN_0)) AS ZSTRING PTR
   WITH *Top
     BallCheck(" GPIO", .Errr)
-    IF 7 <> (Mo AND &b111) THEN         .Errr = @"no GPIO mode" : RETURN .Errr
-    VAR r = .BallGpio(Ball) _ ' resulting GPIO (index and bit number)
-      , i = r SHR 5 _         ' index of GPIO
-      , n = r AND 31 _        ' number of bit
-      , m = 1 SHL n           ' mask for bit
-    IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
-
-    VAR x = IIF(Mo = PRUIO_PIN_RESET, PRUIO_PIN_RESET, Mo AND &b1111111)
-    IF x <> .BallConf[Ball] THEN ModeSet(Ball, x)
-    'IF x <> .BallConf[Ball] THEN if .setPin(Top, Ball, x) then return .Errr
-    IF (x AND PRUIO_RX_ACTIV) = PRUIO_RX_ACTIV               THEN RETURN 0 ' input, we're done
-
-    WITH *Conf(i)
-      IF BIT(Mo, 5) THEN '                                    input Ball
-        .OE OR= m
-        .CLEARDATAOUT AND= NOT m
-        .SETDATAOUT   AND= NOT m
-        m = 0
-      ELSE '                                                 output Ball
-        .OE AND= NOT m
-        IF BIT(Mo, 7) THEN '                                    set high
-          .CLEARDATAOUT AND= NOT m
-          .SETDATAOUT    OR= m
-        ELSE '                                                   set low
-          .CLEARDATAOUT  OR= m
-          .SETDATAOUT   AND= NOT m
-        END IF
-      END IF
-    END WITH
-    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                            RETURN 0
-
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
-    .DRam[5] = Conf(i)->OE
-    .DRam[4] = Conf(i)->SETDATAOUT
-    .DRam[3] = Conf(i)->CLEARDATAOUT
-    .DRam[2] = Conf(i)->DeAd + &h100
-    .DRam[1] = PRUIO_COM_GPIO_CONF SHL 24
-  END WITH :                                                      RETURN 0
+    IF 7 <> (Mo AND &b111)                      THEN .Errr = E1 : RETURN .Errr ' no GPIO mode
+    VAR r = .BallGpio(Ball) ' resulting GPIO (index and bit number)
+    Mode = Mo XOR .BallConf[Ball]
+    IF Mo <> PRUIO_PIN_RESET ANDALSO Mode = 0                THEN return 0 ' nothing to config
+    Indx = r SHR 5 : IF 2 <> Conf(Indx)->ClVa   THEN .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
+    if Mode and &b10100000 then ' change direction or value?
+      Mode = Mo
+      Mask = 1 SHL (r AND 31)
+      setGpio()
+    end if                                                      : RETURN .setPin(Top, Ball, Mo)
+  END WITH
 END FUNCTION
+
+
+/'* \brief Set registers in GPIO subsystem
+
+This procedure writes new values to the related registers of the GPIO
+subsystem to specify the required direction (in or out), and in case of
+output the required state (low or high). It's low-level and private,
+not intended for public usage.
+
+\since 0.6.4
+'/
+SUB GpioUdt.setGpio()
+  WITH *Conf(Indx)
+    IF BIT(Mode, 5) THEN '          input Ball
+      .OE OR= Mask
+      .CLEARDATAOUT AND= NOT Mask
+      .SETDATAOUT   AND= NOT Mask
+    ELSE '                         output Ball
+      .OE AND= NOT Mask
+      IF BIT(Mode, 7) THEN '          set high
+        .CLEARDATAOUT AND= NOT Mask
+        .SETDATAOUT    OR= Mask
+      ELSE '                           set low
+        .CLEARDATAOUT  OR= Mask
+        .SETDATAOUT   AND= NOT Mask
+      END IF
+    END IF
+  END WITH
+  WITH *Top
+    IF .DRam[0] > PRUIO_MSG_IO_OK                          THEN EXIT SUB
+    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    .DRam[5] = Conf(Indx)->OE
+    .DRam[4] = Conf(Indx)->SETDATAOUT
+    .DRam[3] = Conf(Indx)->CLEARDATAOUT
+    .DRam[2] = Conf(Indx)->DeAd + &h100
+    .DRam[1] = PRUIO_COM_GPIO_CONF SHL 24
+  END WITH
+END SUB
 
 
 /'* \brief Set the state of a GPIO.
@@ -174,7 +192,9 @@ END FUNCTION
 
 This function is used to set the state of an output GPIO. Set parameter
 `Ball` to the required header pin (=CPU ball) by using the convenience
-macros defined in pruio_pins.bi (ie. P8_03 selects pin 3 on header P8).
+macros defined in(ie. P8_03 selects pin 3 on header P8). Use
+pruio_pins_pocket.bi or pruio_pins_blue.bi for Pocket Beaglebone or
+Beaglebone Blue boards.
 
 Parameter `Mo` specifies either the state to set (0 or 1). Or it
 specifies the pinmux mode to test and the state in the MSB.
@@ -189,36 +209,21 @@ FUNCTION GpioUdt.setValue CDECL( _
 
   WITH *Top
     BallCheck(" GPIO output", .Errr)
-    VAR r = .BallGpio(Ball) _  ' resulting GPIO (index and bit number)
-      , i = r SHR 5 _          ' index of GPIO
-      , m = 1 SHL (r AND 31) _ ' mask for bit
-      , x = IIF(Mo > 1, Mo AND &b1111111, PRUIO_GPIO_OUT0) '*< the pinmux mode
-
-    IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
-    IF .BallConf[Ball] <> x THEN
-      SELECT CASE AS CONST Mo
-      CASE 0: x = PRUIO_GPIO_OUT0
-      CASE 1: x = PRUIO_GPIO_OUT1
-      CASE ELSE : x = Mo
-      END SELECT :                                                return config(Ball, x)
-    end if
-
-    IF Mo = 1 ORELSE BIT(Mo, 7) THEN
-      Conf(i)->CLEARDATAOUT AND= NOT m
-      Conf(i)->SETDATAOUT    OR= m
-    ELSE
-      Conf(i)->CLEARDATAOUT  OR= m
-      Conf(i)->SETDATAOUT   AND= NOT m
-    END IF
-
-    IF .DRam[0] > PRUIO_MSG_IO_OK THEN                            RETURN 0
-
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
-    .DRam[4] = Conf(i)->SETDATAOUT
-    .DRam[3] = Conf(i)->CLEARDATAOUT
-    .DRam[2] = Conf(i)->DeAd + &h100
-    .DRam[1] = PRUIO_COM_GPIO_OUT SHL 24
-  END WITH :                                                      RETURN 0
+    VAR r = .BallGpio(Ball)  ' resulting GPIO (index and bit number)
+    Indx = r SHR 5 : IF 2 <> Conf(Indx)->ClVa   THEN .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
+    Mask = 1 SHL (r AND 31)
+    SELECT CASE AS CONST Mo
+    CASE 0    : Mode = PRUIO_GPIO_OUT0 : r = .BallConf[Ball] XOR Mode
+    CASE 1    : Mode = PRUIO_GPIO_OUT1 : r = .BallConf[Ball] XOR Mode
+    CASE 255  : Mode = .BallInit[Ball] : r = Mo ' reset
+    CASE ELSE : Mode = Mo              : r = .BallConf[Ball] XOR Mo
+      IF 7 <> (Mo AND &b111)                    THEN .Errr = E1 : RETURN .Errr ' no Gpio mode
+    END SELECT
+    IF r AND &b10100000 THEN setGpio() ' first configure GPIO subsystem
+    IF r AND &b01011000 THEN IF 0 = .setPin(Top, Ball, Mode) THEN RETURN 0 _
+   /' then pinmuxing '/ ELSE Mode = .BallConf[Ball] : setGpio() : RETURN .Errr
+   /' no pinmuxing, set new mode '/      .BallConf[Ball] = Mode : RETURN 0
+  END WITH
 END FUNCTION
 
 
@@ -255,7 +260,7 @@ FUNCTION GpioUdt.Value CDECL(BYVAL Ball AS UInt8) AS Int32
       , i = r SHR 5 _         ' index of GPIO
       , n = r AND 31          ' number of bit
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN -1 ' GPIO subsystem not enabled
-    IF .BallConf[Ball] AND &b111 <> 7 THEN           .Errr = E1 : RETURN -1 ' no GPIO pin
+    IF .BallConf[Ball] AND &b111 <> 7 THEN           .Errr = E2 : RETURN -1 ' no GPIO pin
                                    RETURN IIF(BIT(Raw(i)->Mix, n), 1, 0)
   END WITH
 END FUNCTION

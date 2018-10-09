@@ -33,7 +33,9 @@ Compile by: `fbc -w all sos.bas`
 
 ' *****  main  *****
 
-VAR io = NEW PruIo '*< Create a PruIo structure, wakeup subsystems.
+'* Create a PruIo instance, wakeup only GPIO-1 subsystem, ignore kernel claims.
+'VAR io = NEW PruIo(PRUIO_ACT_FREMUX OR PRUIO_ACT_GPIO1)
+VAR io = NEW PruIo()
 
 WITH *io
   DO
@@ -41,7 +43,7 @@ WITH *io
 
     VAR pinmode = .BallConf[PIN] '*< The current pinmode.
 
-    IF .config() THEN        ?"config failed (" & *.Errr & ")" : EXIT DO
+    IF .config(1, 0) THEN    ?"config failed (" & *.Errr & ")" : EXIT DO
 
     ?"watch SOS code on user LED 3 (near ethernet connector)"
     ?
@@ -55,10 +57,9 @@ WITH *io
       ?!"S"; : OUT_S
       ?!"\r   \r"; : SLEEP 1500
     LOOP UNTIL LEN(INKEY()) : ?
-    .Gpio->setValue(PIN, pinmode) '                 reset LED (cosmetic)
+    if .Gpio->setValue(PIN, pinmode) then _ '       reset LED (cosmetic)
+          ?"reset failed (" & *.Errr & ") press any key to quit" : SLEEP
   LOOP UNTIL 1
-
-  IF .Errr THEN ?"press any key to quit" : SLEEP
 END WITH
 
 DELETE io '                    reset ADC, PinMux and GPIOs, clear memory
