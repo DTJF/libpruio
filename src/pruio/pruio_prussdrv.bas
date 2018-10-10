@@ -21,8 +21,8 @@ module are included.
 #INCLUDE ONCE "dir.bi"
 ' The header for kernel drivercode.
 #INCLUDE ONCE "pruio_prussdrv.bi"
-' Header file with convenience macros and header pin arrays.
-#INCLUDE ONCE "pruio_pins.bi"
+' Header file with pin arrays.
+#INCLUDE ONCE "pruio_boardpins.bi"
 
 
 '* \brief The data structure, global at module level.
@@ -549,7 +549,6 @@ SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"() EXPORT
 END SUB
 
 
-
 /'* \brief Fetch pinmuxing claims from kernel
 \returns A structure containing pin array and names of owners (or zero in case of failure)
 
@@ -561,7 +560,7 @@ is stored only once, no double entries.
 
 \since 0.6.0
 '/
-FUNCTION find_claims CDECL() AS ZSTRING PTR
+FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
 #DEFINE TBUFF_SIZE 32768
   STATIC AS STRING mux
   DIM AS STRING*TBUFF_SIZE t
@@ -570,16 +569,17 @@ FUNCTION find_claims CDECL() AS ZSTRING PTR
   close_(fd)
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1
   mux = STRING(toffs, 0) & "internal CPU ball" & CHR(0)
-  VAR m = CAST(Int16 PTR, SADD(mux))
-  FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL   : m[i] = toffs : NEXT
-  FOR i AS INTEGER = 0 TO UBOUND(P8_Pins) : m[P8_Pins(i)] = 0 : NEXT
-  FOR i AS INTEGER = 0 TO UBOUND(P9_Pins) : m[P9_Pins(i)] = 0 : NEXT
-  FOR i AS INTEGER = 0 TO UBOUND(SD_Pins) : m[SD_Pins(i)] = 0 : NEXT
-  m[JT_04] = 0 : m[JT_05] = 0
+  VAR x = "", m = CAST(Int16 PTR, SADD(mux))
+  FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL : m[i] = toffs : NEXT
+  SELECT CASE AS CONST Typ
+  CASE 1    : x = HEADERPINS_POCKET ' 2x36 headers
+  CASE 2    : x = HEADERPINS_BLUE ' single connectors
+  CASE ELSE : x = HEADERPINS_BB ' BeagleBone 2x46 headers
+  END SELECT : FOR i AS INTEGER = 0 TO LEN(x) - 1 : m[x[i]] = 0 : NEXT
+' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
   VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _
     , c = CVL("pin ") _
     , a = 1, e = INSTR(t, !"\n")
-' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
   WHILE e
     IF *CAST(Int32 PTR, p + a - 4) = c THEN ' check "pin "
       VAR n = VALINT(*(p + a)) : IF n > PRUIO_AZ_BALL    THEN EXIT WHILE
@@ -707,7 +707,7 @@ FUNCTION setPin_save CDECL( _
   WITH *Top
     IF 0 = m ORELSE Ball > PRUIO_AZ_BALL THEN ' init
       set_func = IIF(Top->BbType, @setPin_lkm(), @setPin_lkm_bb())
-      m = find_claims()
+      m = find_claims(.BbType)
                     .Errr = IIF(m, 0, @"parsing kernel claims") : RETURN .Errr
     END IF
 

@@ -66,6 +66,6 @@ number (ie pin 3 on connector E1 is named E1_3).
 '* CPU ball number for SPI1_5 (ZCZ ball A13) spi_sclk
 #DEFINE SPI1_5 &h64 '100
 '* CPU ball number for S1.1_6 (ZCZ ball H18) spi_cs
-#DEFINE S1.1_6 &h51 ' 81
+#DEFINE SPI1_6 &h51 ' 81
 '* CPU ball number for S1.2_6 (ZCZ ball C18) spi_cs
-#DEFINE S1.2_6 &h59 '89
+#DEFINE SPI2_6 &h59 '89

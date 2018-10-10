@@ -24,6 +24,7 @@ SET(SRC_BI
   "pruio.bi"
   "pruio_globals.bi"
   "pruio_pins.bi"
+  "pruio_boardpins.bi"
   "pruio_adc.bi"
   "pruio_gpio.bi"
   "pruio_pwmss.bi"
