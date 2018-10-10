@@ -33,10 +33,12 @@ Released in 2018, Oktober.
 
 ## Bugfixes:
 
+- Doc chapter Messages completed
 - Python apt command in ChaPreparation
 - Macros for AIN pins removed (avoid false pinmuxing)
 - libpruio-lkm added to Python apt command in ChaPreparation
 - Documentation adapted for PocketBeagle (please report erata)
+
 
 # libpruio-0.6.2 # {#SecV-0-6-2}
 

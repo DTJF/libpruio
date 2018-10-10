@@ -204,10 +204,10 @@ typedef struct gpioUdt{
     InitParA, //!< Offset to read data block offset.
     Mask;     //!< The bit mask to manipulate.
   uint8
-    Mode, //! The mode for pinmuxing
-    Indx, //! The GPIO subsystem index
-    Fe1,  //! Future expansion
-    Fe2;  //! Future expansion
+    Mode, //!< The mode for pinmuxing
+    Indx, //!< The GPIO subsystem index
+    Fe1,  //!< Future expansion
+    Fe2;  //!< Future expansion
 } gpioUdt;
 
 

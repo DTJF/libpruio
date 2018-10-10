@@ -80,8 +80,8 @@ the configurations (Init and Conf). -> Make sure that you have at least
 kernel pinmux claims. This is not an error, but a warning. It occurs
 when you loaded the kernel module for pinmuxing on kernel 3.8, and
 \Proj cannot read in directory `/sys/kernel/debug`. Anyway, your
-programm will run unless it tries to change a pin configuration. (Like
-on a no-pinmux configuration, In contrast, when an universal overlay is
+program will run unless it tries to change a pin configuration. (Like
+on a no-pinmux configuration. In contrast, when an universal overlay is
 loaded, you won't see this message. The constructor auto-switches the
 overlay pinmuxing method.) -> Either execute the program with `sudo`,
 or enable the free pinmux feature (= calling constructor
@@ -131,11 +131,11 @@ an early state.
 
 ## config ## {#sSecPruIoConfig}
 
-\Item{"ADC not enabled"} Sampling analog lines is required, but the ADC
-subsystem isn't enabled. -> Either check constructor parameter `Act`
-(bit 1 - ADC must be set) or parameters `Samp` and `Mask` in the
-previous call to function PruIo::config(). Or check the value of
-`PruIo->Adc->Conf->ClVa` (and enable ADC subsystem).
+\Item{"ADC not enabled"} Sampling analog lines is required (parameter
+Mask not equal zero), but the ADC subsystem isn't enabled. -> Either
+check constructor parameter `Act` (bit 1 - ADC must be set). Or, if you
+don't need ADC sampling, pass zero as parameter `Mask` in the function
+call PruIo::config().
 
 \Item{"no step active"} The RB or MM mode is active (parameter `Samp` >
 1), but the parameter `Mask` didn't specify any active channel. ->
@@ -189,7 +189,13 @@ is `16 kB - PRUIO_DAT_ADC` -> Either reduce parameter `Samp` in the
 previous call to AdcUdt::mm_trg_pre(). Or reduce the number of active
 steps in parameter `Mask` in the previous call to PruIo::config().
 
-\Item{"Trg...: pre-trigger step must be active"} (... replaced by trigger number)
+\Item{"Trg...: pre-trigger step must be active"} (... replaced by
+trigger number) The function call specifies a pre-trigger for an
+non-active ADC step. -> Either adapt the parameter `Mask` in function
+call PruIo::config() and make the required pre-trigger step active. Or
+adapt the pre-trigger configuration in function call
+AdcUdt::mm_trg_pre() to a step that ist active in the current `Mask`
+parameter.
 
 \Item{"Trg...: unknown trigger pin number"} (... replaced by trigger
 number) The ball number in the trigger specification is too big. This
@@ -212,14 +218,9 @@ Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
 
 ## setPin ## {#sSecPruIoSetPin}
 
-\Item{"unknown pin number"} The specified ball number is too big. ->
-Make sure that parameter `Ball` is less or equal \ref PRUIO_AZ_BALL.
-
 \Item{"unknown setPin ball number"} The specified ball number is too
 big. -> Make sure that parameter `Ball` is less or equal \ref
 PRUIO_AZ_BALL.
-
-\Item{"unknown setPin ball number"}
 
 \Item{"no ocp access"} The CPU ball isn't in the required modus and
 needs a new pinmux setting, but \Proj has no access to the sysfs
@@ -229,22 +230,25 @@ are set to the required modi before you execute the code. Or consider
 to use the loadable kernel module and execute with  administrator
 privileges.
 
-\Item{"pinmux failed: P._.. -> x.." (points replaced by numbers)} The
+\Item{"pinmux failed: P._.. -> x.."} (points replaced by numbers) The
 CPU ball isn't in the required modus and needs a new pinmux setting,
-but the required CPU ball (parameter `Ball`) is not specified in the
-\Proj device tree overlay, or the overlay isn't loaded, or pinmuxing
-isn't supported for that state. -> Check the parameters `Ball` and
-`Mo`. Make sure that the required modus is defined in the \Proj
+but either the pin or the mode isn't specified in the \Proj device tree
+overlay, or the overlay isn't loaded. -> Check the parameters `Ball`
+and `Mo`. Make sure that the required modus is defined in the \Proj
 device tree overlay and that overlay is loaded. Or consider to use the
 loadable kernel module and execute with administrator privileges.
 
-\Item{"pin P._.. claimed by ..."} This error may occur when you use the
-loadable kernel module for pinmuxing and you didn't enabled the free
-pinmux feature (by not calling PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ).
-Your code tried to override the setting of a pin that is claimed by an
-other system.
+\Item{"pin P._.. claimed by ..."} (or "ball... claimed by ...") The LKM
+(loadable kernel module) is active and the program requires pinmuxing,
+but the related pin (CPU ball) is claimed by another system. -> Either
+enable the free pinmux feature (by calling constructor
+PruIo::PruIo(PRUIO_ACT_FREMUX OR ...) ). Or disable the pin claim by
+loading an other device tree overlay. Or (on kernel >= 4.14) remove the
+trigger file by executing
 
-\Item{"pinmux missing"} Any function needs pinmuxing, but there is no
+    sudo rm /boot/dtbs/`uname -r`/am335x-boneblack-uboot-univ.dtb
+
+\Item{"pinmux missing"} The program requires pinmuxing, but there is no
 pinmux configuration on your system. -> Load the kernel module and
 execute with administrator privileges.
 
@@ -257,7 +261,11 @@ execute with administrator privileges.
 
 ## setStep ## {#sSecErrSetStep}
 
-\Item{"ADC not enabled"}
+\Item{"ADC not enabled"} You try to configure an ADC step, but in the
+constructor call PruIo::PruIo() the first parameter `Act` doesn't
+enable the ADC subsystem, so no sampling is possible. -> Enable the ADC
+subsystem by adding PRUIO_ACT_ADC to the first parameter `Act` in the
+constructor PruIo::PruIo() call.
 
 \Item{"step number too big"} The specified step number is too big. ->
 Make sure that parameter `Stp` is in the range of 0 to 16.
@@ -268,7 +276,11 @@ big. -> Make sure that parameter `ChN` is in the range of 0 to 7.
 
 ## mm_trg_pin ## {#sSecErrMmTrgPin}
 
-\Item{"ADC not enabled"}
+\Item{"ADC not enabled"} You try to configure an ADC trigger, but in
+the constructor call PruIo::PruIo() the first parameter `Act` doesn't
+enable the ADC subsystem, so no sampling is possible. -> Enable the ADC
+subsystem by adding PRUIO_ACT_ADC to the first parameter `Act` in the
+constructor PruIo::PruIo() call.
 
 \Item{"too much values to skip"} The post trigger delay is too big. ->
 Make sure that parameter `Skip` is in the range of 0 to 1023.
@@ -291,7 +303,11 @@ configuration, first.
 
 ## mm_trg_ain ## {#sSecErrMmTrgAin}
 
-\Item{"ADC not enabled"}
+\Item{"ADC not enabled"} You try to configure an ADC trigger, but in
+the constructor call PruIo::PruIo() the first parameter `Act` doesn't
+enable the ADC subsystem, so no sampling is possible. -> Enable the ADC
+subsystem by adding PRUIO_ACT_ADC to the first parameter `Act` in the
+constructor PruIo::PruIo() call.
 
 \Item{"invalid step number"} The specification should get created for a
 non-valid step. -> Make sure to pass a number in the range of 1 to 16
@@ -308,7 +324,11 @@ Make sure that parameter `Skip` is in the range of 0 to 1023.
 
 ## mm_trg_pre ## {#sSecErrMmTrgPre}
 
-\Item{"ADC not enabled"}
+\Item{"ADC not enabled"} You try to configure an ADC trigger, but in
+the constructor call PruIo::PruIo() the first parameter `Act` doesn't
+enable the ADC subsystem, so no sampling is possible. -> Enable the ADC
+subsystem by adding PRUIO_ACT_ADC to the first parameter `Act` in the
+constructor PruIo::PruIo() call.
 
 \Item{"invalid step number"} The specification should get created for a
 non-valid step. -> Make sure to pass a number in the range of 1 to 16
@@ -336,7 +356,20 @@ PruIo::config().
 
 # GPIO # {#SecErrGpio}
 
+\note When the pin (CPU ball) is not in the matching mode, \Proj
+      tries to configure it. In that case you also may get error
+      messages as described in \ref sSecPruIoSetPin.
+
+
 ## config ## {#sSecErrGpioConfig}
+
+\Item{"unknown GPIO output pin number"} The specified ball number is
+too big. -> Make sure that parameter `Ball` is less or equal \ref
+PRUIO_AZ_BALL.
+
+\Item{"no GPIO mode"} Setting a header pin in GPIO mode is required,
+but the specified mode in parameter `Mo` is not a GPIO mode. -> Make
+sure to specify a valid GPIO mode (ie. from enumerators ::PinMuxing).
 
 \Item{"GPIO subsystem not enabled"} Setting a header pin in GPIO mode
 is required, but the related GPIO subsystem isn't enabled. -> Set
@@ -344,31 +377,23 @@ is required, but the related GPIO subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"no GPIO mode"} Setting a header pin in GPIO mode is required,
-but the specified mode in parameter `Mo` is not a GPIO mode. -> Make
-sure to specify a valid GPIO mode (ie. from enumerators PinMuxing).
-
-\note When the pin (CPU ball) is not in the matching mode, \Proj
-      tries to configure it. In that case you also may get error
-      messages as described in \ref sSecPruIoSetPin.
-
 
 ## Value ## {#sSecErrGpioValue}
 
-\Item{"unknown GPIO input pin number"} The specified ball number is too
-big. -> Make sure that parameter `Ball` is less or equal \ref
+\Item{"unknown GPIO output pin number"} The specified ball number is
+too big. -> Make sure that parameter `Ball` is less or equal \ref
 PRUIO_AZ_BALL.
+
+\Item{"no GPIO pin"} Getting a GPIO input is required, but the
+specified header pin (CPU ball number) isn't in GPIO mode. -> Check the
+parameter `Ball`. Call function GpioUdt::config() to change the pin
+configuration to GPIO input mode.
 
 \Item{"GPIO subsystem not enabled"} Getting a GPIO input is required,
 but the related GPIO subsystem isn't enabled. -> Set
 `PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIO subsystem
 connected to that ball number) and call function PruIo::config(),
 first.
-
-\Item{"no GPIO pin"} Getting a GPIO input is required, but the
-specified header pin (CPU ball number) isn't in GPIO mode. -> Check the
-parameter `Ball`. Call function GpioUdt::config() to change the
-pin configuration to GPIO in mode.
 
 
 ## setValue ## {#sSecErrGpioSetValue}
@@ -383,13 +408,16 @@ but the related GPIO subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"no GPIO pin"} Setting a GPIO ouput is required, but the
-specified header pin (CPU ball number) isn't in GPIO mode. -> Check the
-parameter `Ball`. Call function GpioUdt::config() to change the
-pin configuration to GPIO out mode.
+\Item{"no GPIO mode"} Setting a new mode for the GPIO output is
+required, but the specified mode isn't a GPIO mode. -> Check the
+parameter `Mo`, use enumerators ::PinMuxing.
 
 
 # PWM # {#SecErrPwm}
+
+\note When the pin (CPU ball) is not in the matching mode, \Proj
+      tries to configure it. In that case you also may get error
+      messages as described in \ref sSecPruIoSetPin.
 
 ## setValue ## {#sSecErrPwmSetValue}
 
@@ -451,6 +479,10 @@ for details.
 
 # TIMER # {#SecErrTim}
 
+\note When the pin (CPU ball) is not in the matching mode, \Proj
+      tries to configure it. In that case you also may get error
+      messages as described in \ref sSecPruIoSetPin.
+
 ## setValue ## {#sSecErrTimSetValue}
 
 \Item{"pin has no TIMER capability"} The specified ball number has no
@@ -493,6 +525,10 @@ configuration of that pin.
 
 # CAP # {#SecErrCap}
 
+\note When the pin (CPU ball) is not in the matching mode, \Proj
+      tries to configure it. In that case you also may get error
+      messages as described in \ref sSecPruIoSetPin.
+
 ## config ## {#sSecErrCapConfig}
 
 \Item{"unknown CAP pin number"} The specified ball number is too big. ->
@@ -532,6 +568,10 @@ function PruIo::config(), first.
 
 
 # QEP # {#SecErrQep}
+
+\note When the pin (CPU ball) is not in the matching mode, \Proj
+      tries to configure it. In that case you also may get error
+      messages as described in \ref sSecPruIoSetPin.
 
 ## config ## {#sSecErrQepConfig}
 

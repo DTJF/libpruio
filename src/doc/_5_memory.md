@@ -280,14 +280,6 @@ to the running PRU software
   | DRam[4] | Value for GpioSet::SETDATAOUT register   |
   | DRam[5] | Value for GpioSet::OE register           |
 
-- PRU command \ref PRUIO_COM_GPIO_OUT (set GPIO outputs)
-  |  Value  | Description                              |
-  | ------: | : -------------------------------------- |
-  | DRam[1] | PRUIO_COM_GPIO_OUT `SHL 24`              |
-  | DRam[2] | GPIO subsystem adress (+ &h100)          |
-  | DRam[3] | Value for GpioSet::CLEARDATAOUT register |
-  | DRam[4] | Value for GpioSet::SETDATAOUT register   |
-
 - PRU command \ref PRUIO_COM_PWM (set PWM frequency and duty cycle)
   |  Value  | Description                                             |
   | ------: | : ----------------------------------------------------- |
