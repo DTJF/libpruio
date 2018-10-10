@@ -62,10 +62,11 @@ Compile by: `fbc -w all performance.bas`
   END IF
 
   WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+  .DRam[5] = oe
   .DRam[4] = sd
   .DRam[3] = cd
   .DRam[2] = ad
-  .DRam[1] = PRUIO_COM_GPIO_OUT SHL 24
+  .DRam[1] = PRUIO_COM_GPIO_CONF SHL 24
 #ENDMACRO
 
 '* Macro to set output by normal GPIO function (for better readability).
@@ -120,7 +121,8 @@ WITH *io
      , m0 = 1 SHL (r0 AND 31) _'*< Mask for output bit.
      , cd = 0 _                '*< Register value for CLEARDATAOUT.
      , sd = 0 _                '*< Register value for SETDATAOUT.
-     , ad = .Gpio->Conf(g0)->DeAd + &h100 '*< Subsystem adress.
+     , ad = .Gpio->Conf(g0)->DeAd + &h100 _ '*< Subsystem adress.
+     , oe = .Gpio->Conf(g0)->OE '*< Output enable register.
 
     FOR i AS INTEGER = 0 TO UBOUND(desc) ' initialize minimum values
       nf(i) = 100e6

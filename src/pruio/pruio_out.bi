@@ -9,6 +9,98 @@ convenience macros can print out all that register context.
 \since 0.2
 '/
 
+DIM SHARED AS UInt8 P8_Pins(...) = { _
+  P8_03 _
+, P8_04 _
+, P8_05 _
+, P8_06 _
+, P8_07 _
+, P8_08 _
+, P8_09 _
+, P8_10 _
+, P8_11 _
+, P8_12 _
+, P8_13 _
+, P8_14 _
+, P8_15 _
+, P8_16 _
+, P8_17 _
+, P8_18 _
+, P8_19 _
+, P8_20 _
+, P8_21 _
+, P8_22 _
+, P8_23 _
+, P8_24 _
+, P8_25 _
+, P8_26 _
+, P8_27 _
+, P8_28 _
+, P8_29 _
+, P8_30 _
+, P8_31 _
+, P8_32 _
+, P8_33 _
+, P8_34 _
+, P8_35 _
+, P8_36 _
+, P8_37 _
+, P8_38 _
+, P8_39 _
+, P8_40 _
+, P8_41 _
+, P8_42 _
+, P8_43 _
+, P8_44 _
+, P8_45 _
+, P8_46 _
+  }
+
+'* Array of CPU ball numbers for all digital pins on header P9.
+DIM SHARED AS UInt8 P9_Pins(...) = { _
+  P9_11 _
+, P9_12 _
+, P9_13 _
+, P9_14 _
+, P9_15 _
+, P9_16 _
+, P9_17 _
+, P9_18 _
+, P9_19 _
+, P9_20 _
+, P9_21 _
+, P9_22 _
+, P9_23 _
+, P9_24 _
+, P9_25 _
+, P9_26 _
+, P9_27 _
+, P9_28 _
+, P9_29 _
+, P9_30 _
+, P9_31 _
+, P9_41 _
+, P9_42 _
+  }
+
+'* Array of CPU ball numbers for all digital pins on header P9.
+DIM SHARED AS UInt8 JT_Pins(...) = { _
+  JT_04 _
+, JT_05 _
+  }
+
+'* Array of CPU ball numbers for all digital pins on header P9.
+DIM SHARED AS UInt8 SD_Pins(...) = { _
+  SD_01 _
+, SD_02 _
+, SD_03 _
+, SD_05 _
+, SD_07 _
+, SD_08 _
+, SD_10 _
+  }
+
+
 '* Output the context of a single register.
 #DEFINE REG(_R_) RIGHT("                 " & #_R_, 17) & ": " & HEX(.##_R_, SIZEOF(.##_R_) * 2)
 '* Output the start of a set.

@@ -55,10 +55,11 @@ Compile by: `gcc -Wall -o performance performance.c -lpruio`
 #define DIRECT(_O_) \
   if(_O_){cd &= ~m0; sd |= m0;} else {sd &= ~m0; cd |= m0;} \
   while(Io->DRam[1]){} \
+  Io->DRam[5] = oe; \
   Io->DRam[4] = sd; \
   Io->DRam[3] = cd; \
   Io->DRam[2] = ad; \
-  Io->DRam[1] = PRUIO_COM_GPIO_OUT << 24;
+  Io->DRam[1] = PRUIO_COM_GPIO_CONF << 24;
 
 //! Macro to set output by normal GPIO function (for better readability).
 #define FUNC(_O_) \
@@ -110,7 +111,8 @@ int main(int argc, char **argv)
     , m0 = 1 << (r0 & 31)     //!< Mask for output bit.  , sd
     , cd = 0                  //!< Register value for CLEARDATAOUT.
     , sd = 0                  //!< Register value for SETDATAOUT.
-    , ad = Io->Gpio->Conf[g0]->DeAd + 0x100; //!< Subsystem adress.
+    , ad = Io->Gpio->Conf[g0]->DeAd + 0x100 //!< Subsystem adress.
+    , oe = Io->Gpio->Conf[g0]->OE; //!< Output enable register.
     float_t
       f0     //!< The current measurement result.
     , nf[7]  //!< The minimum frequencies.

@@ -30,6 +30,7 @@ m0 = c_ulong(0)
 m1 = c_ulong(0)
 md = c_ulong(0)
 ad = c_ulong(0)
+oe = c_ulong(0)
 cd = c_ulong(0)
 sd = c_ulong(0)
 
@@ -51,10 +52,11 @@ def DIRECT(_O_):
   if _O_: cd.value &= ~m0.value; sd.value |= m0.value
   else:   sd.value &= ~m0.value; cd.value |= m0.value
   while IO.DRam[1]: pass
+  IO.DRam[5] = oe.value
   IO.DRam[4] = sd.value
   IO.DRam[3] = cd.value
   IO.DRam[2] = ad.value
-  IO.DRam[1] = PRUIO_COM_GPIO_OUT << 24
+  IO.DRam[1] = PRUIO_COM_GPIO_CONF << 24
 
 try:
   if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
@@ -81,6 +83,7 @@ try:
   g1 = r1.value >> 5 #            Index of input GPIO.
   g0 = r0.value >> 5 #            Index of output GPIO.
   ad.value = IO.Gpio.contents.Conf[g0].contents.DeAd + 0x100
+  oe.value = IO.Gpio.contents.Conf[g0].contents.OE
   c = 4  # number of cycles for each test
   n = 50 # number of tests
   mi = IO.Gpio.contents.Raw[g1].contents
