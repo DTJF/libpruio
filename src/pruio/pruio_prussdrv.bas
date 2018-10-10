@@ -675,7 +675,12 @@ FUNCTION setPin_lkm_bb CDECL( _
       .Mode = PRUIO_GPIO_IN_0
       .Mask = 1 SHL (r AND 31)
       .setGpio()
-    END WITH                          : RETURN setPin_lkm(Top, Ball, Mo)
+    END WITH
+    VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
+    PUT  #.MuxFnr, , HEX(   r, 2) & "27" _
+                   & HEX(Ball, 2) & HEX(m AND &b1111111, 2)
+    SEEK #.MuxFnr, 1
+         .BallConf[r] = PRUIO_GPIO_IN_0 : .BallConf[Ball] = m : RETURN 0
   END WITH
 END FUNCTION
 
