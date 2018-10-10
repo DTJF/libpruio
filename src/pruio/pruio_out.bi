@@ -9,6 +9,7 @@ convenience macros can print out all that register context.
 \since 0.2
 '/
 
+'* Array of CPU ball numbers for all digital pins on header P8.
 DIM SHARED AS UInt8 P8_Pins(...) = { _
   P8_03 _
 , P8_04 _
