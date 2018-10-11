@@ -570,13 +570,13 @@ FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1
   mux = STRING(toffs, 0) & "internal CPU ball" & CHR(0)
   VAR x = "", m = CAST(Int16 PTR, SADD(mux))
-  FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL : m[i] = toffs : NEXT
+  FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL : m[i] = toffs : NEXT ' all internal
   SELECT CASE AS CONST Typ
   CASE 1    : x = HEADERPINS_POCKET ' 2x36 headers
   CASE 2    : x = HEADERPINS_BLUE ' single connectors
   CASE ELSE : x = HEADERPINS_BB ' BeagleBone 2x46 headers
-  END SELECT : FOR i AS INTEGER = 0 TO LEN(x) - 1 : m[x[i]] = 0 : NEXT
-' to parse: <pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)>
+  END SELECT : FOR i AS INTEGER = 0 TO LEN(x) - 1 : m[x[i]] = 0 : NEXT ' external
+' to parse: "pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)"
   VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _
     , c = CVL("pin ") _
     , a = 1, e = INSTR(t, !"\n")
@@ -584,16 +584,16 @@ FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
     IF *CAST(Int32 PTR, p + a - 4) = c THEN ' check "pin "
       VAR n = VALINT(*(p + a)) : IF n > PRUIO_AZ_BALL    THEN EXIT WHILE
       VAR p1 = INSTR(a, t, "): ") + 3
-      IF p1 > 3 THEN
-        IF t[p1 - 1] <> ASC("(") THEN ' -> (MUX UNCLAIM...
+      IF p1 > 3 THEN ' muxline
+        IF t[p1 - 1] <> ASC("(") THEN ' not "(MUX UNCLAIM..."
           VAR p2 = INSTR(p1, t, " ") _
            , own = MID(t, p1, IIF(p2, p2, e) - p1) & CHR(0) _
              , x = INSTRREV(mux, CHR(0) & own)
-          IF x < toffs THEN x = LEN(mux) : mux &= own
-          CAST(Int16 PTR, SADD(mux))[n] = x
+          IF x < toffs THEN x = LEN(mux) : mux &= own ' new entry
+          CAST(Int16 PTR, SADD(mux))[n] = x '           add owner
         END IF
       END IF
-    END IF : a = e + 1 : e = INSTR(a, t, !"\n")
+    END IF : a = e + 1 : e = INSTR(a, t, !"\n") ' next line
   WEND                                                          : RETURN SADD(mux)
 END FUNCTION
 

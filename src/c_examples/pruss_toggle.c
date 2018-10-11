@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 
     if(load_firmware(pru_iram) < 0)                               break;
 //
-// Pinmuxing
+// Pinmuxing (some examples first)
 //
     //// set PRU-0-r31 bit 15 input with pull up resistor
     //if (io->setPin(io, P8_15, 6 | PRUIO_PULL_UP)) {

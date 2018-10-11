@@ -50,7 +50,7 @@ try:
 
   load_firmware(pru_iram)
 #
-# Pinmuxing
+# Pinmuxing (some examples first)
 #
   ## set PRU-0-r31 bit 15 input with pull up resistor
   #if (IO.setPin(io, P8_15, 6 | PRUIO_PULL_UP)) {
@@ -107,4 +107,5 @@ try:
   # note: no prussdrv_exit(), libpruio does it in the destructor
 
 finally:
+
   pruio_destroy(io)

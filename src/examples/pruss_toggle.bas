@@ -105,7 +105,7 @@ DO
   IF load_firmware(pru_iram) < 0 THEN _
                           ?"failed loading PRUSS instructions" : EXIT DO
 '
-' Pinmuxing
+' Pinmuxing (some examples first)
 '
   '' set PRU-0-r31 bit 15 input with pull up resistor
   'IF io->setPin(io, P8_15, 6 OR PRUIO_PULL_UP) THEN _

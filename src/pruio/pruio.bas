@@ -282,10 +282,10 @@ DESTRUCTOR PruIo()
       IF MuxFnr THEN '                                     close MuxFile
         IF BallInit <> BallConf THEN '                   reset pinmuxing
           FOR i AS LONG = 0 TO PRUIO_AZ_BALL
-            IF BallInit[i] = BallConf[i] THEN CONTINUE FOR
-            IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
+            IF (BallInit[i] XOR BallConf[i]) AND &b1111111 THEN _
+              IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
           NEXT
-        END IF
+        END IF : Errr = 0
         IF MuxFnr < 256 THEN CLOSE #MuxFnr
       END IF
 
@@ -294,7 +294,6 @@ DESTRUCTOR PruIo()
       DEALLOCATE(DInit)
       DRam[2] = 0
 
-      Errr = 0
       VAR l = ArrayBytes(Pru_Run)
       IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Run(0), l) THEN
                           Errr = @"failed loading Pru_Exit instructions"
