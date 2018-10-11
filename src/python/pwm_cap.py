@@ -1,17 +1,37 @@
 #!/usr/bin/python
+## \file
+# \brief Example: PWM output and CAP input.
+#
+# This file contains an example on how to measure the frequency and duty
+# cycle of a pulse train with a eCAP module input. The program sets
+# another pin as eHRPWM output to generate a pulse width modulated signal
+# as source for the measurement. The output can be changed by some keys,
+# the frequency and duty cycle of the input is shown continuously in the
+# terminal output. Find a functional description in section \ref
+# sSecExaPwmCap.
+#
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
+#
+# Run by: `python pwm_cap.py`
+#
+# \since 0.6.0
+
 import curses
 from libpruio import *
 
+## The main function
 def pwm_cap(stdscr):
   ## Clear and refresh the screen for a blank canvas
   stdscr.clear()
   stdscr.nodelay(1)
 
-  POUT = P9_21 # header pin for pwm output
-  #POUT = P8_07 # header pin for pwm output
-  P_IN = P9_42  # header pin for cap input
+  ## Header pin for pwm output
+  POUT = P9_21
+  #POUT = P8_07 # alternate header pin for pwm output
+  ## Header pin for cap input
+  P_IN = P9_42
 
-  # Create a ctypes pointer to the pruio structure
+  ## Create a ctypes pointer to the pruio structure
   io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
   try:
     IO = io.contents #  the pointer dereferencing, using contents member

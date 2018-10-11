@@ -7,7 +7,7 @@
 # the basic usage of libpruio with a minimum of source code. Find a
 # functional description in section \ref sSecExaSimple.
 #
-# Licence: GPLv3, Copyright 2014-\Year by \Mail
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
 #
 # Run by: `python 1.py`
 #
@@ -17,14 +17,16 @@
 from __future__ import print_function
 from libpruio import *
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
 try:
-  IO = io.contents #    the pointer dereferencing, using contents member
+  ## The pointer dereferencing, using contents member
+  IO = io.contents
   if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
   if pruio_config(io, 1, 0x1FE, 0, 4): #  upload settings, start IO mode
     raise AssertionError("config failed (%s)" % IO.Errr)
-  AdcV = IO.Adc.contents.Value #                           array pointer
+  ## Array pointer
+  AdcV = IO.Adc.contents.Value
   for n in range(13): #                                 print some lines
     for i in range(1, 9): #                                    all steps
       print("%4X" % AdcV[i], end=" ") #        output one channel in hex

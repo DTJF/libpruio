@@ -1,12 +1,44 @@
 #!/usr/bin/python
+## \file
+# \brief Example: test execution speed of several methods to toggle a GPIO pin.
+#
+# This file contains an example on measuring the execution speed of
+# different controllers that toggles a GPIO output. It measures the
+# frequency of the toggled output from open and closed loop controllers
+# and computes their mimimum, avarage and maximum execution speed. Find a
+# functional description in section \ref sSecExaPerformance.
+#
+# The code performs 50 tests of each controller version and outputs the
+# toggling frequencies in Hz at the end. The controllers are classified
+# by
+#
+# -# Open loop
+#   - Direct GPIO
+#   - Function Gpio->Value
+# -# Closed loop
+#   - Input direct GPIO, output direct GPIO
+#   - Input function Gpio->Value, output direct GPIO
+#   - Input function Gpio->Value, output function Gpio->setValue
+#   - Input Adc->Value, output direct GPIO
+#   - Input Adc->Value, output function Gpio->Value
+#
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
+#
+# Run by: `python performance.py`
+#
+# \since 0.6.0
+
 from __future__ import print_function
 from libpruio import *
 import time
 
-C_IN = P9_42 # The pin to use for CAP input.
-GOUT = P8_16 # The pin to use for GPIO output.
-G_IN = P8_14 # The pin to use for GPIO input.
-
+## The pin to use for CAP input.
+C_IN = P9_42
+## The pin to use for GPIO output.
+GOUT = P8_16
+## The pin to use for GPIO input.
+G_IN = P8_14
+## Test descriptions
 desc = [
   "Open loop, direct GPIO"
 , "Open loop, function Gpio->Value"
@@ -17,28 +49,38 @@ desc = [
 , "Closed loop, Adc->Value to function Gpio->Value"
 ]
 
-f0 = c_float(0.) # The current measurement result.
+## The current measurement result.
+f0 = c_float(0.)
+## Array for minimal frequency (initialized high)
 nf = [100e6,100e6,100e6,100e6,100e6,100e6,100e6]
+## Array for frequency
 sf = [0.,0.,0.,0.,0.,0.,0.]
+## Array for maximal frequency
 xf = [0.,0.,0.,0.,0.,0.,0.]
 
-#r0 = r1 = c_ubyte(0)
+## Input Gpio
 r0 = c_ubyte(0)
+## Output Gpio
 r1 = c_ubyte(0)
-
+## Input bit mask
 m0 = c_ulong(0)
+## Output bit mask
 m1 = c_ulong(0)
-md = c_ulong(0)
+## Adress of GPIO subsystem
 ad = c_ulong(0)
+## Adress of Output Enable register in GPIO subsystem
 oe = c_ulong(0)
+## Adress of Clear Data register in GPIO subsystem
 cd = c_ulong(0)
+## Adress of Set Date register in GPIO subsystem
 sd = c_ulong(0)
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
-IO = io.contents #    the pointer dereferencing, using contents member
+## The pointer dereferencing, using contents member
+IO = io.contents
 
-# Macro to measure the frequency and compute statistics.
+## Macro to measure the frequency and compute statistics.
 def FREQ(_N_):
   if pruio_cap_Value(io, C_IN, byref(f0), None): #         get CAP input
     raise AssertionError("Cap->Value failed (%s)" % IO.Errr)
@@ -47,7 +89,7 @@ def FREQ(_N_):
   if f0.value > xf[_N_]: xf[_N_] = f0.value
   print("%f" % f0.value, end="\t")
 
-# Macro to set output pin by fast direct PRU command (no error checking).
+## Macro to set output pin by fast direct PRU command (no error checking).
 def DIRECT(_O_):
   if _O_: cd.value &= ~m0.value; sd.value |= m0.value
   else:   sd.value &= ~m0.value; cd.value |= m0.value
@@ -80,14 +122,14 @@ try:
   m1.value = 1 << (r1.value & 31)
   r0.value = IO.BallGpio[GOUT] #  Resulting output GPIO (index and bit number).
   m0.value = 1 << (r0.value & 31)
-  g1 = r1.value >> 5 #            Index of input GPIO.
-  g0 = r0.value >> 5 #            Index of output GPIO.
+  g1 = r1.value >> 5 # Index of input GPIO.
+  g0 = r0.value >> 5 # Index of output GPIO.
   ad.value = IO.Gpio.contents.Conf[g0].contents.DeAd + 0x100
   oe.value = IO.Gpio.contents.Conf[g0].contents.OE
-  c = 4  # number of cycles for each test
-  n = 50 # number of tests
-  mi = IO.Gpio.contents.Raw[g1].contents
-  Adc = IO.Adc.contents.Value
+  c = 4 # Number of cycles for each test
+  n = 50 # Number of tests
+  mi = IO.Gpio.contents.Raw[g1].contents # Mixes register DATAIN/DATAOUT
+  Adc = IO.Adc.contents.Value # Adc values
   for x in range(0, n):
     time.sleep(.001)
     for i in range(0, c):

@@ -1,7 +1,23 @@
 #!/usr/bin/python
+## \file
+# \brief Example: PRUSS GPIO toggling measured speed
+#
+# This file contains an example for parallel usage of the other PRUSS.
+# The firmware toggles a GPIO pin at reduced speed. (Maximum is 100 MHz
+# pulse train, we add 4 NOOPs to reduce it to 20 MHz for better
+# measurments.) Find a functional description in section \ref
+# sSecExaPruToggle.
+#
+# Licence: GPLv3, Copyright 2018-\Year by \Mail
+#
+# Run by: `python pruss_toggle.py`
+#
+# \since 0.6.4
+
 from __future__ import print_function
 from libpruio import *
 
+## Load firmware into PRUSS instruction ram
 def load_firmware(IRam):
   PRUcode = (c_uint32*13)(
     0x240000e0,
@@ -22,19 +38,24 @@ def load_firmware(IRam):
                      raise AssertionError("failed loading instructions")
   return 0
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
 #io = pruio_new(PRUIO_DEF_ACTIVE | PRUIO_ACT_FREMUX, 4, 0x98, 0)
 try:
-  IO = io.contents #    the pointer dereferencing, using contents member
+  ## The pointer dereferencing, using contents member
+  IO = io.contents
   if IO.Errr:    raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 #
 # Check init success
 #
   if(IO.PruNo): #                                   we use the other PRU
+    ## The PRU subsystem we use
     pru_num = 0
+    ## The instruction ram ID of PRU subsystem
     pru_iram = PRUSS0_PRU0_IRAM
+    ## The direct access ram ID of PRU subsystem
     pru_dram = PRUSS0_PRU0_DRAM
+    ## The interrupt we use
     pru_intr = PRU0_ARM_INTERRUPT
   else:
     pru_num = 1
@@ -76,11 +97,14 @@ try:
        raise AssertionError("failed setting input P9_42 (%s)" % IO.Errr)
   if (pruio_config(io, 1, 0, 0, 0)):
                     raise AssertionError("config failed (%s)" % IO.Errr)
-  f = c_float(0) # the measured frequency.
-  d = c_float(0) # the measured duty cycle.
+  ## The measured frequency.
+  f = c_float(0)
+  ## The measured duty cycle.
+  d = c_float(0)
 #
 # Pass parameters to PRU
 #
+  ## The pointer to the PRU direct access ram
   dram = pointer(c_uint32(0))
   prussdrv_map_prumem(pru_dram, byref(dram)) # get dram pointer
   dram[0] = 15 # bit number, must match configured pin (P8_11)

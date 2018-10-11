@@ -1,20 +1,42 @@
 #!/usr/bin/python
+## \file
+# \brief Example: fetch ADC samples in a ring buffer and save to file.
+#
+# This file contains an example on how to use the ring buffer mode of
+# libpruio. A fixed step mask of AIN-0, AIN-1 and AIN-2 get configured
+# for maximum speed, sampled in to the ring buffer and from there saved
+# as raw data to some files. Find a functional description in section
+# \ref sSecExaRbFile.
+#
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
+#
+# Run by: `python rb_file.py`
+#
+# \since 0.6.0
+
 from __future__ import print_function
 from libpruio import *
 import time
 
+## For file operations
 libc = CDLL("libc.so.6")
 
-tSamp = 123401       # The number of samples in the files (per step).
-tmr = 20000          # The sampling rate in ns (20000 -> 50 kHz).
-NoStep = 3           # The number of active steps (must match setStep calls and mask).
-NoFile = 2           # The number of files to write.
-NamFil = "output.%u" # The output file names format.
+## The number of samples in the files (per step).
+tSamp = 123401
+## The sampling rate in ns (20000 -> 50 kHz).
+tmr = 20000
+## The number of active steps (must match setStep calls and mask).
+NoStep = 3
+## The number of files to write.
+NoFile = 2
+## The output file names format.
+NamFil = "output.%u"
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 0, 0, 0)
 try:
-  IO = io.contents #    the pointer dereferencing, using contents member
+  ## The pointer dereferencing, using contents member
+  IO = io.contents
   if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 
   if pruio_adc_setStep(io, 9, 0, 0, 0, 0): #               step 9, AIN-0
@@ -24,12 +46,16 @@ try:
   if pruio_adc_setStep(io,11, 2, 0, 0, 0): #               step 9, AIN-2
     raise AssertionError("step 11 configuration failed: (%s)" % IO.Errr)
 
-  mask = 0b111 << 9 #                         The active steps (9 to 11)
-  tInd = tSamp * NoStep #                        The maximum total index
-  half = ((IO.ESize >> 2) // NoStep) * NoStep #   index half ring buffer
+  ## The active steps (9 to 11)
+  mask = 0b111 << 9
+  ## The maximum total index
+  tInd = tSamp * NoStep
+  ## Index half ring buffer
+  half = ((IO.ESize >> 2) // NoStep) * NoStep
 
   if half > tInd: half = tInd #               adapt size for small files
-  samp = (half << 1) // NoStep #        The number of samples (per step)
+  ## The number of samples (per step)
+  samp = (half << 1) // NoStep
 
   if pruio_config(io, samp, mask, tmr, 0): #  upload settings, start IO mode
     raise AssertionError("config failed (%s)" % IO.Errr)
@@ -37,17 +63,24 @@ try:
   if pruio_rb_start(io):
     raise AssertionError("rb_start failed (%s)" % IO.Errr)
 
-  p0 = IO.Adc.contents.Value # A pointer to the start of the ring buffer
-  p1 = cast(byref(p0, half), POINTER(c_ushort)) # pointer to middle of the ring buffer
+  ## A pointer to the start of the ring buffer
+  p0 = IO.Adc.contents.Value
+  ## Pointer to middle of the ring buffer
+  p1 = cast(byref(p0, half), POINTER(c_ushort))
   for n in range(0, NoFile):
+    ## The file name
     fName = NamFil % n
     print("Creating file %s" % fName)
+    ## The output file descriptor
     oFile = libc.fopen(fName, "wb")
-    i = 0 # Start index
+    ## Start index
+    i = 0
     while i < tInd:
       i += half
       if i > tInd: #             fetch the rest(maybe no complete chunk)
+        ## The bites left in ring buffer
         rest = tInd + half - i
+        ## Last index in buffer
         iEnd = rest if p1 >= p0 else rest + half
         while IO.DRam[0] < iEnd: time.sleep(0.001)
         print("  writing samples %u-%u" % (tInd -rest, tInd-1))

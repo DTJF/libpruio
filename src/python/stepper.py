@@ -1,8 +1,32 @@
 #!/usr/bin/python
+## \file
+# \brief Example: control a stepper motor.
+#
+# This file contains an example on how to use libpruio to control a
+# 4-wire stepper motor:
+#
+# - configure 4 pins as output
+# - receive user action in loop
+# - inform user about the current state
+# - change motor direction
+# - change motor speed
+# - stop holded or in power off mode
+# - move a single step (in holded mode)
+# - quit
+#
+# Find a functional description in section \ref sSecExaStepper.
+#
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
+#
+# Run by: `python stepper.py`
+#
+# \since 0.6.0
+
 import curses
 from libpruio import *
 import time
 
+## The main function
 def stepper(stdscr):
   P1 = P8_08 # The first pin of the stepper.
   P2 = P8_10 # The second pin of the stepper.

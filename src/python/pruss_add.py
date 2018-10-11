@@ -1,7 +1,24 @@
 #!/usr/bin/python
+## \file
+# \brief Example: generate PWM outputs and fetch them as ADC samples, draw graf.
+#
+# This file contains an example on how to use libpruio to generate Pulse
+# Width Modulated (PWM) output. Here the two channels (A + B) of an
+# eHRPWM module and an eCAP module (in PWM) mode generate the PWM
+# signals. The output gets measured by the ADC subsystem at channels
+# AIN-0 to AIN-2, and shown as a line graf in a graphics windows. Find a
+# functional description in section \ref sSecExaPwmAdc.
+#
+# Licence: GPLv3, Copyright 2018-\Year by \Mail
+#
+# Run by: `python pruss_add.py`
+#
+# \since 0.6.4
+
 from __future__ import print_function
 from libpruio import *
 
+## Load firmware into PRUSS instruction ram
 def load_firmware(IRam):
   PRUcode = (c_uint32*8)(
     0x240000e0,
@@ -17,18 +34,23 @@ def load_firmware(IRam):
                      raise AssertionError("failed loading instructions")
   return 0
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
 try:
-  IO = io.contents #    the pointer dereferencing, using contents member
+  ## The pointer dereferencing, using contents member
+  IO = io.contents
   if IO.Errr:    raise AssertionError("pruio_new failed (%s)" % IO.Errr)
 #
 # Check init success
 #
   if(IO.PruNo): #                                   we use the other PRU
+    ## The PRU subsystem we use
     pru_num = 0
+    ## The instruction ram ID of PRU subsystem
     pru_iram = PRUSS0_PRU0_IRAM
+    ## The direct access ram ID of PRU subsystem
     pru_dram = PRUSS0_PRU0_DRAM
+    ## The interrupt we use
     pru_intr = PRU0_ARM_INTERRUPT
   else:
     pru_num = 1
@@ -46,6 +68,7 @@ try:
 #
 # Pass parameters to PRU
 #
+  ## The pointer to the PRU direct access ram
   dram = pointer(c_uint32(0))
   prussdrv_map_prumem(pru_dram, byref(dram)) # get dram pointer
   dram[1] = 23 # start value

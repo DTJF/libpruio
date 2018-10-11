@@ -1,13 +1,30 @@
 #!/usr/bin/python
+## \file
+# \brief Example: get state of a button.
+#
+# This file contains an example on how to use libpruio to get the state
+# of a button connetect to a GPIO pin on the beaglebone board. Here pin 7
+# on header P8 is used as input with pullup resistor. Connect the button
+# between P8_07 (GPIO input) and P8_01 (GND). Find a functional
+# description in section \ref sSecExaButton.
+#
+# Licence: GPLv3, Copyright 2017-\Year by \Mail
+#
+# Run by: `python button2.py`
+#
+# \since 0.6.0
+
 from __future__ import print_function
 from libpruio import *
 
-PIN = P8_07 # the header pin to watch
+## the header pin to watch
+PIN = P8_07
 
-# Create a ctypes pointer to the pruio structure
+## Create a ctypes pointer to the pruio structure
 io = pruio_new(PRUIO_DEF_ACTIVE, 4, 0x98, 0)
 try:
-  IO = io.contents #    the pointer dereferencing, using contents member
+  ## The pointer dereferencing, using contents member
+  IO = io.contents
   if IO.Errr: raise AssertionError("pruio_new failed (%s)" % IO.Errr)
   if pruio_gpio_config(io, PIN, PRUIO_GPIO_IN_0): #  configure input pin
     raise AssertionError("GPIO configuration failed (%s)" % IO.Errr)
