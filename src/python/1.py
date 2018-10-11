@@ -1,4 +1,19 @@
 #!/usr/bin/python
+## \file
+# \brief Example: minimal code for ADC input.
+#
+# This file contains an short and simple example for text output of the
+# analog input lines. It's designed for the description pages and shows
+# the basic usage of libpruio with a minimum of source code. Find a
+# functional description in section \ref sSecExaSimple.
+#
+# Licence: GPLv3, Copyright 2014-\Year by \Mail
+#
+# Run by: `python 1.py`
+#
+# \since 0.0
+
+
 from __future__ import print_function
 from libpruio import *
 

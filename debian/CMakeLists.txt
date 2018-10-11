@@ -54,6 +54,7 @@ ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
   COMMAND ${CMAKE_COMMAND} -E remove ${bbbdir}
   COMMAND mkdir -p ${bdir}
   COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${bdir}
+  COMMAND rm -r  ${bdir}/*.pyc
   COMMAND cp    ${CMAKE_CURRENT_SOURCE_DIR}/compat.${osvers} ${debdir}/compat
   COMMAND cp   ${CMAKE_CURRENT_SOURCE_DIR}/control.${osvers} ${debdir}/control
   COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/control.packages >> ${debdir}/control
