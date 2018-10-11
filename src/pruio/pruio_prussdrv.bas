@@ -718,7 +718,7 @@ FUNCTION setPin_save CDECL( _
 
     VAR o = CAST(Int16 PTR, m) : IF 0 = o[Ball]              THEN RETURN set_func(Top, Ball, Mo)
     VAR x = .nameBall(Ball)
-    IF x THEN e = "pin " & *x ELSE e = "ball " & HEX(Ball, 2)
+    IF x THEN e = "pin " & *x ELSE e = "ball" & Ball
     e &= " claimed by: " & *(m + o[Ball])     : .Errr = SADD(e) : RETURN .Errr
   END WITH
 END FUNCTION

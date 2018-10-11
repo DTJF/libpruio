@@ -51,10 +51,10 @@ def stepper(stdscr):
     stdscr.addstr(2,0, "  4 = rotate CW        5 = stop, hold position   6 = rotate CCW\n")
     stdscr.addstr(3,0, "  1 = single step CW   2 = slower                3 = single step CCW\n")
     stdscr.addstr(4,0, "  0 = stop, power off\n\n")
-    stdscr.addstr(5,0, "Pins\t\tKey\t\tDirection\tSleep\n")
+    stdscr.addstr(6,0, "  Pins    Dir  Sleep")
     w = 128
     d = 1
-    stdscr.addstr(7,10, "d: {:2d}, w: {:3d}".format(d, w))
+    stdscr.addstr(7,10, "{:2d}    {:3d}".format(d, w))
     while True:
       if d: move(d)
       stdscr.addstr(7,0, "{:1d}-{:1d}-{:1d}-{:1d}".format(
@@ -82,7 +82,7 @@ def stepper(stdscr):
         elif c == ord('3'):
           if d == 0: move( 1)
         else: break
-        stdscr.addstr(7,10, "d: {:2d}, w: {:3d}".format(d, w))
+        stdscr.addstr(7,10, "{:2d}    {:3d}".format(d, w))
   finally:
     PIN_OUT(0,0,0,0) #                          reset output pins to low
     pruio_destroy(io) #                                       we're done

@@ -136,13 +136,13 @@ FUNCTION GpioUdt.config CDECL( _
     IF 7 <> (Mo AND &b111)                      THEN .Errr = E1 : RETURN .Errr ' no GPIO mode
     VAR r = .BallGpio(Ball) ' resulting GPIO (index and bit number)
     Mode = Mo XOR .BallConf[Ball]
-    IF Mo <> PRUIO_PIN_RESET ANDALSO Mode = 0                THEN return 0 ' nothing to config
+    IF Mo <> PRUIO_PIN_RESET ANDALSO Mode = 0                THEN RETURN 0 ' nothing to config
     Indx = r SHR 5 : IF 2 <> Conf(Indx)->ClVa   THEN .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
-    if Mode and &b10100000 then ' change direction or value?
+    IF Mode AND &b10100000 THEN ' change direction or value?
       Mode = Mo
       Mask = 1 SHL (r AND 31)
       setGpio()
-    end if                                                      : RETURN .setPin(Top, Ball, Mo)
+    END IF                                                      : RETURN .setPin(Top, Ball, Mo)
   END WITH
 END FUNCTION
 

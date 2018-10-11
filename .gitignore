@@ -34,6 +34,7 @@ src/python/libpruio/pruio.py
 debian/libpruio-lkm.service
 doxy/fbdoc.lfn
 src/config/*.dtbo
+src/examples/BBB
 
 # Use wildcards as well
 *.bz2

@@ -30,6 +30,8 @@ GET_FILENAME_COMPONENT(PluginDir ${CType_BINARY} PATH)
 SET(ResFile ${CMAKE_CURRENT_SOURCE_DIR}/libpruio/pruio.py)
 SET(InFiles
   ${CMAKE_CURRENT_SOURCE_DIR}/../pruio/pruio_pins.bi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../pruio/pruio_pins_blue.bi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../pruio/pruio_pins_pocket.bi
   ${CMAKE_CURRENT_SOURCE_DIR}/../pruio/pruio_prussdrv.bi
   ${CMAKE_CURRENT_SOURCE_DIR}/../pruio/pruio_c_wrapper.bas
 )

@@ -247,7 +247,8 @@ CONSTRUCTOR PruIo( _
   Init = MOffs + DRam[offs]
   Conf = CAST(ANY PTR, Init) + DSize
   BallInit = CAST(ANY PTR, Init) + OFFSETOF(BallSet, Value(0))
-  BallConf = BallInit + DSize
+  BallConf = BallInit + DSize ' initialize invalid:
+  FOR b AS INTEGER = 0 TO PRUIO_AZ_BALL : BallConf[b] OR= &b11000 : NEXT
 
   IF Adc->initialize(Av, OpD, SaD) THEN                 EXIT CONSTRUCTOR
   IF Gpio->initialize() THEN                            EXIT CONSTRUCTOR
@@ -279,14 +280,18 @@ DESTRUCTOR PruIo()
     IF DInit THEN
       prussdrv_pru_disable(PruNo)
 
-      IF MuxFnr THEN '                                     close MuxFile
+      IF MuxFnr THEN '                                  pinmuxing active
         IF BallInit <> BallConf THEN '                   reset pinmuxing
-          FOR i AS LONG = 0 TO PRUIO_AZ_BALL
-            IF (BallInit[i] XOR BallConf[i]) AND &b1111111 THEN _
-              IF setPin(@THIS, i, BallInit[i]) THEN mux &= !"\n" & *Errr
+          FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL
+            IF (BallConf[i] AND &b11000) = &b11000 THEN CONTINUE FOR ' untouched
+            IF (BallConf[i] XOR BallInit[i]) AND &b1111111 THEN _ '    re-mux
+              IF setPin(@THIS, i, BallInit[i]) THEN mux &= _ '         error
+                  !"\nre-mux " _
+                & BIN(BallInit[i], 7) & " -> " & BIN(BallConf[i], 7) _
+                & " failed (" & *Errr & ")"
           NEXT
         END IF : Errr = 0
-        IF MuxFnr < 256 THEN CLOSE #MuxFnr
+        IF MuxFnr < 256 THEN CLOSE #MuxFnr '               close MuxFile
       END IF
 
       DRam[1] = PRUIO_DAT_ALL '           reset subsystems configuration
