@@ -36,6 +36,12 @@ Released in 2018, Oktober.
 - Python apt command fixed in chapter Preparation
 - Macros for AIN pins removed (avoid false pinmuxing)
 
+Since this version the folder for C headers (`src/c_include/`) isn't
+scanned by Doxygen any more. Documentation is now generated from
+FreeBASIC source code only, since the double declaration of symbols for
+C and FreeBASIC made reading difficult and confused Doxygen generating
+graphs.
+
 
 # libpruio-0.6.2 # {#SecV-0-6-2}
 

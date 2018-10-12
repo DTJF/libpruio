@@ -17,8 +17,6 @@ can get configured for a measurement (index 1 to 16). A further step
 
 Find further details in \ArmRef{12.5.1.17 ff.}.
 
-C wrapper equivalent ::adcSteps.
-
 \since 0.0
 '/
 TYPE AdcSteps
@@ -32,8 +30,6 @@ END TYPE
 This UDT contains a set of all ADC subsystem registers. It's used to
 store the initial configuration of the subsystem and to hold current
 configuration for the next call to function PruIo::config().
-
-C wrapper equivalent ::adcSet.
 
 \since 0.2
 '/
@@ -73,13 +69,10 @@ TYPE AdcSet
   , DMA1REQ          '*< Register at offset F8h (see \ArmRef{12.5.1.56} ).
 END TYPE
 
-/'* \brief Structure for ADC subsystem features, containing all
-functions and variables to handle the subsystem.
+/'* \brief Structure for ADC features
 
-This UDT contains the member function to control the ADC features and
-the related variables.
-
-C wrapper equivalent ::adcUdt.
+The UDT contains the variables and member function to control the ADC
+subsystem.
 
 \since 0.2
 '/
@@ -89,7 +82,7 @@ TYPE AdcUdt
     Init _     '*< Initial subsystem configuration, used in the destructor PruIo::~PruIo().
   , Conf       '*< Current subsystem configuration, used in PruIo::config().
   AS UInt32 _
-    Samples _  '*< Number of samples (specifies run mode: 0 = config, 1 = IO mode, >1 = MM mode).
+    Samples _  '*< Number of samples (specifies run mode: 0 = config, 1 = IO mode, >1 = RB/MM mode).
   , TimerVal _ '*< Timer value in [ns].
   , InitParA   '*< Offset to read data block offset.
   AS UInt16 _

@@ -17,9 +17,9 @@ supports pinmuxing and PWM features.
 #INCLUDE ONCE "pruio.bi"
 
 
-/'* \brief Date structure for the `uio_pruss` kernel driver.
+/'* \brief Date structure for `uio_pruss` userspace part.
 
-The data in this structure is used to interact with the `uio_pruss`
+The structure contains data for the user space part of the `uio_pruss`
 kernel driver. It contains physical and virtual adresses of PRUSS
 memory registers.
 

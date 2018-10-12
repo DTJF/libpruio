@@ -18,6 +18,33 @@ from __future__ import print_function
 from libpruio import *
 
 ## Load firmware into PRUSS instruction ram
+# \param IRam The IRam ID for the PRU to use
+# \returns Zero on success, otherwise error raising
+#
+# The instructions are compiled by command
+#
+#     pasm -V3 -c pruss_toggle.p
+#
+# from source code (named pruss_toggle.p)
+#
+#     .origin 0
+#       LDI  r0, 0
+#       LBBO r1, r0, 0, 12 // load parameters in r1 (bitnumber), r2 (counter), r3 (interrupt)
+#       LDI  r0, 1
+#       LSL  r1, r0, r1.b0 // generate bit mask
+#
+#     start:
+#       LOOP finished, r2.w0
+#       XOR  r30, r30, r1  // togle output, max. 200 MHz toggling
+#       LDI  r0, 0         // NOOPs here, CAP is only 100 MHz
+#       LDI  r0, 0         // 1 + 4 x NOOP = 5 cycles
+#       LDI  r0, 0         // --> 40 MHz toggling frequency
+#       LDI  r0, 0         // --> 20 MHz pulse train
+#     finished:
+#
+#       MOV  r31.b0, r3.b0 // send notification to host
+#       HALT
+#       JMP start
 def load_firmware(IRam):
   PRUcode = (c_uint32*13)(
     0x240000e0,
@@ -73,25 +100,23 @@ try:
 #
 # Pinmuxing (some examples first)
 #
-  ## set PRU-0-r31 bit 15 input with pull up resistor
-  #if (IO.setPin(io, P8_15, 6 | PRUIO_PULL_UP)) {
+  # # set PRU-0-r31 bit 15 input with pull up resistor
+  #if (IO.setPin(io, P8_15, 6 | PRUIO_RX_ACTIV | PRUIO_PULL_UP)) {
        #raise AssertionError("P8_15 configuration failed (%s)" % IO.Errr)
 
-  ## set PRU-0-r31 bit 10 input (mode 6), no resistor
-  #if (IO.setPin(io, SD_08, 6)) {
+  # # set PRU-0-r31 bit 10 input (mode 6), pull down resistor
+  #if (IO.setPin(io, SD_08, 6 | PRUIO_RX_ACTIV | PRUIO_PULL_DOWN)) {
        #raise AssertionError("SD_08 configuration failed (%s)" % IO.Errr)
 
-  ## set PRU-0-r30 bit 10 output (mode 5)
-  #if (IO.setPin(io, SD_08, 5)) {
+  # # set PRU-0-r30 bit 10 output (mode 5) no resitor
+  #if (IO.setPin(io, SD_08, 5 | PRUIO_NO_PULL)) {
        #raise AssertionError("SD_08 configuration failed (%s)" % IO.Errr)
 
-  # set PRU-0-r30 bit 15 output (mode 6)
+  # set PRU-0-r30 bit 15 output (mode 6), pull down resistor
   if (IO.setPin(io, P8_11, 6)):
        raise AssertionError("P8_11 configuration failed (%s)" % IO.Errr)
-
-  # ... #
 #
-# Pprepare libpruio measurement
+# Prepare libpruio measurement
 #
   if (pruio_cap_config(io, P9_42, 2.)): #        configure CAP input pin
        raise AssertionError("failed setting input P9_42 (%s)" % IO.Errr)

@@ -28,8 +28,6 @@ all modules, but the functions to control the modules are separated in
 the module UDTs PwmMod, CapMod and QepMod in order to
 make the API more clear.
 
-C wrapper equivalent: ::pwmssSet.
-
 \since 0.2
 '/
 TYPE PwmssSet
@@ -138,8 +136,6 @@ END TYPE
 This UDT is used to fetch the current register data from eCAP and eQEP
 modules in IO and RB mode.
 
-C wrapper equivalent: ::pwmssArr.
-
 \since 0.2
 '/
 TYPE PwmssArr
@@ -162,8 +158,6 @@ This UDT contains (only) the configuration of the three PWMSS
 subsystems in the CPU. The functions to drive the hardware are in
 separate UDTs, to make the API more easy to understand. See UDTs
 PwmMod, CapMod and QepMod for details.
-
-C wrapper equivalent: ::pwmssUdt.
 
 \since 0.2
 '/
@@ -241,8 +235,6 @@ All PWM generators (ePWM-1/2, eCAP and Timer) are controlled by the
 member functions of this structure (UDT). See \ArmRef{15} for hardware
 details.
 
-C wrapper equivalent: ::pwmMod.
-
 \since 0.2
 '/
 TYPE PwmMod
@@ -306,8 +298,6 @@ This structure contains the functions to drive the hardware of the eQEP
 modul in the PWMSS subsystems.
 
 See \ArmRef{15.4} for hardware details.
-
-C wrapper equivalent: ::qepMod.
 
 \since 0.4
 '/

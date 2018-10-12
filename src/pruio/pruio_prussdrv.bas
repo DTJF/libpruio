@@ -234,7 +234,7 @@ END FUNCTION
 \param Irq The interrupt number.
 \returns 0 (zero) on success, otherwise a negative error number
 
-This function tries to open an interrupt file `dev/uio[0-7]`,
+The function tries to open an interrupt file `dev/uio[0-7]`,
 corresponding to Host[2-9] of the PRU INTC. In case of a problem a
 negative error number gets returned.
 
@@ -258,7 +258,7 @@ END FUNCTION
 \param PruId The PRU number.
 \returns 0 (zero) in case of success, otherwise -1
 
-Disable a PRU subsystem, by starting its clock.
+The function enables a PRU subsystem by starting its clock.
 
 \since 0.6
 '/
@@ -274,7 +274,7 @@ END FUNCTION
 \param PruId The PRUSS number.
 \returns 0 (zero) in case of success, otherwise -1
 
-Disable a PRU subsystem, by stopping its clock.
+The function disables a PRU subsystem by stopping its clock.
 
 \since 0.6
 '/
@@ -290,7 +290,8 @@ END FUNCTION
 \param PruId The PRUSS number.
 \returns 0 (zero) in case of success, otherwise -1
 
-Force a reset at a PRU subsystem.
+The function forces a reset at a PRU subsystem by writing 0 (zero) to
+the control register.
 
 \since 0.6
 '/
@@ -309,7 +310,7 @@ END FUNCTION
 \param Size The size of data in bytes.
 \returns The number of bytes written, or -1 in case of failure
 
-This function writes a chunk of data to PRUSS memory (DRam, IRam or
+The function writes a chunk of data to PRUSS memory (DRam, IRam or
 SRam), depending on parameter RamId. The start writing position gets
 specified by parameter Offs.
 
@@ -340,7 +341,7 @@ END FUNCTION
 \param DatIni Data structure to initialize
 \returns 0 (zero) on success, otherwise -1
 
-This function initializes and enables the PRU interrupt controller. The
+The function initializes and enables the PRU interrupt controller. The
 input is a structure of arrays that determine which system events are
 enabled and how each is mapped to a host event. This structure is
 defined in PruIo::IntcInit in file `src/pruio/pruio.bi`. Currently a
@@ -412,7 +413,7 @@ END FUNCTION
 /'* \brief Send a system event to PRUSS.
 \param Event The interrupt number to send.
 
-This procedure sets the interrupt registers to send an event to the
+The procedure sets the interrupt registers to send an event to the
 PRUSS.
 
 \since 0.6
@@ -428,7 +429,7 @@ END SUB
 \param Irq The event number to wait for.
 \returns The kernel counter for the event number.
 
-This function blocks the calling thread until the corresponding event
+The function blocks the calling thread until the corresponding event
 input occurs.
 
 \since 0.6
@@ -444,8 +445,9 @@ END FUNCTION
 \param Irq The host interrupt.
 \param Event The system event.
 
-Once a system event occurs, the registers have to get released, in
-order to get ready for the next event.
+The procedure clears an event, previously sent from PRU to ARM. Once a
+system event occurs, the registers have to get released, in order to
+get ready for the next event.
 
 \since 0.6
 '/
@@ -460,8 +462,8 @@ END SUB
 /'* \brief Map external ram (ERam).
 \param Addr The pointer to set.
 
-Maps the external memory allocated by the `uio_pruss` kernel driver to
-input pointer. Memory is then accessed by an array.
+The procedure maps the external memory allocated by the `uio_pruss`
+kernel driver to pointer parameter. Memory is then accessed by an array.
 
 \since 0.6
 '/
@@ -473,9 +475,9 @@ END SUB ' -> property
 /'* \brief Get size of external memory
 \returns The memory size.
 
-The kernel driver `uio_pruss` allocates a block of coherent memory.
-This function returns the size if this block. See section \ref SecERam
-for details.
+The procedure returns the size of the external memory. The kernel
+driver `uio_pruss` allocates a block of coherent memory. This function
+returns the size if this block. See section \ref SecERam for details.
 
 \since 0.6
 '/
@@ -489,8 +491,8 @@ END FUNCTION ' -> property
 \param Addr The pointer to set.
 \returns 0 (zero) on success, otherwise -1.
 
-Map PRU  memory (DRAM, IRAM, SHARED) to input pointer. Memory is then
-accessed by an array.
+The procedure maps PRU memory (DRAM, IRAM, SHARED) to the pointer
+parameter. Memory is then accessed by an array.
 
 \note  Call this function after the prussdrv_open() function. Minimum
        one event needs to be opened to access memory map.
@@ -513,8 +515,8 @@ END FUNCTION
 \returns The physical Addr associated with the mmap value input if
          successful, otherwise 0 (zero).
 
-Compute the physical adress from a prussdrv memor pointer or from an
-value returned form a mmap() call.
+The function computes the physical adress from a prussdrv memory
+pointer or from an value returned form a mmap() call.
 
 \since 0.6
 '/
@@ -532,7 +534,7 @@ END FUNCTION ' -> property
 
 /'* \brief End the driver session
 
-The procedure unmaps the memory and closes the interrupt file.
+The procedure unmaps all memory and closes the interrupt file.
 
 \note It doesn't disable the PRUSS.
 
@@ -552,11 +554,11 @@ END SUB
 /'* \brief Fetch pinmuxing claims from kernel
 \returns A structure containing pin array and names of owners (or zero in case of failure)
 
-This function parses the output from
-`/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins`. Free and
-claimed pins get identified, and the owners of claimed pins get
-collected in a `STRING` variable in a condensed form. Each owner name
-is stored only once, no double entries.
+The function greps the kernel claim for CPU balls by parsing the output
+from `/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins`. Free and
+claimed CPU balls (named pins by kernel) get identified, and the owners
+of claimed balls get collected in a `STRING` variable in a condensed
+form. Each owner name is stored only once, no double entries.
 
 \since 0.6.0
 '/

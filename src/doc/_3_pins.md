@@ -21,7 +21,9 @@ use that features, the pin has to get configured to the matching mode
 before usage (pinmuxing).
 
 Here's an overview of the Beaglebone Black pins. The settings for other
-Beaglebone hardware (White, Green, Blue, Pocket-, ...) are different.
+Beaglebone hardware (White, Green, Blue, Pocket-, ...) are different
+(have more free pins). See the related TRM (technical reference manual)
+for details.
 
 ![Header pins on BeagleBone Black boards](pins_bbb.png)
 
@@ -38,6 +40,22 @@ The pins are sorted into four categories:
 
 -# Brown pins are used by the BeagleboneBlack operating system, try to
    avoid them.
+
+For pinmuxing (digital pins category 2 to 4) the connected CPU ball
+needs to get adressed. Therefor a set of header files are shipped with
+\Proj, which define the CPU ball numbers by the connectors location.
+Ie. it's more easy for the user specify P8_07 (pin 7 on header P8) then
+looking up the related ball number 36 (since the ball numbers are not
+sorted in any order). Here's a table of the pin headers:
+
+| Name (Type)         | Headers      | FreeBASIC                      | C                                 |
+| ------------------: | :----------- | :----------------------------- | :-------------------------------- |
+| White, Green, Black | 2x46 headers | src/pruio/pruio_pins.bi        | src/c_include/pruio_pins.h        |
+| PocketBeagle        | 2x36 headers | src/pruio/pruio_pins_pocket.bi | src/c_include/pruio_pins_pocket.h |
+| Blue                | indiv. conn. | src/pruio/pruio_pins_blue.bi   | src/c_include/pruio_pins_blue.h   |
+
+For Python programming language all pin defines are included in the
+binding file `src/python/libpruio/pruio.py`.
 
 When planing a new project, concentrate on the category 1 to 3 pins,
 and try to avoid the brown pins. Some of them are used to control the

@@ -1,4 +1,4 @@
-/*! \file pruio_prussdrv.h
+/* ! \ file pruio_prussdrv.h
 \brief Header file for kernel drivers.
 
 The header contains declarations to bind the user space part of the

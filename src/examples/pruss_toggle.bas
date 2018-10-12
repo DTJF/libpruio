@@ -108,18 +108,18 @@ DO
 ' Pinmuxing (some examples first)
 '
   '' set PRU-0-r31 bit 15 input with pull up resistor
-  'IF io->setPin(io, P8_15, 6 OR PRUIO_PULL_UP) THEN _
+  'IF io->setPin(io, P8_15, 6 OR PRUIO_RX_ACTIV OR PRUIO_PULL_UP) THEN _
              '?"P8_15 configuration failed (" & *io->Errr & ")" : EXIT DO
 
-  '' set PRU-0-r31 bit 10 input (mode 6), no resistor
-  'IF io->setPin(io, SD_08, 6) THEN _
+  '' set PRU-0-r31 bit 10 input (mode 6), pull down resistor
+  'IF io->setPin(io, SD_08, 6 OR PRUIO_RX_ACTIV OR PRUIO_PULL_DOWN) THEN _
              '?"SD_08 configuration failed (" & *io->Errr & ")" : EXIT DO
 
   '' set PRU-0-r30 bit 10 output (mode 5)
-  'IF io->setPin(io, SD_08, 5) THEN _
+  'IF io->setPin(io, SD_08, 5 OR PRUIO_NO_PULL) THEN _
              '?"SD_08 configuration failed (" & *io->Errr & ")" : EXIT DO
 
-  ' set PRU-0-r30 bit 15 output (mode 6)
+  ' set PRU-0-r30 bit 15 output (mode 6), pull down resistor
   IF io->setPin(io, P8_11, 6) THEN _
              ?"P8_11 configuration failed (" & *io->Errr & ")" : EXIT DO
 

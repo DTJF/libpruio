@@ -801,7 +801,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = ../src/pruio/pasm_init.bi \
                          ../src/pruio/pasm_run.bi \
-                         ../src/c_include/pruio.hp \
+                         ../src/c_include \
                          ../src/python/libpruio \
                          ../src/kernel \
                          ../src/test

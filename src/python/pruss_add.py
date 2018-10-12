@@ -1,13 +1,10 @@
 #!/usr/bin/python
 ## \file
-# \brief Example: generate PWM outputs and fetch them as ADC samples, draw graf.
+# \brief Example: minimal code for PRUSS firmware.
 #
-# This file contains an example on how to use libpruio to generate Pulse
-# Width Modulated (PWM) output. Here the two channels (A + B) of an
-# eHRPWM module and an eCAP module (in PWM) mode generate the PWM
-# signals. The output gets measured by the ADC subsystem at channels
-# AIN-0 to AIN-2, and shown as a line graf in a graphics windows. Find a
-# functional description in section \ref sSecExaPwmAdc.
+# This file contains an short and simple example for parallel usage of
+# the other PRUSS. Find a functional description in section \ref
+# sSecExaPruAdd.
 #
 # Licence: GPLv3, Copyright 2018-\Year by \Mail
 #
@@ -19,6 +16,28 @@ from __future__ import print_function
 from libpruio import *
 
 ## Load firmware into PRUSS instruction ram
+# \param IRam The IRam ID for the PRU to use
+# \returns Zero on success, otherwise error raising
+#
+# The instructions are compiled by command
+#
+#     pasm -V3 -c pruss_add.p
+#
+# from source code (named pruss_add.p)
+#
+#     .origin 0
+#       LDI  r0, 0
+#     start:
+#       LBBO r1, r0, 4, 16 // load parameters in r1 (start value), r2 (add value), r3 (count), r4 (interrupt)
+#
+#       LOOP finished, r3.w0
+#       ADD  r1, r1, r2    // compute result
+#     finished:
+#
+#       SBBO r1, r0, 0, 4  // store result
+#       MOV  r31.b0, r4.b0 // send notification to host
+#       HALT
+#       JMP start
 def load_firmware(IRam):
   PRUcode = (c_uint32*8)(
     0x240000e0,

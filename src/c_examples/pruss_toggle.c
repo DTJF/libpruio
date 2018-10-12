@@ -111,18 +111,18 @@ int main(int argc, char **argv)
 // Pinmuxing (some examples first)
 //
     //// set PRU-0-r31 bit 15 input with pull up resistor
-    //if (io->setPin(io, P8_15, 6 | PRUIO_PULL_UP)) {
+    //if (io->setPin(io, P8_15, 6 | PRUIO_RX_ACTIV | PRUIO_PULL_UP)) {
           //printf("P8_15 configuration failed (%s)\n", io->Errr); break;}
 
-    //// set PRU-0-r31 bit 10 input (mode 6), no resistor
-    //if (io->setPin(io, SD_08, 6)) {
+    //// set PRU-0-r31 bit 10 input (mode 6), pull down resistor
+    //if (io->setPin(io, SD_08, 6 | PRUIO_RX_ACTIV | PRUIO_PULL_DOWN)) {
           //printf("SD_08 configuration failed (%s)\n", io->Errr); break;}
 
-    //// set PRU-0-r30 bit 10 output (mode 5)
-    //if (io->setPin(io, SD_08, 5)) {
+    //// set PRU-0-r30 bit 10 output (mode 5), no resistor
+    //if (io->setPin(io, SD_08, 5 | PRUIO_NO_PULL)) {
           //printf("SD_08 configuration failed (%s)\n", io->Errr); break;}
 
-    // set PRU-0-r30 bit 15 output (mode 6)
+    // set PRU-0-r30 bit 15 output (mode 6), pull down resistor
     if (io->setPin(io, P8_11, 6)) {
           printf("P8_11 configuration failed (%s)\n", io->Errr); break;}
 

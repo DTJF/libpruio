@@ -119,7 +119,7 @@ E960 E0D0 DDE0 CF10 0010 0740 17B0 EE40
 
   src/examples/1.bas
 
-  src/c_examples/1.c
+  [<b>src/c_examples/1.c</b>](1_8c.html)
 
   src/python/1.py
 
@@ -216,15 +216,22 @@ PWMSS-0 (DeAd: 48300000, ClAd: 44E000D4, ClVa: 00000002)
 
   src/examples/button.bas
 
-  src/c_examples/button.c
+  [<b>src/c_examples/button.c</b>](button_8c.html)
 
   src/python/button.py
 
 \note The button2 example swaps logic. It configures P8_07 as input
       with pulldown resistor. In order to see any change, you have to
       connect it to 3V3 (move cable from P8_02 to P9_03). This example
-      requires pinmuxing capability: execute with `sudo`. (Also
-      mandatory: universal device tree overlay for pinmuxing.)
+      requires pinmuxing capability, see section \ref SecPinmuxing.
+
+\Item{Source Code}
+
+  src/examples/button2.bas
+
+  [<b>src/c_examples/button2.c</b>](button2_8c.html)
+
+  src/python/button2.py
 
 
 ## io_input ## {#sSecExaIoInput}
@@ -280,7 +287,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
 
   src/examples/io_input.bas
 
-  src/c_examples/io_input.c
+  [<b>src/c_examples/io_input.c</b>](io_input_8c.html)
 
   src/python/io_input.py
 
@@ -389,7 +396,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 
   src/examples/performance.bas
 
-  src/c_examples/performance.c
+  [<b>src/c_examples/performance.c</b>](performance_8c.html)
 
   src/python/performance.py
 
@@ -484,7 +491,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 
   src/examples/pwm_cap.bas
 
-  src/c_examples/pwm_cap.c
+  [<b>src/c_examples/pwm_cap.c</b>](pwm_cap_8c.html)
 
   src/python/pwm_cap.py
 
@@ -523,9 +530,9 @@ Test OK 492 = 23 + (7 * 67)
 
   src/examples/pruss_add.bas
 
-  src/c_examples/pruss_add.c
+  [<b>src/c_examples/pruss_add.c</b>](pruss_add_8c.html)
 
-  No Python source yet
+  src/python/pruss_add.py
 
 
 ## pruss_toggle ## {#sSecExaPruToggle}
@@ -599,9 +606,9 @@ instructions loaded, starting PRU-0
 
   src/examples/pruss_toggle.bas
 
-  src/c_examples/pruss_toggle.c
+  [<b>src/c_examples/pruss_toggle.c</b>](pruss_toggle_8c.html)
 
-  No Python source yet
+  src/python/pruss_toggle.py
 
 
 ## qep ## {#sSecExaQep}
@@ -695,7 +702,7 @@ instructions loaded, starting PRU-0
 
   src/examples/qep.bas
 
-  src/c_examples/qep.c
+  [<b>src/c_examples/qep.c</b>](qep_8c.html)
 
   src/python/qep.py
 
@@ -737,7 +744,7 @@ Finished file output.1
 
   src/examples/rb_file.bas
 
-  src/c_examples/rb_file.c
+  [<b>src/c_examples/rb_file.c</b>](rb_file_8c.html)
 
   src/python/rb_file.py
 
@@ -779,7 +786,7 @@ press any key to quit
 
   src/examples/sos.bas
 
-  src/c_examples/sos.c
+  [<b>src/c_examples/sos.c</b>](sos_8c.html)
 
   src/python/sos.py
 
@@ -848,7 +855,7 @@ Pins            Key        Direction        Sleep
 
   src/examples/stepper.bas
 
-  src/c_examples/stepper.c
+  [<b>src/c_examples/stepper.c</b>](stepper_8c.html)
 
   src/python/stepper.py
 

@@ -52,8 +52,6 @@ Example:
       override the default configuration. Those masks get invalid when
       you change the step channel.
 
-C wrapper equivalent ::adcStepmask.
-
 \since 0.6.4
 '/
 ENUM AdcStepMask
@@ -85,8 +83,6 @@ The first enumerator PRUIO_ACT_PRU1 is used to specify the PRU
 subsystem to execute libpruio. By default the bit is set and libpruio
 runs on PRU-1. See PruIo::PruIo() for further information.
 
-C wrapper equivalent ::activateDevice.
-
 \since 0.2
 '/
 ENUM ActivateDevice
@@ -114,8 +110,6 @@ This UDT contains a set of all pad control registers. This is the
 muxing between CPU balls and the internal subsystem targets, the pullup
 or pulldown configuration and the receiver activation.
 
-C wrapper equivalent ::ballSet.
-
 \since 0.2
 '/
 TYPE BallSet
@@ -137,29 +131,27 @@ This UDT glues all together. It downloads and start software on the
 PRUSS, controls the initialisation and configuration processes and
 reads or writes the pinmux configurations.
 
-C wrapper equivalent ::pruIo.
-
 \since 0.0
 '/
 TYPE PruIo
   AS ZSTRING PTR _
-    Errr = 0    '*< Pointer for error messages.
+    Errr = 0    '*< Pointer for error messages, see chapter \ref ChaMessages.
 
-  AS AdcUdt PTR Adc     '*< Pointer to ADC subsystem structure.
-  AS GpioUdt PTR Gpio   '*< Pointer to GPIO subsystems structure.
-  AS PwmssUdt PTR PwmSS '*< Pointer to PWMSS subsystems structure.
-  AS TimerUdt PTR TimSS '*< Pointer to TIMER subsystems structure.
-  AS PwmMod PTR Pwm     '*< Pointer to the ePWM module structure (in PWMSS subsystems).
-  AS CapMod PTR Cap     '*< Pointer to the eCAP module structure (in PWMSS subsystems).
-  AS QepMod PTR Qep     '*< Pointer to the eQEP module structure (in PWMSS subsystems).
-  AS TimerUdt PTR Tim   '*< Pointer to the TimSS structure (for homogenous API).
+  AS AdcUdt PTR Adc     '*< Pointer to ::AdcUdt class.
+  AS GpioUdt PTR Gpio   '*< Pointer to ::GpioUdt class.
+  AS PwmssUdt PTR PwmSS '*< Pointer to ::PwmssUdt class.
+  AS TimerUdt PTR TimSS '*< Pointer to ::TimerUdt class.
+  AS PwmMod PTR Pwm     '*< Pointer to ::PwmMod class for PWM features (in PWMSS subsystems).
+  AS CapMod PTR Cap     '*< Pointer to ::CapMod class for CAP features (in PWMSS subsystems).
+  AS QepMod PTR Qep     '*< Pointer to ::QepMod class for QEP features (in PWMSS subsystems).
+  AS TimerUdt PTR Tim   '*< Pointer to ::TimerUdt class for TIMER features (for homogenous API).
 
-  AS  UInt32 PTR DRam '*< Pointer to access PRU DRam.
+  AS  UInt32 PTR DRam '*< Pointer to access PRU DRam, see chapter \ref ChaMemory.
   AS BallSet PTR _
     Init _      '*< The subsystems register data at start-up (to restore when finished).
   , Conf        '*< The subsystems register data used by libpruio (current local data to be uploaded by PruIo::Config() ).
   AS ANY PTR _
-    ERam _      '*< Pointer to read PRU external ram.
+    ERam _      '*< Pointer to read PRU external ram, see chapter \ref ChaMemory.
   , DInit _     '*< Pointer to block of subsystems initial data.
   , DConf _     '*< Pointer to block of subsystems configuration data.
   , MOffs       '*< Configuration offset for modules.
@@ -179,7 +171,7 @@ TYPE PruIo
   , DevAct      '*< Active subsystems.
 
   AS UInt32 _
-    BbType _ '*< Type of Beaglebone board (1 = Pocket-, 0 = others)
+    BbType _ '*< Type of Beaglebone board (2 = Blue, 1 = Pocket, 0 = others)
   , MuxFnr   '*< Pinmuxing file number, if any
   AS ZSTRING PTR MuxAcc '*< Pinmuxing ocp path, if no LKM
 

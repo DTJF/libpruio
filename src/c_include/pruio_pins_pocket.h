@@ -1,4 +1,4 @@
-/* * \file pruio_pins_pocket.h
+/* * \ file pruio_pins_pocket.h
 \brief Pre-defined macros to handle the PocketBeagle header pins.
 
 This file contains macros to easy handle the header pins and pin groups

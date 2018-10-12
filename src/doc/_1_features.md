@@ -17,9 +17,9 @@ wrote:](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p2174
 
 Thanks, for the feedback! It seems that the major goal is reached.
 
-\Proj is designed to enable fast (faster than sysfs), flexible
-(customizable) and easy (single source) access to the AM33xx CPU
-subsystems. Its features in short
+\Proj is designed to provide faster, more flexible (customizable) and
+more easy (single source) access to the AM33xx CPU subsystems, compared
+to the methods provided by the kernel. Its features in short
 
 - run on PRU-0 or PRU-1 (default)
 - control subsystems at runtime (disable or enable and configure)
@@ -29,6 +29,7 @@ subsystems. Its features in short
 - set digital output (GPIO)
 - analyse digital input train (CAP frequency and duty cycle)
 - set digital output train (PWM frequency and duty cycle)
+- get digital input from Quadrature Encoder (QEP position and speed)
 - get analog input (ADC)
 - apply samples bit encoding (12 to 16 bit)
 - configure ADC settings (input channel, timing, averaging)
@@ -37,15 +38,24 @@ subsystems. Its features in short
 - trigger on analog (single or all) or digital (GPIO) lines
 - perform a pre-trigger that starts measurement before the trigger event happens
 
+It's designed for BeagleBone boards
+
+- with 2x46 headers (White, Gree, Black)
+- with 3x36 headers (Pocket)
+- with individual connectors (Blue)
+
+and runs on all kernel versions above 3.8 (including 4.x).
+
 
 # PRUSS # {#SecPruss}
 
-\Proj contains software running on the host system (ARM) and
-software running on a Programable Realtime Unit SubSystem (PRUSS). The
-AM33xx CPU on Beaglebone hardware contains two PRU subsystems. \Proj
-can either use PRU-0 or PRU-1 (the later is the default). To use PRU-0,
-just clear bit 0 in parameter *Act* when calling the constructor
-PruIo::PruIo().
+The AM33xx CPU on Beaglebone hardware contains two PRU subsystems.
+\Proj runs software on the host system (ARM) and on a Programable
+Realtime Unit SubSystem (PRUSS), either on PRU-0 or PRU-1 (the later is
+the default). Due to the PRU support the load on the ARM is very low,
+even complex controllers can operate at reasonable speed. The second
+PRU is free for a custom controller working in real-time, and using
+\Proj measurement configuration and data.
 
 
 # Operation # {#SecOperation}
@@ -62,7 +72,7 @@ PruIo::PruIo().
 
 - TIMERSS (4x Timer and PWM features)
 
-by a sequence of these three steps
+Therefor the application executes a sequence of these three steps
 
 -# Create a PruIo structure, read initial configuration (constructor
    PruIo::PruIo() ).
@@ -95,22 +105,22 @@ timing of the ADC subsystem restarts:
 
 -# IO mode (inaccurate ADC timing): the PRU is running in an endless
    loop and handles input and output lines of all subsystems at the
-   same priority. Depending on the number of enabled subsystems and the
-   step configuration, there may be some delay of up to 50 ns before
-   the ADC subsystems starts again to fetches the next set of samples.
+   same priority. Depending on the number of enabled subsystems, their
+   usage and the ADC step configuration, there may be some latency (< 1
+   &micro;s) before the next ADC sampling sequence.
 
 -# RB mode (accurate ADC timing): the PRU is running in an endless
    loop and handles restarts of the ADC subsystem at prefered priority.
    Digital input and output gets only handled when the PRU is waiting
-   for the next ADC restart. This may cause some delay of up to 50 ns
-   before a digital output gets set or a digital value gets in.
+   for the next ADC restart. This may cause some delay (< 1 &micro;s)
+   before a digital output line gets set or a digital value gets in.
 
 -# MM mode (accurate ADC timing): the PRU waits for a start command and
    performs a single measurement. It handles analog samples only (no
    digital IO available).
 
-Choose the run modus by setting parameter *Samp* in the call to
-function PruIo::config()
+The run mode gets specified by parameter `Samp` in the call to function
+PruIo::config()
 
 - `Samp = 1` for IO mode, starting immediately, running endless.
 
@@ -127,9 +137,10 @@ PruIo::~PruIo().
 
 # Pinmuxing # {#SecPinmuxingIntro}
 
-A digital line of the AM33xx CPU needs to be configured before use (see
-section \ref SecPinmuxing for details). \Proj checks the pin
-configuration at run-time, and tries to adapt it if necessary.
+Most digital lines of the AM33xx CPU support several features and need
+to be configured before use (see section \ref SecPinmuxing for
+details). \Proj checks the pin configuration at run-time, and tries to
+adapt it if necessary.
 
 - An input line gets configured by a call to the config member function
   (ie. GpioUdt::config() or CapMod::config() ).
@@ -138,9 +149,12 @@ configuration at run-time, and tries to adapt it if necessary.
   the first call to the setValue member function (ie.
   GpioUdt::setValue() or PwmMod::setValue() ).
 
-Pinmuxing at run-time requires administrator privileges. To run your
-\Proj application with user privileges, make sure that digital lines
-are in the required state (configuration) before executing the code.
+\Proj supports multiple pinmuxing methods. Depending on the kernel
+version and the system configuration pinmuxing at run-time may require
+administrator privileges. The most advanced method is the loadable
+kernel module, described in section \ref sSecLKM. Or you can run your
+application with user privileges by making sure that digital lines are
+in the required state (configuration) before executing the code.
 
 
 # GPIO # {#SecGpio}
@@ -149,30 +163,27 @@ General Purpose Input Output is available by the GpioUdt member
 functions (in IO and RB mode, for all header pins). See section \ref
 sSecGpio for further info.
 
-- Call GpioUdt::config() to set the CPU ball in the required state
-  (internal resistor pullup/pulldown/nopull, receiver active) when
-  running under administrator privileges. Otherwise use a device tree
-  overlays or an external tool like pinconfig-pin (Charles
-  Steinkuehler).
+- Function GpioUdt::config() sets the CPU ball in the required state
+  (internal resistor pullup/pulldown/nopull, receiver active). This may
+  need pinmuxing capability, see \ref SecPinmuxing.
 
-- Call function GpioUdt::Value() to get the current state (input or output).
+- Function GpioUdt::Value() gets the current state (input or output).
 
-- Call function GpioUdt::setValue() to set an output state.
+- Function GpioUdt::setValue() sets an output state (includes
+  GpioUdt::config() call).
 
-- Call function GpioUdt::config() to specify the mode of an input pin.
-
-Furthermore, simultameous input and output can get realized by direct
-access to the PRU software (experts only).
+Furthermore, multi lines can get accessed simultameously by direct
+access to the PRU interface (experts only).
 
 
 # CAP # {#SecCap}
 
-Capture And Analyse a digital Pulse train is available by the CapMod
-member functions (in IO and RB mode). The frequency and duty cycle of
-an header pin pulse train can get measured. See section \ref sSecCap
-for further info.
+Capture And Analyse a digital Pulse train is available by the member
+functions of class ::CapMod (in IO and RB mode). The frequency and duty
+cycle of a pulse train can get measured. See section \ref sSecCap for
+further info.
 
-- Call function CapMod::config() to configure the pin as CAP input.
+- Call Function CapMod::config() to configure the pin as CAP input.
 
 - Call function CapMod::Value() to get the current frequency and/or duty cycle.
 
@@ -182,34 +193,34 @@ case of no input.
 
 # PWM # {#SecPwm}
 
-Generating a Pulse Width Modulated output is available by the PwmMod
+Generating a Pulse Width Modulated output is available by the ::PwmMod
 member functions (in IO and RB mode). Therefor \Proj uses different
 subsystems: the PWM modules and the CAP modules in the PWMSS
 subsystems, as well as the `TIMER [4-7]` subsystems. All modules are
 supported in a transparent API. See section \ref sSecPwm for further
 info.
 
-- Call function PwmMod::setValue() to set the frequncy and duty cycle
+- Function PwmMod::setValue() sets the frequncy and duty cycle
   (and configure the pin, if necessary).
 
-- Call function CapMod::Value() to get the current frequency and/or
-  duty cycle (those may differ from the required values).
+- Function CapMod::Value() gets the current frequency and/or
+  duty cycle (they may differ from the required values).
 
 Furthermore advanced features of the PWMSS subsystems can be used by
-direct access to the register configuration and PRU software (experts
-only).
+direct access to the register configuration and PRU interface, ie.
+syncronizing multiple PWM outputs (experts only).
 
 
 # TIMER # {#SecTim}
 
-Generating a pulse at an output line. The time period until the pulse
-starts and its duration gets specified. See section \ref sSecTimer for
-details.
+Generating a pulse train on output line[s]. The time period until the
+pulse starts and its duration gets specified. See section \ref
+sSecTimer for details.
 
-- Call function TimerUdt::setValue() to set the durations or stop a
+- Function TimerUdt::setValue() sets the duration or stops a
   running TIMER (and configure the pin, if necessary).
 
-- Call function TimerUdt::Value() to get the current durations (those
+- Function TimerUdt::Value() gets the current durations (those
   may differ from the required values).
 
 
@@ -222,13 +233,13 @@ scanning a regular grid (bar code), while both sensors are out of phase
 by 90 degrees. By analysing those signals, the position (angle) and the
 speed of the movement can get detected.
 
-- Call function QepMod::config() to configure up to three pins for
+- Function QepMod::config() configures up to three pins for
   QEP signals.
 
-- Call function QepMod::Value() to read the current values (position
+- Function QepMod::Value() reads the current values (position
   and speed).
 
-\Proj supports different measuremnt configurations:
+\Proj supports multiple measurement configurations:
 
 - single pin (speed only)
 
@@ -242,39 +253,39 @@ section \ref sSecQep for further info.
 
 # ADC # {#SecAdc}
 
-In all modes (IO, RB and MM) Analog Digital Converted input can get
-sampled by the AdcUdt member functions, controling the Touch Screen
-Controler and Analog to Digital Converter Subsystem (TSC_ADC_SS). It
-samples analog data on eight input lines (AIN-0 to AIN-7). While line
-AIN-7 is connected by a voltage divider on board to the 3V3 power
-supply, the other lines (AIN-0 to AIN-6) are free available.
+In all run modi (IO, RB and MM) Analog Digital Converted input can get
+sampled by the ::AdcUdt member functions, controling the Touch Screen
+Controler and Analog to Digital Converter SubSystem (TSC_ADC_SS). It
+samples analog data on eight input lines (AIN-0 to AIN-7).
+
+\note On Beaglebone hardware line AIN-7 is hard wired by a voltage
+      divider on board to the 3V3 power supply.
 
 The ADC subsystem can use up to `16` step configurations (and an
 additional charge step) to perform a measurement. \Proj
 pre-configures steps `1` to `8` by default to sample lines AIN-0 to
 AIN-7.
 
-- Call function PruIo::config() to set the run mode, the step mask, the
+- Function PruIo::config() sets the run mode, the step mask, the
   measurement timing and the bit encoding.
 
-- Call function AdcUdt::setStep() to customize a step configuration
+- Function AdcUdt::setStep() customizes a step configuration
   (optional).
 
-- Read array AdcUdt::Value to get the sampled values. The context
+- Array AdcUdt::Value holds the sampled values. The context
   depends on the run mode of \Proj, specified by the parameter
   *Samp* in the most recent call to function PruIo::config().
 
 
 ## Bit Encoding ## {#sSecBitEncoding}
 
-The Beaglebone ADC subsystem samples 12 bit values in the range of `0` to
-`4095`. Most other devices (ie. like sound cards) use `16` bit encoding
-(in the range of `0` to `65535`) and the values cannot get compared
-directly. Therefor \Proj can left shift the samples internaly. By
-default the output is 16 bit encoded (range 0 to 65520).
+The Beaglebone ADC subsystem samples 12 bit values in the range of `0`
+to `4095`. Most other devices (ie. like sound cards) use `16` bit
+encoding (in the range of `0` to `65535`) and the values cannot get
+compared directly. Therefor \Proj can left shift the samples internaly.
+By default the output is 16 bit encoded (range 0 to 65520).
 
-- Adapt parameter *Mds* in the call to function PruIo::config() to
-  customize the bit encoding.
+- Parameter *Mds* in function PruIo::config() call adapts the bit encoding.
 
 
 ## Ring Buffer ## {#sSecRB}
@@ -337,7 +348,7 @@ SecOperation. Each of these subsystems can either
 
 - get configured and used (the default), or
 
-- get switched of (ie. to reduce power consumption). or
+- get switched of (ie. to reduce power consumption), or
 
 - get ignored (no subsystem access, just evaluate the initial state).
 
@@ -364,16 +375,16 @@ subsystems and restores their state by the destructor when finished.
 Active subsystems can get enabled or disabled at run-time. Each call to
 function PruIo::config() can change a subsystem state.
 
-- Set a subsystem status bit in parameter *Act* when calling the
-  constructor PruIo::PruIo() to enable it.
+- A set status bit in parameter *Act* for the constructor
+  PruIo::PruIo() call enable the subsystem.
 
 - To disable a subsystem, set the clock value to `0` (zero), before
   calling function PruIo::config(). Ie. set
   `PruIo->PwmSS->Conf(2)->ClVa = 0` to switch off the third PWMSS
   subsystem (PWMSS-2).
 
-- To enable a subsystem, set the clock value to `2`, before calling
-  function PruIo::config(). Ie. set `PruIo->Adc->Conf->ClVa = 2`
+- To re-enable a subsystem, set the clock value to `2`, before calling
+  function PruIo::config() again. Ie. set `PruIo->Adc->Conf->ClVa = 2`
   to enable the ADC subsystem.
 
 
