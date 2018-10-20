@@ -84,7 +84,9 @@ DIM SHARED AS UInt8 P9_Pins(...) = { _
 , P9_30 _
 , P9_31 _
 , P9_41 _
+, 106 _
 , P9_42 _
+, 104 _
   }
 
 '* Array of CPU ball numbers for all digital pins on header P9.

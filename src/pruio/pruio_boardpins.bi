@@ -39,6 +39,6 @@ external header pins and internal CPU balls.
  & CHR(P8_43, P8_44, P8_45, P8_46) _
  & CHR(P9_11, P9_12, P9_13, P9_14, P9_15, P9_16, P9_17, P9_18, P9_19, P9_20) _
  & CHR(P9_21, P9_22, P9_23, P9_24, P9_25, P9_26, P9_27, P9_28, P9_29, P9_30) _
- & CHR(P9_31, P9_41, P9_42) _
+ & CHR(P9_31, P9_41, 106, P9_42, 104) _
  & CHR(SD_01, SD_02, SD_03, SD_05, SD_07, SD_08, SD_10, JT_04, JT_05)
 

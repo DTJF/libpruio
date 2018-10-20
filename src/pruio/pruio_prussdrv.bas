@@ -634,7 +634,10 @@ FUNCTION setPin_lkm CDECL( _
     IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown ball number" : RETURN .Errr
 
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
-    IF .BallConf[Ball] = m                                   THEN RETURN 0 ' nothing to do
+    SELECT CASE m
+    CASE .BallConf[Ball] :                                        RETURN 0 ' nothing to do
+    CASE .BallInit[Ball] : IF .BallConf[Ball] AND 24 = 24    THEN RETURN 0 ' nothing to do
+    END SELECT
 
     PUT  #.MuxFnr, , HEX((Ball SHL 8) + (m AND &b1111111), 4)
     SEEK #.MuxFnr, 1 : .BallConf[Ball] = m                      : RETURN 0
@@ -667,9 +670,9 @@ FUNCTION setPin_lkm_bb CDECL( _
     STATIC AS UInt8 r
     SELECT CASE AS CONST Ball
     CASE P9_41 : r = .BallGpio(106)
-    CASE P9_42 : r = .BallGpio(93)
+    CASE P9_42 : r = .BallGpio(104)
     CASE   106 : r = .BallGpio(P9_41)
-    CASE    93 : r = .BallGpio(P9_42)
+    CASE   104 : r = .BallGpio(P9_42)
     CASE ELSE                         : RETURN setPin_lkm(Top, Ball, Mo)
     END SELECT
     WITH *.Gpio
@@ -679,6 +682,10 @@ FUNCTION setPin_lkm_bb CDECL( _
       .setGpio()
     END WITH
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
+    SELECT CASE m
+    CASE .BallConf[Ball] :                                        RETURN 0 ' nothing to do
+    CASE .BallInit[Ball] : IF .BallConf[Ball] AND 24 = 24    THEN RETURN 0 ' nothing to do
+    END SELECT
     PUT  #.MuxFnr, , HEX(   r, 2) & "27" _
                    & HEX(Ball, 2) & HEX(m AND &b1111111, 2)
     SEEK #.MuxFnr, 1
