@@ -1,3 +1,10 @@
+libpruio (0.6.4a) jessie; urgency=low
+
+  * fix: BallInit/BallConf handling with LKM
+  * fix: ball# for double pins
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Sat, 03 Nov 2018 18:35:39 +0100
+
 libpruio (0.6.4) jessie; urgency=low
 
   * new: Python pruss_xxx examples
