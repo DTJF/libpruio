@@ -1,4 +1,4 @@
-/* * \ file pruio.h
+/** \ file pruio.h
 \brief The main header code of the C wrapper for libpruio.
 
 This file provides the declarations of macros, types and classes in C
@@ -30,7 +30,7 @@ Copyright 2014-\Year by \Email
 #include "pruio.hp"
 
 //! version string
-#define PRUIO_VERSION "0.6"
+#define PRUIO_VERSION "0.6.4"
 
 //#include "../pruio/pruio.bi" (transformed)
 typedef signed char int8;      //!< 8 bit signed integer data type.

@@ -28,7 +28,7 @@ mode, the other CPU ball gets set to the save `PRUIO_GPIO_IN` mode.
 MODULE_LICENSE("GPL");                        ///< The license type -- this affects runtime behavior
 MODULE_AUTHOR("<Thomas.Freiherr@gmx.net>");   ///< The author -- visible when using modinfo
 MODULE_DESCRIPTION("pinmuxing for libpruio"); ///< The description -- see modinfo
-MODULE_VERSION("0.0");                        ///< The version of the module
+MODULE_VERSION("0.6.4");                      ///< The version of the module
 //MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
 MODULE_INFO(softdep, "pre: uio_pruss");       ///< soft dependency
 
