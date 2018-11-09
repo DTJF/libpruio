@@ -22,14 +22,12 @@ mode, the other CPU ball gets set to the save `PRUIO_GPIO_IN` mode.
 #include <linux/kernel.h> // Contains types, macros, functions for the kernel
 #include <linux/io.h>
 #include <linux/err.h>
-//#include <linux/errno.h>
 #include <linux/platform_device.h>
 
 MODULE_LICENSE("GPL");                        ///< The license type -- this affects runtime behavior
 MODULE_AUTHOR("<Thomas.Freiherr@gmx.net>");   ///< The author -- visible when using modinfo
 MODULE_DESCRIPTION("pinmuxing for libpruio"); ///< The description -- see modinfo
 MODULE_VERSION("0.6.4");                      ///< The version of the module
-//MODULE_SOFTDEP("pre: uio_pruss");   ///< soft dependency
 MODULE_INFO(softdep, "pre: uio_pruss");       ///< soft dependency
 
 static struct platform_device *pdev;
@@ -69,20 +67,7 @@ static ssize_t state_write(struct device *dev,
         } else {
           switch(offs) {
             case 128: iowrite16(mode, mem1); break;
-            //case  89:
-              //iowrite16(0x2f, mem2 + 0x1a0);
-              //iowrite16(mode, mem2 + (offs << 2)); break;
-            //case 104:
-              //iowrite16(0x2f, mem2 + 0x164);
-              //iowrite16(mode, mem2 + (offs << 2)); break;
-            //case 106:
-              //iowrite16(0x2f, mem2 + 0x1b4);
-              //iowrite16(mode, mem2 + (offs << 2)); break;
-            //case 108:
-              //iowrite16(0x2f, mem2 + 0x1a8);
-              //iowrite16(mode, mem2 + (offs << 2)); break;
-            default:
-              iowrite16(mode, mem2 + (offs << 2));
+            default:  iowrite16(mode, mem2 + (offs << 2));
           }
         }
       }

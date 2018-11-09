@@ -26,7 +26,7 @@ Debian operating system, edit the file `sudo nano
 
 Then grep the keyring by (mind the '-' character at the ende)
 
-    wget -qO - http://beagle.tuks.nl/debian/public.key | sudo apt-key add -
+    wget -qO - http://beagle.tuks.nl/debian/pubring.gpg | sudo apt-key add -
 
 Once prepared, you can update your package manager database
 
