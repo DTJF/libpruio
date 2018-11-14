@@ -4,14 +4,15 @@ Memory Organisation  {#ChaMemory}
 
 \Proj uses three blocks of memory to organize its data
 
-- PruIo::DInit : A memory block of variable size, allocated by
-  \Proj, containing the data arrays PruIo::Init and PruIo::Conf.
+- PruIo::DInit : A memory block of variable size in user space memory,
+  allocated by \Proj, containing the data arrays PruIo::Init and
+  PruIo::Conf.
 
-- PruIo::DRam : A memory block of 2 x 8 kB, allocated by the kernel
-  driver uio_pruss and mapped to the PRUSS DRam.
+- PruIo::DRam : A memory block of 2 x 8 kB on the PRUSS, mapped by the
+  kernel driver uio_pruss for ARM access.
 
-- PruIo::ERam : A memory block of variable size (up to 8 MB), allocated
-  by the kernel driver uio_pruss.
+- PruIo::ERam : A contingous memory block of variable size (up to 8 MB)
+  in kernel space memory, allocated by the kernel driver uio_pruss.
 
 These blocks are available after the constructor call PruIo::PruIo()
 and get destroyed in the destructor PruIo::~PruIo(). The constructor

@@ -12,9 +12,9 @@ the CPU subsystems
 
 - Control Module: CPU Ball configurations (pinmuxing)
 - GPIO: General Purpose Input / Output
-- PWMSS: Pulse-Width Modulation Subsystem
+- PWMSS: Pulse-Width Modulation Subsystem (PWM, QEP, CAP)
 - TSC_ADC_SS: Touch Screen Controler and Analog-to-Digital Convertor SubSystem (or just ADC)
-- TIMER: Timers 4 to 7
+- TIMER: Timers 4 to 7 (TIMER, PWM)
 
 The driver supports three run modi
 
@@ -22,12 +22,15 @@ The driver supports three run modi
 - RB mode: digital and analog lines, accurate ADC timing controlled by the PRU,
 - MM mode: analog lines and optional triggers, accurate ADC timing controlled by the PRU.
 
+Since version 0.6.2 a PRU driver is included to load and start firmware
+on the PRUSS.
+
 The *libpruio* project is [hosted at GitHub](https://github.com/DTJF/libpruio). It's
-developed and tested on a Beaglebone Black under Ubuntu 13.10 and
-Debian Image 2014-08-05. It should run on all Beaglebone platforms with
-Debian based LINUX operating system. It's compiled by the [FreeBasic
-compiler](http://www.freebasic.net). Wrappers and examples code for C
-programming language and Python are included.
+developed and tested on a Beaglebone Black. It should run on all
+Beaglebone platforms with Debian based LINUX operating system,
+including PocketBeagle and BeagleboneBlue. It's compiled by the
+[FreeBasic compiler](http://www.freebasic.net). Wrappers and examples
+code for C and Python programming languages are included.
 
 Find more information in the online documentation at
 

@@ -42,13 +42,13 @@ static unsigned char hex1(char t){
 }
 
 static ssize_t state_read(struct device *dev,
-		struct device_attribute *attr, char *buf)
+    struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "tbclk=%u/%u (orig/curr)\n", tbclk_org, ioread16(mem1));
+  return sprintf(buf, "tbclk=%u/%u (orig/curr)\n", tbclk_org, ioread16(mem1));
 }
 
 static ssize_t state_write(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
+    struct device_attribute *attr, const char *buf, size_t count)
 {
   unsigned offs, mode, i = 0;
   if(count < 4) {
@@ -57,35 +57,37 @@ static ssize_t state_write(struct device *dev,
     while(i < count) {
       if (buf[i] < '0') {i++; continue;}
 
-      offs = (hex1(buf[i]) << 4) + hex1(buf[i + 1]);
-      if(offs > 128) {
-        printk(KERN_ALERT "libpruioRtError: invalid ball# (%u)\n", offs);
+      mode = (hex1(buf[i + 2]) << 4) + hex1(buf[i + 3]);
+      if(mode > 127) {
+        printk(KERN_ALERT "libpruioRtError: invalid mode (%u)\n", mode);
       } else {
-        mode = (hex1(buf[i + 2]) << 4) + hex1(buf[i + 3]);
-        if(mode > 127) {
-          printk(KERN_ALERT "libpruioRtError: invalid mode (%u)\n", mode);
+        offs = (hex1(buf[i]) << 4) + hex1(buf[i + 1]);
+        if (offs < 110) {
+          iowrite16(mode, mem2 + (offs << 2));
         } else {
           switch(offs) {
-            case 128: iowrite16(mode, mem1); break;
-            default:  iowrite16(mode, mem2 + (offs << 2));
+            case 128: iowrite16(mode, mem1); break; // only mode 0 -> write tbclk
+            case 121, 122, 135, 141: iowrite16(mode, mem2 + (offs << 2)); break;
+            default:
+              printk(KERN_ALERT "libpruioRtError: invalid ball# (%u)\n", offs);
           }
         }
       }
       i += 4;
     }
   }
-	return count;
+  return count;
 }
 
 static DEVICE_ATTR(state, S_IWUSR | S_IRUGO | S_IWGRP | S_IRGRP, state_read, state_write);
 
 static struct attribute *libpruio_attributes[] = {
-	&dev_attr_state.attr,
-	NULL
+  &dev_attr_state.attr,
+  NULL
 };
 
 static const struct attribute_group libpruio_attr_group = {
-	.attrs = libpruio_attributes,
+  .attrs = libpruio_attributes,
 };
 
 
@@ -95,13 +97,13 @@ static int fail(int N, char* Text, int Ret){
   if(N >= 3) iounmap(mem2);
   if(N >= 2) iowrite16(tbclk_org, mem1);
   if(N >= 1) iounmap(mem1);
-	if( Text ) printk(KERN_ALERT "libpruioInit: failed %s\n", Text);
+  if( Text ) printk(KERN_ALERT "libpruioInit: failed %s\n", Text);
   return Ret;
 }
 
 static int __init libpruio_init(void){
   mem1 = ioremap(0x44e10600uL, 0x10uL);
-	if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENOMEM);
+  if (!mem1)                          return fail(0, "ioremap CPU-ID", -ENOMEM);
   if ((ioread32(mem1) & 0xB94402EuL) != 0xB94402EuL)
                                      return fail(1, "ckecking CPU-ID", -ENODEV);
   if ((ioread32(mem1+4) & 0x10003uL) != 0x10003uL)
@@ -109,18 +111,18 @@ static int __init libpruio_init(void){
   iounmap(mem1);
 
   mem1 = ioremap(0x44e10664uL, 0x4uL);
-	if (!mem1)                       return fail(0, "ioremap PWM_tbclk", -ENOMEM);
+  if (!mem1)                       return fail(0, "ioremap PWM_tbclk", -ENOMEM);
   tbclk_org = ioread16(mem1);
   iowrite16(tbclk_org | 0x7, mem1);
 
   mem2 = ioremap(0x44e10800uL, 0x200uL);
-	if (!mem2)                       return fail(2, "ioremap CM pinmux", -ENOMEM);
+  if (!mem2)                       return fail(2, "ioremap CM pinmux", -ENOMEM);
 
   pdev = platform_device_register_simple("libpruio", -1, NULL, 0);
   if (IS_ERR(pdev))                    return fail(3, "register pdev",  PTR_ERR(pdev));
 
-	if (sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group))
-	                                return fail(4, "create sysfs group", -ENODEV);
+  if (sysfs_create_group(&(&pdev->dev)->kobj, &libpruio_attr_group))
+                                  return fail(4, "create sysfs group", -ENODEV);
   return 0;
 }
 
