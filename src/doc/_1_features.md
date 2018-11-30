@@ -23,7 +23,7 @@ to the methods provided by the kernel. Its features in short
 
 - run on PRU-0 or PRU-1 (default)
 - control subsystems at runtime (disable or enable and configure)
-- run in different run modi (IO, RB and MM)
+- run in different run modes (IO, RB and MM)
 - configure header pins
 - get digital input (GPIO)
 - set digital output (GPIO)
@@ -98,9 +98,9 @@ lines can get done by adapting the subsystem registers before step 2.
       for experts only and may cause non-revisible hardware damages.
 
 
-# Modi # {#SecModi}
+# Run Modes # {#SecModi}
 
-\Proj supports three run modi. They differ in the priority of the
+\Proj supports three run modes. They differ in the priority of the
 timing of the ADC subsystem restarts:
 
 -# IO mode (inaccurate ADC timing): the PRU is running in an endless
@@ -253,7 +253,7 @@ section \ref sSecQep for further info.
 
 # ADC # {#SecAdc}
 
-In all run modi (IO, RB and MM) Analog Digital Converted input can get
+In all run modes (IO, RB and MM) Analog Digital Converted input can get
 sampled by the ::AdcUdt member functions, controling the Touch Screen
 Controler and Analog to Digital Converter SubSystem (TSC_ADC_SS). It
 samples analog data on eight input lines (AIN-0 to AIN-7).

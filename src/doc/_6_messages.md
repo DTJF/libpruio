@@ -226,7 +226,7 @@ PRUIO_AZ_BALL.
 needs a new pinmux setting, but \Proj has no access to the sysfs
 folders. -> Either load the universal device tree overlay and execute
 the code with administrator privileges. Or make sure that digital lines
-are set to the required modi before you execute the code. Or consider
+are set to the required modes before you execute the code. Or consider
 to use the loadable kernel module and execute with  administrator
 privileges.
 

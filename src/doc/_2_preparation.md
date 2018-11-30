@@ -35,19 +35,20 @@ Once prepared, you can update your package manager database
 and finally download and install the packages for your prefered
 programming language:
 
-|   Size | Name                         | Description                 |
-| -----: | :--------------------------- | :-------------------------- |
-|  45 kB | libpruio_0.6.0_armhf.deb     | shared library binary       |
-|  18 kB | libpruio-dev_0.6.0_armhf.deb | examples/bindings C         |
-|  27 kB | libpruio-bas_0.6.0_armhf.deb | examples/bindings FreeBASIC |
-|  18 kB | python-pruio_0.6.0_armhf.deb | examples/bindings Python    |
-|  80 kB | libpruio-bin_0.6.0_armhf.deb | executable examples         |
-|   8 kB | libpruio-lkm_0.6.0_armhf.deb | loadable kernel module      |
-| 4.1 MB | libpruio-doc_0.6.0_all.deb   | documentation (html-tree)   |
-| 1.2 MB | libpruio_0.6.0.tar.xz        | source code                 |
+| Name         | Description                 |   Size | Current File Name            |
+| :----------- | :-------------------------- | -----: | :--------------------------- |
+| libpruio     | shared library binary       |  45 kB | libpruio_0.6.0_armhf.deb     |
+| libpruio-dev | examples/bindings C         |  18 kB | libpruio-dev_0.6.0_armhf.deb |
+| libpruio-bas | examples/bindings FreeBASIC |  27 kB | libpruio-bas_0.6.0_armhf.deb |
+| python-pruio | examples/bindings Python    |  18 kB | python-pruio_0.6.0_armhf.deb |
+| libpruio-bin | executable examples         |  80 kB | libpruio-bin_0.6.0_armhf.deb |
+| libpruio-lkm | loadable kernel module      |   8 kB | libpruio-lkm_0.6.0_armhf.deb |
+| libpruio-doc | documentation (html-tree)   | 4.1 MB | libpruio-doc_0.6.0_all.deb   |
+| libpruio-src | source code                 | 1.2 MB | libpruio_0.6.0.tar.xz        |
 
-\note The size may vary after updates. It's mentioned to give you a
-      roughly assessment of the download volume.
+\note The size and the current full name may vary after updates.
+      They're mentioned to give you a roughly assessment of the
+      download volume.
 
 The first package contains the binary executable of the shared library,
 which gets linked at runtime to related programs. This one is mandatory
