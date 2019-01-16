@@ -120,27 +120,27 @@ On Beaglebone boards (2x46 headers) all fast GPIOs can get used on
 PRU-0 with a custom firmware when the SD card slot is free (that's why
 \Proj runs on PRU-1 by default). Therefor you have to operate from the
 on-board memory (EMC) and use a special connector to wire some SD slot
-pins. Here's a table of the fast GPIO pins for PRU-0:
+pins. Here's a table of the fast GPIO pins for both PRUSS:
 
-| Bit# | Output | Input |
-| :--: | :----: | :---: |
-|   0  |  P9_31 | P9_31 |
-|   1  |  P9_29 | P9_29 |
-|   2  |  P9_30 | P9_30 |
-|   3  |  P9_28 | P9_28 |
-|   4  |  BA104 | BA104 |
-|   5  |  P9_27 | P9_27 |
-|   6  |  BA106 | BA106 |
-|   7  |  P9_25 | P9_25 |
-|   8  |  SD_02 | SD_02 |
-|   9  |  SD_01 | SD_01 |
-|  10  |  SD_08 | SD_08 |
-|  11  |  SD_07 | SD_07 |
-|  12  |  SD_05 | SD_05 |
-|  13  |  SD_03 | SD_03 |
-|  14  |  P8_12 | P8_16 |
-|  15  |  P8_11 | P8_15 |
-|  16  |        | P9_24 |
+| Bit# | Out-0 | In-0  | Out-1 | In-1  |
+| :--: | :---: | :---: | :---: | :---: |
+|   0  | P9_31 | P9_31 | P8_45 | P8_45 |
+|   1  | P9_29 | P9_29 | P8_46 | P8_46 |
+|   2  | P9_30 | P9_30 | P8_43 | P8_43 |
+|   3  | P9_28 | P9_28 | P8_44 | P8_44 |
+|   4  | BA104 | BA104 | P8_41 | P8_41 |
+|   5  | P9_27 | P9_27 | P8_42 | P8_42 |
+|   6  | BA106 | BA106 | P8_39 | P8_39 |
+|   7  | P9_25 | P9_25 | P8_40 | P8_40 |
+|   8  | SD_02 | SD_02 | P8_27 | P8_27 |
+|   9  | SD_01 | SD_01 | P8_29 | P8_29 |
+|  10  | SD_08 | SD_08 | P8_28 | P8_28 |
+|  11  | SD_07 | SD_07 | P8_30 | P8_30 |
+|  12  | SD_05 | SD_05 | P8_21 | P8_21 |
+|  13  | SD_03 | SD_03 | P8_20 | P8_20 |
+|  14  | P8_12 | P8_16 | JT_04 | JT_04 |
+|  15  | P8_11 | P8_15 | JT_05 | JT_05 |
+|  16  |       | P9_24 |       | P9_26 or BA108 |
 
 \note The `BAxxx` entries are the ball numbers of the double pins on
       header connectors P9_41 and P9_42.

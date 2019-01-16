@@ -16,7 +16,7 @@ the CPU subsystems
 - TSC_ADC_SS: Touch Screen Controler and Analog-to-Digital Convertor SubSystem (or just ADC)
 - TIMER: Timers 4 to 7 (TIMER, PWM)
 
-The driver supports three run modi
+The driver supports three run modes
 
 - IO mode: digital and analog lines, sloppy timing controlled by the host,
 - RB mode: digital and analog lines, accurate ADC timing controlled by the PRU,
@@ -53,7 +53,7 @@ Licence:
 libpruio (LGPLv2.1):
 --------------------------
 
-Copyright &copy; 2014-2018 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
+Copyright &copy; 2014-2019 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the Lesser GNU General Public License version 2 as
@@ -74,7 +74,7 @@ http://www.gnu.org/licenses/lgpl-2.0.html
 Examples and utility programs (GPLv3):
 --------------------------------------
 
-Copyright &copy; 2014-2018 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
+Copyright &copy; 2014-2019 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
 
 The examples of this bundle are free software as well; you can
 redistribute them and/or modify them under the terms of the GNU
