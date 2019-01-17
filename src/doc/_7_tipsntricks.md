@@ -116,13 +116,13 @@ access some GPIOs are connected directly to the PRU registers R30
 (output) and R31 (input). They operate fast with low latency (one
 cycle).
 
-On Beaglebone boards (2x46 headers) all fast GPIOs can get used on
-PRU-0 with a custom firmware when the SD card slot is free (that's why
-\Proj runs on PRU-1 by default). Therefor you have to operate from the
-on-board memory (EMC) and use a special connector to wire some SD slot
-pins. Here's a table of the fast GPIO pins for both PRUSS:
+On Beaglebone boards (2x46 headers) custom firmware can use all fast
+GPIOs on both PRUSS, when both, the JT header and the SD card slot, are
+free. Therefor you have to operate from the on-board memory (EMC) and
+use a special connector to wire some SD slot pins. Here's a table of
+the fast GPIO pins for both PRUSS:
 
-| Bit# | Out-0 | In-0  | Out-1 | In-1  |
+| Bit# | Out-0 (R30) | In-0 (R31) | Out-1 (R30) | In-1 (R31) |
 | :--: | :---: | :---: | :---: | :---: |
 |   0  | P9_31 | P9_31 | P8_45 | P8_45 |
 |   1  | P9_29 | P9_29 | P8_46 | P8_46 |
@@ -138,9 +138,9 @@ pins. Here's a table of the fast GPIO pins for both PRUSS:
 |  11  | SD_07 | SD_07 | P8_30 | P8_30 |
 |  12  | SD_05 | SD_05 | P8_21 | P8_21 |
 |  13  | SD_03 | SD_03 | P8_20 | P8_20 |
-|  14  | P8_12 | P8_16 | JT_04 | JT_04 |
-|  15  | P8_11 | P8_15 | JT_05 | JT_05 |
-|  16  |       | P9_24 |       | P9_26 or BA108 |
+|  14  | P8_12 | P8_16 |       | JT_04 |
+|  15  | P8_11 | P8_15 | JT_05 |       |
+|  16  |       | P9_24 |       | P9_26 |
 
 \note The `BAxxx` entries are the ball numbers of the double pins on
-      header connectors P9_41 and P9_42.
+      header connectors P9_41 and P9_42. The JT pins are unidirectional.
