@@ -97,7 +97,7 @@ END FUNCTION
 
 /'* \brief Configure timer output.
 \param Ball The header pin to configure.
-\param Dur1 The duration in [ms] before state change (or 0 to stop timer).
+\param Dur1 The total period duration in [ms] (or 0 to stop timer).
 \param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
 \param Mode The output modus (defaults to 0).
 \returns Zero on success, an error string otherwise.

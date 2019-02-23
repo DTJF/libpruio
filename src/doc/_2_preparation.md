@@ -24,7 +24,7 @@ Debian operating system, edit the file `sudo nano
     deb http://beagle.tuks.nl/debian jessie/
     deb-src http://beagle.tuks.nl/debian jessie/
 
-Then grep the keyring by (mind the '-' character at the ende)
+Then grep the keyring by (mind the '-' character at the end)
 
     wget -qO - http://beagle.tuks.nl/debian/pubring.gpg | sudo apt-key add -
 
@@ -93,6 +93,9 @@ And finally the .tar.xz package contains the source code, which was
 used to build the above described packages. Unlike the code on \Webs
 this code is garantied to match the contens of the other packages.
 
+\note In order to use libpruio pinmuxing disable the device tree
+      overlay for config-pin (see section \ref sSecLKM).
+
 
 ## C programming language ## {#sSecDev}
 
@@ -114,7 +117,7 @@ and you're ready to start.
 
 For development in FreeBASIC programming language execute
 
-    sudo apt-get install libpruio-bas libpruio-lkm libpruio-doc
+    sudo apt-get install libpruio-dev libpruio-bas libpruio-lkm libpruio-doc
 
 to install the shared library, the header files, the example source
 code, the loadable kernel module and the html documentation

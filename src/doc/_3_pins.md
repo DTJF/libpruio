@@ -711,9 +711,16 @@ privileges necessary).
       folders were created with the ownership of that group.
 
 By default, the pinmuxing feature is limited to the free header pins,
-which are not claimed for other subsystems by the kernel. However, this
-safety feature can get disabled in the constructor PruIo::PruIo()
-parameters.
+which are not claimed for other subsystems by the kernel. So you cannot
+configure pins in default configuration, because all pins are claimed
+by the cape-universal device tree blob. You can either disable the
+trigger file by (or by renaming that file, adapt the file name for
+pocket-beagle, BBGrenn or BBBlue)
+
+    sudo rm /boot/dtbs/`uname -r`/am335x-boneblack-uboot-univ.dtb
+
+Or you can disable the \Proj safety feature by calling the constructor
+PruIo::PruIo() with PRUIO_ACT_FREMUX ored in first parameter.
 
 \note On kernel 3.x there's no user access to files in folder
       `/sys/kernel/debug`. \Proj cannot determin the current kernel
