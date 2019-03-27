@@ -530,25 +530,34 @@ there're three methods supported:
 -# \ref sSecUniversal -> configure at boot time multiple custom modes in an overlay, and switch at runtime
 -# \ref sSecLKM -> load the kernel module, and switch at runtime
 
-Each method has its advantages and downsides. The first two are save
-and documented, but unflexible. There is no fixed border between them.
+Each method has its advantages and downsides. The first two are well
+known and save, but unflexible. There is no fixed border between them.
 Ie. you can prepare a mixed device tree blob with multiple settings for
 some pins, and single settings for the others. Anyway, you have to know
 and specify each pin configuration before boot. And the necessary tools
-(device tree compiler, capemgr) are not very reliable. Debuggung is a
+(device tree compiler, capemgr) are not very reliable. Debugging is a
 mess. Any change requires rebooting.
 
-In contrast the loadable kernel module (LKM) is flexible and fast in
-executation speed. You need not prepare the pins before boot. Instead
-you can access all pins at runtime, and you can switch any feature at
-run-time. It has a short boot time and a small memory footprint. But
-you can more easy raise conflicts with other systems.
+In contrast the loadable kernel module (LKM, since version 0.6) is
+flexible and fast in executation speed. You need not prepare the pins
+before boot. Instead you can access all pins at runtime, and you can
+switch any feature at run-time. This method has a short boot time and a
+small memory footprint. But you can more easy raise conflicts with
+other systems.
 
 \Proj checks in the constructor PruIo:PruIo() if the LKM is available,
 and uses it when found. It's the prefered pinmuxing method. Otherwise
 it checks for settings provided by an universal overlay. If neither of
 them are present, it works with the current pin settings and throughs
-error messages when the programm tries to change oinmuxing.
+error messages when the programm tries to change pinmuxing.
+
+\note It's best practice to configure (pinmux) the pins before starting
+      the \Proj main loop (by calling PruIo::config() ). Also it's
+      possible to pinmux later. But in the later case the user has to
+      make sure that the PRU finished configuration and the main loop
+      is running. In FreeBASIC syntax use `WHILE .DRam[0] >
+      PRUIO_MSG_IO_OK : .WaitCycles += 1 : WEND` before the pinmuxing
+      command.
 
 
 ## Custom overlay ## {#sSecCustom}

@@ -81,9 +81,12 @@ module on each kernel change/update, to keep the binary up-to-date.
 Find further information on the LKM in section \ref sSecLKM.
 
 The -doc package contains the documentation in html format. That is the
-text you're currently reading. You can install it for off-line reading,
-but it's also [available
-on-line.](http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html)
+text you're currently reading. Installing that package copies a HTML
+tree on to your box starting at
+http://usr/share/doc/libpruio-doc/html/index.html for off-line reading.
+Load and bookmark that file in your prefered browser. But it's also
+[available
+on-line.](http://users.freebasic-portal.de/tjf/Projekte/libpruio/doc/html/index.html)
 It's recommended to use the off-line version, because it's garantied to
 match the binaries. The on-line version may be behind or even before
 the current binaries. When you're short of memory at the Beaglebone,
