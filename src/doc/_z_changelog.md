@@ -10,6 +10,17 @@ Changelog & Credits {#ChaChangelog}
 Feel free to send further ideas to the author (\Email).
 
 
+# libpruio-0.6.4b # {#SecV-0-6-4b}
+
+- fix: DTOR does proper re-muxing again
+- fix: race condition in fast setValue sequences
+
+# libpruio-0.6.4a # {#SecV-0-6-4a}
+
+- fix: BallInit/BallConf handling with LKM
+- fix: ball# for double pins
+
+
 # libpruio-0.6.4 # {#SecV-0-6-4}
 
 Released in 2018, Oktober.

@@ -1,3 +1,10 @@
+libpruio (0.6.4b) jessie; urgency=low
+
+  * fix: DTOR does proper re-muxing again
+  * fix: race condition in fast setValue sequences
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Wed, 27 Mar 2019 11:35:02 +0100
+
 libpruio (0.6.4a) jessie; urgency=low
 
   * fix: BallInit/BallConf handling with LKM
