@@ -362,15 +362,14 @@ It's allocated by the kernel driver when loaded. The default size is
 256 kB (= 128 kSamples). \Proj uses the external memory in RB and MM
 mode to store the ADC samples.
 
-- In RB mode the size of the ring buffer is limited by the size of the
-  external ram.
-
-- And in MM mode the number of total samples (`= AdcUdt::Samples x
-  AdcUdt::ChAz`) must not be greater than the available number of
-  samples in the external memory.
+In both cases the number of total samples (`= AdcUdt::Samples x
+AdcUdt::ChAz`) must not be greater than the available number of samples
+in the external memory. The block size is available in member variable
+PruIo::ESize. The pointer AdcUdt::Samples gets set to the start of
+the ERam block.
 
 The kernel driver allows to customize the size of the external memory.
-This must be done at the first driver loading. Ie. execute (with admin
+This must be done at driver loading time. Ie. execute (with admin
 privileges) `modprobe uio_pruss extram_pool_sz=0x800000` to set the
 maximum size of 8 MB (= 0x800000).
 

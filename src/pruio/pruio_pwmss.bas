@@ -178,7 +178,7 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    PruReady ' wait, if PRU is busy (should never happen)
     .DRam[4] = cmp(Nr)
     .DRam[3] = cnt(Nr)
     .DRam[2] = Conf(Nr)->DeAd + &h100

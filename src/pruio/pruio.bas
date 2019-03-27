@@ -278,8 +278,6 @@ DESTRUCTOR PruIo()
   VAR mux = "" : Errr = 0
   IF DRam THEN
     IF DInit THEN
-      prussdrv_pru_disable(PruNo)
-
       IF MuxFnr THEN '                                  pinmuxing active
         IF BallInit <> BallConf THEN '                   reset pinmuxing
           FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL
@@ -287,12 +285,13 @@ DESTRUCTOR PruIo()
             IF (BallConf[i] XOR BallInit[i]) AND &b1111111 THEN _ '    re-mux
               IF setPin(@THIS, i, BallInit[i]) THEN mux &= _ '         error
                   !"\nre-mux " _
-                & BIN(BallInit[i], 7) & " -> " & BIN(BallConf[i], 7) _
+                & BIN(BallConf[i], 7) & " -> " & BIN(BallInit[i], 7) _
                 & " failed (" & *Errr & ")"
           NEXT
         END IF : Errr = 0
         IF MuxFnr < 256 THEN CLOSE #MuxFnr '               close MuxFile
       END IF
+      prussdrv_pru_disable(PruNo)
 
       DRam[1] = PRUIO_DAT_ALL '           reset subsystems configuration
       memcpy(CAST(ANY PTR, DRam) + DRam[1], DInit, DSize)
@@ -725,7 +724,7 @@ FUNCTION PruIo.mm_start CDECL( _
     IF t_pin > PRUIO_AZ_BALL THEN _
               Errr = @"Trg" #_T_ ": unknown trigger pin number" : RETURN Errr : _
     END IF : _
-    IF BallConf[t_pin] AND &b111 <> 7 THEN _
+    IF &b111 <> (BallConf[t_pin] AND &b111) THEN _
     Errr = @"Trg" #_T_ ": trigger pin must be in mode 7 (GPIO)" : RETURN Errr : _
     ELSE Trg##_T_ AND= &b11111111111100000000000011111111uL : _
          Trg##_T_  OR= BallGpio(t_pin) SHL 8 : _

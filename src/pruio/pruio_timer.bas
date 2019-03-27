@@ -224,7 +224,7 @@ FUNCTION TimerUdt.setValue CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    PruReady ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(nr)->TCRR
     .DRam[4] = Conf(nr)->TMAR
     .DRam[3] = Conf(nr)->TLDR
@@ -361,7 +361,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+    PruReady ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(Nr)->TCRR
     .DRam[4] = Conf(Nr)->TMAR
     .DRam[3] = Conf(Nr)->TLDR

@@ -107,10 +107,6 @@ macros defined in pruio.bi to specify the pin number in parameter
 `Ball` for a pin on the Beaglebone headers (ie P8_03 selects pin 3 on
 header P8).
 
-Its not possible to set the state of a CPU ball (not connected to a
-header), because only header pins are prepared for pinmuxing in the
-libpruio device tree overlay.
-
 Parameter `Modus` specifies the pinmux mode for the ARM control module
 (see \ArmRef{9} for details). By default the pin gets configured as
 input pin with pulldown resistor. Other configurations are prepared as
@@ -123,6 +119,10 @@ enumerators \ref PinMuxing :
 | PRUIO_GPIO_IN_1  | high input pin (with pullup resistor)    |
 | PRUIO_GPIO_OUT0  | output pin set to low (no resistor)      |
 | PRUIO_GPIO_OUT1  | output pin set to high (no resistor)     |
+
+\note In case of device tree pinmuxing it's not possible to set the
+state of a CPU ball (not connected to a header), because only header
+pins are prepared for pinmuxing in the libpruio device tree overlay.
 
 Wrapper function (C or Python): pruio_gpio_config().
 
@@ -175,7 +175,8 @@ SUB GpioUdt.setGpio()
   END WITH
   WITH *Top
     IF .DRam[0] > PRUIO_MSG_IO_OK                          THEN EXIT SUB
-    WHILE .DRam[1] : WEND '   wait, if PRU is busy (should never happen)
+
+    PruReady ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(Indx)->OE
     .DRam[4] = Conf(Indx)->SETDATAOUT
     .DRam[3] = Conf(Indx)->CLEARDATAOUT
@@ -216,13 +217,14 @@ FUNCTION GpioUdt.setValue CDECL( _
     CASE 0    : Mode = PRUIO_GPIO_OUT0 : r = .BallConf[Ball] XOR Mode
     CASE 1    : Mode = PRUIO_GPIO_OUT1 : r = .BallConf[Ball] XOR Mode
     CASE 255  : Mode = .BallInit[Ball] : r = Mo ' reset
-    CASE ELSE : Mode = Mo              : r = .BallConf[Ball] XOR Mo
-      IF 7 <> (Mo AND &b111)                    THEN .Errr = E1 : RETURN .Errr ' no Gpio mode
+    CASE ELSE : IF &b111 <> (Mo AND &b111)      THEN .Errr = E1 : RETURN .Errr ' no Gpio mode
+                Mode = Mo              : r = .BallConf[Ball] XOR Mo
     END SELECT
-    IF r AND &b10100000 THEN setGpio() ' first configure GPIO subsystem
-    IF r AND &b01011000 THEN IF 0 = .setPin(Top, Ball, Mode) THEN RETURN 0 _
-   /' then pinmuxing '/ ELSE Mode = .BallConf[Ball] : setGpio() : RETURN .Errr
-   /' no pinmuxing, set new mode '/      .BallConf[Ball] = Mode : RETURN 0
+    IF r AND &b10100000 THEN setGpio() ' i/o or state changed -> configure GPIO subsystem
+    IF r AND &b01011000 THEN _ '         receiver or resistor changed -> pinmux
+      IF .setPin(Top, Ball, Mode) THEN _ ' error -> re-conf and report error
+                             Mode = .BallConf[Ball] : setGpio() : RETURN .Errr
+    /' all OK, set new mode '/           .BallConf[Ball] = Mode : RETURN 0
   END WITH
 END FUNCTION
 
@@ -260,7 +262,7 @@ FUNCTION GpioUdt.Value CDECL(BYVAL Ball AS UInt8) AS Int32
       , i = r SHR 5 _         ' index of GPIO
       , n = r AND 31          ' number of bit
     IF 2 <> Conf(i)->ClVa THEN                       .Errr = E0 : RETURN -1 ' GPIO subsystem not enabled
-    IF .BallConf[Ball] AND &b111 <> 7 THEN           .Errr = E2 : RETURN -1 ' no GPIO pin
+    IF &b111 <> (.BallConf[Ball] AND &b111) THEN     .Errr = E2 : RETURN -1 ' no GPIO pin
                                    RETURN IIF(BIT(Raw(i)->Mix, n), 1, 0)
   END WITH
 END FUNCTION
