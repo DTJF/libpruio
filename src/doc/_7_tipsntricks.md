@@ -144,3 +144,34 @@ the fast GPIO pins for both PRUSS:
 
 \note The `BAxxx` entries are the ball numbers of the double pins on
       header connectors P9_41 and P9_42. The JT pins are unidirectional.
+
+
+# Auto Starting an Application # {#SecAutoStart}
+
+In order to auto start a program compiled against \Proj (ie. by a
+systemd service), you've to care about some kind of race conditions.
+Before the CTOR call PruIo::PruIo() your code needs the kernel driver
+`uio_pruss` loaded in any case, and perhaps it also needs the LKM for
+pinmuxing. You've to make sure that both drivers are properly loaded
+before your code starts.
+
+To find out the loading status you can check if some sysfs files exists
+
+\Item{uio_pruss} check for `/dev/uio5`
+
+\Item{LKM} check for `/sys/devices/platform/libpruio/state`
+
+This can either get done by a loop halting your code until the files
+are created. Or you can use a bash script to wait for the files being
+up, like
+
+    until test -e /dev/uio5; do sleep 1; done
+    until test -e /sys/devices/platform/libpruio/state; do sleep 1; done
+
+\note When your code starts before the `uio_pruss` driver is loaded,
+      the CTOR call creates the file `/dev/uio5`, and that file is
+      blocking proper loading of the driver. You can check this race
+      condition ie. by using the output of command `ls -l /dev/uio*`.
+      When the file is mistakenly created by the CTOR, the file `uio5`
+      is different. Ie. since kernel 4.14 the owner is `root root`,
+      while the proper files are owned by `root users`.
