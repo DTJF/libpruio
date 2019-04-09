@@ -198,25 +198,27 @@ The function PruIo::config() uploads the customized configuration to
 the subsystems and starts operation in the declared run mode. Before
 the pasm_run.p instructions get executed, the DRam area contains
 
-|    Value  | Description                       |
-| --------: | : ------------------------------- |
-|   DRam[1] | Start of the data block           |
-|   DRam[2] | Number of samples AdcUdt::Samples |
-|   DRam[3] | Step mask AdcSet::STEPENABLE      |
-|   DRam[4] | Bit encoding mode AdcUdt::LslMode |
-|   DRam[5] | Timer value AdcUdt::TimerVal      |
-| DRam[128] | Conf data block context           |
+|     Value  | Description                       |
+| ---------: | : ------------------------------- |
+|    DRam[1] | Start of the data block           |
+|    DRam[2] | Number of samples AdcUdt::Samples |
+|    DRam[3] | Step mask AdcSet::STEPENABLE      |
+|    DRam[4] | Bit encoding mode AdcUdt::LslMode |
+|    DRam[5] | Timer value AdcUdt::TimerVal      |
+| DRam[128-] | Conf data block context           |
 
 The PRU software reads these parameters and writes the configuration to
 the subsystem registers. Then it prepares the DRam area as follows
 
-|  Value   | Description             |
-| -------: | : --------------------- |
-|  DRam[0] | PRUIO_MSG_xxx           |
-| DRam[16] | 4xGpioArr (4*16 bytes)  |
-| DRam[64] | 3xPwmssArr (3*32 bytes) |
-| DRam[72] | ADC data (38 bytes)     |
-| DRam[89] | 4xTimerArr (4*16 bytes) |
+|    Value   | Description                        |
+|   -------: | : -------------------------------- |
+|    DRam[0] | PRUIO_MSG_xxx                      |
+| DRam[1-15] | var. parameters                    |
+|   DRam[16] | 4 x GpioArr (4*16 bytes)           |
+|   DRam[64] | 3 x PwmssArr (3*32 bytes)          |
+|   DRam[72] | AdcSet::DeAd (4 bytes)             |
+|   DRam[73] | 17 x AdcUdt::Value data (34 bytes) |
+|   DRam[89] | 4 x TimerArr (4*16 bytes)          |
 
 The type of PRUIO_MSG_xxx depends on the required run mode. It's either
 \ref PRUIO_MSG_IO_OK in case of IO mode (parameter *Samp* = 1) or \ref
