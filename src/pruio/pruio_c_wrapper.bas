@@ -247,15 +247,14 @@ END FUNCTION
 
 
 '* \brief Wrapper function for TimerUdt::Value().
-'&char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2, uint16* Mode);/*
+'&char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2);/*
 FUNCTION pruio_tim_Value CDECL ALIAS "pruio_tim_Value"( _
     BYVAL Io AS PruIo PTR _
   , BYVAL Ball AS UInt8 _
-  , BYVAL Dur1 AS Float_t PTR = 0 _
-  , BYVAL Dur2 AS Float_t PTR = 0 _
-  , BYVAL Mode AS UInt16 PTR = 0) AS ZSTRING PTR EXPORT
+  , BYVAL Dur1 AS Float_t PTR _
+  , BYVAL Dur2 AS Float_t PTR) AS ZSTRING PTR EXPORT
 
-  RETURN Io->Tim->Value(Ball, Dur1, Dur2, Mode)
+  RETURN Io->Tim->Value(Ball, Dur1, Dur2)
 END FUNCTION
 '&*/
 

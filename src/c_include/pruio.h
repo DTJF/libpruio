@@ -805,12 +805,11 @@ char* pruio_pwm_setValue(pruIo* Io, uint8 Ball, float_t Hz, float_t Du);
 \param Ball The header pin to configure.
 \param Dur1 The duration in [ms] before state change (or 0 to stop timer).
 \param Dur2 The duration in [ms] for the state change (or 0 for minimal duration).
-\param Mode The modus to set (defaults to 0 = one cycle positive pulse).
 \returns Zero on success, an error string otherwise.
 
 \since 0.4
 */
-char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2, uint16* Mode);
+char* pruio_tim_Value(pruIo* Io, uint8 Ball, float_t* Dur1, float_t* Dur2);
 
 /** \brief Wrapper function for TimerUdt::setValue().
 \param Io The pointer of the PruIo instance.

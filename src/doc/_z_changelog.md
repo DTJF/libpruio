@@ -10,6 +10,16 @@ Changelog & Credits {#ChaChangelog}
 Feel free to send further ideas to the author (\Email).
 
 
+# libpruio-0.6.4c # {#SecV-0-6-4c}
+
+- fix: docs for TIMER and PWM
+- fix: Timer scaling fixed [s] -> [ms]# libpruio-0.6.4b # {#SecV-0-6-4b}
+- fix: PwmUdt::Sync LKM value 0x08 -> 0xFF
+- fix: LKM case syntax (commas)
+- cha: Timer PRU code starting by trigger- fix: DTOR does proper re-muxing again
+- cha: LKM tblck value 0x80 -> 0xFF- fix: race condition in fast setValue sequences
+- cha: in GpioUdt renamed setGpio -> setGpioSs to be more clear# libpruio-0.6.4a # {#SecV-0-6-4a}
+
 # libpruio-0.6.4b # {#SecV-0-6-4b}
 
 - fix: DTOR does proper re-muxing again
@@ -19,7 +29,6 @@ Feel free to send further ideas to the author (\Email).
 
 - fix: BallInit/BallConf handling with LKM
 - fix: ball# for double pins
-
 
 # libpruio-0.6.4 # {#SecV-0-6-4}
 

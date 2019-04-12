@@ -66,8 +66,11 @@ static ssize_t state_write(struct device *dev,
           iowrite16(mode, mem2 + (offs << 2));
         } else {
           switch(offs) {
-            case 128: iowrite16(mode, mem1); break; // only mode 0 -> write tbclk
-            case 121, 122, 135, 141: iowrite16(mode, mem2 + (offs << 2)); break;
+            case 0xFF: iowrite16(mode, mem1); break; // write tbclk
+            case 121:
+            case 122:
+            case 135:
+            case 141: iowrite16(mode, mem2 + (offs << 2)); break; // extra pins
             default:
               printk(KERN_ALERT "libpruioRtError: invalid ball# (%u)\n", offs);
           }

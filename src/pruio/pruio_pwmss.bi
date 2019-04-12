@@ -170,8 +170,8 @@ TYPE PwmssUdt
     Raw(PRUIO_AZ_PWMSS)    '*< Pointer to current raw subsystem data (IO).
   AS UInt32 InitParA       '*< Initial parameters offset.
   AS CONST UInt16 _
-    PwmMode = &b1011010000 _'*< Value for ECCTL2 in PWM mode.
-  , CapMode = &b0011010110  '*< Value for ECCTL2 in CAP mode.
+    PwmMode = &b01011010000 _'*< Value for ECCTL2 in PWM mode.
+  , CapMode = &b00011010110  '*< Value for ECCTL2 in CAP mode.
   AS ZSTRING PTR _
     E0 = @"PWMSS not enabled" _           '*< Common error message.
   , E1 = @"set frequency in first call" _ '*< Common error message.
@@ -211,9 +211,8 @@ TYPE PwmssUdt
   , BYVAL AS SHORT) AS ZSTRING PTR
   DECLARE FUNCTION cap_tim_get CDECL( _
     BYVAL AS UInt8 _
-  , BYVAL AS Float_t PTR = 0 _
-  , BYVAL AS Float_t PTR = 0 _
-  , BYVAL AS SHORT PTR = 0) AS ZSTRING PTR
+  , BYVAL AS Float_t PTR _
+  , BYVAL AS Float_t PTR) AS ZSTRING PTR
 END TYPE
 
 
@@ -260,7 +259,7 @@ TYPE PwmMod
     BYVAL AS UInt8, _
     BYVAL AS Float_t, _
     BYVAL AS Float_t) AS ZSTRING PTR
-  DECLARE FUNCTION sync CDECL( _
+  DECLARE FUNCTION Sync CDECL( _
     BYVAL AS UInt8) AS ZSTRING PTR
 END TYPE
 

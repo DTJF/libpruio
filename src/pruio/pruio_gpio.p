@@ -131,9 +131,9 @@ GpioDEnd:
 //
   QBLT GpioCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO_IN command -> skip
   QBLT IoCEnd, Comm.b3, PRUIO_COM_GPIO_CONF // if no GPIO command -> skip, invalid
-  LBCO U2, DRam, 4*2, 4*4  // get parameters
+  LBCO U2, DRam, 2*4, 4*4  // get parameters
   SBBO U5, U2, 0x34, 4     // write OE
-  SBBO U3, U2, 0x90, 4*2   // write CLEARDATAOUT & SETDATAOUT
+  SBBO U3, U2, 0x90, 2*4   // write CLEARDATAOUT & SETDATAOUT
   JMP  IoCEnd              // finish command
 
 GpioCEnd:
@@ -152,7 +152,7 @@ GpioCEnd:
   QBEQ TrgPost, UR, 0      // if subsystem disabled -> skip
 
 TrgGet:
-  LBBO U1, UR, 0x38, 4*2   // load GPIO states (input / output)
+  LBBO U1, UR, 0x38, 2*4   // load GPIO states (input / output)
   OR   U3, U1, U2          // mix both together
 
   QBBS TrgLow, TrgR.t7     // check negative bit

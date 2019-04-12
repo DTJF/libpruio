@@ -495,10 +495,22 @@ required, but the related TIMERSS subsystem isn't enabled. -> Set
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"frequency not supported"} The module (TIMER or CAP) isn't
+\Item{"duration too short"} The module (TIMER or CAP) isn't capable to
+generate output at the required time periods. -> Check the parameters
+`Dur1` and `Dur2`, and set appropriate values. TIMER and CAP modules
+have different ranges, see section \ref sSecTimer. Note: in one shot
+mode the minimal duration is bigger.
+
+\Item{"duration too long"} The module (TIMER or CAP) isn't
 capable to generate output at the required time periods. -> Check the
-parameters `Dur1` and `Dur2`, and set an appropriate value (TIMER and
-CAP modules have different ranges).
+parameters `Dur1` and `Dur2`, and set appropriate values. TIMER and
+CAP modules have different ranges, see section \ref sSecTimer.
+
+\Item{"pin not in TIMER mode"} Setting the values for a
+TIMER output is required, but the pin is not in TIMER mode, and
+therefor cannot generate TIMER pulses. -> Check the (previous)
+configuration of that pin. Or enable LKM pinmuxing, see chapter \ref
+ChaPreparation for details.
 
 \note When the pin (CPU ball) is not in the matching mode, \Proj
       tries to configure it. In that case you also may get error
@@ -517,10 +529,11 @@ Set `PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
 connected to that ball number) and call function PruIo::config(),
 first.
 
-\Item{"TIMER subsystem not in output mode"} Getting the values of a
-TIMER output is required, but the module is not in output mode, and
-therefor cannot generate TIMER pulses. -> Check the (previous)
-configuration of that pin.
+\Item{"pin not in TIMER mode"} Getting the values of a TIMER output is
+required, but the pin is not in TIMER mode, and therefor cannot
+generate TIMER pulses. -> Check the (previous) configuration of that
+pin. Or enable LKM pinmuxing, see chapter \ref ChaPreparation for
+details.
 
 
 # CAP # {#SecErrCap}

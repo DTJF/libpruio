@@ -48,6 +48,7 @@ CONSTRUCTOR PwmssUdt(BYVAL T AS Pruio_ PTR)
 
     i += 1 : .DRam[i] = &h48304000uL
     i += 1 : .DRam[i] = IIF(.DevAct AND PRUIO_ACT_PWM2, &h44E000D8uL, 0)
+
     .ParOffs = i
   END WITH
 END CONSTRUCTOR
@@ -160,7 +161,7 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
     VAR r = 0
     IF 2 <> Conf(Nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' PWMSS not enabled
     IF 0 = cnt(Nr) ANDALSO _
-      F <= 0. THEN                                .Errr = E1 : RETURN E1 ' set frequency first
+       0 >= F THEN                                .Errr = E1 : RETURN E1 ' set frequency first
     IF F > 0. THEN
       IF F < f_min ORELSE _
          F > PWMSS_CLK_2 THEN                     .Errr = E2 : RETURN E2 ' frequency not supported
@@ -179,6 +180,7 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
     PruReady ' wait, if PRU is busy (should never happen)
+    .DRam[5] = 0 ' counter start value
     .DRam[4] = cmp(Nr)
     .DRam[3] = cnt(Nr)
     .DRam[2] = Conf(Nr)->DeAd + &h100
@@ -189,9 +191,8 @@ END FUNCTION
 
 /'* \brief Compute current values of eCAP Timer output (private).
 \param Nr The PWMSS subsystem index.
-\param Dur1 The variable to store the duration of initial state (or NULL).
-\param Dur2 The variable to store the duration of the pulse (or NULL).
-\param Mode The variable to store the mode of the timer output (or NULL).
+\param Dur1 The variable to store the duration of initial state.
+\param Dur2 The variable to store the duration of the pulse.
 \returns Zero on success, an error string otherwise.
 
 This private functions computes the real PWM configuration of an eCAP
@@ -205,20 +206,36 @@ module. It's designed to get called from function PwmMod::Value().
 '/
 FUNCTION PwmssUdt.cap_tim_get CDECL( _
     BYVAL Nr AS UInt8 _
-  , BYVAL Dur1 AS Float_t PTR = 0 _
-  , BYVAL Dur2 AS Float_t PTR = 0 _
-  , BYVAL Mode AS SHORT PTR = 0) AS ZSTRING PTR
+  , BYVAL Dur1 AS Float_t PTR _
+  , BYVAL Dur2 AS Float_t PTR) AS ZSTRING PTR
 
+  IF Dur1 = 0 ORELSE Dur2 = 0 THEN Top->Errr = @"pass pointers" : RETURN Top->Errr
   WITH *Conf(Nr)
-    IF 2 <> .ClVa THEN                        Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
-    IF 0 = BIT(.ECCTL2, 9) THEN               Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
-    VAR dur = .CAP1 / PWMSS_CLK _
-      , d_2 = .CAP2 / PWMSS_CLK
-    IF Dur1 THEN *Dur1 = dur - d_2
-    IF Dur2 THEN *Dur2 = d_2
-    IF Mode THEN *Mode = iif(bit(.ECCTL2, 1), 1, 0) _
-                      OR iif(bit(.ECCTL2, 7), 2, 0) '???
-  END WITH :                                                    RETURN 0
+    VAR dur = *Dur1 + *Dur2 _ ' [mSec]
+      , dmx = 1000. * &hFFFFFFFF / PWMSS_CLK _
+      , dmn = 1000. * 2 / PWMSS_CLK
+    SELECT CASE dur
+    CASE IS <= 0. ' get current
+      IF 2 <> .ClVa THEN                         Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
+      IF 0 = BIT(.ECCTL2, 9) THEN                Top->Errr = E9 : RETURN E9 ' eCAP module not in output mode
+      IF BIT(.ECCTL2, 4) THEN ' running
+        *Dur2 = 1000. * .CAP2 / PWMSS_CLK
+        *Dur1 = 1000. * .CAP1 / PWMSS_CLK - *Dur2
+      ELSE ' stopped
+        *Dur2 = 0.
+        *Dur1 = 0.
+      END IF
+    CASE IS < dmn ' get minimal
+      *Dur1 = dmn
+      *Dur2 = dmn / 2
+    CASE IS > dmx ' get maximal
+      *Dur1 = *Dur1 / dur * dmx
+      *Dur2 = *Dur2 / dur * dmx
+    CASE ELSE
+      *Dur1 = 1000. * CULNG(*Dur1 / dur * PWMSS_CLK)
+      *Dur2 = 1000. * CULNG(*Dur2 / dur * PWMSS_CLK)
+    END SELECT
+  END WITH :                                                     RETURN 0
 END FUNCTION
 
 
@@ -245,36 +262,45 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
   , BYVAL Mode AS SHORT) AS ZSTRING PTR
 
   STATIC AS CONST Float_t _
-    d_min =            &h2 / PWMSS_CLK _ '' minimal durarion
-  , d_max = &h100000000uLL / PWMSS_CLK   '' maximal duration
-
-  VAR dur = Dur1 + Dur2
-  WITH *Top
-    IF 2 <> Conf(Nr)->ClVa THEN                   .Errr = E0 : RETURN E0 ' PWMSS not enabled
-
-    IF dur < d_min ORELSE _
-       dur > d_max THEN                           .Errr = E2 : RETURN E2 ' frequency not supported
-  END WITH
+    d_min = 1000. *           &h2 / PWMSS_CLK _ '' minimal durarion [mSec]
+  , d_max = 1000. * &hFFFFFFFFuLL / PWMSS_CLK   '' maximal duration [mSec]
 
   WITH *Conf(Nr)
-    .CAP1 = CULNG(dur * PWMSS_CLK)
-    IF Dur1 < 0. ORELSE Dur2 < 0. THEN ' switch off
-      .CAP2 = IIF(BIT(Mode, 1), .CAP1, 0)
-    ELSE
-      .CAP2 = IIF(Dur2 > 0., CULNG(Dur2 / dur * PWMSS_CLK), 1uL)
-    END IF
+    IF 2 <> .ClVa                           THEN Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
 
-    .ECCTL2 = PwmMode
-    Raw(Nr)->CMax = 0
+    VAR dur = Dur1 + Dur2
+    SELECT CASE dur
+    CASE IS <= 0. ' -> switch off
+      Raw(Nr)->CMax = 0
+      .CAP1 = &h100
+      .CAP2 = &h0
+      .ECCTL2 = PwmMode OR IIF(Mode AND &b01, &b10000010000, &b00000010000) ' default/invers
+    CASE IS < d_min :                Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' duration too short
+    CASE IS > d_max :                Top->Errr = Top->TimSS->E4 : RETURN Top->Errr ' duration too long
+    CASE ELSE
+      IF Mode AND &b10 THEN ' one-shot
+        IF 0.01 > dur THEN           Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' one-shot duration too short
+        Raw(Nr)->CMax = 1
+      ELSE
+        Raw(Nr)->CMax = 0
+      END IF
+      .CAP1 = CULNG(.001 * dur * PWMSS_CLK)
+      VAR x = CULNG(Dur2 / dur * PWMSS_CLK)
+      .CAP2 = IIF(x > 0, .CAP1 - x, .CAP1 - 1)
+      .ECCTL2 = PwmMode OR IIF(Mode AND &b01, 0, &b10000000000) ' default/invers
+    END SELECT
+  END WITH
 
-    IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                      RETURN 0
+  WITH *Top
+    IF .DRam[0] > PRUIO_MSG_IO_OK                            THEN RETURN 0
 
-    WHILE Top->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
-    Top->DRam[4] = .CAP2
-    Top->DRam[3] = .CAP1
-    Top->DRam[2] = .DeAd + &h100
-    Top->DRam[1] = .ECCTL2 OR (PRUIO_COM_CAP_PWM SHL 24)
-  END WITH :                                                    RETURN 0
+    PruReady ' wait, if PRU is busy (should never happen)
+    .DRam[5] = Conf(Nr)->TSCTR
+    .DRam[4] = Conf(Nr)->CAP2
+    .DRam[3] = Conf(Nr)->CAP1
+    .DRam[2] = Conf(Nr)->DeAd + &h100
+    .DRam[1] = Conf(Nr)->ECCTL2 OR (PRUIO_COM_CAP_TIM SHL 24)
+  END WITH :                                                      RETURN 0
 END FUNCTION
 
 
@@ -306,15 +332,13 @@ FUNCTION PwmssUdt.pwm_pwm_get CDECL( _
     IF F THEN
       VAR d1 = (.TBCTL SHR 7) AND &b111, d2 = (.TBCTL SHR 10) AND &b111
       VAR cg = p * IIF(d1, d1 SHL 1, 1) * (1 SHL d2)
-      *F = PWMSS_CLK / IIF(BIT(.TBCTL, 1), cg SHL 1, cg + 1)
+      *F = PWMSS_CLK / IIF(BIT(.TBCTL, 1), cg SHL 1, cg)
     END IF
     IF Du THEN
       VAR c = CAST(UInt32, IIF(Mo, .CMPB, .CMPA))
       IF BIT(.TBCTL, 1) THEN '                             count up-down
         p SHL= 1
         IF IIF(Mo, .AQCTLB, .AQCTLA) AND &b010001000000 THEN c = p - c
-      ELSE '                                                    count up
-        p += 1
       END IF
       *Du = c / p
     END IF
@@ -374,7 +398,7 @@ FUNCTION PwmssUdt.pwm_pwm_set CDECL( _
 
       freq(Nr) = ABS(F)
       IF cycle <= &h10000 ANDALSO 0 = BIT(Top->Pwm->ForceUpDown, Nr) THEN ' count up mode
-        cnt(Nr) = cycle - 1
+        cnt(Nr) = cycle
       ELSEIF cycle < &h20000 THEN '        no divisor count up-down mode
         cnt(Nr) = cycle SHR 1
         ctl = 2
@@ -621,11 +645,32 @@ Examples:
 
 \since 0.6
 '/
-FUNCTION PwmMod.sync CDECL( _
+FUNCTION PwmMod.Sync CDECL( _
   BYVAL Mask AS UInt8) AS ZSTRING PTR
-  IF Top->MuxFnr > 255                 THEN RETURN @"libpruio LKM missing"
-  PRINT #Top->MuxFnr, "08" & HEX(Mask, 2) : RETURN 0
+  WITH *Top
+    IF .MuxFnr < 1 ORELSE .MuxFnr > 255                      THEN RETURN @"libpruio LKM missing"
+    PRINT #.MuxFnr, "FF" & HEX(Mask, 2) : SEEK #.MuxFnr, 1      : RETURN 0
+  END WITH
 END FUNCTION
+
+'FUNCTION PwmMod.SyncToggle CDECL( _
+  'BYVAL Mask AS UInt8 = 0,
+  'BYVAL Curr AS UInt8 PTR = 0) AS ZSTRING PTR
+  'WITH *Top
+    'if Curr then
+      'PruReady ' wait if PRU busy
+      '.DRam[2] = &h44E10664uL
+      '.DRam[1] = 4 OR PRUIO_COM_PEEK
+      'PruReady ' wait if PRU busy
+      '*Curr = DRam[2]
+    'end if
+    'if Mask then
+      'IF .MuxFnr < 1 ORELSE .MuxFnr > 255                    THEN RETURN @"libpruio LKM missing"
+
+      'PRINT #.MuxFnr, "FF" & HEX(Mask, 2) : SEEK #.MuxFnr, 1    : RETURN 0
+    'END if
+  'END WITH
+'END FUNCTION
 
 
 /'* \brief The constructor for the CAP feature of the PWMSS.
@@ -696,27 +741,25 @@ FUNCTION CapMod.config CDECL( _
       'm = 2
     'CASE    99 : IF ModeCheck(Ball,3) THEN ModeSet(Ball, &h23)
       'm = 1
-    CASE ELSE                        : .Errr = .PwmSS->E6 : RETURN .Errr ' pin has no CAP capability
+    CASE ELSE                              : .Errr = .PwmSS->E6 : RETURN .Errr ' pin has no CAP capability
     END SELECT
-    IF 2 <> .PwmSS->Conf(m)->ClVa THEN .Errr = .PwmSS->E0 : RETURN .Errr ' PWMSS not enabled
-  END WITH
-  WITH *Top->PwmSS
-    VAR cnt = &hFFFFFFFFul
-    IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
-      cnt = CUINT(PWMSS_CLK / FLow)
-      IF cnt < 200 THEN cnt = 200
-    END IF
-    .Raw(m)->CMax = cnt
-
-    IF .Conf(m)->ECCTL2 <> .CapMode THEN ' eCAP module not in input mode
+    IF 2 <> .PwmSS->Conf(m)->ClVa       THEN .Errr = .PwmSS->E0 : RETURN .Errr ' PWMSS not enabled
+    WITH *.PwmSS
+      VAR cnt = &hFFFFFFFFul
+      IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
+        cnt = CUINT(PWMSS_CLK / FLow)
+        IF cnt < 200 THEN cnt = 200
+      END IF
+      .Raw(m)->CMax = cnt
       .Conf(m)->ECCTL2 = .CapMode
-      IF Top->DRam[0] > PRUIO_MSG_IO_OK THEN                    RETURN 0
+    END WITH
 
-      WHILE Top->DRam[1] : WEND '                   wait, if PRU is busy
-      Top->DRam[2] = .Conf(m)->DeAd + &h100
-      Top->DRam[1] = .CapMode + (PRUIO_COM_CAP SHL 24)
-    END IF
-  END WITH :                                                    RETURN 0
+    IF .DRam[0] > PRUIO_MSG_IO_OK                            THEN RETURN 0
+
+    PruReady ' wait, if PRU is busy
+    .DRam[2] = .PwmSS->Conf(m)->DeAd + &h100
+    .DRam[1] = .PwmSS->CapMode + (PRUIO_COM_CAP SHL 24)
+  END WITH :                                                      RETURN 0
 END FUNCTION
 
 
@@ -777,7 +820,7 @@ FUNCTION CapMod.Value CDECL( _
   WITH *Top->PwmSS->Raw(m)
     IF .CMax THEN
       IF Hz THEN *Hz = IIF(.C2, PWMSS_CLK / .C2, 0.)
-      IF Du THEN *Du = IIF(.C2, (.C2 - .C1 - 1) / .C2, 0.)
+      IF Du THEN *Du = IIF(.C2, (.C2 - .C1) / .C2, 0.)
                                                                 RETURN 0
     END IF
     IF Hz THEN *Hz = 0

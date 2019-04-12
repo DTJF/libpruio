@@ -53,8 +53,12 @@ pruio.bi in case of any change here.
 \brief Command number to re-configure a CAP module
 \def PRUIO_COM_QEP
 \brief The command number to re-configure a QEP parameter change for a QEP module
+\def PRUIO_COM_CAP_TIM
+\brief The command number to re-configure a CAP in TIMER mode
 \def PRUIO_COM_TIM_PWM
 \brief The command number to re-configure a TIMER in PWM mode
+\def PRUIO_COM_TIM_TIM
+\brief The command number to re-configure a TIMER in TIMER mode
 \def PRUIO_COM_TIM_CAP
 \brief The command number to re-configure a TIMER in CAP mode
 \def PRUIO_COM_ADC
@@ -116,7 +120,9 @@ Minimal value is AdcSet + 4 x GpioSet + BallSet + 3 x PwmssSet + 4 x TimerSet.
 #define PRUIO_COM_CAP_PWM   29
 #define PRUIO_COM_CAP       28
 #define PRUIO_COM_QEP       27
+#define PRUIO_COM_CAP_TIM   26
 #define PRUIO_COM_TIM_PWM   40
+#define PRUIO_COM_TIM_TIM   39
 #define PRUIO_COM_TIM_CAP   38
 #define PRUIO_COM_ADC       50
 
