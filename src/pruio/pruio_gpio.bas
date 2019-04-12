@@ -141,7 +141,7 @@ FUNCTION GpioUdt.config CDECL( _
     IF Mode AND &b10100000 THEN ' change direction or value?
       Mode = Mo
       Mask = 1 SHL (r AND 31)
-      setGpio()
+      setGpioSs()
     END IF                                                      : RETURN .setPin(Top, Ball, Mo)
   END WITH
 END FUNCTION
@@ -156,7 +156,7 @@ not intended for public usage.
 
 \since 0.6.4
 '/
-SUB GpioUdt.setGpio()
+SUB GpioUdt.setGpioSs()
   WITH *Conf(Indx)
     IF BIT(Mode, 5) THEN '          input Ball
       .OE OR= Mask
@@ -220,10 +220,10 @@ FUNCTION GpioUdt.setValue CDECL( _
     CASE ELSE : IF &b111 <> (Mo AND &b111)      THEN .Errr = E1 : RETURN .Errr ' no Gpio mode
                 Mode = Mo              : r = .BallConf[Ball] XOR Mo
     END SELECT
-    IF r AND &b10100000 THEN setGpio() ' i/o or state changed -> configure GPIO subsystem
+    IF r AND &b10100000 THEN setGpioSs() ' i/o or state changed -> configure GPIO subsystem
     IF r AND &b01011000 THEN _ '         receiver or resistor changed -> pinmux
       IF .setPin(Top, Ball, Mode) THEN _ ' error -> re-conf and report error
-                             Mode = .BallConf[Ball] : setGpio() : RETURN .Errr
+                           Mode = .BallConf[Ball] : setGpioSs() : RETURN .Errr
     /' all OK, set new mode '/           .BallConf[Ball] = Mode : RETURN 0
   END WITH
 END FUNCTION

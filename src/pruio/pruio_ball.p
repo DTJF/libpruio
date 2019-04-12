@@ -37,18 +37,20 @@ BallDone:
 //
 // handle subsystem command in IO mode
 //
-  QBLT BallEnd, Comm.b3, PRUIO_COM_POKE // if no Ball command -> skip
-  LBCO U2, DRam, 4*2, 4    // get adress
-  MOV  Para.b0, Comm.b0    // get length
-  QBNE BallCIn, Comm.b3, PRUIO_COM_POKE // if no Ball_OUT command -> skip to IN
+  QBLT BallEnd, Comm.b3, PRUIO_COM_POKE // if no Poke/Peek command -> skip
+  LBCO U2, DRam, 2*4, 4    // get adress
+  MAX  U6, Comm.b1, 16     // maximum lenght 16 bytes
+  //MOV  Para.b0, Comm.b0    // get length
+  QBNE BallCIn, Comm.b3, PRUIO_COM_POKE // if no Poke command -> skip to Peek
 
-  LBCO U3, DRam, 4*3, b0  // get context
-  SBBO U3, U2,     0, b0  // save context
+  LBCO U3, DRam, 3*4, U6  // get context
+  SBBO U3, U2,     0, U6  // save context
   JMP  IoCEnd             // finish command
 
 BallCIn:
-  LBBO U3, U2,     0, b0  // get context
-  SBCO U3, DRam, 4*3, b0  // save context
+  QBNE BallEnd, Comm.b3, PRUIO_COM_PEEK // if no Peek command -> error, skip
+  LBBO U3, U2,     0, U6  // get context
+  SBCO U3, DRam, 3*4, U6  // save context
   JMP  IoCEnd             // finish command
 
 BallEnd:

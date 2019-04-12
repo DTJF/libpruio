@@ -665,6 +665,7 @@ FUNCTION setPin_lkm_bb CDECL( _
     BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
+
   WITH *Top
     STATIC AS UInt8 r
     SELECT CASE AS CONST Ball
@@ -678,13 +679,14 @@ FUNCTION setPin_lkm_bb CDECL( _
       .Indx = r SHR 5
       .Mode = PRUIO_GPIO_IN_0
       .Mask = 1 SHL (r AND 31)
-      .setGpio()
+      .setGpioSs()
     END WITH
     VAR m = IIF(Mo = PRUIO_PIN_RESET, .BallInit[Ball], Mo)
     SELECT CASE m
     CASE .BallConf[Ball] :                                        RETURN 0 ' nothing to do
     CASE .BallInit[Ball] : IF 24 = (.BallConf[Ball] AND 24)  THEN RETURN 0 ' nothing to do
     END SELECT
+
     PUT  #.MuxFnr, , HEX(   r, 2) & "27" _
                    & HEX(Ball, 2) & HEX(m AND &b1111111, 2)
     SEEK #.MuxFnr, 1
@@ -717,6 +719,7 @@ FUNCTION setPin_save CDECL( _
   STATIC AS ZSTRING PTR m
   STATIC set_func AS setPinFunc
   STATIC AS STRING e
+
   WITH *Top
     IF 0 = m ORELSE Ball > PRUIO_AZ_BALL THEN ' init
       set_func = IIF(Top->BbType, @setPin_lkm(), @setPin_lkm_bb())
@@ -751,6 +754,7 @@ FUNCTION setPin_nogo CDECL( _
     BYVAL Top AS Pruio_ PTR _
   , BYVAL Ball AS UInt8 _
   , BYVAL Mo AS UInt8) AS ZSTRING PTR
+
                                   Top->Errr = @"pinmux missing" : RETURN Top->Errr
 END FUNCTION
 

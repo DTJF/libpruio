@@ -1,3 +1,15 @@
+libpruio (0.6.4c) jessie; urgency=low
+
+  * fix: docs for TIMER and PWM
+  * fix: Timer scaling fixed [s] -> [ms]
+  * fix: PwmUdt::Sync LKM value 0x08 -> 0xFF
+  * cha: Timer PRU code starting by trigger
+  * cha: LKM tblck value 0x80 -> 0xFF
+  * fix: LKM case syntax (commas)
+  * cha: in GpioUdt renamed setGpio -> setGpioSs to be more clear
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>
+
 libpruio (0.6.4b) jessie; urgency=low
 
   * fix: DTOR does proper re-muxing again
