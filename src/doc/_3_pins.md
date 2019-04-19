@@ -99,7 +99,7 @@ line, which is internal connected to the board power line (3V3) by a
 voltage, in oder to control the power supply.
 
 |  BB   |  PB       | Description                            |
-| ----: | :-------- | :------------------------------------- |
+| :---: | :-------: | :------------------------------------- |
 | P9_39 | P1_19     | AIN-0 (default configuration in step 1 |
 | P9_40 | P1_21     | AIN-1 (default configuration in step 2 |
 | P9_37 | P1_23     | AIN-2 (default configuration in step 3 |
@@ -267,7 +267,7 @@ subsystems (and \Proj supports many of them), the resolution and the
 frequency range vary between the pins.
 
 |   BB  |  PB   | Subsystem       | Frequency Range        | Notice BBB        |
-| ----: | :---- | :-------------: | ---------------------: | :---------------- |
+| :---: | :---: | :-------------: | ---------------------: | :---------------- |
 | P8_07 |       | TIMER-4         | 0.000010914 to 6e6 Hz  | free              |
 | P8_09 | P1_28 | TIMER-5         | 0.000010914 to 6e6 Hz  | free              |
 | P8_10 | P1_26 | TIMER-6         | 0.000010914 to 6e6 Hz  | free              |
@@ -348,7 +348,7 @@ the duration range in [mSec] vary between the pins. In any case the
 counter resolution is 32 bit.
 
 |  BB   |  PB   | Subsystem       | Max Dur  |   Min Dur | Notice            |
-| ----: | :---- | :-------------: | :------- | :-------: | :---------------- |
+| :---: | :---: | :-------------: | -------: | :-------- | :---------------- |
 | P8_07 |       | TIMER-4         | 45812984 | 0.000167  | free              |
 | P8_09 | P1_28 | TIMER-5         | 45812984 | 0.000167  | free              |
 | P8_10 | P1_26 | TIMER-6         | 45812984 | 0.000167  | free              |
@@ -382,7 +382,7 @@ by different subsystems (and \Proj support some of them), the frequency
 range vary between the pins.
 
 |   BB  |  PB   |   Subsystem    | Frequency Range        | Notice            |
-| ----: | :---- | :------------: | :--------------------- | :---------------- |
+| :---: | :---: | :------------: | :--------------------- | :---------------- |
 | P9_42 |       | PWMSS-0, CAP   | 0.0233 to 50e6 Hz      | free (double pin) |
 | SD_10 | SD_10 | PWMSS-1, CAP   | 0.0233 to 50e6 Hz      | SD card in button |
 | P9_28 | P2_30 | PWMSS-2, CAP   | 0.0233 to 50e6 Hz      | MCASP0            |
@@ -421,7 +421,7 @@ accuracy of the position information can get improved by using an index
 signal that resets the position counter.
 
 |   BB  | PB    | Type    | Subsystem | Speed | Direction | Position | Index | Further Pins | Notice BBB        |
-| ----: | :---- | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
+| :---: | :---: | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
 | P9_42 |       | A input |  PWMSS-0  |   X   |     -     |     -    |   -   |              | free (double pin) |
 | P9_27 | P2_34 | B input |  PWMSS-0  |   X   |     X     |     X    |   -   | P9_42        | free              |
 | P9_41 |       | I input |  PWMSS-0  |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
