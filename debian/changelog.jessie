@@ -11,7 +11,7 @@ libpruio (0.6.4c) jessie; urgency=low
   * fix: LKM case syntax (commas)
   * cha: in GpioUdt renamed setGpio -> setGpioSs to be more clear
 
- -- Thomas Freiherr <Thomas.Freiherr@gmx.net>
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Fri, 19 Apr 2019 20:39:14 +0200
 
 libpruio (0.6.4b) jessie; urgency=low
 
