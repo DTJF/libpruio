@@ -12,18 +12,25 @@ Feel free to send further ideas to the author (\Email).
 
 # libpruio-0.6.4c # {#SecV-0-6-4c}
 
+- fix: finetuning CAP input (freq&duty)
+- fix: finetuning PWM output (freq&duty)
+- fix: pinmux in setPin_lkm_bb for double pins
 - fix: docs for TIMER and PWM
-- fix: Timer scaling fixed [s] -> [ms]# libpruio-0.6.4b # {#SecV-0-6-4b}
+- fix: Timer scaling fixed [s] -> [ms]
 - fix: PwmUdt::Sync LKM value 0x08 -> 0xFF
 - fix: LKM case syntax (commas)
-- cha: Timer PRU code starting by trigger- fix: DTOR does proper re-muxing again
-- cha: LKM tblck value 0x80 -> 0xFF- fix: race condition in fast setValue sequences
-- cha: in GpioUdt renamed setGpio -> setGpioSs to be more clear# libpruio-0.6.4a # {#SecV-0-6-4a}
+- cha: Timer PRU code starting by trigger
+- cha: LKM tblck value 0x80 -> 0xFF
+- cha: in GpioUdt renamed setGpio -> setGpioSs to be more clear
+
+Released in 2019, April.
 
 # libpruio-0.6.4b # {#SecV-0-6-4b}
 
 - fix: DTOR does proper re-muxing again
 - fix: race condition in fast setValue sequences
+
+Released in 2019, March.
 
 # libpruio-0.6.4a # {#SecV-0-6-4a}
 
