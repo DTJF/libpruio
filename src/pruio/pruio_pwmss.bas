@@ -78,8 +78,9 @@ FUNCTION PwmssUdt.initialize CDECL() AS ZSTRING PTR
 
       WITH *Conf(i)
         IF .ClAd =  0 ORELSE _
-           .IDVER = 0 THEN _ '                     subsystem not enabled
-              .DeAd = 0 : .ClVa = 0 : p_mem += 16 : CONTINUE FOR
+           .IDVER = 0 THEN _ '                        subsystem disabled
+                .DeAd = 0 : .ClVa = &h30000 : p_mem += 16 : _
+                    Init(i)->DeAd = 0 : Init(i)->ClAd = 0 : CONTINUE FOR
         .ClVa = 2
         .SYSCONFIG = 2 SHL 2
         .CLKCONFIG = &b0100010001 ' enable all modules
@@ -179,7 +180,7 @@ FUNCTION PwmssUdt.cap_pwm_set CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
-    PruReady ' wait, if PRU is busy (should never happen)
+    PruReady(1) ' wait, if PRU is busy (should never happen)
     .DRam[5] = 0 ' counter start value
     .DRam[4] = cmp(Nr)
     .DRam[3] = cnt(Nr)
@@ -294,7 +295,7 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
   WITH *Top
     IF .DRam[0] > PRUIO_MSG_IO_OK                            THEN RETURN 0
 
-    PruReady ' wait, if PRU is busy (should never happen)
+    PruReady(1) ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(Nr)->TSCTR
     .DRam[4] = Conf(Nr)->CAP2
     .DRam[3] = Conf(Nr)->CAP1
@@ -658,10 +659,10 @@ END FUNCTION
   'BYVAL Curr AS UInt8 PTR = 0) AS ZSTRING PTR
   'WITH *Top
     'if Curr then
-      'PruReady ' wait if PRU busy
+      'PruReady(1) ' wait if PRU busy
       '.DRam[2] = &h44E10664uL
       '.DRam[1] = 4 OR PRUIO_COM_PEEK
-      'PruReady ' wait if PRU busy
+      'PruReady(1) ' wait if PRU busy
       '*Curr = DRam[2]
     'end if
     'if Mask then
@@ -756,7 +757,7 @@ FUNCTION CapMod.config CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK                            THEN RETURN 0
 
-    PruReady ' wait, if PRU is busy
+    PruReady(1) ' wait, if PRU is busy
     .DRam[2] = .PwmSS->Conf(m)->DeAd + &h100
     .DRam[1] = .PwmSS->CapMode + (PRUIO_COM_CAP SHL 24)
   END WITH :                                                      RETURN 0

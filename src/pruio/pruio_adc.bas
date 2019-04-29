@@ -66,8 +66,9 @@ FUNCTION AdcUdt.initialize CDECL( _
 
   WITH *Conf
     IF .ClAd =  0 ORELSE _
-       .REVISION = 0 THEN _ '                      subsystem not enabled
-                                        .DeAd = 0 : .ClVa = 0 : RETURN 0
+       .REVISION = 0 THEN _ '                         subsystem disabled
+                                  .DeAd = 0 : .ClVa = &h30000 : _
+                              Init->DeAd = 0 : Init->ClAd = 0 : RETURN 0
     .ClVa = 2
     .SYSCONFIG = 0
     .CTRL = &b11

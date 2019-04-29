@@ -69,8 +69,9 @@ FUNCTION GpioUdt.initialize CDECL() AS ZSTRING PTR
       Conf(i) = p_mem + .DSize
 
       WITH *Conf(i)
-        IF .ClAd = 0 ORELSE .REVISION = 0 THEN _ ' subsystem not enabled
-                      .DeAd = 0 : .ClVa = 0 : p_mem += 16 : CONTINUE FOR
+        IF .ClAd = 0 ORELSE .REVISION = 0 THEN _ '    subsystem disabled
+                .DeAd = 0 : .ClVa = &h30000 : p_mem += 16 : _
+                    Init(i)->DeAd = 0 : Init(i)->ClAd = 0 : CONTINUE FOR
         .ClVa = 2
         .CLEARDATAOUT = 0
         .SETDATAOUT = 0
@@ -176,7 +177,7 @@ SUB GpioUdt.setGpioSs()
   WITH *Top
     IF .DRam[0] > PRUIO_MSG_IO_OK                          THEN EXIT SUB
 
-    PruReady ' wait, if PRU is busy (should never happen)
+    PruReady(1) ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(Indx)->OE
     .DRam[4] = Conf(Indx)->SETDATAOUT
     .DRam[3] = Conf(Indx)->CLEARDATAOUT

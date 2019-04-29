@@ -62,15 +62,15 @@ AdcDone:
   QBEQ AdcJump, ClVa, 2   // if subsystem enabled -> don't zero
   LDI  U2, 0              // clear subsystem address
 AdcJump:
-  ZERO &U3, 2*17            // clear registers (for Value array)
+  ZERO &U3, 17*2            // clear registers (for Value array)
   LDI  UR, PRUIO_DAT_ADC    // load source pointer (DRam)
-  SBCO U2, DRam, UR, 4+2*17 // prepare ADC array data
+  SBCO U2, DRam, UR, 4+17*2 // prepare ADC array data
 
 // check enabled / dissabled + data block length
   LDI  FiFo, 0              // reset FiFo-0 address
   QBEQ AdcDone, ClAd, 0     // if subsystem disabled -> don't touch
-  QBEQ AdcConf, ClVa, 2     // if normal operation -> configure
-  SBBO ClVa.b0, ClAd, 0, 1  // write clock register
+  QBNE AdcConf, DeAd, 0     // if normal operation -> copy
+  SBBO ClVa, ClAd, 0, 4     // write clock register
   QBEQ AdcZero, UR, 0       // if AdcSet is empty (REVISION = 0) -> skip
   ADD  Para, Para, 4*56-4   // increase pointer to skip parameters
   JMP  AdcZero              // skip config

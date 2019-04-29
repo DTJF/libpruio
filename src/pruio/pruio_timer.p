@@ -62,15 +62,15 @@ TimerLoop:
   QBEQ TimerJump, ClVa, 2   // if subsystem enabled -> don't clear DeAd
   LDI  U2, 0                // clear DeAd
 TimerJump:
-  ZERO &U3, 4*3             // clear registers
+  ZERO &U3, 3*4             // clear registers
   SBBO U2, U1, PRUIO_DAT_TIMER, 4*4 // prepare array data
 
 // check enabled / dissabled and data block length
 //
-  QBEQ TimerDone, ClAd, 0   // if subsystem disabled -> don't touch
-  QBEQ TimerCopy, ClVa, 2   // if normal operation -> copy
-  SBBO ClVa, ClAd, 0, 1     // write clock register
-  QBEQ TimerDone, UR, 0     // if empty segment -> skip
+  QBEQ TimerDone, ClAd, 0   // if no CLOCK addr -> don't touch
+  QBNE TimerCopy, DeAd, 0   // if normal operation -> copy
+  SBBO ClVa, ClAd, 0, 4     // write clock register
+  QBEQ TimerDone, UR, 0     // if no ID (empty segment) -> skip
   ADD  Para, Para, 4*17-4   // increase pointer
   JMP  TimerDone
 
@@ -80,15 +80,15 @@ TimerCopy:
   LDI  UR, 0                // reset value for TCLR
   SBBO UR, DeAd, 0x38, 4    // write TCLR
 
-  LBBO UR, Para, 4*2 , 4*6  // load IRQ_EOI to IRQWAKEN block
-  SBBO UR, DeAd, 0x20, 4*6  // write IRQ_EOI to IRQWAKEN block
-  LBBO UR, Para, 4*9 , 4*2  // load TCRR & TLDR
-  SBBO UR, DeAd, 0x3C, 4*2  // write TCRR & TLDR
-  LBBO UR, Para, 4*12, 4*5  // load TWPS to TCAR2
-  SBBO UR, DeAd, 0x48, 4*5  // write TWPS to TCAR2
-  LBBO UR, Para, 4*1 , 4    // load TIOCP_CFG
+  LBBO UR, Para, 2* 4, 6*4  // load IRQ_EOI to IRQWAKEN block
+  SBBO UR, DeAd, 0x20, 6*4  // write IRQ_EOI to IRQWAKEN block
+  LBBO UR, Para, 9* 4, 2*4  // load TCRR & TLDR
+  SBBO UR, DeAd, 0x3C, 2*4  // write TCRR & TLDR
+  LBBO UR, Para, 12*4, 5*4  // load TWPS to TCAR2
+  SBBO UR, DeAd, 0x48, 5*4  // write TWPS to TCAR2
+  LBBO UR, Para,    4, 4    // load TIOCP_CFG
   SBBO UR, DeAd, 0x10, 4    // write TIOCP_CFG
-  LBBO UR, Para, 4*8 , 4    // load TCLR
+  LBBO UR, Para, 8* 4, 4    // load TCLR
   SBBO UR, DeAd, 0x38, 4    // write TCLR
 
   ADD  Para, Para, 4*17     // increase pointer

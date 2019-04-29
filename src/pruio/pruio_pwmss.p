@@ -60,7 +60,7 @@ PwmCopy:
   LBBO UR, DeAd, 0x1E, 2*3    // load DB registers
   SBBO UR, Targ, 4*39, 2*3    // save registers
   LBBO UR.w0, DeAd, 0x24, 2   // load TZSEL register
-  LBBO UR.w1, DeAd, 0x28, 2   // load TZCTL register
+  LBBO UR.w2, DeAd, 0x28, 2   // load TZCTL register
   LBBO U1, DeAd, 0x2A, 2*4    // load TZEINT to TZFRC registers
   SBBO UR, Targ, 162, 2*6     // save registers
   LBBO UR, DeAd, 0x32, 2*5    // load ETSEL to ETFRC registers
@@ -86,7 +86,7 @@ PwmDone:
 //
   LDI  Cntr, 0            // reset counter
 PwmConf:
-  LBBO DeAd, Para, 0, 4*4 // load PWMSS base address, clock address, clock value
+  LBBO DeAd, Para, 0, 4*4 // load PWMSS DeAd, ClAd, ClVa, ID
   ADD  Para, Para, 4*4    // increase pointer
 
 // prepare data array
@@ -96,13 +96,13 @@ PwmConf:
   QBEQ PwmJump, ClVa, 2     // if subsystem enabled -> don't clear
   LDI  U2, 0                // clear register
 PwmJump:
-  ZERO &U3, 4*8             // clear registers
+  ZERO &U3, 8*4             // clear registers
   SBBO U2, U1,   0, 4       // prepare subsystem address
   SBBO U3, U1, 4*2, 4*6     // prepare array data (skip CMax)
 
 // check enabled / dissabled and data block length
-  QBEQ PwmDone, ClAd, 0     // if subsystem disabled -> don't touch
-  QBEQ PwmCopy, ClVa, 2     // if normal operation -> copy
+  QBEQ PwmDone, ClAd, 0     // if no CLOCK addr -> don't touch
+  QBNE PwmCopy, DeAd, 0     // if normal operation -> copy
   SBBO ClVa, ClAd, 0, 4     // write clock register
   QBEQ PwmDone, UR, 0       // if PwmssSet empty -> skip
   ADD  Para, Para, 188+3-4  // increase pointer and adjust ...
@@ -115,14 +115,14 @@ PwmCopy:
   LBBO UR, Para, 4*1, 4*2   // load SYSCONFIG & CLKCONFIG registers
   SBBO UR, DeAd, 0x04, 4*2  // write registers
 
-  SET  DeAd, DeAd, 9        // switch to ePWM registers (+0x200)
+  SET  DeAd, 9              // switch to ePWM registers (+0x200)
   LBBO UR, Para, 184, 2*2   // load PCCTL and HRCTL registers
   SBBO UR, DeAd, 0x3C, 2*2  // write registers
   LBBO UR, Para, 174, 2*2   // load ETSEL & ETPS registers
   SBBO UR, DeAd, 0x32, 2*2  // write registers
   LBBO UR, Para, 162, 2*6   // load TZSEL to TZFRC registers
   SBBO UR.w0, DeAd, 0x24, 2 // write TZSEL
-  SBBO UR.w1, DeAd, 0x28, 2 // write TZCTL
+  SBBO UR.w2, DeAd, 0x28, 2 // write TZCTL
   SBBO U1.w0, DeAd, 0x2A, 2 // write TZEINT
   SBBO U2, DeAd, 0x2E, 2*2  // write TZCLR & TZFRC
   LBBO UR, Para, 4*39, 2*3  // load DB registers

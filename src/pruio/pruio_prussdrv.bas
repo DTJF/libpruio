@@ -187,12 +187,23 @@ original libprussdrv code, the function here gets called only once.
 FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS Int32) AS Int32
   WITH PRUSSDRV
     DIM AS STRING*PRUSS_UIO_PARAM_VAL_LEN buff = ""
-    .mmap_fd = IrqFd
 
     VAR fd = open_("/sys/class/uio/uio0/maps/map0/size", O_RDONLY) : IF fd < 0 THEN RETURN -11
     read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
     .pruss_map_size = VALINT("&h" + MID(buff, 3))
     close_(fd)
+
+    fd = open_("/sys/class/uio/uio0/maps/map1/addr", O_RDONLY) : IF fd < 0 THEN RETURN -12
+    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
+    .extram_phys_base = VALINT("&h" + MID(buff, 3))
+    close_(fd)
+
+    fd = open_("/sys/class/uio/uio0/maps/map1/size", O_RDONLY) : IF fd < 0 THEN RETURN -13
+    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
+    .extram_map_size = VALINT("&h" + MID(buff, 3))
+    close_(fd)
+
+    .mmap_fd = IrqFd
 
     .pru0_dataram_base = mmap( _
         0, .pruss_map_size, PROT_READ OR PROT_WRITE, _
@@ -212,16 +223,6 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS Int32) AS Int32
                        + .pru1_iram_phy_base    - .pru0_dataram_phy_base
     .pruss_sharedram_base = .pru0_dataram_base _
                        + .pruss_sram_phy_base   - .pru0_dataram_phy_base
-
-    fd = open_("/sys/class/uio/uio0/maps/map1/addr", O_RDONLY) : IF fd < 0 THEN RETURN -12
-    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
-    .extram_phys_base = VALINT("&h" + MID(buff, 3))
-    close_(fd)
-
-    fd = open_("/sys/class/uio/uio0/maps/map1/size", O_RDONLY) : IF fd < 0 THEN RETURN -13
-    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
-    .extram_map_size = VALINT("&h" + MID(buff, 3))
-    close_(fd)
 
     .extram_base = mmap( _
          0, .extram_map_size, PROT_READ OR PROT_WRITE, _
@@ -354,8 +355,8 @@ FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL DatIni 
     VAR intc = CAST(UInt32 PTR, .intc_base)
     DIM AS UInt32 i, mask1, mask2
 
-    intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFF
-    intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFF
+    intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFFuL
+    intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFFuL
 
     FOR i = 0 TO ((NUM_PRU_SYS_EVTS + 3) SHR 2) - 1
       intc[(PRU_INTC_CMR0_REG SHR 2) + i] = 0
@@ -545,8 +546,9 @@ SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"() EXPORT
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)
     FOR i AS INTEGER = 0 TO NUM_PRU_HOSTIRQS - 1
-      IF .fd(i) THEN close_(.fd(i))
+      IF .fd(i) THEN close_(.fd(i)) : .fd(i) = 0
     NEXT
+    .mmap_fd = 0
   END WITH
 END SUB
 

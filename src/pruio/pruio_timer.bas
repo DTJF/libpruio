@@ -78,7 +78,8 @@ FUNCTION TimerUdt.initialize CDECL() AS ZSTRING PTR
       WITH *Conf(i)
         IF .ClAd = 0 ORELSE _
            .TIDR = 0 THEN _ '                         subsystem disabled
-                      .DeAd = 0 : .ClVa = 0 : p_mem += 16 : CONTINUE FOR
+                .DeAd = 0 : .ClVa = &h30000 : p_mem += 16 : _
+                Init(i)->DeAd = 0 : Init(i)->ClAd = 0 : CONTINUE FOR
         .ClVa = 2
         .TCAR1 = 0
         .TCAR2 = 0
@@ -225,7 +226,7 @@ FUNCTION TimerUdt.setValue CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK                            THEN RETURN 0
 
-    PruReady ' wait, if PRU is busy (should never happen)
+    PruReady(1) ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(nr)->TMAR
     .DRam[4] = Conf(nr)->TLDR
     .DRam[3] = Conf(nr)->TCRR
@@ -245,6 +246,9 @@ This function computes the real values for timer output durations.
 Since function TimerUdt::setValue() rounds the input parameters to the
 best matching values, this function can get used to pre-compute the
 final values, or get the current setting.
+
+In order to read the current setting, pass negative values (or zero)
+for parameters `Dur1` and `Dur2`.
 
 Wrapper function (C or Python): pruio_tim_Value().
 
@@ -271,31 +275,31 @@ FUNCTION TimerUdt.Value CDECL( _
   END WITH
   WITH *Conf(nr)
     VAR dur = *Dur1 + *Dur2 _ ' [mSec]
-     , dmax = 1000. * &hFFFFFFFF / TMRSS_CLK _
+     , dmax = 1000. * &hFFFFFFFF00uLL / TMRSS_CLK _
      , dmin = 1000. * 4 / TMRSS_CLK
     SELECT CASE dur
     CASE IS <= 0. ' get current
       IF 2 <> .ClVa THEN                         Top->Errr = E0 : RETURN E0 ' TIMER subsystem not enabled
-      IF 0 = BIT(.TCLR, 13) THEN                 Top->Errr = E2 : RETURN E2 ' pin not in TIMER mode
+      IF BIT(.TCLR, 13) THEN                     Top->Errr = E2 : RETURN E2 ' pin not in TIMER mode
       IF BIT(.TCLR, 6) THEN ' running
-        VAR f = IIF(BIT(.TCLR, 5), 2000. * 1 SHL ((.TCLR SHR 2) AND &b111), 1000.)
-        *Dur1 = f * (&hFFFFFFFF - .TLDR) / TMRSS_CLK
-        *Dur2 = f * (&hFFFFFFFF - .TMAR) / TMRSS_CLK
+        VAR f = IIF(BIT(.TCLR, 5), (1 SHL ((.TCLR SHR 2) AND &b111)) * 2000., 1000.)
+        *Dur1 = f * (       .TMAR - .TLDR) / TMRSS_CLK
+        *Dur2 = f * (&hFFFFFFFFuL - .TMAR) / TMRSS_CLK
       ELSE ' stopped
         *Dur2 = 0.
         *Dur1 = 0.
       END IF
-    CASE IS < dmin ' get minimal
+    CASE IS <= dmin ' get minimal
       *Dur1 = dmin
       *Dur2 = dmin / 2
-    CASE IS > dmax ' get maximal
+    CASE IS >= dmax ' get maximal, splited by ratio Dur1/Dur2
       *Dur1 = *Dur1 / dur * dmax
       *Dur2 = *Dur2 / dur * dmax
     CASE ELSE '!!! log !!!
-      VAR cnt = CULNGINT(.001 * dur * TMRSS_CLK), n = LOG(cnt SHR 32)/LOG(2)
-      cnt = (cnt shr n) shr n
-      *Dur1 = 1000. * CULNGINT(*Dur1 / dur * cnt)
-      *Dur2 = 1000. * CULNGINT(*Dur2 / dur * cnt)
+      VAR cnt = CULNGINT(.001 * dur * TMRSS_CLK), n = cnt SHR 32
+      IF n THEN n = LOG(n)/LOG(2) : cnt = (cnt SHR n) SHL n
+      *Dur1 = 1000. * CULNGINT(*Dur1 / dur * cnt) / TMRSS_CLK
+      *Dur2 = 1000. * CULNGINT(*Dur2 / dur * cnt) / TMRSS_CLK
     END SELECT
   END WITH :                                                     RETURN 0
 END FUNCTION
@@ -374,7 +378,7 @@ FUNCTION TimerUdt.pwm_set CDECL( _
 
     IF .DRam[0] > PRUIO_MSG_IO_OK THEN                          RETURN 0
 
-    PruReady ' wait, if PRU is busy (should never happen)
+    PruReady(1) ' wait, if PRU is busy (should never happen)
     .DRam[5] = Conf(Nr)->TCRR
     .DRam[4] = Conf(Nr)->TMAR
     .DRam[3] = Conf(Nr)->TLDR

@@ -1,3 +1,14 @@
+libpruio (0.6.6) jessie; urgency=low
+
+* fix: macro PruReady removed in pruio.py
+* fix: PRU systems config: copy for disabled SS
+* fix: prussdrv exit function
+* fix: ePWM TZCTL reg config
+* fix: evaluation in Pwm/Tim->Value functions fixed
+* fix:
+
+ -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Fri, 26 Apr 2019 18:59:39 +0200
+
 libpruio (0.6.4c) jessie; urgency=low
 
   * fix: finetuning CAP input (freq&duty)

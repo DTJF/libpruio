@@ -87,7 +87,7 @@
   MOV  UR, CTBIR        // load address
   SBBO r0, UR, 0, 4     // make C24 point to 0x0 (this PRU DRAM) and C25 point to 0x2000 (the other PRU DRAM)
 
-  LBCO Para, DRam, 4, 4*2 // get Para & Samp (start of transfer block & # of Samples)
+  LBCO Para, DRam, 4, 2*4 // get Para & Samp (start of transfer block & # of Samples)
 
 // Init macros (order must match the order in constructor PruiIo::PruIo() and pruio_init.p)
   ADC_Config
@@ -117,7 +117,7 @@ IoStart:
 
   MOV  UR, PRUIO_MSG_IO_OK
   LDI  U1, 0              // value to reset command
-  SBCO UR, DRam, 0, 4*2   // write status information & command
+  SBCO UR, DRam, 0, 2*4   // write status information & command
   MOV  r31.b0, IRPT       // send notification to host and start
 
 IoLoop:

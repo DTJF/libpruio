@@ -39,7 +39,7 @@ BallDone:
 //
   QBLT BallEnd, Comm.b3, PRUIO_COM_POKE // if no Poke/Peek command -> skip
   LBCO U2, DRam, 2*4, 4     // get adress
-  MIN  Para.b0, Comm.b1, 16 // maximum lenght 16 bytes
+  MIN  Para.b0, Comm.b0, 16 // maximum lenght 16 bytes
   QBNE BallCIn, Comm.b3, PRUIO_COM_POKE // if no Poke command -> skip to Peek
 
   LBCO U3, DRam, 3*4, b0  // get context

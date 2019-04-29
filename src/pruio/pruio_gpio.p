@@ -74,8 +74,8 @@ GpioJump:
 // check enabled / dissabled and data block length
 //
   QBEQ GpioDone, ClAd, 0    // if subsystem disabled -> don't touch
-  QBEQ GpioCopy, ClVa, 2    // if normal operation -> copy
-  SBBO ClVa, ClAd, 0, 1     // write clock register
+  QBNE GpioCopy, DeAd, 0    // if normal operation -> copy
+  SBBO ClVa, ClAd, 0, 4     // write clock register
   QBEQ GpioDone, UR, 0      // if empty set -> skip
   ADD  Para, Para, 4*26-4   // increase pointer
   JMP  GpioDone
