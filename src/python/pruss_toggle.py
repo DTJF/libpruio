@@ -139,10 +139,11 @@ try:
 # Execute 20 times
 #
   print("instructions loaded, starting PRU-%d" % pru_num)
+  prussdrv_pru_enable(pru_num, 0) #                    start @ address 0
   for i in range(0, 20):
-    prussdrv_pru_enable(pru_num) #                                 start
 
     prussdrv_pru_wait_event(PRU_EVTOUT_0) #      wait until PRU finished
+    prussdrv_pru_clear_event(PRU_EVTOUT_0, pru_intr) #     clr interrupt
 
     if(pruio_cap_Value(io, P9_42, byref(f), byref(d))): # get last measurement
       raise AssertionError("failed reading input P9_42 (%s)" % IO.Errr)
@@ -150,7 +151,7 @@ try:
     print("--> Frequency: %3.0f MHz, Duty:%3.0f %c" %
               ((f.value * .000001), (d.value * 100), '%')) #     results
 
-    prussdrv_pru_clear_event(PRU_EVTOUT_0, pru_intr) #     clr interrupt
+    prussdrv_pru_resume(pru_num) #                   continue after HALT
 
   prussdrv_pru_disable(pru_num) # disable PRU
   # note: no prussdrv_exit(), libpruio does it in the destructor

@@ -110,21 +110,13 @@ TimerDone:
   QBNE TimerCnt, U2, 1     // if no one shot mode -> skip
   LBBO U4, U1, 0x28, 4     // load IRQSTATUS
 
-  QBBS TimerMatchEv, U4.t0 // got match -> change events
-  QBNE TimerCnt, U4, 0b110 // still running -> skip
+  QBBC TimerCnt, U4.t0     // no match -> skip
   LBBO U3, U1, 0x38, 4     // load TCLR
   CLR  U3.t0               // clear ST bit
-  XOR  U3, U3, 0b10000000  // toggle invers bit
-  SBBO U3, U1, 0x38, 4     // write TCLR (cleared ST bit)
-  LDI  U4, 0b111           // load mask for all flags
-  SBBO U4, U1, 0x28, 4     // clear IRQSTATUS events
-  SBBO U4.w2, UR, PRUIO_DAT_TIMER+4, 4 // clear maximum period
-  JMP  TimerCnt
-
-TimerMatchEv:
-  LDI  U4, 0b11100000100   // load two masks in b1 & b0
-  SBBO U4.b1, U1, 0x28, 4  // write IRQSTATUS to clear
-  SBBO U4.b0, U1, 0x24, 4  // write IRQSTATUS_RAW to trigger TCAR event
+  SBBO U3, U1, 0x38, 4     // write TCLR
+  SBBO U4, U1, 0x30, 4     // write IRQENABLE to clear event
+  LDI  U4, 0               // zero
+  SBBO U4, UR, PRUIO_DAT_TIMER+4, 4 // clear maximum period
   JMP  TimerCnt
 
 TimerCap:
@@ -165,7 +157,8 @@ TimerCTim:
   SBBO Comm, U2, 0x38, 4   // write TCLR (cleared ST bit)
   SBBO U3, U2, 0x3C, 2*4   // write TCRR & TLDR
   SBBO U5, U2, 0x4C, 4     // write TMAR
-  LDI  U5, 0b111           // load MAT_IT_FLAG & OVF_IT_FLAG & TCAR_IT_FLAG
+  //LDI  U5, 0b111           // load MAT_IT_FLAG & OVF_IT_FLAG & TCAR_IT_FLAG
+  LDI  U5, 0b111           // load MAT_IT_FLAG
   SBBO U5, U2, 0x2C, 4     // write IRQENSET, enable events
   SBBO U5, U2, 0x28, 4     // write IRQSTATUS to clear
   SET  Comm.t0             // set ST bit

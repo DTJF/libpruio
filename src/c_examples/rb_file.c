@@ -67,7 +67,7 @@ int main(int argc, char **argv)
       uint32 i = 0;               //!< Start index.
       while(i < tInd){
         i += half;
-        if(i > tInd){        // fetch the rest(maybe no complete chunk)
+        if(i > tInd){         // fetch the rest(maybe no complete chunk)
           uint32 rest = tInd + half - i;
           uint32 iEnd = p1 >= p0 ? rest : rest + half;
           while(io->DRam[0] < iEnd) nanosleep(&mSec, NULL);

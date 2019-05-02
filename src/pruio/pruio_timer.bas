@@ -204,15 +204,15 @@ FUNCTION TimerUdt.setValue CDECL( _
         CASE ELSE :                              Top->Errr = E4 : RETURN E4 ' duration too long
         END SELECT
         .TLDR = &hFFFFFFFFuL - cnt
+
         VAR match = CULNG(Dur1 / dur * cnt)
         SELECT CASE match
-        CASE IS < 2    : .TMAR = .TLDR + 2
-        'CASE IS > cnt - 2 : .TMAR = &hFFFFFFFE
-        CASE IS >= cnt : .TMAR = &hFFFFFFFF ' unused
-          .TCLR XOR= &b1110011000000  ' clear CE, pulse instead of toggle
-        CASE ELSE      : .TMAR = .TLDR + match
+        CASE IS <= 2      : .TMAR = &hFFFFFFFEuL : .TCRR = .TMAR : .TLDR += 1
+          .TCLR XOR= &b0110000000000  ' toggle on overflow
+        CASE IS > cnt - 2 : .TMAR = .TLDR + 2    : .TCRR = .TMAR + 2 : .TLDR += 1
+          .TCLR XOR= &b1110000000000  ' pulse instead of toggle
+        CASE ELSE         : .TMAR = &hFFFFFFFFuL - match : .TCRR = .TMAR + 2
         END SELECT
-        .TCRR = &hFFFFFFFE
 
         IF Mode AND &b01 THEN .TCLR XOR= &b0000010000000 ' invers
         IF Mode AND &b10 THEN ' one-shot

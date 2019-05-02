@@ -257,17 +257,25 @@ END FUNCTION
 
 /'* \brief Enable one PRU subsystem.
 \param PruId The PRU number.
+\param PCnt The byte adress where to start (defaults to 0 = zero).
 \returns 0 (zero) in case of success, otherwise -1
 
-The function enables a PRU subsystem by starting its clock.
+The function enables a PRU subsystem by starting its clock. Parameter
+`PCnt` specifies a byte address where to start, as used in function
+prussdrv_pru_write_memory().
+
+\note When the PASM code contains `.origin 7` the matching `PCnt` value
+      is 28 = 7 * 4.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL PruId AS UInt32) AS Int32 EXPORT
+FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL PruId AS UInt32, BYVAL PCnt AS UInt32 = 0) AS Int32 EXPORT
+  IF PCnt > &h1FFC                                        THEN RETURN -2
+  DIM AS UInt32 v = (((PCnt + 3) SHR 2) SHL 16) OR 2
   SELECT CASE AS CONST PruId
-  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 2 : RETURN 0
-  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 2 : RETURN 0
-  END SELECT : RETURN -1
+  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = v : RETURN 0
+  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = v : RETURN 0
+  END SELECT                                                 : RETURN -1
 END FUNCTION
 
 
@@ -283,7 +291,7 @@ FUNCTION prussdrv_pru_disable CDECL ALIAS "prussdrv_pru_disable"(BYVAL PruId AS 
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 1 : RETURN 0
   CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 1 : RETURN 0
-  END SELECT: RETURN -1
+  END SELECT : RETURN -1
 END FUNCTION
 
 
@@ -300,7 +308,26 @@ FUNCTION prussdrv_pru_reset CDECL ALIAS "prussdrv_pru_reset"(BYVAL PruId AS UInt
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 0 : RETURN 0
   CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 0 : RETURN 0
-  END SELECT: RETURN -1
+  END SELECT : RETURN -1
+END FUNCTION
+
+
+/'* \brief Resume one PRU.
+\param PruId The PRUSS number.
+\returns 0 (zero) in case of success, otherwise -1
+
+The function restarts a PRUSS after `SLP 1` or `HALT` command. The
+PRU re-starts executing the next instruction.
+
+\since 0.6.6
+'/
+FUNCTION prussdrv_pru_resume CDECL ALIAS "prussdrv_pru_resume"(BYVAL PruId AS UInt32) AS Int32 EXPORT
+  DIM AS UInt32 PTR p
+  SELECT CASE AS CONST PruId
+  CASE 0 : p = PRUSSDRV.pru0_control_base
+  CASE 1 : p = PRUSSDRV.pru1_control_base
+  CASE ELSE                                                   : RETURN -1
+  END SELECT                : p[0] = ((1 + p[1]) SHL 16) OR 2 : RETURN 0
 END FUNCTION
 
 
