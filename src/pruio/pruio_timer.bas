@@ -109,26 +109,28 @@ This function sets timer output on a header pin. The default output is
 
 Parameter `Mode` allows manipulation of this pulse train:
 
-- Bit-0 inverts the signal (high first, then low).
-- Bit-1 enables one shot mode (pulse train stops after first period).
+- Bit[0] inverts the signal (high first, then low).
+- Bits[1-8] enables one shot mode (pulse train stops after a number of periods).
 
 Parameter `Ball` specifies the header pin to use. Check section \ref
 sSecTimer for available header pins. \Proj will check the pins
-configuration and adapt it, if necessary and possible. If unpossible an
-error message gets returned.
+configuration (pinmuxing) and adapt it, if necessary and possible. If
+unpossible an error message gets returned.
 
 Parameter `Dur1` specifies the time period of the starting state in
 [mSec]. Parameter `Dur2` specifies the time period of the state change
-(= pulse) in [mSec].
+(= pulse) in [mSec]. if `Dur2` is 0 (zero), the minimal pulse time is
+used (one clock impluse).
 
 If the summ of both, `Dur1` and `Dur2`, is smaller or equal 0 (zero),
 the timer gets stopped (when running in continuous mode) in the state
 specified by bit 0 (invers) parameter `Mode`.
 
-When `Dur1` is 0 (zero) then a pulse
-with time period `Dur2` starts immediatelly and the timer stops after
-that single pulse. When `Dur2` is 0 (zero) then the pulse has minimal
-duration and the timer stops in its initial state after that pulse.
+When parameter `Mode` is greater than 1 the timer fires a number of
+pulses and stops afterwards. The maximal number of pulses is 255, and
+twice the pulses have to get specified. Ie `Mode = 2` sends one pulse,
+`Mode = 510` sends 255 pulses (=maximum), `Mode = 511` sends 255 pulses
+(=maximum) in invers mode.
 
 \note Each call to this function starts a new timer period (and breaks
       the current).
@@ -149,8 +151,8 @@ duration and the timer stops in its initial state after that pulse.
       input clock isn't supported, yet.
 
 \note One shot mode is supported by software running on the PRU, and
-      therefor is limited in speed. The minimal duration summ (`Dur1` +
-      `Dur2`) is 0.01 mSec.
+      therefor is limited in speed. The minimal `Dur1` is 0.01 mSec in
+      case of one shots.
 
 Wrapper function (C or Python): pruio_tim_setValue().
 
@@ -186,6 +188,7 @@ FUNCTION TimerUdt.setValue CDECL( _
 
     VAR dur = Dur1 + Dur2 ' [mSec]
     WITH *Conf(nr)
+      Raw(nr)->CMax = 0
       SELECT CASE dur
       CASE IS <= 0. : .TCLR = IIF(Mode AND &b01, TimHigh, Tim_Low) ' stop
       CASE IS < d_min :                          Top->Errr = E3 : RETURN E3 ' duration too short
@@ -215,11 +218,9 @@ FUNCTION TimerUdt.setValue CDECL( _
         END SELECT
 
         IF Mode AND &b01 THEN .TCLR XOR= &b0000010000000 ' invers
-        IF Mode AND &b10 THEN ' one-shot
-          IF dur < 0.01 THEN                     Top->Errr = E3 : RETURN Top->Errr ' duration too short
-          Raw(Nr)->CMax = 1
-        ELSE
-          Raw(Nr)->CMax = 0
+        IF Mode >= &b10 THEN ' one-shot
+          IF 0.01 > Dur1 THEN                    Top->Errr = E3 : RETURN Top->Errr ' duration too short
+          Raw(nr)->CMax = (Mode AND &b111111110) SHR 1
         END IF
       END SELECT
     END WITH

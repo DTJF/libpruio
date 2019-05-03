@@ -1,9 +1,11 @@
 libpruio (0.6.6) jessie; urgency=low
 
-* new: function prussdrv_pru_resume()
-* new: second parameter in function prussdrv_pru_enable()
+* new: second parameter in function prussdrv_pru_enable() = start at
+* new: function prussdrv_pru_resume() for restart after SLP 1 or HALT
+* new: TIMER one shot mode with counter
+* fix: examples pruss_[add|toggle], resume function implemented
 * fix: function prussdrv_exIt(), optimized cleanup
-* fix: PRU systems config: copies regs for disabled SS now
+* fix: PRU systems config: copies regs for disabled subsystems now
 * fix: PRU code, reg PWMSS.TZCTL config
 * fix: evaluation in Pwm/Tim->Value functions fixed
 * fix: TIMERSS generated timers, start peak removed, one shot optimized

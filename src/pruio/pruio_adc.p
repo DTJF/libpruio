@@ -191,7 +191,7 @@ AdcCEnd:
   HALT
 
 InitGo:
-  LBCO StpM, DRam, 4*3, 4*3// get real step mask, Lsl mode & TimerVal (StpM, RegC, Comm)
+  LBCO StpM, DRam, 3*4, 3*4// get real step mask, Lsl mode & TimerVal (StpM, RegC, Comm)
 
   LBCO UR, C26, 0x40, 4    // read IEP timer CMP_CFG register
   OR   UR, UR, 0b111       // CMP0_RST_CNT_EN (count reset) and CMP_EN[0+1]

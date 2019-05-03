@@ -266,30 +266,29 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
     d_min = 1000. *           &h2 / PWMSS_CLK _ '' minimal durarion [mSec]
   , d_max = 1000. * &hFFFFFFFFuLL / PWMSS_CLK   '' maximal duration [mSec]
 
+  VAR TimMode = PwmMode XOR &b10000, dur = Dur1 + Dur2 ' [msec]
   WITH *Conf(Nr)
     IF 2 <> .ClVa                           THEN Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
 
-    VAR dur = Dur1 + Dur2
+    Raw(Nr)->CMax = 0
     SELECT CASE dur
     CASE IS <= 0. ' -> switch off
-      Raw(Nr)->CMax = 0
-      .CAP1 = &h100
+      .CAP1 = &hFFFFFFFFuL
       .CAP2 = &h0
-      .ECCTL2 = PwmMode OR IIF(Mode AND &b01, &b10000010000, &b00000010000) ' default/invers
+      .ECCTL2 = IIF(Mode AND &b01, TimMode OR &b10000000000, TimMode) ' default/invers
     CASE IS < d_min :                Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' duration too short
     CASE IS > d_max :                Top->Errr = Top->TimSS->E4 : RETURN Top->Errr ' duration too long
     CASE ELSE
-      IF Mode AND &b10 THEN ' one-shot
-        IF 0.01 > dur THEN           Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' one-shot duration too short
-        Raw(Nr)->CMax = 1
-      ELSE
-        Raw(Nr)->CMax = 0
+      IF Mode >= &b10 THEN ' one-shot
+        IF 0.01 > Dur1 THEN          Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' one-shot duration too short
+        Raw(Nr)->CMax = (Mode AND &b111111110) SHR 1
       END IF
-      .CAP1 = CULNG(.001 * dur * PWMSS_CLK)
-      VAR x = CULNG(Dur2 / dur * PWMSS_CLK)
+      .CAP1 = CULNG(.001 * dur * PWMSS_CLK) ' period
+      VAR x = CULNG(Dur2 / dur * .CAP1) '     match
       .CAP2 = IIF(x > 0, .CAP1 - x, .CAP1 - 1)
-      .ECCTL2 = PwmMode OR IIF(Mode AND &b01, 0, &b10000000000) ' default/invers
+      .ECCTL2 = IIF(Mode AND &b01, TimMode, TimMode OR &b10000000000) ' default/invers
     END SELECT
+    .TSCTR = 0
   END WITH
 
   WITH *Top
@@ -749,7 +748,7 @@ FUNCTION CapMod.config CDECL( _
       VAR cnt = &hFFFFFFFFul
       IF FLow > PWMSS_CLK/ &hFFFFFFFFul THEN
         cnt = CUINT(PWMSS_CLK / FLow)
-        IF cnt < 200 THEN cnt = 200
+        IF cnt < 256 THEN cnt = 256
       END IF
       .Raw(m)->CMax = cnt
       .Conf(m)->ECCTL2 = .CapMode

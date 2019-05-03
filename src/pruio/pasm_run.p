@@ -19,7 +19,7 @@
 #define StpM r2    // the step mask for ADC steps
 
 #define RegC r3    // counter register (used byte-wise, must follow StpM)
-#define LslM r3.b0 // the LSL mode (12 to 16 bit samples                (in RegC)
+#define LslM r3.b0 // the LSL mode (12 to 16 bit samples encoding       (in RegC)
 #define GpoC r3.b1 // counter for current Gpio                          (in RegC)
 #define PwmC r3.b2 // counter for current PWMSS                         (in RegC)
 #define TimC r3.b3 // counter for current TIMER                         (in RegC)
@@ -63,7 +63,7 @@
 
 #define PtrR r29   // pointer register (only for ADC_MM_Data)
 
-#define ChMx 64    // chunk size limit (depends on free data registers)
+#define ChMx 64    // chunk size limit (> 32, depends on free data registers)
 #define TChC 0xFF  // start value for trigger step#
 
 #include "pruio_adc.p"
