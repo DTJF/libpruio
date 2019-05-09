@@ -80,7 +80,7 @@ AdcConf:
   SBBO UR, DeAd, 0x10, 1    // reset SYSCONFIG register to zero (= idle)
 AdcIdle:
   LBBO UR, DeAd, 0x44, 4    // get ADC status
-  QBBS AdcIdle, UR, 5       // if ADC busy -> wait
+  QBBS AdcIdle, UR.t5       // if ADC busy -> wait
   LDI  UR, 0b100            // disable ADC (step config writable)
   SBBO UR, DeAd, 0x40, 2    // write CTRL register
 
@@ -136,7 +136,7 @@ AdcIEnd:
   LBCO DeAd, DRam, U1, 4   // get devise address
   QBEQ AdcDEnd, DeAd, 0    // if subsystem disabled -> skip
   LBBO UR, DeAd, 0x44, 4   // get ADC status
-  QBBS AdcGet, UR, 5       // if ADC busy -> skip restart
+  QBBS AdcGet, UR.t5       // if ADC busy -> skip restart
   SBBO StpM, DeAd, 0x54, 3 // restart ADC
 
 AdcGet:
@@ -197,7 +197,7 @@ InitGo:
   OR   UR, UR, 0b111       // CMP0_RST_CNT_EN (count reset) and CMP_EN[0+1]
   LDI  U1, 0b11            // clear CMP_HIT[0+1]
   MOV  U2, Comm            // CMP0 (loop period = TimerVal)
-  LDI  U3, 500             // timer reserve for digital IO
+  LDI  U3, 500             // timer reserve for digital IO (100 cycles)
   SUB  U3, Comm, U3        // max. timer for digital IO
   SBCO UR, C26, 0x40, 4*4  // write CMP_CFG, CMP_STATUS, CMP0, CMP1 (config, status, period, pre-period)
 
@@ -212,7 +212,7 @@ InitGo:
 //
 AdcPrep:
   LBBO SmpR, DeAd, 0x44, 4 // get ADC status
-  QBBS AdcPrep, SmpR, 5    // ADC busy, wait
+  QBBS AdcPrep, SmpR.t5    // ADC busy, wait
 FifoClr:
   LBBO Cntr, DeAd, 0xE4, 4 // get FiFo-0 counter
   QBEQ FifoEmpty, Cntr, 0  // if FiFo-0 empty -> start
@@ -277,7 +277,7 @@ TrgStart:
 
 TrgBusy:
   LBBO SmpR, DeAd, 0x44, 4   // get ADC status
-  QBBS TrgBusy, SmpR, 5      // if ADC busy -> wait
+  QBBS TrgBusy, SmpR.t5      // if ADC busy -> wait
 TrgGet:
   LBBO SmpR, DeAd, 0xE4, 4   // get FiFo-0 counter
   QBEQ TrgStart, SmpR, 0     // if no value -> start again
@@ -298,7 +298,7 @@ TrgLt:
 // empty FiFo-0
 TrgDone:
   LBBO SmpR, DeAd, 0x44, 4   // get ADC status
-  QBBS TrgDone, SmpR, 5      // if ADC busy -> wait
+  QBBS TrgDone, SmpR.t5      // if ADC busy -> wait
 TrgDone2:
   LBBO UR, DeAd, 0xE4, 4     // get FiFo-0 counter
   QBEQ TrgPost, UR, 0        // if no value -> continue at post trigger
@@ -312,11 +312,13 @@ TrgDone2:
 TrgPre:
   QBNE TrgMmDRam, Tr_c, 0    // if pre-values -> configure DRam ring buffer
 
-// configure ERam ring buffer (RB mode)
-  ADD  Samp, Samp, 255       // add some values to samples to run endless
+// configure ERam ring buffer (start RB mode)
+  //MOV  UR, PRUIO_MSG_IO_OK   // load new status ID
+  //SBCO UR, DRam, 0, 4        // write status information
+  ADD  Samp, Samp, 255       // increase samples to run endless
   JMP  MmData                // start measurement
 
-// clear ring buffer in DRam (MM mode)
+// clear ring buffer in DRam (start MM mode)
 TrgMmDRam:
   LDI  Ch__, ChMx            // start with max chunk size
   ZERO &UR, ChMx             // clear data registers
@@ -360,17 +362,17 @@ DataLoop:
 
 DigiIoLoop:
   LBCO CmpR, C26,  0x44, 1   // load CMP_STATUS bits
-  QBBS DataAdc, CmpR, 1      // if timer CMP_HIT[1] -> handle ADC
+  QBBS DataAdc, CmpR.t1      // if timer CMP_HIT[1] -> handle ADC
   CALL IoData                // get digital IO and execute commands
   JMP  DigiIoLoop            // next loop
 
 DataAdc:
   LBBO CmpR, DeAd, 0x44, 4   // get ADC status
-  QBBS DataAdc, CmpR, 5      // if ADC busy -> wait
+  QBBS DataAdc, CmpR.t5      // if ADC busy -> wait
 
 DataTime:
   LBCO CmpR, C26,  0x44, 1   // load CMP_STATUS bits
-  QBBC DataTime, CmpR, 0     // if timer counting -> wait
+  QBBC DataTime, CmpR.t0     // if timer counting -> wait
 
   SBBO StpM, DeAd, 0x54, 3   // enable ADC steps, go for next sample
   SBCO CmpR, C26,  0x44, 1   // clear timer CMP_STATUS bits

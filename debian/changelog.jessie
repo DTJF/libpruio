@@ -11,6 +11,7 @@ libpruio (0.6.6) jessie; urgency=low
 * fix: TIMERSS generated timers, start peak removed, one shot optimized
 * fix: file pruio.py, macro PruReady removed
 * fix: file rb_file.py, correct pointer p1 computation
+* fix: gen. invalid pointer AdcUdt::Value in case of config error
 
  -- Thomas Freiherr <Thomas.Freiherr@gmx.net>  Fri, 26 Apr 2019 18:59:39 +0200
 

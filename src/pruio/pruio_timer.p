@@ -104,7 +104,7 @@ TimerDone:
 // get subsystem data in IO mode
 //
   LSL  UR, TimC, 4         // calc array pointer
-  LBBO U1, UR, PRUIO_DAT_TIMER, 2*4 // get DeAd & maximum period
+  LBBO U1, UR, PRUIO_DAT_TIMER, 2*4 // get DeAd & CMax
   QBEQ TimerCnt, U1, 0     // if subsystem disabled -> skip
   QBLT TimerCap, U2, 255   // if module in CAP mode -> skip
   QBEQ TimerCnt, U2, 0     // if no one shot mode -> skip
@@ -113,13 +113,14 @@ TimerDone:
   QBBC TimerCnt, U3.t0     // no match -> skip
   SBBO U3, U1, 0x28, 4     // write IRQSTATUS to clear events
   LBBO U4, U1, 0x38, 4     // load TCLR
-  QBBC TimerCnt, U4.t0     // stopped -> skip
+  QBBC TimerCnt, U4.t8     // no oneshot -> skip
+
   SUB  U2, U2, 1           // decrease count
-  SBBO U2, UR, PRUIO_DAT_TIMER+4, 1 // write CMax
+  SBBO U2, UR, PRUIO_DAT_TIMER+4, 4 // write CMax
   QBNE TimerCnt, U2, 0     // counts left -> skip
 
-  CLR  U3.t0               // clear ST bit
-  SBBO U3, U1, 0x38, 4     // write TCLR
+  CLR  U4.t0               // clear ST bit
+  SBBO U4, U1, 0x38, 4     // write TCLR
   JMP  TimerCnt
 
 TimerCap:
@@ -159,12 +160,13 @@ TimerCTim:
   LBCO U2, DRam, 2*4, 4*4  // get parameters (DeAd, TCRR, TLDR, TMAR)
   LDI  Comm.w2, 0          // clear command byte
   SBBO Comm, U2, 0x38, 4   // write TCLR (cleared ST bit)
+  QBBC IoCEnd, Comm.t1     // no reload=stopped -> done
   SBBO U3, U2, 0x3C, 2*4   // write TCRR & TLDR
   SBBO U5, U2, 0x4C, 4     // write TMAR
-  LDI  U6, 0b111           // load MAT_IT_FLAG & OVF_IT_FLAG & TCAR_IT_FLAG
-  SBBO U6, U2, 0x28, 4     // write IRQSTATUS -> clear events
   SET  Comm.t0             // set ST bit
   SBBO Comm, U2, 0x38, 4   // write TCLR (set ST bit)
+  LDI  U6, 0b111           // load MAT_IT_FLAG & OVF_IT_FLAG & TCAR_IT_FLAG
+  SBBO U6, U2, 0x28, 4     // write IRQSTATUS -> clear events
 
 TimerCSkip:
   JMP  IoCEnd              // finish command

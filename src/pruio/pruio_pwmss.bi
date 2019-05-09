@@ -170,7 +170,7 @@ TYPE PwmssUdt
     Raw(PRUIO_AZ_PWMSS)    '*< Pointer to current raw subsystem data (IO).
   AS UInt32 InitParA       '*< Initial parameters offset.
   AS CONST UInt16 _
-    PwmMode = &b01011010000 _'*< Value for ECCTL2 in PWM mode.
+    PwmMode = &b01000010000 _'*< Value for ECCTL2 in PWM mode.
   , CapMode = &b00011010110  '*< Value for ECCTL2 in CAP mode.
   AS ZSTRING PTR _
     E0 = @"PWMSS not enabled" _           '*< Common error message.

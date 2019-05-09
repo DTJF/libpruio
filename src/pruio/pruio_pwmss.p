@@ -176,15 +176,17 @@ PwmDone:
   QBEQ QepDat, U2, 0       // no one shot -> skip
 
   LBBO U3, U1, 0x2E, 2     // get ECFLG register (events)
-  QBBC QepDat, U3.t6       // no PRDEQ -> skip
+  QBBC QepDat, U3.t7       // no MATCH -> skip
   SBBO U3, U1, 0x30, 2     // clear events (ECCLR reg)
+  QBBC QepDat, U3.t6       // no PRDEQ -> skip
   LBBO U4, U1, 0x2A, 2     // get ECCTL2 register
-  QBBC QepDat, U4.t4       // stopped -> skip
+  QBBC QepDat, U4.t7       // no one shot -> skip
+
   SUB  U2, U2, 1           // decrease count
   SBBO U2, UR, 4, 4        // write CMax
   QBNE QepDat, U2, 0       // counts left -> skip
 
-  CLR  U4.t4               // clr counter bit -> stop
+  XOR  U4, U4, 0b10010000  // clr counter&marker bit -> stop
   SBBO U4, U1, 0x2A, 2     // write ECCTL2 register
   JMP  QepDat
 
@@ -273,13 +275,14 @@ PwmCapNI:
 TimComm:
   QBNE CapComm, Comm.b3, PRUIO_COM_CAP_TIM // if no TIMER command for CAP module -> skip
   LBCO U2, DRam, 2*4, 4*4   // get parameters (DeAd, CAP1, CAP2, TSCTR)
+  CLR  Comm.w0.t4           // clr RUN bit
   SBBO Comm.w0, U2, 0x2A, 2 // write ECCTL2 register -> stop
   SBBO U3, U2, 0x08, 2*4    // write CAP1 & CAP2 regs
   SBBO U5, U2, 0x00,   4    // write counter reg
-  LDI  U6, 0b11111110       // mask to clear flags
-  SBBO U6, U2, 0x30, 2      // write ECCLR flags -> clear
   SET  Comm.w0.t4           // set RUN bit
   SBBO Comm.w0, U2, 0x2A, 2 // write ECCTL2 register -> start
+  LDI  U6, 0b11111110       // mask to clear flags
+  SBBO U6, U2, 0x30, 2      // write ECCLR flags -> clear
   JMP  IoCEnd               // finish command
 
 CapComm:

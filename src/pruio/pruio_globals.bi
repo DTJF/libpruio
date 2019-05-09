@@ -27,7 +27,7 @@ Header file for including global libpruio definitions and declarations.
 #DEFINE PRUIO_DEF_TIMERV 0
 '* The default bit mode (4 = 16 bit encoding)
 #DEFINE PRUIO_DEF_LSLMOD 4
-'* The default clock divisor (0 = full speed AFE = 2.4 MHz)
+'* The default clock divisor (0 = full speed AFE = 24 MHz)
 #DEFINE PRUIO_DEF_CLKDIV 0
 
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).

@@ -27,7 +27,7 @@ int32 prussdrv_open(uint32 host_interrupt);
 //! See prussdrv_pru_reset(BYVAL_AS_UInt32 PruId)
 int32 prussdrv_pru_reset(uint32 prunum);
 //! See prussdrv_pru_resume(BYVAL_AS_UInt32 PruId)
-int32 prussdrv_pru_resume(uint32 prunum);
+char* prussdrv_pru_resume(uint32 prunum);
 //! See prussdrv_pru_disable(BYVAL_AS_UInt32 PruId)
 int32 prussdrv_pru_disable(uint32 prunum);
 //! See prussdrv_pru_enable(BYVAL_AS_UInt32 PruId, BYVAL_AS_UInt32 PCnt)

@@ -266,7 +266,7 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
     d_min = 1000. *           &h2 / PWMSS_CLK _ '' minimal durarion [mSec]
   , d_max = 1000. * &hFFFFFFFFuLL / PWMSS_CLK   '' maximal duration [mSec]
 
-  VAR TimMode = PwmMode XOR &b10000, dur = Dur1 + Dur2 ' [msec]
+  VAR dur = Dur1 + Dur2 ' [msec]
   WITH *Conf(Nr)
     IF 2 <> .ClVa                           THEN Top->Errr = E0 : RETURN E0 ' PWMSS not enabled
 
@@ -275,20 +275,22 @@ FUNCTION PwmssUdt.cap_tim_set CDECL( _
     CASE IS <= 0. ' -> switch off
       .CAP1 = &hFFFFFFFFuL
       .CAP2 = &h0
-      .ECCTL2 = IIF(Mode AND &b01, TimMode OR &b10000000000, TimMode) ' default/invers
+      .ECCTL2 = IIF(Mode AND &b01, PwmMode OR &b10000000000, PwmMode) ' default/invers
     CASE IS < d_min :                Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' duration too short
     CASE IS > d_max :                Top->Errr = Top->TimSS->E4 : RETURN Top->Errr ' duration too long
     CASE ELSE
       IF Mode >= &b10 THEN ' one-shot
-        IF 0.01 > Dur1 THEN          Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' one-shot duration too short
+        IF 0.01 >= Dur1 THEN         Top->Errr = Top->TimSS->E3 : RETURN Top->Errr ' one-shot duration too short
         Raw(Nr)->CMax = (Mode AND &b111111110) SHR 1
+        .ECCTL2 = PwmMode OR IIF(Mode AND &b01, &b10010000000, &b00010000000) ' default/invers
+      ELSE
+        .ECCTL2 = IIF(Mode AND &b01, PwmMode OR &b10000000000, PwmMode) ' default/invers
       END IF
       .CAP1 = CULNG(.001 * dur * PWMSS_CLK) ' period
       VAR x = CULNG(Dur2 / dur * .CAP1) '     match
-      .CAP2 = IIF(x > 0, .CAP1 - x, .CAP1 - 1)
-      .ECCTL2 = IIF(Mode AND &b01, TimMode, TimMode OR &b10000000000) ' default/invers
+      .CAP2 = IIF(x > 0, x, 1)
     END SELECT
-    .TSCTR = 0
+    .TSCTR = .CAP2
   END WITH
 
   WITH *Top

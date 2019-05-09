@@ -321,13 +321,14 @@ PRU re-starts executing the next instruction.
 
 \since 0.6.6
 '/
-FUNCTION prussdrv_pru_resume CDECL ALIAS "prussdrv_pru_resume"(BYVAL PruId AS UInt32) AS Int32 EXPORT
+FUNCTION prussdrv_pru_resume CDECL ALIAS "prussdrv_pru_resume"(BYVAL PruId AS UInt32) AS ZSTRING PTR EXPORT
   DIM AS UInt32 PTR p
   SELECT CASE AS CONST PruId
   CASE 0 : p = PRUSSDRV.pru0_control_base
   CASE 1 : p = PRUSSDRV.pru1_control_base
-  CASE ELSE                                                   : RETURN -1
-  END SELECT                : p[0] = ((1 + p[1]) SHL 16) OR 2 : RETURN 0
+  CASE ELSE                                                   : RETURN @"invalid PRU#"
+  END SELECT : IF p[0] AND &h8000 /' test bit 15 '/        THEN RETURN @"PRU is running"
+                              p[0] = ((1 + p[1]) SHL 16) OR 2 : RETURN 0
 END FUNCTION
 
 

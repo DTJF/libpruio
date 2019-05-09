@@ -207,7 +207,7 @@ TrgNext:
 // start measurement
 MmData:    // default entry
   LDI  TrgC, 0             // reset trigger control regiser
-  LBCO LUpR, DRam, 4, 4*2  // get size of & pointer to ERam (LUpR & TarR)
+  LBCO LUpR, DRam, 4, 2*4  // get size of & pointer to ERam (LUpR & TarR)
   SBCO TrgC, DRam, 4, 4    // reset command parameter
 MmData2:   // entry for pre-trigger
 
