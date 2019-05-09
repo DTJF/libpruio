@@ -19,7 +19,7 @@
 #define StpM r2    // the step mask for ADC steps
 
 #define RegC r3    // counter register (used byte-wise, must follow StpM)
-#define LslM r3.b0 // the LSL mode (12 to 16 bit samples                (in RegC)
+#define LslM r3.b0 // the LSL mode (12 to 16 bit samples encoding       (in RegC)
 #define GpoC r3.b1 // counter for current Gpio                          (in RegC)
 #define PwmC r3.b2 // counter for current PWMSS                         (in RegC)
 #define TimC r3.b3 // counter for current TIMER                         (in RegC)
@@ -63,7 +63,7 @@
 
 #define PtrR r29   // pointer register (only for ADC_MM_Data)
 
-#define ChMx 64    // chunk size limit (depends on free data registers)
+#define ChMx 64    // chunk size limit (> 32, depends on free data registers)
 #define TChC 0xFF  // start value for trigger step#
 
 #include "pruio_adc.p"
@@ -87,7 +87,7 @@
   MOV  UR, CTBIR        // load address
   SBBO r0, UR, 0, 4     // make C24 point to 0x0 (this PRU DRAM) and C25 point to 0x2000 (the other PRU DRAM)
 
-  LBCO Para, DRam, 4, 4*2 // get Para & Samp (start of transfer block & # of Samples)
+  LBCO Para, DRam, 4, 2*4 // get Para & Samp (start of transfer block & # of Samples)
 
 // Init macros (order must match the order in constructor PruiIo::PruIo() and pruio_init.p)
   ADC_Config
@@ -117,7 +117,7 @@ IoStart:
 
   MOV  UR, PRUIO_MSG_IO_OK
   LDI  U1, 0              // value to reset command
-  SBCO UR, DRam, 0, 4*2   // write status information & command
+  SBCO UR, DRam, 0, 2*4   // write status information & command
   MOV  r31.b0, IRPT       // send notification to host and start
 
 IoLoop:
@@ -207,7 +207,7 @@ TrgNext:
 // start measurement
 MmData:    // default entry
   LDI  TrgC, 0             // reset trigger control regiser
-  LBCO LUpR, DRam, 4, 4*2  // get size of & pointer to ERam (LUpR & TarR)
+  LBCO LUpR, DRam, 4, 2*4  // get size of & pointer to ERam (LUpR & TarR)
   SBCO TrgC, DRam, 4, 4    // reset command parameter
 MmData2:   // entry for pre-trigger
 

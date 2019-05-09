@@ -27,7 +27,7 @@ Header file for including global libpruio definitions and declarations.
 #DEFINE PRUIO_DEF_TIMERV 0
 '* The default bit mode (4 = 16 bit encoding)
 #DEFINE PRUIO_DEF_LSLMOD 4
-'* The default clock divisor (0 = full speed AFE = 2.4 MHz)
+'* The default clock divisor (0 = full speed AFE = 24 MHz)
 #DEFINE PRUIO_DEF_CLKDIV 0
 
 '* Macro to check a CPU ball mode (ball must be in valid range, 0 to 109).
@@ -35,7 +35,7 @@ Header file for including global libpruio definitions and declarations.
 '* Macro to check a CPU ball mode.
 #DEFINE ModeSet(_B_,_M_) IF .setPin(Top, _B_, _M_) THEN RETURN .Errr
 '* Macro to start a PRU command.
-#DEFINE PruReady WHILE .DRam[1] : .WaitCycles += 1 : WEND
+#DEFINE PruReady(_I_) WHILE .DRam[1] : .WaitCycles += _I_ : WEND
 
 TYPE AS   BYTE Int8    '*< 8 bit signed integer data type
 TYPE AS  SHORT Int16   '*< 16 bit signed integer data type

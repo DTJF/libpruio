@@ -56,14 +56,14 @@ GpioDone:
 //
 // write configuration from data block to subsystem registers
 //
-  LDI  Cntr, 0            // reset counter
+  LDI  GpoC, 0            // reset counter
 GpioLoop:
   LBBO DeAd, Para, 0, 4*4 // load subsystem parameters DeAd, ClAd, ClVa, REVISION
   ADD  Para, Para, 4*4    // increase pointer
 
 // prepare data array
 //
-  LSL  U1, Cntr, 4          // calc array pointer (sizeof(GpioArr)=16)
+  LSL  U1, GpoC, 4          // calc array pointer (sizeof(GpioArr)=16)
   SET  U2, DeAd, 8          // copy DeAd (high bank)
   QBEQ GpioJump, ClVa, 2    // if subsystem enabled -> don't clear DeAd
   LDI  U2, 0                // clear DeAd
@@ -74,8 +74,8 @@ GpioJump:
 // check enabled / dissabled and data block length
 //
   QBEQ GpioDone, ClAd, 0    // if subsystem disabled -> don't touch
-  QBEQ GpioCopy, ClVa, 2    // if normal operation -> copy
-  SBBO ClVa, ClAd, 0, 1     // write clock register
+  QBNE GpioCopy, DeAd, 0    // if normal operation -> copy
+  SBBO ClVa, ClAd, 0, 4     // write clock register
   QBEQ GpioDone, UR, 0      // if empty set -> skip
   ADD  Para, Para, 4*26-4   // increase pointer
   JMP  GpioDone
@@ -101,8 +101,8 @@ GpioCopy:
   ADD  Para, Para, 4*26       // increase pointer
 
 GpioDone:
-  ADD  Cntr, Cntr, 1      // increase counter
-  QBGE GpioLoop, Cntr, PRUIO_AZ_GPIO // if not last -> do next
+  ADD  GpoC, GpoC, 1      // increase counter
+  QBGE GpioLoop, GpoC, PRUIO_AZ_GPIO // if not last -> do next
 .endm
 
 

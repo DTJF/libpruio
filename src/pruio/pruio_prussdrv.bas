@@ -187,12 +187,23 @@ original libprussdrv code, the function here gets called only once.
 FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS Int32) AS Int32
   WITH PRUSSDRV
     DIM AS STRING*PRUSS_UIO_PARAM_VAL_LEN buff = ""
-    .mmap_fd = IrqFd
 
     VAR fd = open_("/sys/class/uio/uio0/maps/map0/size", O_RDONLY) : IF fd < 0 THEN RETURN -11
     read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
     .pruss_map_size = VALINT("&h" + MID(buff, 3))
     close_(fd)
+
+    fd = open_("/sys/class/uio/uio0/maps/map1/addr", O_RDONLY) : IF fd < 0 THEN RETURN -12
+    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
+    .extram_phys_base = VALINT("&h" + MID(buff, 3))
+    close_(fd)
+
+    fd = open_("/sys/class/uio/uio0/maps/map1/size", O_RDONLY) : IF fd < 0 THEN RETURN -13
+    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
+    .extram_map_size = VALINT("&h" + MID(buff, 3))
+    close_(fd)
+
+    .mmap_fd = IrqFd
 
     .pru0_dataram_base = mmap( _
         0, .pruss_map_size, PROT_READ OR PROT_WRITE, _
@@ -212,16 +223,6 @@ FUNCTION __prussdrv_memmap_init CDECL(BYVAL IrqFd AS Int32) AS Int32
                        + .pru1_iram_phy_base    - .pru0_dataram_phy_base
     .pruss_sharedram_base = .pru0_dataram_base _
                        + .pruss_sram_phy_base   - .pru0_dataram_phy_base
-
-    fd = open_("/sys/class/uio/uio0/maps/map1/addr", O_RDONLY) : IF fd < 0 THEN RETURN -12
-    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
-    .extram_phys_base = VALINT("&h" + MID(buff, 3))
-    close_(fd)
-
-    fd = open_("/sys/class/uio/uio0/maps/map1/size", O_RDONLY) : IF fd < 0 THEN RETURN -13
-    read_(fd, @buff, PRUSS_UIO_PARAM_VAL_LEN)
-    .extram_map_size = VALINT("&h" + MID(buff, 3))
-    close_(fd)
 
     .extram_base = mmap( _
          0, .extram_map_size, PROT_READ OR PROT_WRITE, _
@@ -256,17 +257,25 @@ END FUNCTION
 
 /'* \brief Enable one PRU subsystem.
 \param PruId The PRU number.
+\param PCnt The byte adress where to start (defaults to 0 = zero).
 \returns 0 (zero) in case of success, otherwise -1
 
-The function enables a PRU subsystem by starting its clock.
+The function enables a PRU subsystem by starting its clock. Parameter
+`PCnt` specifies a byte address where to start, as used in function
+prussdrv_pru_write_memory().
+
+\note When the PASM code contains `.origin 7` the matching `PCnt` value
+      is 28 = 7 * 4.
 
 \since 0.6
 '/
-FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL PruId AS UInt32) AS Int32 EXPORT
+FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL PruId AS UInt32, BYVAL PCnt AS UInt32 = 0) AS Int32 EXPORT
+  IF PCnt > &h1FFC                                        THEN RETURN -2
+  DIM AS UInt32 v = (((PCnt + 3) SHR 2) SHL 16) OR 2
   SELECT CASE AS CONST PruId
-  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 2 : RETURN 0
-  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 2 : RETURN 0
-  END SELECT : RETURN -1
+  CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = v : RETURN 0
+  CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = v : RETURN 0
+  END SELECT                                                 : RETURN -1
 END FUNCTION
 
 
@@ -282,7 +291,7 @@ FUNCTION prussdrv_pru_disable CDECL ALIAS "prussdrv_pru_disable"(BYVAL PruId AS 
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 1 : RETURN 0
   CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 1 : RETURN 0
-  END SELECT: RETURN -1
+  END SELECT : RETURN -1
 END FUNCTION
 
 
@@ -299,7 +308,27 @@ FUNCTION prussdrv_pru_reset CDECL ALIAS "prussdrv_pru_reset"(BYVAL PruId AS UInt
   SELECT CASE AS CONST PruId
   CASE 0 : *CAST(UInt32 PTR, PRUSSDRV.pru0_control_base) = 0 : RETURN 0
   CASE 1 : *CAST(UInt32 PTR, PRUSSDRV.pru1_control_base) = 0 : RETURN 0
-  END SELECT: RETURN -1
+  END SELECT : RETURN -1
+END FUNCTION
+
+
+/'* \brief Resume one PRU.
+\param PruId The PRUSS number.
+\returns 0 (zero) in case of success, otherwise -1
+
+The function restarts a PRUSS after `SLP 1` or `HALT` command. The
+PRU re-starts executing the next instruction.
+
+\since 0.6.6
+'/
+FUNCTION prussdrv_pru_resume CDECL ALIAS "prussdrv_pru_resume"(BYVAL PruId AS UInt32) AS ZSTRING PTR EXPORT
+  DIM AS UInt32 PTR p
+  SELECT CASE AS CONST PruId
+  CASE 0 : p = PRUSSDRV.pru0_control_base
+  CASE 1 : p = PRUSSDRV.pru1_control_base
+  CASE ELSE                                                   : RETURN @"invalid PRU#"
+  END SELECT : IF p[0] AND &h8000 /' test bit 15 '/        THEN RETURN @"PRU is running"
+                              p[0] = ((1 + p[1]) SHL 16) OR 2 : RETURN 0
 END FUNCTION
 
 
@@ -354,8 +383,8 @@ FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL DatIni 
     VAR intc = CAST(UInt32 PTR, .intc_base)
     DIM AS UInt32 i, mask1, mask2
 
-    intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFF
-    intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFF
+    intc[PRU_INTC_SIPR0_REG SHR 2] = &hFFFFFFFFuL
+    intc[PRU_INTC_SIPR1_REG SHR 2] = &hFFFFFFFFuL
 
     FOR i = 0 TO ((NUM_PRU_SYS_EVTS + 3) SHR 2) - 1
       intc[(PRU_INTC_CMR0_REG SHR 2) + i] = 0
@@ -545,8 +574,9 @@ SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"() EXPORT
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)
     FOR i AS INTEGER = 0 TO NUM_PRU_HOSTIRQS - 1
-      IF .fd(i) THEN close_(.fd(i))
+      IF .fd(i) THEN close_(.fd(i)) : .fd(i) = 0
     NEXT
+    .mmap_fd = 0
   END WITH
 END SUB
 

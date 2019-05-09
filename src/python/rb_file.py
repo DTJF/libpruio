@@ -57,16 +57,16 @@ try:
   ## The number of samples (per step)
   samp = (half << 1) // NoStep
 
-  if pruio_config(io, samp, mask, tmr, 0): #  upload settings, start IO mode
+  if pruio_config(io, samp, mask, tmr, 0): #  upload settings, prepare MM/RB mode
     raise AssertionError("config failed (%s)" % IO.Errr)
 
-  if pruio_rb_start(io):
+  if pruio_rb_start(io): #                                start sampling
     raise AssertionError("rb_start failed (%s)" % IO.Errr)
 
   ## A pointer to the start of the ring buffer
   p0 = IO.Adc.contents.Value
   ## Pointer to middle of the ring buffer
-  p1 = cast(byref(p0, half), POINTER(c_ushort))
+  p1 = cast(byref(p0.contents, (half << 1)), POINTER(c_ushort))
   for n in range(0, NoFile):
     ## The file name
     fName = NamFil % n

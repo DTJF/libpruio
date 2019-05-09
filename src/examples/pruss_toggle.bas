@@ -125,9 +125,9 @@ DO
 
   /' ... '/
 '
-' Pprepare libpruio measurement
+' Prepare libpruio measurement
 '
-  IF io->cap->config(P9_42, 2.) THEN _ '         configure CAP input pin
+  IF io->Cap->config(P9_42, 2.) THEN _ '         configure CAP input pin
              ?"failed setting input P9_42 (" & *io->Errr & ")" : EXIT DO
   IF io->config(1, 0, 0, 0) THEN _
                           ?"config failed (" & *io->Errr & ")" : EXIT DO

@@ -293,10 +293,10 @@ DESTRUCTOR PruIo()
       END IF
       prussdrv_pru_disable(PruNo)
 
+      DRam[2] = 0
       DRam[1] = PRUIO_DAT_ALL '           reset subsystems configuration
       memcpy(CAST(ANY PTR, DRam) + DRam[1], DInit, DSize)
       DEALLOCATE(DInit)
-      DRam[2] = 0
 
       VAR l = ArrayBytes(Pru_Run)
       IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Run(0), l) THEN

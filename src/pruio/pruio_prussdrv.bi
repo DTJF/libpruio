@@ -58,9 +58,10 @@ END TYPE
 TYPE AS __prussdrv tprussdrv
 
 DECLARE FUNCTION prussdrv_open CDECL ALIAS "prussdrv_open"(BYVAL AS UInt32) AS Int32
-DECLARE FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_enable CDECL ALIAS "prussdrv_pru_enable"(BYVAL AS UInt32, BYVAL AS UInt32 = 0) AS Int32
 DECLARE FUNCTION prussdrv_pru_disable CDECL ALIAS "prussdrv_pru_disable"(BYVAL AS UInt32) AS Int32
 DECLARE FUNCTION prussdrv_pru_reset CDECL ALIAS "prussdrv_pru_reset"(BYVAL AS UInt32) AS Int32
+DECLARE FUNCTION prussdrv_pru_resume CDECL ALIAS "prussdrv_pru_resume"(BYVAL AS UInt32) AS ZSTRING PTR
 DECLARE FUNCTION prussdrv_pru_write_memory CDECL ALIAS "prussdrv_pru_write_memory"( _
   BYVAL AS UInt32 _
 , BYVAL AS UInt32 _

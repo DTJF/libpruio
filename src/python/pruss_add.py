@@ -98,7 +98,7 @@ try:
 # Execute
 #
   print("instructions loaded, starting PRU-%d" % pru_num)
-  prussdrv_pru_enable(pru_num) # start
+  prussdrv_pru_enable(pru_num, 0) # start @ address 0
   prussdrv_pru_wait_event(PRU_EVTOUT_0) # wait until finished
   prussdrv_pru_clear_event(PRU_EVTOUT_0, pru_intr) # clear interrupt (optional, useful when starting again)
 #

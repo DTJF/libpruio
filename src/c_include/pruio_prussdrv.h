@@ -26,10 +26,13 @@ extern "C" {
 int32 prussdrv_open(uint32 host_interrupt);
 //! See prussdrv_pru_reset(BYVAL_AS_UInt32 PruId)
 int32 prussdrv_pru_reset(uint32 prunum);
+//! See prussdrv_pru_resume(BYVAL_AS_UInt32 PruId)
+char* prussdrv_pru_resume(uint32 prunum);
 //! See prussdrv_pru_disable(BYVAL_AS_UInt32 PruId)
 int32 prussdrv_pru_disable(uint32 prunum);
-//! See prussdrv_pru_enable(BYVAL_AS_UInt32 PruId)
-int32 prussdrv_pru_enable(uint32 prunum);
+//! See prussdrv_pru_enable(BYVAL_AS_UInt32 PruId, BYVAL_AS_UInt32 PCnt)
+int32 prussdrv_pru_enable(uint32 prunum, uint32 pcnt);
+#define prussdrv_pru_enable(N) prussdrv_pru_enable(N, 0)
 //! See prussdrv_pru_write_memory(BYVAL_AS_UInt32 RamId, BYVAL_AS_UInt32 Offs, BYVAL_AS_CONST_UInt32_PTR Dat, BYVAL_AS_UInt32 Size)
 int32 prussdrv_pru_write_memory(uint32 pru_ram_id,
                                 uint32 wordoffset,

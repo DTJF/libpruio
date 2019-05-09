@@ -149,11 +149,11 @@ int main(int argc, char **argv)
 // Execute 20 times
 //
     printf("instructions loaded, starting PRU-%d\n", pru_num);
+    prussdrv_pru_enable(pru_num); //                               start
     for (i = 0; i < 20; i++)
     {
-      prussdrv_pru_enable(pru_num); //                             start
-
       prussdrv_pru_wait_event(PRU_EVTOUT_0); //  wait until PRU finished
+      prussdrv_pru_clear_event(PRU_EVTOUT_0, pru_intr); // clr interrupt
 
       if(pruio_cap_Value(io, P9_42, &f, &d)) { //   get last measurement
           printf("failed reading input P9_42 (%s)\n", io->Errr); break;}
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
       printf("--> Frequency: %3.0f MHz, Duty:%3.0f %c \n",
                             (f * .000001), (d * 100), '%'); //   results
 
-      prussdrv_pru_clear_event(PRU_EVTOUT_0, pru_intr); // clr interrupt
+      prussdrv_pru_resume(pru_num); //               continue after HALT
     }
 
     prussdrv_pru_disable(pru_num); //   Disable PRU

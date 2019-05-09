@@ -2,6 +2,7 @@
 Package: libpruio-lkm
 Architecture: armhf
 Section: libs
+Suggests: linux-headers, build-essential
 Depends: libpruio (>= ${binary:Version}), ${misc:Depends}
 Description: DKMS source for libpruio driver
  libpruio is a driver for ARM33xx micro processors, which are used in

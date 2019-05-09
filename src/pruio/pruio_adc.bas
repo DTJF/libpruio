@@ -66,8 +66,9 @@ FUNCTION AdcUdt.initialize CDECL( _
 
   WITH *Conf
     IF .ClAd =  0 ORELSE _
-       .REVISION = 0 THEN _ '                      subsystem not enabled
-                                        .DeAd = 0 : .ClVa = 0 : RETURN 0
+       .REVISION = 0 THEN _ '                         subsystem disabled
+                                  .DeAd = 0 : .ClVa = &h30000 : _
+                              Init->DeAd = 0 : Init->ClAd = 0 : RETURN 0
     .ClVa = 2
     .SYSCONFIG = 0
     .CTRL = &b11
@@ -104,7 +105,7 @@ FUNCTION AdcUdt.configure CDECL( _
   , BYVAL  Mds AS UInt16 = PRUIO_DEF_LSLMOD) AS ZSTRING PTR
 
   WITH *Top
-    Value = CAST(ANY PTR, .DRam) + PRUIO_DAT_ADC + 4
+    Value = 0 'set invalid in case of error
 
     IF 2 <> Conf->ClVa THEN '                      subsystem not enabled
       IF Samp < 2 ANDALSO _
@@ -134,6 +135,7 @@ FUNCTION AdcUdt.configure CDECL( _
     IF Samp < 2 THEN ' IO mode
       Samples = 1
       TimerVal = 0
+      Value = CAST(ANY PTR, .DRam) + PRUIO_DAT_ADC + 4
     ELSE
       IF r < 1 THEN             .Errr = @"no step active" : RETURN .Errr
       Samples = Samp * ChAz
@@ -163,11 +165,11 @@ END FUNCTION
 
 
 /'* \brief Customize a single configuration step.
-\param Stp Step index (0 = step 0 => charge step, 1 = step 1 (=> AIN-0 by default),  ..., 17 = idle step)-
-\param ChN Channel number to scan (0 = AIN-0, 1 = AIN-1, ...)-
-\param Av New value for avaraging (defaults to 4)-
-\param SaD New value for sample delay (defaults to 0)-
-\param OpD New value for open delay (defaults to 0x98)-
+\param Stp Step index (0 = step 0 => charge step, 1 = step 1 (=> AIN-0 by default),  ..., 17 = idle step)
+\param ChN Channel number to scan (0 = AIN-0, 1 = AIN-1, ...)
+\param Av New value for avaraging (defaults to 4)
+\param SaD New value for sample delay (defaults to 0)
+\param OpD New value for open delay (defaults to 0x98)
 \returns Zero on success (otherwise a string with an error message).
 
 This function is used to adapt a step configuration. In the
@@ -175,6 +177,11 @@ constructor, steps 1 to 8 get configured for AIN-0 to AIN-7 (other
 steps stay un-configured). By this function you can customize the
 default settings and / or configure further steps (input channel
 number, avaraging and delay values).
+
+Parameter `Stp` is the step number in the hardware sequencer FSM. The
+steps get executed in upcounting order, if enabled. Since there are
+eight input lines, but 16 steps in the sequencer, the sampling sequence
+can be asymmetric.
 
 |      Stp | Description |
 | -------: | :---------- |
@@ -188,10 +195,26 @@ number, avaraging and delay values).
       uploaded to the PRU and activated when calling function
       PruIo::config().
 
+Parameter `ChN` is the ADC line to measure. The ADC subsystem
+multiplexes eight lines to the ADC unit (AIN-[0-7]). On Beaglebone
+boards (2x46 headers) AIN-7 is not pinned out, but wired to the
+on-board power, and therefor usable for power measurements only.
+
+Parameter `Av` specifies avaraging. The hardware can perform multiple
+measuremnts before serving the a single result, in order to increase
+accuracy. Avaraging slows down maximum sampling rate.
+
+The parameters `SaD` and `OpD` are delay values (cycles @ 24MHz). The
+ADC subsystem can perform some wait cycles after the multiplexer
+switching, in order to optimize the transient behavior for high
+impedance signals. The `SaD` (= sample delay) gets applicated before
+each sampling process (ie. between each avaraging measurements), and
+the `OpD` (= open delay) gets applicated once (before the avaraging
+sequence).
+
 It's also possible to directly write to the step configuration in
-member variables AdcSet::St_p `(i).Confg` and
-AdcSet::St_p `(i).Delay`. See \ArmRef{12} for details on ADC
-configurations.
+AdcSet::St_p by writing to the member variables `Confg` and `Delay`.
+See \ArmRef{12} for details on ADC configurations.
 
 Wrapper function (C or Python): pruio_adc_setStep().
 
