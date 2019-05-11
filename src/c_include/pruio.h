@@ -30,7 +30,7 @@ Copyright 2014-\Year by \Email
 #include "pruio.hp"
 
 //! version string
-#define PRUIO_VERSION "0.6.4"
+#define PRUIO_VERSION "0.6.6"
 
 //#include "../pruio/pruio.bi" (transformed)
 typedef signed char int8;      //!< 8 bit signed integer data type.

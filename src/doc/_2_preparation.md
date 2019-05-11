@@ -369,6 +369,10 @@ FreeBASIC and C programming language.
       install. It makes the newly installed library visible for the
       linker. You can omit it for further updates.
 
+\note The `make install` script creates files in the system subfolders
+      under `/usr/local/`, and a file named `install_manifest.txt`. In
+      order to uninstall execute `xargs rm < install_manifest.txt`.
+
 
 ### Examples ### {#sSecBuildExamples}
 
@@ -398,6 +402,9 @@ as well as single builds
 
 \note In order to build the examples you have to build and install the
       library binary first, see section \ref sSecBuildBin.
+
+\note The `make examples` script only creates files inside the source
+      tree -> to uninstall just remove them.
 
 
 ### LKM ### {#sSecLkmBuild}
@@ -453,6 +460,10 @@ also support separate builds
 \note The targets get prepared by the `UseFbDoc.cmake` script. Find
       further information in the `cmakefbc` [package
       documentation](http://users.freebasic-portal.de/tjf/Projekte/cmakefbc/doc/html/index.html).
+
+\note The `make cod` script only creates files inside the source
+      tree -> to uninstall just remove the folder `doxy/html` and the
+      file `libpruio.pdf`.
 
 
 ### Python Binding ### {#sSecBuildPython}
