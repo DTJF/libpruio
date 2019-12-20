@@ -1,13 +1,14 @@
 [Unit]
-Description=Load libpruio overlay, make /dev/uio5 available for users in group pruio, start a custom program
-After=capemgr.service
+Description=Load libpruio overlay, make /dev/uio5 available for users in group pruio
+Documentation=http://users.freebasic-portal.de/tjf/Projekte/libpruio/doc/html/index.html
 
 [Service]
 Type=oneshot
-ExecStart=/etc/default/libpruio.sh
+ExecStart=/sbin/modprobe libpruio
+ExecStartPost=/bin/dash -c 'until [ -e /dev/uio5 ] ; do sleep 1 ; done ; /bin/chown root:pruio /sys/devices/platform/libpruio/state /dev/uio5'
+ExecStop=/sbin/modprobe -r libpruio
 StandardOutput=tty
 RemainAfterExit=yes
-SysVStartPriority=99
 
 [Install]
 WantedBy=multi-user.target

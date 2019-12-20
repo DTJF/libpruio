@@ -64,7 +64,6 @@ ADD_CUSTOM_TARGET(lkm-uninstall
   COMMAND depmod
   #VERBATIM
   )
-ADD_DEPENDENCIES(lkm-install lkm)
 
 INSTALL(FILES ${lkm}
   DESTINATION /lib/modules

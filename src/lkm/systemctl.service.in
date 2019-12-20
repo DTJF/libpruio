@@ -4,7 +4,7 @@ Description=Load @PROJ_NAME@ loadable kernel module
 [Service]
 Type=oneshot
 ExecStart=/sbin/modprobe @PROJ_NAME@
-ExecStartPost=/bin/chown root:pruio /sys/devices/platform/@PROJ_NAME@/state
+ExecStartPost=/bin/chown root:pruio /sys/devices/platform/@PROJ_NAME@/state /dev/uio5
 ExecStop=/sbin/modprobe -r @PROJ_NAME@
 StandardOutput=tty
 RemainAfterExit=yes
