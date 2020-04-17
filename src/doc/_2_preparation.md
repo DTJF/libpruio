@@ -69,8 +69,9 @@ the binary names are prepended by "pruio_", so ie. in order to
 execute example \ref sSecExaSos type `pruio_sos`.
 
 \note Some of the examples need custom wiring on the headers. Ie.
-      `pruio_performance` does nothing without the related wiring, so
-      mind the wiring descriptions in chapter \ref ChaExamples.
+      `pruio_performance` does nothing but hangs endless (waiting for a
+      certain input) without the related wiring, so mind the wiring
+      descriptions in chapter \ref ChaExamples.
 
 The -lkm package provides enhanced pinmuxing and PWM features. It's
 mandatory to get all PWM outputs working on kernel 4.x, and recommended
@@ -203,29 +204,46 @@ It's beyond the scope of this guide to describe the installation for
 those tools. Find detailed installation instructions on the related
 websides, linked by the name in the first column.
 
-Here's a brief overview on dependenvies vs. major targets (described below)
+Here's a brief overview on dependenvies vs. major targets (described
+below, two tables due to latex longtabu restrictions)
 
-|                                                                Name  | pasm | pruio | fb_examples | c_examples | lkm | doc_htm | doc_pdf | python | deb | config |
-| -------------------------------------------------------------------: | :--: | :---: | :---------: | :--------: | :-- | :-----: | :-----: | :----: | :-: | :----: |
-| [fbc](http://www.freebasic.net)                                      |      |   X   |     X       |            |     |         |         |   X    |  X  |   X    |
-| [CMake](http://www.cmake.org)                                        |   X  |   X   |     X       |      X     |  X  |    X    |    X    |   X    |  X  |   X    |
-| [cmakefbc](http://github.com/DTJF/cmakefbc)                          |      |   X   |     X       |            |     |    X    |    X    |   X    |  X  |        |
-| [fbdoc](http://github.com/DTJF/fbdoc)                                |      |       |             |            |     |    X    |    X    |  !X!   |  X  |        |
-| [am335x-pru-package](https://github.com/DTJF/fb_prussdrv)            |   X  |   X   |     X       |      X     |     |         |         |        |  X  |        |
-| [device-tree-compiler](https://git.kernel.org/cgit/utils/dtc/dtc.git)|      |       |             |            |     |         |         |        |     |   X    |
-| [GIT](http://git-scm.com/)                                           |      |       |             |            |     |         |         |        |     |        |
-| [Doxygen](http://www.doxygen.org/)                                   |      |       |             |            |     |    X    |    X    |        |  X  |        |
-| [Graphviz](http://www.graphviz.org/)                                 |      |       |             |            |     |    X    |    X    |        |  X  |        |
-| [LaTeX](https://latex-project.org/ftp.html)                          |      |       |             |            |     |         |    X    |        |  X  |        |
-| linux-headers-X.X.X                                                  |      |       |             |            |     |         |         |        |  X  |        |
-| debhelper & further tools                                            |      |       |             |            |     |         |         |        |  X  |        |
+|                                                                Name  | pasm | pruio | lkm | deb | config |
+| -------------------------------------------------------------------: | :--: | :---: | :-- | :-: | :----: |
+| [fbc](http://www.freebasic.net)                                      |      |   X   |     |  X  |   X    |
+| [CMake](http://www.cmake.org)                                        |   X  |   X   |  X  |  X  |   X    |
+| [cmakefbc](http://github.com/DTJF/cmakefbc)                          |      |   X   |     |  X  |        |
+| [fbdoc](http://github.com/DTJF/fbdoc)                                |      |       |     |  X  |        |
+| [am335x-pru-package](https://github.com/DTJF/fb_prussdrv)            |   X  |   X   |     |  X  |        |
+| [device-tree-compiler](https://git.kernel.org/cgit/utils/dtc/dtc.git)|      |       |     |     |   X    |
+| [GIT](http://git-scm.com/)                                           |      |       |     |     |        |
+| [Doxygen](http://www.doxygen.org/)                                   |      |       |     |  X  |        |
+| [Graphviz](http://www.graphviz.org/)                                 |      |       |     |  X  |        |
+| [LaTeX](https://latex-project.org/ftp.html)                          |      |       |     |  X  |        |
+| linux-headers-X.X.X                                                  |      |       |     |  X  |        |
+| debhelper & further tools                                            |      |       |     |  X  |        |
+
+|                                                                Name  | fb_examples | c_examples | doc_htm | doc_pdf | python |
+| -------------------------------------------------------------------: | :---------: | :--------: | :-----: | :-----: | :----: |
+| [fbc](http://www.freebasic.net)                                      |     X       |            |         |         |   X    |
+| [CMake](http://www.cmake.org)                                        |     X       |      X     |    X    |    X    |   X    |
+| [cmakefbc](http://github.com/DTJF/cmakefbc)                          |     X       |            |    X    |    X    |   X    |
+| [fbdoc](http://github.com/DTJF/fbdoc)                                |             |            |    X    |    X    |  !X!   |
+| [am335x-pru-package](https://github.com/DTJF/fb_prussdrv)            |     X       |      X     |         |         |        |
+| [device-tree-compiler](https://git.kernel.org/cgit/utils/dtc/dtc.git)|             |            |         |         |        |
+| [GIT](http://git-scm.com/)                                           |             |            |         |         |        |
+| [Doxygen](http://www.doxygen.org/)                                   |             |            |    X    |    X    |        |
+| [Graphviz](http://www.graphviz.org/)                                 |             |            |    X    |    X    |        |
+| [LaTeX](https://latex-project.org/ftp.html)                          |             |            |         |    X    |        |
+| linux-headers-X.X.X                                                  |             |            |         |         |        |
+| debhelper & further tools                                            |             |            |         |         |        |
 
 As you can see not all dependencies are necessary to build only a
 special target. Ie. when you want to build the documentation you won't
 need the compilers nor assemblers. Use the package manager to install
 the desired dependencies (omit the packages you don't need)
 
-    sudo apt-get install fbc cmake fbdoc am335x-pru-package device-tree-compiler doxygen graphviz linux-headers-`uname -r ` debhelper dkms dh-systemd autotools-dev dh-python python
+    sudo apt-get install fbc cmake fbdoc am335x-pru-package device-tree-compiler python
+    sudo apt-get install doxygen graphviz linux-headers-`uname -r ` debhelper dkms dh-systemd autotools-dev dh-python
 
 \note In order to fetch the P type packages you have to add the PPA to
       your `/etc/apt/sources.list` file as described in section \ref
@@ -238,14 +256,14 @@ sSecBuildPython. In order to build the language binding, the
 source tree at the same level as the \Proj package and perform at least
 the `make` command to create the `py_ctypes` binary.
 
-Execute the commands (in you projects folder)
+Execute the commands (in your projects folder)
 
-   git clone https://github.com/DTJF/fbdoc
-   cd fbdoc
-   mkdir build
-   cd build
-   cmake ..
-   make
+    git clone https://github.com/DTJF/fbdoc
+    cd fbdoc
+    mkdir build
+    cd build
+    cmake ..
+    make
 
 Then install the \Proj package at the same level as the `fbdoc`
 package, like
@@ -263,29 +281,39 @@ Unfortunatelly this step may get complicated. \Proj needs the
 `uio_pruss` driver. In kernel 3.8 this is the default setting, no
 further action is required. But in kernel 4.x the new `rproc` driver
 gets default, and it took years until easy reconfiguration was
-supported. In kernel 4.14 you can easily switch between the drivers in
-file `/boot/uEnv.txt`. But in former kernel versions, different actions
-have to be done to get the `rproc` driver out of the way. It's beyond
-the scope of this documentation to describe all the diffent quirks and
-pitfalls. Search the internet for further documentation.
+supported. Since kernel 4.14 you can simply switch between the drivers
+in file `/boot/uEnv.txt`. But in former kernel versions, different
+actions have to be done to get the `rproc` driver out of the way. It's
+beyond the scope of this documentation to describe all the diffent
+quirks and pitfalls. Search the internet for further documentation.
 
-The only help I can provide is a command to test success. Executing
+The only help I can provide is a command to test success. Executing the
+commands
 
     lsmod | grep uio
+    ls -l /dev/uio*
 
-should output
+should generate text similar to
 
-~~~{.txt}
-uio_pruss              16384  0
-uio_pdrv_genirq        16384  0
-uio                    20480  2 uio_pruss,uio_pdrv_genirq
-~~~
+    $ lsmod | grep uio
+    uio_pruss              16384  0
+    uio_pdrv_genirq        16384  0
+    uio                    20480  2 uio_pruss,uio_pdrv_genirq
+    $ ls -l /dev/uio*
+    crw-rw---- 1 root users 243, 0 Mai 17 07:25 /dev/uio0
+    crw-rw---- 1 root users 243, 1 Mai 17 07:25 /dev/uio1
+    crw-rw---- 1 root users 243, 2 Mai 17 07:25 /dev/uio2
+    crw-rw---- 1 root users 243, 3 Mai 17 07:25 /dev/uio3
+    crw-rw---- 1 root users 243, 4 Mai 17 07:25 /dev/uio4
+    crw-rw---- 1 root users 243, 5 Mai 17 07:25 /dev/uio5
+    crw-rw---- 1 root users 243, 6 Mai 17 07:25 /dev/uio6
+    crw-rw---- 1 root users 243, 7 Mai 17 07:25 /dev/uio7
 
 
 ### Get Package ### {#sSecGet}
 
 Depending on whether you installed the optional GIT package, there're
-two ways to get the \Proj package.
+two ways to get the \Proj source tree.
 
 #### ZIP #### {#sSecGet_Zip}
 
@@ -300,15 +328,15 @@ the archive. Then change to the newly created folder.
 
 #### GIT #### {#sSecGet_Git}
 
-Using GIT is the prefered way to download the \Proj package (since it
-helps users to get involved in to the development process). Get your
+Using GIT is the prefered way to download the \Proj source tree (since
+it helps users to get involved in to the development process). Get your
 copy and change to the source tree by executing
 
     git clone https://github.com/DTJF/libpruio
     cd libpruio
 
 
-### Configure the Tree ### {#sSecPrepBuild}
+### Configure the Source Tree ### {#sSecPrepBuild}
 
 Before you can build any target, you have to configure the source tree.
 CMake will check the tools on your system and create matching
@@ -370,13 +398,14 @@ FreeBASIC and C programming language.
       linker. You can omit it for further updates.
 
 \note The `make install` script creates files in the system subfolders
-      under `/usr/local/`, and a file named `install_manifest.txt`. In
-      order to uninstall execute `xargs rm < install_manifest.txt`.
+      under `/usr/local/`, and a write-pretected file named
+      `install_manifest.txt`. In order to uninstall execute `xargs rm <
+      install_manifest.txt`.
 
 
 ### Examples ### {#sSecBuildExamples}
 
-Build the examples by:
+Compile the examples by:
 
     make examples
 
@@ -390,12 +419,12 @@ to run the `sos.bas` example, or
 
 to run the `sos.c` example.
 
-The build scripts also support separate builds
+The build scripts also support separate compilation
 
     make fb_examples
     make c_examples
 
-as well as single builds
+as well as single compilation like
 
     make sos
     make sos_c

@@ -421,23 +421,25 @@ information is available when calling function QepMod::Value(). The
 accuracy of the position information can get improved by using an index
 signal that resets the position counter.
 
-|   BB  | PB    | Type    | Subsystem | Speed | Direction | Position | Index | Further Pins | Notice BBB        |
-| :---: | :---: | :-----: | :-------: | :---: | :-------: | :------: | :---: | :----------- | :---------------- |
-| P9_42 |       | A input |  PWMSS-0  |   X   |     -     |     -    |   -   |              | free (double pin) |
-| P9_27 | P2_34 | B input |  PWMSS-0  |   X   |     X     |     X    |   -   | P9_42        | free              |
-| P9_41 |       | I input |  PWMSS-0  |   X   |     X     |     X    |   X   | P9_42, P9_27 | free (double pin) |
-| P8_35 |       | A input |  PWMSS-1  |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_33 |       | B input |  PWMSS-1  |   X   |     X     |     X    |   -   | P8_35        | HDMI              |
-| P8_31 |       | I input |  PWMSS-1  |   X   |     X     |     X    |   X   | P8_35, P8_33 | HDMI              |
-| P8_12 |       | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
-| P8_11 |       | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_12        | free              |
-| P8_16 |       | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_11, P8_12 | free              |
-| P8_41 |       | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | HDMI              |
-| P8_42 |       | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P8_41        | HDMI              |
-| P8_39 |       | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P8_41, P8_42 | HDMI              |
-|       | P2_24 | A input |  PWMSS-2  |   X   |     -     |     -    |   -   |              | free              |
-|       | P2_33 | B input |  PWMSS-2  |   X   |     X     |     X    |   -   | P2_24        | free              |
-|       | P2_22 | I input |  PWMSS-2  |   X   |     X     |     X    |   X   | P2_24, P2_33 | free              |
+|   BB  | PB    | Type    | Subsystem | Measurements | Further Pins | Notice BBB        |
+| :---: | :---: | :-----: | :-------: | :----------- | :----------- | :---------------- |
+| P9_42 |       | A input |  PWMSS-0  |     S        |              | free (double pin) |
+| P9_27 | P2_34 | B input |  PWMSS-0  |     SDP      | P9_42        | free              |
+| P9_41 |       | I input |  PWMSS-0  |     SDPI     | P9_42, P9_27 | free (double pin) |
+| P8_35 |       | A input |  PWMSS-1  |     S        |              | HDMI              |
+| P8_33 |       | B input |  PWMSS-1  |     SDP      | P8_35        | HDMI              |
+| P8_31 |       | I input |  PWMSS-1  |     SDPI     | P8_35, P8_33 | HDMI              |
+| P8_12 |       | A input |  PWMSS-2  |     S        |              | free              |
+| P8_11 |       | B input |  PWMSS-2  |     SDP      | P8_12        | free              |
+| P8_16 |       | I input |  PWMSS-2  |     SDPI     | P8_11, P8_12 | free              |
+| P8_41 |       | A input |  PWMSS-2  |     S        |              | HDMI              |
+| P8_42 |       | B input |  PWMSS-2  |     SDP      | P8_41        | HDMI              |
+| P8_39 |       | I input |  PWMSS-2  |     SDPI     | P8_41, P8_42 | HDMI              |
+|       | P2_24 | A input |  PWMSS-2  |     S        |              | free              |
+|       | P2_33 | B input |  PWMSS-2  |     SDP      | P2_24        | free              |
+|       | P2_22 | I input |  PWMSS-2  |     SDPI     | P2_24, P2_33 | free              |
+
+Measurements: S = Speed, D = Direction, P = Position, I = Index
 
 Direction information is derived from two different signals that "look"
 at the sensor lines with a mechanical shift of 1 / 4 of the pitch. So

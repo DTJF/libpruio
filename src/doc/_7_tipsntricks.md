@@ -29,10 +29,13 @@ Example
 # Simultaneous GPIO # {#SecSimuGpio}
 
 The functions GpioUdt::Value() and GpioUdt::setValue() read or set the
-value of a single GPIO pin. When you call them for multiple GPIO pins,
-there's a certain delay since the functions need some time to execute.
-\Proj supports to read or set multiple GPIO pins at the same time, when
-the pins are controlled by the same GPIO subsystem.
+value of a single GPIO pin. When you need to manipulate multiple GPIO
+pins, there's a certain delay between the pin setting since the
+functions need some time to execute. \Proj supports reading or setting
+multiple GPIO pins at the same time, when the pins are controlled by
+the same GPIO subsystem.
+
+## Reading ## {#SecSimuGpioRead}
 
 Instead of using function GpioUdt::Value() you can read the value of
 GpioArr::Mix. Then mask the bits you need.
@@ -44,19 +47,21 @@ Example
 reads the values of GPIO2_01 (P8_18) in bit 1 and GPIO2_04 (P8_10) in
 bit 4.
 
+## Setting ## {#SecSimuGpioSet}
+
 Instead of using function GpioUdt::setValue() you can set the values of
 GpioSet::CLEARDATAOUT and GpioSet::SETDATAOUT directly and transfer
 them to the PRU. The first contains the bitmask for low output pins and
 the second the mask for the high state pins.
 
 The following example sets the output of GPIO2_01 (P8_18) and GPIO2_04
-(P8_10) to high state
+(P8_10) to high state (the other bits stay unchanged)
 
     VAR mask = &b10010
     Io->Gpio->Conf(2)->SETDATAOUT    OR= mask
     Io->Gpio->Conf(2)->CLEARDATAOUT AND= NOT mask
 
-    WHILE Io->DRam[1] : WEND ' wait, if PRU is busy (should never happen)
+    WHILE Io->DRam[1] : SLEEP 1 : WEND ' wait, if PRU is busy
     Io->DRam[5] = Io->Gpio->Conf(2)->OE
     Io->DRam[4] = Io->Gpio->Conf(2)->SETDATAOUT
     Io->DRam[3] = Io->Gpio->Conf(2)->CLEARDATAOUT

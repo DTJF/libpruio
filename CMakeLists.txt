@@ -13,7 +13,7 @@ SET(PROJ_WEBS "https://github.com/DTJF/libpruio" CACHE STRING "project website" 
 SET(PROJ_LICE "LGPLv2.1" CACHE STRING "project licence" FORCE)
 #STRING(TIMESTAMP tmp "%Y" UTC) # requires CMake 2.8.11
 #SET(PROJ_YEAR "${tmp}"             CACHE STRING "project year" FORCE)
-SET(PROJ_YEAR "2019"   CACHE STRING "project year" FORCE)
+SET(PROJ_YEAR "2020"   CACHE STRING "project year" FORCE)
 
 PROJECT(${PROJ_NAME} Fbc C)
 
@@ -40,8 +40,9 @@ ELSE()
   ELSE()
     ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
     ADD_DEPENDENCIES(pruio pruiofbcode)
-    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -z,relro") # must be global
+    #SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -z,relro") # must be global
     SET_TARGET_PROPERTIES(pruio PROPERTIES
+      LINK_FLAGS "-Wl -z,relro"
       SOVERSION "o" # adapt <Package: ...> in debian/control
       #NO_SONAME "YES"
       )
