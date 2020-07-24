@@ -645,9 +645,9 @@ them. The system preparation is described in Chapter \ref
 ChaPreparation.
 
 \Item{cmakefbc_deps: skipping dir.bi ...} The dependency scanner misses
-an include file and cannot generate a CMake dependency for it. That's
-just a warning information, no action is required. Find details in the
-(cmakefbc package documentation)[github.com/dtjf/cmakefbc].
+an include file and cannot generate a CMake dependency for it. -> That's
+just a warning, no action is required. Find details in the
+[cmakefbc package documentation](github.com/dtjf/cmakefbc).
 
 
 # make # {#SecMake}
@@ -657,4 +657,4 @@ when you start building targets.
 
 \Item{file INSTALL cannot copy file} You executed a ` make install`
 instruction for a restricted location. The script has no permission to
-perform the required task. Prepend `sudo` to your command.
+perform the required task. -> Prepend `sudo` to your command.
