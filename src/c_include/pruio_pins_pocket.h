@@ -1,10 +1,16 @@
 /* * \ file pruio_pins_pocket.h
 \brief Pre-defined macros to handle the PocketBeagle header pins.
 
-This file contains macros to easy handle the header pins and pin groups
-of the PocketBeaglebone hardware. Instead of searching the CPU ball
-number in lists, you can use one of these macros named after the header
+This file contains macros to easy handle the header pins of the
+PocketBeaglebone hardware (2x36 headers). Instead of searching the CPU
+ball number in lists, you can use these macros named after the header
 and pin number (ie pin 3 on header P1 is named P1_03).
+
+See src/pruio/pruio_pins_pocket.bi for details.
+
+Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
+
+Copyright 2014-\Year by \Email
 
 \since 0.6.4
 */

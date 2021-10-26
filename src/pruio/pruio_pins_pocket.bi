@@ -2,9 +2,9 @@
 \brief Pre-defined macros to handle the PocketBeagle header pins.
 
 This file contains macros to easy handle the header pins of the
-PocketBeaglebone hardware. Instead of searching the CPU ball number in
-lists, you can use these macros named after the header and pin number
-(ie pin 3 on header P1 is named P1_03).
+PocketBeaglebone hardware (2x36 headers). Instead of searching the CPU
+ball number in lists, you can use these macros named after the header
+and pin number (ie pin 3 on header P1 is named P1_03).
 
 \since 0.6.4
 '/

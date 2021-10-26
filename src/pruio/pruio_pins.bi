@@ -2,9 +2,10 @@
 \brief Pre-defined macros to handle the beagle bone header pins.
 
 This file contains macros to easy handle the header pins and pin groups
-of the beaglebone hardware. Instead of searching the CPU ball number in
-lists, you can use these macros named after the header and pin number
-(ie. pin 3 on header P8 is named P8_03).
+of the beaglebone hardware (white, green, black: 2x46 headers). Instead
+of searching the CPU ball number in lists, you can use these macros
+named after the header and pin number (ie. pin 3 on header P8 is named
+P8_03).
 
 \since 0.0
 '/

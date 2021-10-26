@@ -1,10 +1,16 @@
 /* * \ file pruio_pins_blue.bi
 \brief Pre-defined macros to handle the BeagleBone Blue connectors.
 
-This file contains macros to easy handle the header pins of the
-PocketBeaglebone hardware. Instead of searching the CPU ball number in
-lists, you can use these macros named after the connectors pin number
-(ie pin 3 on connector E1 is named E1_3).
+This file contains macros to easy handle the connector pins of
+the Beaglebone Blue hardware. Instead of searching the CPU ball number
+in lists, you can use these macros named after the connectors pin
+number (ie pin 3 on connector E1 is named E1_3).
+
+See src/pruio/pruio_pins_blue.bi for details.
+
+Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
+
+Copyright 2014-\Year by \Email
 
 \since 0.6.4
 */

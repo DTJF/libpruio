@@ -1,10 +1,11 @@
 /* * \ file pruio_pins.h
 \brief Pre-defined macros to handle the beagle bone header pins.
 
-This file contains macros to easy handle the header pins and
-pin groups of the beaglebone hardware. Instead of looking up the CPU
-pin number in lists, you can use a macro named after the header and pin
-number (ie pin 3 on header P8 is named P8_03).
+This file contains macros to easy handle the header pins and pin groups
+of the beaglebone hardware (white, green, black: 2x46 headers). Instead
+of searching the CPU ball number in lists, you can use these macros
+named after the header and pin number (ie. pin 3 on header P8 is named
+P8_03).
 
 See src/pruio/pruio_pins.bi for details.
 

@@ -1,7 +1,7 @@
 /'* \file pruio_boardpins.bi
 \brief Pin lists for board types
 
-This header file contains pin list for the differend board designs. The
+This header file contains pin lists for the differend board designs. The
 lists are used in function find_claims() to distinguish between
 external header pins and internal CPU balls.
 
