@@ -78,7 +78,7 @@ int32 load_firmware(uint32 IRam)
 //! The main function.
 int main(int argc, char **argv)
 {
-  // our configuration is for PUR-0, so PRU-1 for libpruio
+  // our configuration is for PRU-0, so PRU-1 for libpruio
   uint16 act = PRUIO_ACT_PRU1 | PRUIO_ACT_PWM0;
   pruIo *io = pruio_new(act, 0, 0, 0); //    create new driver structure
   do {

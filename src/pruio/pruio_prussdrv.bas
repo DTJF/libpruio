@@ -596,7 +596,9 @@ FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
 #DEFINE TBUFF_SIZE 32768
   STATIC AS STRING mux
   DIM AS STRING*TBUFF_SIZE t
-  VAR fd = open_(KERNEL_PINMUX_PINS, O_RDONLY) : IF fd < 0   THEN RETURN 0
+  'VAR fd = open_(KERNEL_PINMUX_PINS, O_RDONLY) : IF fd < 0   THEN RETURN 0
+  VAR fd = open_("/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins", O_RDONLY)
+  IF fd < 0 THEN fd = open_("/sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pinmux-pins", O_RDONLY) : IF fd < 0   THEN RETURN 0
   VAR r = read_(fd, @t, TBUFF_SIZE)
   close_(fd)
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1
