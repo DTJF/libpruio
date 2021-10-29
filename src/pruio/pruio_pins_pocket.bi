@@ -11,7 +11,7 @@ and pin number (ie pin 3 on header P1 is named P1_03).
 
 
 ' P1_01
-'* CPU ball number for pin 2 on header 1 (+ AIN6 3V3 / P8_29 hdmi)
+'* CPU ball number for double pin 2 on header 1 (+ AIN6 3V3 / P8_29 hdmi)
 #DEFINE P1_02 &h39 '57
 ' P1_03
 '* CPU ball number for pin 4 on header 1 (P8_30 hdmi)
@@ -129,7 +129,7 @@ and pin number (ie pin 3 on header P1 is named P1_03).
 #DEFINE P2_33 &h0D '13
 '* CPU ball number for pin 34 on header 2 (P9_27)
 #DEFINE P2_34 &h69 '105
-'* CPU ball number for pin 35 on header 2 (AIN5 3V3 / P8_27 hdmi)
+'* CPU ball number for double pin 35 on header 2 (AIN5 3V3 / P8_27 hdmi)
 #DEFINE P2_35 &h38 '56
 '* Analog line 7 (1V8)
 #DEFINE P2_36 no_pinmuxing_for_AIN7

@@ -157,9 +157,9 @@ P8_03).
 '* Analog line on pin 40 on header 9
 #DEFINE P9_40 no_pinmuxing_for_AIN1
 
-'* CPU ball number for pin 41 on header 9
+'* CPU ball number for double pin 41 on header 9 (second ball is 106)
 #DEFINE P9_41 &h6D '109
-'* CPU ball number for pin 42 on header 9
+'* CPU ball number for double pin 42 on header 9 (second ball is 104)
 #DEFINE P9_42 &h59 '89
 
 '* CPU ball number for pin 4 on JTag header (E15)
