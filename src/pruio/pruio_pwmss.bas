@@ -806,6 +806,7 @@ FUNCTION CapMod.Value CDECL( _
       CASE P9_42 : IF ModeCheck(Ball,0) THEN e = .PwmSS->E5 ' pin not in CAP mode
       'CASE P8_15 : IF ModeCheck(Ball,5) THEN e = .PwmSS->E5 ELSE m = -1 ' pr1_ecap0_ecap_capin_apwm_o (also on P9_42)
       CASE JT_04 : IF ModeCheck(Ball,4) THEN e = .PwmSS->E5 ELSE m = 2
+      CASE SD_10 : IF ModeCheck(Ball,1) THEN e = .PwmSS->E5 ELSE m = 1
       'CASE 88 : IF ModeCheck(Ball,2) THEN e = .PwmSS->E5 ELSE m = 1
       'CASE 98 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 2
       'CASE 99 : IF ModeCheck(Ball,3) THEN e = .PwmSS->E5 ELSE m = 1

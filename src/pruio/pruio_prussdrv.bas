@@ -704,7 +704,7 @@ FUNCTION setPin_lkm_bb CDECL( _
     CASE P9_41 : b = 106
     CASE P9_42 : b = 104
     CASE   106 : b = P9_41
-    CASE   104 : b = P9_41
+    CASE   104 : b = P9_42
     CASE ELSE                                                   : RETURN setPin_lkm(Top, Ball, Mo)
     END SELECT : r = .BallGpio(b)
     WITH *.Gpio
