@@ -1,6 +1,6 @@
 Welcome to *libpruio* library,
 
-- a driver for micro processors of type \cpu ,
+- a driver for micro processors of type TI AM335x,
 - designed for [Beaglebone hardware](http://www.beaglebone.org), supporting
 - analog input and
 - digital input and output features.
