@@ -1,6 +1,6 @@
 Welcome to *@PROJ_NAME@* library,
 
-- a driver for ARM33xx micro processors,
+- a driver for micro processors of type \cpu ,
 - designed for [Beaglebone hardware](http://www.beaglebone.org), supporting
 - analog input and
 - digital input and output features.

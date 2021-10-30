@@ -18,9 +18,9 @@ subsystems and its modules when doing simple tasks.
 /'* \brief Structure for PWMSS subsystem registers.
 
 This UDT contains a set of all PWMSS subsystem registers. Is used to
-store the initial configuration of the three subsystems in the AM33xx
-CPU, and to hold their current configurations for the next call to
-function PruIo::config().
+store the initial configuration of the three subsystems in the \cpu ,
+and to hold their current configurations for the next call to function
+PruIo::config().
 
 Each Pulse Width Modulation SubSystem (PWMSS) cpntains three modules:
 PWM, CAP and QEP. This structure holds the values for all registers of

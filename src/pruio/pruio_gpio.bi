@@ -11,9 +11,9 @@ for the GPIO component of the library.
 /'* \brief Structure for GPIO subsystem registers.
 
 This UDT contains a set of all GPIO subsystem registers. It's used to
-store the initial configuration of the four subsystems in the AM33xx
-CPU, and to hold their current configurations for the next call to
-function PruIo::config().
+store the initial configuration of the four subsystems in the \cpu ,
+and to hold their current configurations for the next call to function
+PruIo::config().
 
 \since 0.2
 '/
@@ -73,7 +73,7 @@ END TYPE
 functions and variables to handle the subsystems.
 
 This UDT contains the member function to control the features in each
-of the four GPIO subsystems included in the AM33xx CPU and the related
+of the four GPIO subsystems included in the \cpu and the related
 variables.
 
 \since 0.2

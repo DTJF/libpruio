@@ -1,7 +1,7 @@
 /*! \file libpruio.c
 \brief Source code of loadable kernel module (LKM)
 
-When tainted to the kernel, the LKM checks for the TI-AM335x CPU and
+When tainted to the kernel, the LKM checks for the \cpu and
 the PRUSS version. In case of a missmatch or other problems, an error
 message gets placed in the kernel log `dmesg`. In case of a match it
 

@@ -233,6 +233,7 @@ TAB_SIZE               = 4
 ALIASES                = "ArmRef{1}=[ARM Reference Guide, chapter \1](http://www.ti.com/lit/pdf/spruh73)" \
                          "Email=Thomas{ dOt ]Freiherr[ aT ]gmx[DoT}net" \
                          "Item{1}=- <b>\1</b>:" \
+                         "cpu=TI AM335x CPU" \
                          "BbbRef{1}=[BBB Software Reference Guide, chapter \1](https://github.com/beagleboard/BeagleBone-Black/blob/master/BBB_SRM.pdf?raw=true)" \
                          "MpuRef{1}=[Sitara AM335x ARM Cortex-A8 Microprocessors Guide, chapter \1](http://www.openhacks.com/uploadsproductos/am3359.pdf)"
 
@@ -839,8 +840,8 @@ EXCLUDE_SYMBOLS        =
 # command).
 
 EXAMPLE_PATH           = ../src/examples \
-                       = ../src/c_examples \
-                       = ../src/python
+                         ../src/c_examples \
+                         ../src/python
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -1614,7 +1615,7 @@ COMPACT_LATEX          = NO
 # The default value is: a4.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-PAPER_TYPE             = letter
+PAPER_TYPE             = a4EXAM
 
 # The EXTRA_PACKAGES tag can be used to specify one or more LaTeX package names
 # that should be included in the LaTeX output. To get the times font for
@@ -2020,12 +2021,6 @@ EXTERNAL_GROUPS        = YES
 
 EXTERNAL_PAGES         = YES
 
-# The PERL_PATH should be the absolute path and name of the perl script
-# interpreter (i.e. the result of 'which perl').
-# The default file (with absolute path) is: /usr/bin/perl.
-
-PERL_PATH              = /usr/bin/perl
-
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
@@ -2038,15 +2033,6 @@ PERL_PATH              = /usr/bin/perl
 # The default value is: YES.
 
 CLASS_DIAGRAMS         = NO
-
-# You can define message sequence charts within doxygen comments using the \msc
-# command. Doxygen will then run the mscgen tool (see:
-# http://www.mcternan.me.uk/mscgen/)) to produce the chart and insert it in the
-# documentation. The MSCGEN_PATH tag allows you to specify the directory where
-# the mscgen tool resides. If left empty the tool is assumed to be found in the
-# default search path.
-
-MSCGEN_PATH            =
 
 # You can include diagrams made with dia in doxygen documentation. Doxygen will
 # then run dia to produce the diagram and insert it in the documentation. The

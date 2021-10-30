@@ -1,2 +1,4 @@
 *.bas linguist-language=FreeBASIC
-src/doc/* linguist-documentation
+*.bi linguist-language=FreeBASIC
+*.p linguist-language=pasm
+src/doc/** linguist-documentation

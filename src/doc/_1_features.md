@@ -18,7 +18,7 @@ wrote:](http://www.freebasic.net/forum/viewtopic.php?f=14&t=22501&p=217404#p2174
 Thanks, for the feedback! It seems that the major goal is reached.
 
 \Proj is designed to provide faster, more flexible (customizable) and
-more easy (single source) access to the AM33xx CPU subsystems, compared
+more easy (single source) access to the \cpu subsystems, compared
 to the methods provided by the kernel. Its features in short
 
 - run on PRU-0 or PRU-1 (default)
@@ -49,7 +49,7 @@ and runs on all kernel versions above 3.8 (including 4.x).
 
 # PRUSS # {#SecPruss}
 
-The AM33xx CPU on Beaglebone hardware contains two PRU subsystems.
+The \cpu on Beaglebone hardware contains two PRU subsystems.
 \Proj runs software on the host system (ARM) and on a Programable
 Realtime Unit SubSystem (PRUSS), either on PRU-0 or PRU-1 (the later is
 the default). Due to the PRU support the load on the ARM is very low,
@@ -60,7 +60,7 @@ PRU is free for a custom controller working in real-time, and using
 
 # Operation # {#SecOperation}
 
-\Proj controls the AM33xx CPU subsystems
+\Proj controls the \cpu subsystems
 
 - TSC_ADCSS (Touch Screen Controler and Analog to Digital Converter
   SubSystem)
@@ -137,7 +137,7 @@ PruIo::~PruIo().
 
 # Pinmuxing # {#SecPinmuxingIntro}
 
-Most digital lines of the AM33xx CPU support several features and need
+Most digital lines of the \cpu support several features and need
 to be configured before use (see section \ref SecPinmuxing for
 details). \Proj checks the pin configuration at run-time, and tries to
 adapt it if necessary.

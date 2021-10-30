@@ -41,9 +41,6 @@ typedef unsigned short uint16; //!< 16 bit unsigned integer data type.
 typedef unsigned int uint32;   //!< 32 bit unsigned integer data type.
 typedef float float_t;         //!< float data type.
 
-//! Tell pruss_intc_mapping.bi that we use ARM33xx.
-#define AM33XX
-
 //! forward declaration
 typedef struct pruIo pruIo;
 
