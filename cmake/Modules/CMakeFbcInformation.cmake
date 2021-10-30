@@ -1,7 +1,7 @@
 #
 # CMakeFbc - CMake module for FreeBASIC Language
 #
-# Copyright (C) 2014-2018, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
+# Copyright (C) 2014-2021, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
 #
 # All rights reserved.
 #
@@ -163,7 +163,7 @@ ELSE()
       STRING(REGEX REPLACE ".[Bb][Aa][Ss]$" ".c" c_nam ${src})
       SET(c_file "${_dir}/${c_nam}")
       EXECUTE_PROCESS(
-        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} -gen gcc -r ${src}
+        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} ${src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
       IF(${CMAKE_CURRENT_SOURCE_DIR} NOT EQUAL ${_dir})
@@ -173,7 +173,7 @@ ELSE()
           )
       ENDIF()
       ADD_CUSTOM_COMMAND(OUTPUT ${c_file}
-        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} -gen gcc -r ${src}
+        COMMAND ${CMAKE_Fbc_COMPILER} ${flags} ${src}
         COMMAND ${CMAKE_COMMAND} -E rename ${c_nam} ${c_file}
         DEPENDS ${src}
         )
