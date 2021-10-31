@@ -16,8 +16,14 @@ wrapper functions are not included as in the original version).
 #INCLUDE ONCE "pruio_prussdrv.bi"
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
-' Header file with convenience macros.
+' Header file with convenience macros BBB2x46.
 #INCLUDE ONCE "pruio_pins.bi"
+' Header file with convenience macros PBB2x36.
+#INCLUDE ONCE "pruio_pins_pocket.bi"
+' Header file with convenience macros BB_Blue.
+#INCLUDE ONCE "pruio_pins_blue.bi"
+' Header file with convenience macros SD card slot.
+#INCLUDE ONCE "pruio_pins_sd.bi"
 ' Header file with Pru_Init instructions.
 #INCLUDE ONCE "pasm_init.bi"
 ' Header file with Pru_Run instructions.
