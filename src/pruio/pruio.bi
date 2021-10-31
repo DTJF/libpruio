@@ -36,6 +36,18 @@ different components together and provides all declarations.
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
 
+
+/'* \brief Enumerators for board types
+
+\since 0.6.8
+'/
+ENUM BBTypes
+  BBB2x46 = 0 '*< Classic Beaglebone board with 2x46 headers, JT, SD
+  PBB2x36 = 1 '*< PocketBeagle board with 2x36 headers, SD
+  BB_Blue = 2 '*< Beaglebone Blue with connectors, SD
+END ENUM
+
+
 /'* \brief Mask for ADC step enabling.
 
 This enumerators are for use in function PruIo::config() to enable

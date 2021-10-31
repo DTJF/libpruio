@@ -150,10 +150,10 @@ CONSTRUCTOR PruIo( _
   STATIC AS STRING mux, bbb '   check for BB type and pinmuxing features
   IF 0 = OPEN("/proc/device-tree/model" FOR INPUT AS fnr) THEN
     LINE INPUT #fnr, bbb
-    'IF bbb = "TI_AM335x_PocketBeagle" THEN BbType = 1
-    'IF bbb = "TI AM335x BeagleBone Blue" THEN BbType = 2
-    IF INSTR(bbb, "Pocket") THEN BbType = 1
-    IF INSTR(bbb, "Blue") THEN BbType = 2
+    'IF bbb = "TI_AM335x_PocketBeagle" THEN BbType = PBB2x36
+    'IF bbb = "TI AM335x BeagleBone Blue" THEN BbType = BB_Blue
+    IF INSTR(bbb, "Pocket") THEN BbType = PBB2x36
+    IF INSTR(bbb, "Blue") THEN BbType = BB_Blue
     CLOSE #fnr
   END IF
 
@@ -536,21 +536,15 @@ FUNCTION PruIo.Pin CDECL( _
 END FUNCTION
 
 
-/'* \brief Get header pin connected to CPU ball.
-\param Ball The CPU ball number.
-\returns A string pointer (don't free it) on success (otherwise zero).
+/'* \brief Beaglebone pin name for CPU ball number
 
-This function creates a text description of the header pin connected to
-a CPU ball. The returned string is owned by this function and must not
-be freed.
+This macro returns the human readable [2x46 header|connector] pin name
+wired to a CPU ball number on the Beaglebone (Black, Green, White), if
+any.
 
-When the CPU ball is not connected to a header pin, this function
-returns 0 (zero).
-
-\since 0.2
+\since 0.6.8
 '/
-FUNCTION PruIo.nameBall CDECL(BYVAL Ball AS UInt8) AS ZSTRING PTR
-  SELECT CASE AS CONST Ball '                                  find name
+#MACRO BB_NAMES()
   CASE P8_03 : RETURN @"P8_03"
   CASE P8_04 : RETURN @"P8_04"
   CASE P8_05 : RETURN @"P8_05"
@@ -622,6 +616,135 @@ FUNCTION PruIo.nameBall CDECL(BYVAL Ball AS UInt8) AS ZSTRING PTR
   CASE  104  : RETURN @"P9_42"
   CASE JT_04 : RETURN @"JT_04"
   CASE JT_05 : RETURN @"JT_05"
+#ENDMACRO
+
+
+/'* \brief Beaglebone Blue connector pin name for CPU ball number
+
+This macro returns the human readable connector pin name wired to a CPU
+ball number on the Beaglebone Blue, if any.
+
+\since 0.6.8
+'/
+#MACRO BLUE_NAMES()
+  CASE E1_3   : RETURN @"E1_3"
+  CASE E1_4   : RETURN @"E1_4"
+  CASE E2_4   : RETURN @"E2_4"
+  CASE E3_3   : RETURN @"E3_3"
+  CASE E3_4   : RETURN @"E3_4"
+  CASE E4_3   : RETURN @"E4_3"
+  CASE E4_4   : RETURN @"E4_4"
+  CASE UT0_3  : RETURN @"UT0_3"
+  CASE UT0_4  : RETURN @"UT0_4"
+  CASE UT1_3  : RETURN @"UT1_3"
+  CASE UT1_4  : RETURN @"UT1_4"
+  CASE UT5_3  : RETURN @"UT5_3"
+  CASE UT5_4  : RETURN @"UT5_4"
+  CASE DSM2_3 : RETURN @"DSM2_3"
+  CASE GP0_3  : RETURN @"GP0_3"
+  CASE GP0_4  : RETURN @"GP0_4"
+  CASE GP0_5  : RETURN @"GP0_5"
+  CASE GP0_6  : RETURN @"GP0_6"
+  CASE GP1_3  : RETURN @"GP1_3"
+  CASE GP1_4  : RETURN @"GP1_4"
+  CASE GP1_5  : RETURN @"GP1_5"
+  CASE GP1_6  : RETURN @"GP1_6"
+  CASE GPS_3  : RETURN @"GPS_3"
+  CASE GPS_4  : RETURN @"GPS_4"
+  CASE SPI1_3 : RETURN @"SPI1_3"
+  CASE SPI1_4 : RETURN @"SPI1_4"
+  CASE SPI1_5 : RETURN @"SPI1_5"
+  CASE SPI1_6 : RETURN @"SPI1_6"
+  CASE SPI2_6 : RETURN @"SPI2_6"
+#ENDMACRO
+
+
+/'* \brief Pocketbeagle header pin name for CPU ball number
+
+This macro returns the human readable 2x36 header pin name wired to a
+CPU ball number on the PocketBeagle, if any.
+
+\since 0.6.8
+'/
+#MACRO POCKET_NAMES()
+  CASE P1_02 : RETURN @"P1_02"
+  CASE P1_04 : RETURN @"P1_04"
+  CASE P1_06 : RETURN @"P1_06"
+  CASE P1_08 : RETURN @"P1_08"
+  CASE P1_10 : RETURN @"P1_10"
+  CASE P1_12 : RETURN @"P1_12"
+  CASE P1_20 : RETURN @"P1_20"
+  CASE P1_26 : RETURN @"P1_26"
+  CASE P1_28 : RETURN @"P1_28"
+  CASE P1_29 : RETURN @"P1_29"
+  CASE P1_30 : RETURN @"P1_30"
+  CASE P1_31 : RETURN @"P1_31"
+  CASE P1_32 : RETURN @"P1_32"
+  CASE P1_33 : RETURN @"P1_33"
+  CASE P1_34 : RETURN @"P1_34"
+  CASE P1_35 : RETURN @"P1_35"
+  CASE P1_36 : RETURN @"P1_36"
+  CASE P2_01 : RETURN @"P2_01"
+  CASE P2_02 : RETURN @"P2_02"
+  CASE P2_03 : RETURN @"P2_03"
+  CASE P2_04 : RETURN @"P2_04"
+  CASE P2_05 : RETURN @"P2_05"
+  CASE P2_06 : RETURN @"P2_06"
+  CASE P2_07 : RETURN @"P2_07"
+  CASE P2_08 : RETURN @"P2_08"
+  CASE P2_09 : RETURN @"P2_09"
+  CASE P2_10 : RETURN @"P2_10"
+  CASE P2_11 : RETURN @"P2_11"
+  CASE P2_17 : RETURN @"P2_17"
+  CASE P2_18 : RETURN @"P2_18"
+  CASE P2_19 : RETURN @"P2_19"
+  CASE P2_20 : RETURN @"P2_20"
+  CASE P2_22 : RETURN @"P2_22"
+  CASE P2_24 : RETURN @"P2_24"
+  CASE P2_25 : RETURN @"P2_25"
+  CASE P2_27 : RETURN @"P2_27"
+  CASE P2_28 : RETURN @"P2_28"
+  CASE P2_29 : RETURN @"P2_29"
+  CASE P2_30 : RETURN @"P2_30"
+  CASE P2_31 : RETURN @"P2_31"
+  CASE P2_32 : RETURN @"P2_32"
+  CASE P2_33 : RETURN @"P2_33"
+  CASE P2_34 : RETURN @"P2_34"
+  CASE P2_35 : RETURN @"P2_35"
+#ENDMACRO
+
+
+/'* \brief Get header pin connected to CPU ball.
+\param Ball The CPU ball number.
+\returns A string pointer (don't free it) on success (otherwise zero).
+
+This function creates a text description of the header pin connected to
+a CPU ball. The returned string is owned by this function and must not
+be freed.
+
+When the CPU ball is not connected to a header pin, this function
+returns 0 (zero).
+
+\note Since 0.6.8 also Pocket and Blue names are implemented.
+
+\since 0.2
+'/
+FUNCTION PruIo.nameBall CDECL(BYVAL Ball AS UInt8) AS ZSTRING PTR
+  SELECT CASE AS CONST BbType '                               find model
+  CASE PBB2x36
+    SELECT CASE AS CONST Ball ' 2x36 headers (Pocket)
+    POCKET_NAMES()
+    END SELECT
+  CASE BB_Blue
+    SELECT CASE AS CONST Ball ' connectors (Blue)
+    BLUE_NAMES()
+    END SELECT
+  CASE ELSE
+    SELECT CASE AS CONST Ball ' 2x46 headers (Black, Green, White)
+    BB_NAMES()
+    END SELECT
+  END SELECT
+  SELECT CASE AS CONST Ball
   CASE SD_01 : RETURN @"SD_01"
   CASE SD_02 : RETURN @"SD_02"
   CASE SD_03 : RETURN @"SD_03"

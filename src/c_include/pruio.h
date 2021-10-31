@@ -468,6 +468,16 @@ typedef struct qepMod{
 // PRUSS driver interrupt settings
 #include "pruio_intc.h"
 
+/** \brief Wrapper enumerators for board types
+
+\since 0.6.8
+*/
+enum BBTypes{
+  BBB2x46 = 0, //!< Classic Beaglebone board with 2x46 headers, JT, SD
+  PBB2x36 = 1, //!< PocketBeagle board with 2x36 headers, SD
+  BB_Blue = 2  //!< Beaglebone Blue with connectors, SD
+};
+
 /** \brief Wrapper enumerators for ::PinMuxing.
 
 \since 0.2

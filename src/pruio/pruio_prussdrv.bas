@@ -606,9 +606,9 @@ FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
   VAR x = "", m = CAST(Int16 PTR, SADD(mux))
   FOR i AS INTEGER = 0 TO PRUIO_AZ_BALL : m[i] = toffs : NEXT ' all internal
   SELECT CASE AS CONST Typ
-  CASE 1    : x = HEADERPINS_POCKET ' 2x36 headers
-  CASE 2    : x = HEADERPINS_BLUE ' single connectors
-  CASE ELSE : x = HEADERPINS_BB ' BeagleBone 2x46 headers
+  CASE PBB2x36 : x = HEADERPINS_POCKET ' 2x36 headers
+  CASE BB_Blue : x = HEADERPINS_BLUE ' single connectors
+  CASE ELSE    : x = HEADERPINS_BB ' BeagleBone 2x46 headers
   END SELECT : FOR i AS INTEGER = 0 TO LEN(x) - 1 : m[x[i]] = 0 : NEXT ' external
 ' to parse: "pin 105 (PIN105): (MUX UNCLAIMED) (GPIO UNCLAIMED)"
   VAR p = CAST(ZSTRING PTR, SADD(t) + 3) _

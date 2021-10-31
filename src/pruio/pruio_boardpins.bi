@@ -26,7 +26,8 @@ external header pins and internal CPU balls.
    CHR(E1_3, E1_4, E2_3, E2_4, E3_3, E3_4, E4_3, E4_4) _
  & CHR(UT0_3, UT0_4, UT1_3, UT1_4, UT5_3, UT5_4, DSM2_3) _
  & CHR(GP0_3, GP0_4, GP0_5, GP0_6, GP1_3, GP1_4, GP1_5, GP1_6, GPS_3, GPS_4) _
- & CHR(SPI1_3, SPI1_4, SPI1_5, SPI1_6, SPI2_6)
+ & CHR(SPI1_3, SPI1_4, SPI1_5, SPI1_6, SPI2_6) _
+ & CHR(SD_01, SD_02, SD_03, SD_05, SD_07, SD_08, SD_10)
 
 #INCLUDE ONCE "pruio_pins.bi"
 
