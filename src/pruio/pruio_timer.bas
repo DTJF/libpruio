@@ -16,8 +16,6 @@ subsystem. See classes TimerUdt and PwmUdt for details.
 #INCLUDE ONCE "pruio_timer.bi"
 ' driver header file
 #INCLUDE ONCE "pruio.bi"
-' Header file with convenience macros.
-#INCLUDE ONCE "pruio_pins.bi"
 
 '* The TIMER clock frequency.
 #DEFINE TMRSS_CLK  24e6
@@ -168,21 +166,23 @@ FUNCTION TimerUdt.setValue CDECL( _
 
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_07 : nr = 0
-    CASE P8_09 : nr = 1
-    CASE P8_10 : nr = 2
-    CASE P8_08 : nr = 3
-    CASE P9_28 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+    CASE &h24 : nr = 0 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' P8_07, GP1_5, R7 mode 2
+    CASE &h25 : nr = 3 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' P8_08, GP1_6, T7 mode 2
+    CASE &h26 : nr = 2 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' P8_10
+    CASE &h27 : nr = 1 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' P8_09
+    CASE &h5A : nr = 3 : IF ModeCheck(Ball,5) THEN ModeSet(Ball, &h0D) ' P2_27, E18 mode 5
+    CASE &h6C : nr = 0 : IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A) ' P2_31, A15 mode 2
+    CASE &h67 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) ' P9_28
       RETURN .PwmSS->cap_tim_set(2, Dur1, Dur2, Mode)
-    CASE JT_05 : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C)
+    CASE &h5D : IF ModeCheck(Ball,4) THEN ModeSet(Ball, &h0C) ' JT_05
       RETURN .PwmSS->cap_tim_set(1, Dur1, Dur2, Mode)
-    CASE P9_42 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08)
+    CASE &h59 : IF ModeCheck(Ball,0) THEN ModeSet(Ball, &h08) ' P9_42
       RETURN .PwmSS->cap_tim_set(0, Dur1, Dur2, Mode)
     CASE ELSE :                                      .Errr = E1 : RETURN E1 ' no Timer pin
     END SELECT
 
     IF 2 <> Conf(nr)->ClVa THEN                      .Errr = E0 : RETURN E0 ' TIMER not enabled
-    IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
+    'IF ModeCheck(Ball,2) THEN ModeSet(Ball, &h0A)
 
     VAR dur = Dur1 + Dur2 ' [mSec]
     WITH *Conf(nr)
@@ -263,13 +263,15 @@ FUNCTION TimerUdt.Value CDECL( _
   DIM AS Uint32 nr
   WITH *Top
     SELECT CASE AS CONST Ball
-    CASE P8_07 : nr = 0
-    CASE P8_09 : nr = 1
-    CASE P8_10 : nr = 2
-    CASE P8_08 : nr = 3
-    CASE P9_28 : RETURN IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(2, Dur1, Dur2))
-    CASE JT_05 : RETURN IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(1, Dur1, Dur2))
-    CASE P9_42 : RETURN IIF(ModeCheck(Ball,0), E2, .PwmSS->cap_tim_get(0, Dur1, Dur2))
+    CASE &h24 : nr = 0 : IF ModeCheck(Ball,2) THEN RETURN E2 ' P8_07, GP1_5, R7 mode 2
+    CASE &h25 : nr = 3 : IF ModeCheck(Ball,2) THEN RETURN E2 ' P8_08, GP1_6, T7 mode 2
+    CASE &h26 : nr = 2 : IF ModeCheck(Ball,2) THEN RETURN E2 ' P8_10
+    CASE &h27 : nr = 1 : IF ModeCheck(Ball,2) THEN RETURN E2 ' P8_09
+    CASE &h5A : nr = 3 : IF ModeCheck(Ball,5) THEN RETURN E2 ' P2_27, E18 mode 5
+    CASE &h6C : nr = 0 : IF ModeCheck(Ball,2) THEN RETURN E2 ' P2_31, A15 mode 2
+    CASE &h67 : RETURN IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(2, Dur1, Dur2)) ' P9_28
+    CASE &h5D : RETURN IIF(ModeCheck(Ball,4), E2, .PwmSS->cap_tim_get(1, Dur1, Dur2)) ' JT_05
+    CASE &h59 : RETURN IIF(ModeCheck(Ball,0), E2, .PwmSS->cap_tim_get(0, Dur1, Dur2)) ' P9_42
     CASE ELSE :                                   .Errr = E1 : RETURN E1 ' no Timer pin
     END SELECT
   END WITH
@@ -297,7 +299,7 @@ FUNCTION TimerUdt.Value CDECL( _
       *Dur2 = *Dur2 / dur * dmax
     CASE ELSE '!!! log !!!
       VAR cnt = CULNGINT(.001 * dur * TMRSS_CLK), n = cnt SHR 32
-      IF n THEN n = LOG(n)/LOG(2) : cnt = (cnt SHR n) SHL n
+      IF n THEN n = LOG(n) / LOG2 : cnt = (cnt SHR n) SHL n
       *Dur1 = 1000. * CULNGINT(*Dur1 / dur * cnt) / TMRSS_CLK
       *Dur2 = 1000. * CULNGINT(*Dur2 / dur * cnt) / TMRSS_CLK
     END SELECT

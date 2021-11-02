@@ -17,10 +17,12 @@ Compile by: `fbc -w all analyse.bas`
 
 ' include libpruio
 #INCLUDE ONCE "BBB/pruio.bi"
-' include the convenience macros for header pins
-#INCLUDE ONCE "BBB/pruio_pins.bi"
+' include board pin header
+#INCLUDE ONCE "BBB/pruio_boardpins.bi"
+'' include the convenience macros for header pins
+'#INCLUDE ONCE "BBB/pruio_pins.bi"
 ' include macros to print out register context
-#INCLUDE ONCE "BBB/pruio_out.bi"
+#INCLUDE ONCE "analyse.bi"
 
 '' Output all CPU balls or just header pins?
 '#DEFINE __ALL_BALLS__
@@ -39,18 +41,16 @@ WITH *io
 #IFDEF __ALL_BALLS__
     BALL_OUT(OUT_TYPE)
 #ELSE
-    ?"Header Pins:"
-    FOR i AS LONG = 0 TO UBOUND(P8_Pins)
-      ?"  " & *.Pin(P8_Pins(i))
+    VAR typ = "", pins = ""
+    SELECT CASE AS CONST .BbType
+    CASE PBB2x36 : typ = "Pocketbeagle 2x36" : pins = HEADERPINS_POCKET
+    CASE BB_Blue : typ = "Beaglebone Blue"   : pins = HEADERPINS_BLUE
+    CASE ELSE    : typ = "Beaglebone 2x46"   : pins = HEADERPINS_BB
+    END SELECT
+    ?"Header Pins (" & typ & "):"
+    FOR i AS LONG = 0 TO LEN(pins) - 1
+      ?"  " & *.Pin(pins[i])
     NEXT
-    FOR i AS LONG = 0 TO UBOUND(P9_Pins)
-      ?"  " & *.Pin(P9_Pins(i))
-    NEXT
-    FOR i AS LONG = 0 TO UBOUND(SD_Pins)
-      ?"  " & *.Pin(SD_Pins(i))
-    NEXT
-    ?"  " & *.Pin(JT_04)
-    ?"  " & *.Pin(JT_05)
 #ENDIF
 
     GPIO_OUT(OUT_TYPE)

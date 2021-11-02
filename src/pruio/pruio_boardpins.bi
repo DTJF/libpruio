@@ -8,6 +8,8 @@ external header pins and internal CPU balls.
 \since 0.6.4
 '/
 
+#INCLUDE ONCE "pruio_pins_sd.bi"
+
 #INCLUDE ONCE "pruio_pins_pocket.bi"
 
 '* List of header pins on Pocket BeagleBone boards

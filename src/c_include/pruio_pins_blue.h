@@ -75,18 +75,3 @@ Copyright 2014-\Year by \Email
 #define SPI1_6 0x51 // 81
 //! CPU ball number for S1.2_6 (ZCZ ball C18) spi_cs
 #define SPI2_6 0x59 //89
-
-//! CPU ball number for pin 1 on SD slot (F18)
-#define SD_01 0x3D //61
-//! CPU ball number for pin 2 on SD slot (F17)
-#define SD_02 0x3C //60
-//! CPU ball number for pin 3 on SD slot (G18)
-#define SD_03 0x41 //65
-//! CPU ball number for pin 5 on SD slot (G17)
-#define SD_05 0x40 //64
-//! CPU ball number for pin 7 on SD slot (G16)
-#define SD_07 0x3F //63
-//! CPU ball number for pin 8 on SD slot (G15)
-#define SD_08 0x3E //62
-//! CPU ball number for pin 10 on SD slot (C15)
-#define SD_10 0x58 //88

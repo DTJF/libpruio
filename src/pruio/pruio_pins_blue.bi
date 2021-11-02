@@ -9,7 +9,7 @@ number (ie pin 3 on connector E1 is named E1_3).
 \since 0.6.4
 '/
 
-'* CPU ball number for E1_3 (ZCZ ball B12) eqep0a_in
+'* CPU ball number for E1_3 (no BB pin, ZCZ ball B12) eqep0a_in
 #DEFINE E1_3   &h68 '104
 '* CPU ball number for E1_4 (ZCZ ball C13) qep
 #DEFINE E1_4   &h69 '105
@@ -39,19 +39,19 @@ number (ie pin 3 on connector E1 is named E1_3).
 #DEFINE UT5_4  &h30 '48
 '* CPU ball number for DSM2_3 (ZCZ ball T17) uart
 #DEFINE DSM2_3 &h1C '28
-'* CPU ball number for GP0_3 (ZCZ ball U16)
+'* CPU ball number for GP0_3 (no BB pin, ZCZ ball U16)
 #DEFINE GP0_3  &h19 '25
 '* CPU ball number for GP0_4 (ZCZ ball V14)
 #DEFINE GP0_4  &h11 '17
-'* CPU ball number for GP0_5 (ZCZ ball D13)
+'* CPU ball number for GP0_5 (no BB pin, ZCZ ball D13)
 #DEFINE GP0_5  &h6A '106
 '* CPU ball number for GP0_6 (ZCZ ball C12)
 #DEFINE GP0_6  &h67 '103
-'* CPU ball number for GP1_3 (ZCZ ball J15)
+'* CPU ball number for GP1_3 (no BB pin, ZCZ ball J15)
 #DEFINE GP1_3  &h44 '68
-'* CPU ball number for GP1_4 (ZCZ ball H17)
+'* CPU ball number for GP1_4 (no BB pin, ZCZ ball H17)
 #DEFINE GP1_4  &h43 '67
-'* CPU ball number for GP1_5 (ZCZ ball R7)
+'* CPU ball number for GP1_5 (no BB pin, ZCZ ball R7)
 #DEFINE GP1_5  &h24 '36
 '* CPU ball number for GP1_6 (ZCZ ball T7)
 #DEFINE GP1_6  &h25 '37
@@ -65,7 +65,7 @@ number (ie pin 3 on connector E1 is named E1_3).
 #DEFINE SPI1_4 &h65 '101
 '* CPU ball number for SPI1_5 (ZCZ ball A13) spi_sclk
 #DEFINE SPI1_5 &h64 '100
-'* CPU ball number for S1.1_6 (ZCZ ball H18) spi_cs
+'* CPU ball number for SPI1_6 (no BB pin, ZCZ ball H18) spi_cs
 #DEFINE SPI1_6 &h51 ' 81
-'* CPU ball number for S1.2_6 (ZCZ ball C18) spi_cs
+'* CPU ball number for SPI2_6 (ZCZ ball C18) spi_cs
 #DEFINE SPI2_6 &h59 '89

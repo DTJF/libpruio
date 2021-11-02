@@ -11,7 +11,10 @@ Header file for including global libpruio definitions and declarations.
 
 '* The NULL pointer
 '#DEFINE NULL CAST(ANY PTR, 0)
-#DEFINE NULL 0
+CONST AS ANY PTR NULL = 0
+
+'* Natural logarythm 2
+CONST AS DOUBLE LOG2 = LOG(2)
 
 '* The default setting for avaraging
 #DEFINE PRUIO_DEF_AVRAGE 4

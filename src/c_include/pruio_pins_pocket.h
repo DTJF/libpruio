@@ -79,11 +79,11 @@ Copyright 2014-\Year by \Email
 //! CPU ball number for pin 1 on header 2 (P9_14)
 #define P2_01 0x12 //18
 //! CPU ball number for pin 2 on header 2 (no BB pin)
-#define P2_02 0x1E //27
+#define P2_02 0x1B //27
 //! CPU ball number for pin 3 on header 2 (P8_13)
 #define P2_03 0x09 //9
 //! CPU ball number for pin 4 on header 2 (no BB pin)
-#define P2_04 0x1D //26
+#define P2_04 0x1A //26
 //! CPU ball number for pin 5 on header 2 (P9_11)
 #define P2_05 0x1C //28
 //! CPU ball number for pin 6 on header 2 (no BB pin)
@@ -122,7 +122,7 @@ Copyright 2014-\Year by \Email
 //! CPU ball number for pin 27 on header 2 (no BB pin)
 #define P2_27 0x5A //90
 //! CPU ball number for pin 28 on header 2 (P9_41)
-#define P2_28 0x6D //109
+#define P2_28 0x6A //106
 //! CPU ball number for pin 29 on header 2 (P9_42)
 #define P2_29 0x59 //89
 //! CPU ball number for pin 30 on header 2 (P9_28 mcasp0)
@@ -139,18 +139,3 @@ Copyright 2014-\Year by \Email
 #define P2_35 0x38 //56
 //! ID for analog line 7 (1V8)
 #define P2_36 no_pinmuxing_for_AIN7
-
-//! CPU ball number for pin 1 on SD slot (F18)
-#define SD_01 0x3D //61
-//! CPU ball number for pin 2 on SD slot (F17)
-#define SD_02 0x3C //60
-//! CPU ball number for pin 3 on SD slot (G18)
-#define SD_03 0x41 //65
-//! CPU ball number for pin 5 on SD slot (G17)
-#define SD_05 0x40 //64
-//! CPU ball number for pin 7 on SD slot (G16)
-#define SD_07 0x3F //63
-//! CPU ball number for pin 8 on SD slot (G15)
-#define SD_08 0x3E //62
-//! CPU ball number for pin 10 on SD slot (C15)
-#define SD_10 0x58 //88
