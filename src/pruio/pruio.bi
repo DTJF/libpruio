@@ -36,7 +36,6 @@ different components together and provides all declarations.
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 
 
-
 /'* \brief Enumerators for board types
 
 \since 0.6.8
