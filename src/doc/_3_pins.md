@@ -53,6 +53,7 @@ sorted in any order). Here's a table of the pin headers:
 | White, Green, Black | 2x46 headers | src/pruio/pruio_pins.bi        | src/c_include/pruio_pins.h        |
 | PocketBeagle        | 2x36 headers | src/pruio/pruio_pins_pocket.bi | src/c_include/pruio_pins_pocket.h |
 | Blue                | indiv. conn. | src/pruio/pruio_pins_blue.bi   | src/c_include/pruio_pins_blue.h   |
+| ALL Boards          | SD card slot | src/pruio/pruio_pins_sd.bi     | src/c_include/pruio_pins_sd.h     |
 
 For Python programming language all pin defines are included in the
 binding file `src/python/libpruio/pruio.py`.
@@ -71,8 +72,9 @@ manual) shipped with your board.
       similar PocketBeagle board specification.
 
 \note Some header pins (`P9_41` and `P9_42`) are connected to two CPU
-      balls. Both CPU balls must not be set in contrary output states,
-      in order to avoid hardware damages.
+	  balls. Both CPU balls must not be set in contrary output states,
+	  in order to avoid hardware damages. \Proj handles that internaly,
+	  the later configuration overrides the previous.
 
 In the first part this chapter explains the different features
 available on the header pins, and serves detailed information about the
@@ -116,11 +118,12 @@ ADC input, \Proj can encode to different bit formats. The default
 encoding is 16 bit. This means the maximum input of 1V8 gets measured
 as 65520 (= 4095 * 16).
 
-\Proj offers full control over the ADC subsystem configuration. Up to
+\Proj provides full control over the ADC subsystem configuration. Up to
 16 ADC steps can get configured to switch the required input line,
 specify individual delay values and maybe apply avaraging. The ADC
 subsystem supports analog input up to a frequency of 200 kHz. This
-works for up to eight steps. The maximum frequency shrinks when
+works for up to eight steps. The maximum frequency for an input line
+shrinks when
 
 - avaraging of the samples gets applied, or
 - more than eight steps are active, or

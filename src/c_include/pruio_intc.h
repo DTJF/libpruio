@@ -1,4 +1,4 @@
-/* * \ file pruio_intc.h
+/*! \file pruio_intc.h
 \brief C header file for interrupt controller defines.
 
 Header file containing the defines and data types used for the

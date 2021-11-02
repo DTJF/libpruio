@@ -1,4 +1,4 @@
-/* * \ file pruio_pins_sd.h
+/*! \file pruio_pins_sd.h
 \brief Pre-defined macros to handle the SD card slot connectors.
 
 This file contains macros to easy handle the connector pins of

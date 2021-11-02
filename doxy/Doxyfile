@@ -38,7 +38,7 @@ PROJECT_NAME           = libpruio
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 0.4.0
+PROJECT_NUMBER         = 0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -802,7 +802,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = ../src/pruio/pasm_init.bi \
                          ../src/pruio/pasm_run.bi \
-                         ../src/c_include \
+                         ../src/c_include/pruio.hp \
                          ../src/python/libpruio \
                          ../src/kernel \
                          ../src/test

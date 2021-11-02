@@ -1,4 +1,4 @@
-/* * \ file pruio_pins_blue.bi
+/*! \file pruio_pins_blue.h
 \brief Pre-defined macros to handle the BeagleBone Blue connectors.
 
 This file contains macros to easy handle the connector pins of

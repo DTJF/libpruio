@@ -1,4 +1,4 @@
-/** \ file pruio.h
+/*! \file pruio.h
 \brief The main header code of the C wrapper for libpruio.
 
 This file provides the declarations of macros, types and classes in C

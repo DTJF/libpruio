@@ -1,4 +1,4 @@
-/* ! \ file pruio_prussdrv.h
+/*! \file pruio_prussdrv.h
 \brief Header file for kernel drivers.
 
 The header contains declarations to bind the user space part of the
@@ -32,6 +32,7 @@ char* prussdrv_pru_resume(uint32 prunum);
 int32 prussdrv_pru_disable(uint32 prunum);
 //! See prussdrv_pru_enable(BYVAL_AS_UInt32 PruId, BYVAL_AS_UInt32 PCnt)
 int32 prussdrv_pru_enable(uint32 prunum, uint32 pcnt);
+//! Macro for variadic parameter list
 #define prussdrv_pru_enable(N) prussdrv_pru_enable(N, 0)
 //! See prussdrv_pru_write_memory(BYVAL_AS_UInt32 RamId, BYVAL_AS_UInt32 Offs, BYVAL_AS_CONST_UInt32_PTR Dat, BYVAL_AS_UInt32 Size)
 int32 prussdrv_pru_write_memory(uint32 pru_ram_id,

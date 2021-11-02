@@ -19,8 +19,6 @@ Compile by: `fbc -w all analyse.bas`
 #INCLUDE ONCE "BBB/pruio.bi"
 ' include board pin header
 #INCLUDE ONCE "BBB/pruio_boardpins.bi"
-' include macros to print out register context
-#INCLUDE ONCE "analyse.bi"
 
 '' Output all CPU balls or just subset of header pins?
 '#DEFINE __ALL_BALLS__
@@ -249,7 +247,8 @@ WITH *io
 #IFDEF __ALL_BALLS__
     BALL_OUT(OUT_TYPE)
 #ELSE
-    VAR typ = "", pins = ""
+    VAR typ = "" _ '*< Board type
+     , pins = ""   '*< Array of board specific ball numbers
     SELECT CASE AS CONST .BbType
     CASE PBB2x36 : typ = "Pocketbeagle 2x36" : pins = HEADERPINS_POCKET
     CASE BB_Blue : typ = "Beaglebone Blue"   : pins = HEADERPINS_BLUE
