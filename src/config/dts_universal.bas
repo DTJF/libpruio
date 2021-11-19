@@ -101,7 +101,7 @@ Licence: GPLv3, Copyright 2014-\Year by \Mail
 '* The folder where to place the compiled overlay binary.
 VAR TARG_PATH = "/lib/firmware/"
 '* The BB model.
-VAR COMPATIBL = ""
+VAR COMPATIBL = "ti,beaglebone-black"
 
 ' quick & dirty: first create settings for all pins ...
 #INCLUDE ONCE "P8.bi"

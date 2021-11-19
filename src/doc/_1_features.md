@@ -38,29 +38,30 @@ to the methods provided by the kernel. Its features in short
 - trigger on analog (single or all) or digital (GPIO) lines
 - perform a pre-trigger that starts measurement before the trigger event happens
 
-It's designed for BeagleBone boards
+It's designed for BeagleBone boards with a type of \cpu
 
-- with 2x46 headers (White, Gree, Black)
+- with 2x46 headers (White, Green, Black)
 - with 3x36 headers (Pocket)
 - with individual connectors (Blue)
 
-and runs on all kernel versions above 3.8 (including 4.x).
+and runs on all kernel versions above 3.8 (including 4.x, 5.x).
 
 
 # PRUSS # {#SecPruss}
 
-The \cpu on Beaglebone hardware contains two PRU subsystems.
-\Proj runs software on the host system (ARM) and on a Programable
-Realtime Unit SubSystem (PRUSS), either on PRU-0 or PRU-1 (the later is
-the default). Due to the PRU support the load on the ARM is very low,
-even complex controllers can operate at reasonable speed. The second
-PRU is free for a custom controller working in real-time, and using
+The \cpu on Beaglebone hardware contains beside the main ARMv7
+processor also two PRU subsystems. \Proj runs software on the host
+system (ARM) and in parallel on a Programable Realtime Unit SubSystem
+(PRUSS), either on PRU-0 or PRU-1 (the later is the default). Due to
+the PRU support the work load on the ARM is very low. Even complex
+controllers can operate at reasonable speed. The second PRU is free for
+any custom firmware, ie. a controller working in real-time, and using
 \Proj measurement configuration and data.
 
 
 # Operation # {#SecOperation}
 
-\Proj controls the \cpu subsystems
+\Proj controls the following subsystems on the \cpu
 
 - TSC_ADCSS (Touch Screen Controler and Analog to Digital Converter
   SubSystem)
@@ -72,16 +73,16 @@ PRU is free for a custom controller working in real-time, and using
 
 - TIMERSS (4x Timer and PWM features)
 
-Therefor the application executes a sequence of these three steps
+Therefor the user application (ARM) executes a sequence of these three steps
 
--# Create a PruIo structure, read initial configuration (constructor
-   PruIo::PruIo() ).
+-# Create a PruIo structure, read initial subsystems registers
+   configuration (constructor PruIo::PruIo() ).
 
--# Upload customize configuration to the subsystem registers (function
-   PruIo::config() ) and start operation (possibly by functions
-   PruIo::rb_start() or PruIo::mm_start() ).
+-# Upload customized configuration to the subsystems registers (function
+   PruIo::config() ) and start the main loop operations (possibly by
+   functions PruIo::rb_start() or PruIo::mm_start() ).
 
--# When done, restore original register configuration and destroy the
+-# Finally, restore original register configuration and destroy the
    PruIo structure (destructor PruIo::~PruIo() ).
 
 \note Create and use just one PruIo structure at a time.
@@ -101,7 +102,7 @@ lines can get done by adapting the subsystem registers before step 2.
 # Run Modes # {#SecModi}
 
 \Proj supports three run modes. They differ in the priority of the
-timing of the ADC subsystem restarts:
+timing of the ADC subsystem (restarts of the sequencer):
 
 -# IO mode (inaccurate ADC timing): the PRU is running in an endless
    loop and handles input and output lines of all subsystems at the
@@ -128,7 +129,7 @@ PruIo::config()
   PruIo::rb_start(), running endless.
 
 - `Samp > 1` for MM mode, starting by a call to function
-  PruIo::mm_start(), stoping after measurement is done.
+  PruIo::mm_start(), stopping after a single measurement is done.
 
 To stop an endless mode (IO or RB) call function PruIo::config() again.
 Or destroy the \Proj structure when done by calling the destructor
@@ -390,8 +391,8 @@ function PruIo::config() can change a subsystem state.
 
 # Overlays # {#SecOverlays}
 
-The \Proj package contains tools to create, compile and install
-device tree overlays in folder src/config.
+The \Proj package contains in folder src/config tools to create,
+compile and install device tree overlays.
 
 - Either an overlay with fixed pin configuration. This overlay type
   configures the pins to a certain state before the \Proj code gets
@@ -402,7 +403,8 @@ device tree overlays in folder src/config.
   changed when the \Proj code is running. The later needs admin
   privileges.
 
-For a customized overlay adapt the source code, compile and execute it:
+In order to create a customized overlay adapt the source code, compile
+and execute it:
 
 - Use dts_custom.bas for overlays with fixed pinmuxing, or
 
