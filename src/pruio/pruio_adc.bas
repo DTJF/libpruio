@@ -243,14 +243,20 @@ END FUNCTION
 
 /'* \brief Create a trigger configuration for a digital trigger (GPIO).
 \param Ball The CPU ball number to test.
-\param GpioV The state to check (defaults to high = 1).
+\param GpioV The state to check (defaults to low = 0).
 \param Skip The number of samples to skip (defaults to 0 = zero, max. 1023).
 \returns The trigger configuration (or zero in case of an error, check PruIo::Errr).
 
 This function is used to create a configuration for a digital (= GPIO)
 trigger. Pass the returned value as parameter to function
 PruIo::mm_start(). The measurement (or the next trigger) will start
-when the specified GPIO gets in to the declared state.
+when the specified GPIO gets in to the declared state. Ie using the
+default setting, the GPIO can get pulled up by an internal resistor and
+the measurement starts when the pin is grounded by a button.
+
+\note When the pin is in the declared at the time of the
+      PruIo::mm_start() function call, the measurement starts
+      immediatelly.
 
 The parameter Skip can be used to hold up the start for a certain
 time (previously defined by the Tmr parameter in the last call to
@@ -260,10 +266,10 @@ This trigger is a fast trigger. The ADC subsystem is waiting in idle
 mode while the GPIO gets checked.
 
 \note When the CPU ball number (parameter `Ball`) is on a GPIO
-       subsystem that is not enabled, an error gets reported (return
-       value = zero). When you switch off the subsystem after creating
-       the trigger specification, the trigger has no effect (it gets
-       skipped).
+      subsystem that is not enabled, an error gets reported (return
+      value = zero). When you switch off the subsystem after creating
+      the trigger specification, the trigger has no effect (it gets
+      skipped).
 
 Wrapper function (C or Python): pruio_adc_mm_trg_pin().
 
@@ -278,10 +284,11 @@ FUNCTION AdcUdt.mm_trg_pin CDECL( _
     IF 2 <> Conf->ClVa THEN                        .Errr = E5 : RETURN 0 ' ADC not enabled
     IF Skip > 1023 THEN                            .Errr = E2 : RETURN 0 'too much values 2 skip
     BallCheck(" trigger", 0)
-    VAR g = .BallGpio(Ball) _ ' resulting GPIO (index and bit number)
-      , i = g SHR 5           ' index of GPIO
+    'VAR g = .BallGpio(Ball) _ ' resulting GPIO (index and bit number)
+      ', i = g SHR 5           ' index of GPIO
 
-    IF 2 <> .Gpio->Conf(i)->ClVa THEN _
+    'IF 2 <> .Gpio->Conf(i)->ClVa THEN _
+    IF 2 <> .Gpio->Conf(.BallGpio(Ball) SHR 5)->ClVa THEN _
                         .Errr = @"GPIO subsystem not enabled" : RETURN 0
     IF 7 <> (.BallConf[Ball] AND &b111) THEN _
                  .Errr = @"pin must be in GPIO mode (mode 7)" : RETURN 0
@@ -373,12 +380,12 @@ FUNCTION AdcUdt.mm_trg_ain CDECL( _
   VAR v = ABS(AdcV) SHR LslMode
   IF v < &hF THEN v = &hF ELSE IF v > &hFF0 THEN v = &hFF0
 
-  DIM AS UInt32 r =  (Skip SHL 22) _  ' number of samples to skip
-        +               (v SHL 8) _   ' sample AdcV to check
-        + IIF(AdcV < 0,  1 SHL 7, 0)  ' negative bit
-  IF 0 = Stp THEN  r += (1 SHL 5) _   ' all step bit,
-              ELSE r +=  Stp - 1 _    ' or step number
-        +      IIF(Rela, 1 SHL 6, 0)  ' and relative bit
+  DIM AS UInt32 r =  (Skip SHL 22) _ ' number of samples to skip
+        +               (v SHL 8) _  ' sample AdcV to check
+        + IIF(AdcV < 0,  1 SHL 7, 0) ' negative bit
+  IF 0 = Stp THEN r += (1 SHL 5) _   ' all step bit,
+             ELSE r += Stp - 1 _     ' or step number
+                     + IIF(Rela, 1 SHL 6, 0)  ' and relative bit
   RETURN r
 END FUNCTION
 

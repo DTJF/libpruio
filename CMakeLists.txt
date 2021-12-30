@@ -13,7 +13,7 @@ SET(PROJ_WEBS "https://github.com/DTJF/libpruio" CACHE STRING "project website" 
 SET(PROJ_LICE "LGPLv2.1" CACHE STRING "project licence" FORCE)
 #STRING(TIMESTAMP tmp "%Y" UTC) # requires CMake 2.8.11
 #SET(PROJ_YEAR "${tmp}"             CACHE STRING "project year" FORCE)
-SET(PROJ_YEAR "2021"   CACHE STRING "project year" FORCE)
+SET(PROJ_YEAR "2022"   CACHE STRING "project year" FORCE)
 
 PROJECT(${PROJ_NAME} Fbc C)
 

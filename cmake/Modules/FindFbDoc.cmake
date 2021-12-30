@@ -7,7 +7,7 @@
 #   FbDoc_WORKS          = Was fbdoc found or not?
 #   FbDoc_VERSION        = The version reported by fbdoc --version
 #
-# Copyright (C) 2014-2021, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
+# Copyright (C) 2014-2022, Thomas{ dOt ]Freiherr[ aT ]gmx[ DoT }net
 # License GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.html)
 #
 # See ReadMe.md for details.
