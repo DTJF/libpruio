@@ -839,7 +839,8 @@ FUNCTION PruIo.mm_start CDECL( _
     STATIC AS UInt32 tmin = (1 SHL 22), t_pin
     DRam[3] = 0
 
-#DEFINE PRUIO_PRE_TRIG(_T_) Trg##_T_ >= tmin ANDALSO (Trg##_T_ AND (1 SHL 4)) THEN : _
+'#DEFINE PRUIO_PRE_TRIG(_T_) Trg##_T_ >= tmin ANDALSO (Trg##_T_ AND (1 SHL 4)) THEN : _
+#DEFINE PRUIO_PRE_TRIG(_T_) Trg##_T_ >= tmin ANDALSO (Trg##_T_ AND (&b10000)) THEN : _
   IF BIT(Trg##_T_, 5) ORELSE BIT(Adc->Conf->STEPENABLE, (Trg##_T_ AND &b1111) + 1) THEN : _
     VAR n = (Trg##_T_ SHR 22) * Adc->ChAz : _
     IF n < Adc->Samples THEN : DRam[3] = n SHL 1 : _

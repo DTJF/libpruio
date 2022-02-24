@@ -1,7 +1,7 @@
 // \file pruio__run.p
 // \brief Source code for exit instructions, restore subsystem configurations.
 // Licence: LGPLv2 (http://www.gnu.org/licenses/lgpl-2.0.html)
-// Copyright 2014-2021 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
+// Copyright 2014-2022 by Thomas{ dOt ]Freiherr[ At ]gmx[ DoT }net
 
 //  compile for .bi output (replace -f by -y for older pasm versions <0.87)
 //    pasm -V3 -f -CPru_Run pasm_run.p

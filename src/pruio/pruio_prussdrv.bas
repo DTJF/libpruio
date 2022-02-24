@@ -373,8 +373,10 @@ END FUNCTION
 The function initializes and enables the PRU interrupt controller. The
 input is a structure of arrays that determine which system events are
 enabled and how each is mapped to a host event. This structure is
-defined in PruIo::IntcInit in file `src/pruio/pruio.bi`. Currently a
-custom configuration must get compiled in the binary.
+pre-defined as a member variable PruIo::IntcInit in header file
+`src/pruio/pruio.bi`. Experts can adapted the default arrays to meet
+custom needs before the CTOR PruIo::PruIo() call, but note that wrong
+settings can cause serious malfunctions.
 
 \since 0.6
 '/
@@ -405,9 +407,9 @@ FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL DatIni 
     i = 0
     WHILE (DatIni->channel_to_host_map(i).channel <> -1) ANDALSO _
           (DatIni->channel_to_host_map(i).host <> -1)
-      __prussintc_set_hmr(intc, _
-                          DatIni->channel_to_host_map(i).channel, _
-                          DatIni->channel_to_host_map(i).host)
+      __prussintc_set_hmr(intc _
+                        , DatIni->channel_to_host_map(i).channel _
+                        , DatIni->channel_to_host_map(i).host)
       i += 1
     WEND
 
@@ -434,7 +436,7 @@ FUNCTION prussdrv_pruintc_init CDECL ALIAS "prussdrv_pruintc_init"(BYVAL DatIni 
     NEXT
 
     intc[PRU_INTC_GER_REG SHR 2] = &h1
-    memcpy( @.intc_data, CAST(ANY PTR, DatIni), SIZEOF(.intc_data) )
+    memcpy(@.intc_data, CAST(ANY PTR, DatIni), SIZEOF(.intc_data))
   END WITH : RETURN 0
 END FUNCTION
 
