@@ -81,7 +81,7 @@ ALIASES += \"Mail=${PROJ_MAIL}\" \\
     SET(lfn ${CMAKE_CURRENT_BINARY_DIR}/fbdoc.lfn)
     LIST(APPEND ARG_DEPENDS ${lfn})
     ADD_CUSTOM_COMMAND(OUTPUT ${lfn}
-      COMMAND ${FbDoc_EXECUTABLE} -l -L ${lfn} ${ARG_DOXYFILE}
+      COMMAND ${FbDoc_EXECUTABLE} -l -L ${lfn} ${doxyext}
       DEPENDS ${ARG_BAS_SRC}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       )

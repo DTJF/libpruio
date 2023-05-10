@@ -159,6 +159,16 @@ FUNCTION pruio_gpio_setValue CDECL ALIAS "pruio_gpio_setValue"( _
 END FUNCTION
 '&*/
 
+'* \brief Wrapper function for GpioUdt::flush().
+'&char* pruio_gpio_setValue(pruIo* Io, uint8 Indx);/*
+FUNCTION pruio_gpio_flush CDECL ALIAS "pruio_gpio_flush"( _
+    BYVAL Io AS PruIo PTR _
+  , BYVAL Indx AS UInt8) AS ZSTRING PTR EXPORT
+
+  RETURN Io->Gpio->flush(Indx)
+END FUNCTION
+'&*/
+
 '* \brief Wrapper function for GpioUdt::Value().
 '&uint32 pruio_gpio_Value(pruIo* Io, uint8 Ball);/*
 FUNCTION pruio_gpio_Value CDECL ALIAS "pruio_gpio_Value"( _

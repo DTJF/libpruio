@@ -257,35 +257,8 @@ TYPE PruIo
   ,  40,  41,  42,  43,  12,   13,  14,  15, 101, 102 _ ' 90
   , 110, 111, 112, 113, 114,  115, 116, 117,  19,  20}
 
-  '* interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel)
-  AS tpruss_intc_initdata IntcInit = _
-    TYPE<tpruss_intc_initdata>( _
-      { PRU0_PRU1_INTERRUPT _
-      , PRU1_PRU0_INTERRUPT _
-      , PRU0_ARM_INTERRUPT _
-      , PRU1_ARM_INTERRUPT _
-      , ARM_PRU0_INTERRUPT _
-      , ARM_PRU1_INTERRUPT _
-      , PRUIO_IRPT _
-      , CAST(BYTE, -1) }, _
-      { TYPE<tsysevt_to_channel_map>(PRU0_PRU1_INTERRUPT, CHANNEL1) _
-      , TYPE<tsysevt_to_channel_map>(PRU1_PRU0_INTERRUPT, CHANNEL0) _
-      , TYPE<tsysevt_to_channel_map>(PRU0_ARM_INTERRUPT, CHANNEL2) _
-      , TYPE<tsysevt_to_channel_map>(PRU1_ARM_INTERRUPT, CHANNEL3) _
-      , TYPE<tsysevt_to_channel_map>(ARM_PRU0_INTERRUPT, CHANNEL0) _
-      , TYPE<tsysevt_to_channel_map>(ARM_PRU1_INTERRUPT, CHANNEL1) _
-      , TYPE<tsysevt_to_channel_map>(PRUIO_IRPT, PRUIO_CHAN) _
-      , TYPE<tsysevt_to_channel_map>(-1, -1)}, _
-      { TYPE<tchannel_to_host_map>(CHANNEL0, PRU0) _
-      , TYPE<tchannel_to_host_map>(CHANNEL1, PRU1) _
-      , TYPE<tchannel_to_host_map>(CHANNEL2, PRU_EVTOUT0) _
-      , TYPE<tchannel_to_host_map>(CHANNEL3, PRU_EVTOUT1) _
-      , TYPE<tchannel_to_host_map>(PRUIO_CHAN, PRUIO_EMAP) _
-      , TYPE<tchannel_to_host_map>(-1, -1) }, _
-      (PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR _
-       PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK OR PRUIO_MASK) _
-      )
-
+  '* interrupt settings
+  AS tpruss_intc_initdata PTR IntcInit = @DEF_INTC_INIT
   AS UInt32 WaitCycles '*< Counter: ARM waiting for PRU
 
   DECLARE CONSTRUCTOR( _

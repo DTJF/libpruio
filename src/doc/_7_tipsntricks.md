@@ -118,8 +118,8 @@ the quality of the prototype controller loop increases a lot.
 since every GPIO pin can get handled that way. The registers get
 accessed over L3 port with a latency of at least 3 cycles. For fast
 access some GPIOs are connected directly to the PRU registers R30
-(output) and R31 (input). They operate fast with low latency (one
-cycle).
+(output) and R31 (input). They operate fast with low latency (constant
+one cycle).
 
 On Beaglebone boards (2x46 headers) custom firmware can use all fast
 GPIOs on both PRUSS, when both, the JT header and the SD card slot, are
@@ -149,6 +149,29 @@ the fast GPIO pins for both PRUSS:
 
 \note The `BAxxx` entries are the ball numbers of the double pins on
       header connectors P9_41 and P9_42. The JT pins are unidirectional.
+
+
+# PRU fast GPIO 16 bit # {#SecPruDigio}
+
+In addition to the [fast GPIO lines](SecPruGpio) both PRUSS can access
+the DIGIO block in the PRU-IEP module. That 8 digital lines get
+controled by DATA_IN/DATA_OUT registers, resulting in a latency of two
+cycles. Here's a table of the DIGIO pins:
+
+| Bit# | In/Out       |
+| :--: | :----------- |
+|   0  | P9_18        |
+|   1  | P9_17        |
+|   2  | P8_27        |
+|   3  | P8_29        |
+|   4  | P8_28        |
+|   5  | P8_30        |
+|   6  | P8_24, P8_39 |
+|   7  | P8_20, P8_40 |
+
+\note In the enhanced PRU_ICSSG the DIGIO block got a further register
+      named PRUSS_IEP_DIGIO_DATA_OUT_EN, which makes it possible to
+      operate the lines in floating mode (= either output or input).
 
 
 # Auto Starting an Application # {#SecAutoStart}

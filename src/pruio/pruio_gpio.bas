@@ -185,6 +185,42 @@ SUB GpioUdt.setGpioSs()
 END SUB
 
 
+/'* \brief Flush all output lines at a GPIO subsystem
+\param Indx The subsystem index [0-3]
+\returns Zero on success (otherwise a pointer to an error message).
+
+Transfer new data to the GPIO subsystem registers
+
+* OE (OutputEnable),
+* SETDATAOUT and
+* CLEARDATAOUT,
+
+in order to set multiple output lines in a single step (no latency
+between the output transitions). First, modify the related member
+variables in the array PruIo::Gpio::Conf(Indx) and then flush those
+values to the hardware.
+
+\note This function is designed to be used when the main loop is
+running (after the call to PruIo::config() ).
+
+\since 0.6.8
+'/
+FUNCTION GpioUdt.flush CDECL(BYVAL Indx AS UInt8) AS ZSTRING PTR
+  WITH *Top
+    IF 2 <> Conf(Indx)->ClVa                    THEN .Errr = E0 : RETURN .Errr ' GPIO subsystem not enabled
+    IF .DRam[0] > PRUIO_MSG_IO_OK _
+                          THEN .Errr = @"main loop not running" : RETURN .Errr
+
+    PruReady(1) ' wait, if PRU is busy (should never happen)
+    .DRam[5] = Conf(Indx)->OE
+    .DRam[4] = Conf(Indx)->SETDATAOUT
+    .DRam[3] = Conf(Indx)->CLEARDATAOUT
+    .DRam[2] = Conf(Indx)->DeAd + &h100
+    .DRam[1] = PRUIO_COM_GPIO_CONF SHL 24
+  END WITH : RETURN 0
+END FUNCTION
+
+
 /'* \brief Set the state of a GPIO.
 \param Ball The CPU ball number to test.
 \param Mo The state to set (0 = low, high otherwise).

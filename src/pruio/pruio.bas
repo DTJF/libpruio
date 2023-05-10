@@ -197,7 +197,7 @@ CONSTRUCTOR PruIo( _
        PruNo = PRU0
   END IF
   IF prussdrv_open(PRUIO_EVNT) THEN _  '              open PRU Interrupt
-            Errr = @"failed opening prussdrv library" : EXIT CONSTRUCTOR
+                  Errr = @"failed opening PRUIO_EVNT" : EXIT CONSTRUCTOR
 
   prussdrv_map_prumem(PruDRam, CAST(ANY PTR, @DRam))
   prussdrv_map_extmem(@ERam)
@@ -227,7 +227,7 @@ CONSTRUCTOR PruIo( _
   VAR l = ArrayBytes(Pru_Init)
   IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Init(0), l) THEN _
        Errr = @"failed loading Pru_Init instructions" : EXIT CONSTRUCTOR
-  prussdrv_pruintc_init(@IntcInit) '          get interrupts initialized
+  prussdrv_pruintc_init(IntcInit) '          get interrupts initialized
   prussdrv_pru_enable(PruNo)
 
   Pwm = NEW PwmMod(@THIS)
@@ -308,7 +308,7 @@ DESTRUCTOR PruIo()
       IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Run(0), l) THEN
                           Errr = @"failed loading Pru_Exit instructions"
       ELSE
-        prussdrv_pruintc_init(@IntcInit) '     get interrupt initialized
+        prussdrv_pruintc_init(IntcInit) '     get interrupt initialized
         prussdrv_pru_enable(PruNo)
         prussdrv_pru_wait_event(PRUIO_EVNT)
         IF DRam[0] <> PRUIO_MSG_CONF_OK THEN _
@@ -463,7 +463,7 @@ FUNCTION PruIo.config CDECL( _
   VAR l = ArrayBytes(Pru_Run)
   IF 0 >= prussdrv_pru_write_memory(PruIRam, 0, @Pru_Run(0), l) THEN _
                   Errr = @"failed loading Pru_Run instructions" : RETURN Errr
-  prussdrv_pruintc_init(@IntcInit) '           get interrupt initialized
+  prussdrv_pruintc_init(IntcInit) '           get interrupt initialized
   prussdrv_pru_enable(PruNo)
   prussdrv_pru_wait_event(PRUIO_EVNT)
   SELECT CASE AS CONST Samp
@@ -635,6 +635,7 @@ ball number on the Beaglebone Blue, if any.
 #MACRO BLUE_NAMES()
   CASE E1_3   : RETURN @"E1_3"
   CASE E1_4   : RETURN @"E1_4"
+  CASE E2_3   : RETURN @"E2_3"
   CASE E2_4   : RETURN @"E2_4"
   CASE E3_3   : RETURN @"E3_3"
   CASE E3_4   : RETURN @"E3_4"

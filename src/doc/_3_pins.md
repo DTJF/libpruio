@@ -211,17 +211,18 @@ constructor PruIo::PruIo() )
 \note Some pins are used to control the boot sequence and mustn't be
       connected at boot-time.
 
+\note Do not load any output pin by more than 6 mA!
+
 
 ## GPIO ## {#sSecGpio}
 
-GPIO stands for General Purpose Input or Output. In output mode the
-program can switch any connected hardware on or off. In input mode the
-program can detect the state of any connected hardware. \Proj can
-configure and use any digital header pin in one of the following five
-GPIO modes. (Therefor the universal device tree overlay
-`libpruio-00A0.dtbo` has to be loaded and the program has to be
-executed with admin privileges.) Find details on GPIO hardware in
-\ArmRef{25}.
+GPIO means General Purpose Input or Output. In output mode the program
+can switch any connected hardware on or off (high=3V3, low=0V). In
+input mode the program can detect the state of any connected hardware
+(high>1V8, low<0V8). \Proj can configure and use any digital header pin
+in one of the following five GPIO modes. (Therefor a pinmixing feature
+has to get activated, find details in section \ref SecPinmuxing.) Find
+details on GPIO hardware in \ArmRef{25}.
 
 | PinMuxing Enumerator | Function                         | GpioUdt::Value() |
 | -------------------: | :------------------------------: | :--------------- |
@@ -236,19 +237,37 @@ none of them. Those resistors (about 10 k) are incorporated in the CPU.
 In contrast, output pins get always configured with no CPU resistor
 connection by \Proj (to minimize power consumption). So the first two
 modes (PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
-Those modes are predefined in the universal overlay
-`libpruio-00A0.dtbo` for each claimed header pin.
 
 In order to set a GPIO output just set its state by calling function
 Gpio::setValue() (after calling the constructor PruIo::PruIo() ). When
 you do this after the call to PruIo::config(), the state will change
 immediately. Otherwise it changes after the PruIo::config() call.
 
-In order to get a GPIO input configure the pin first by
-calling function GpioUdt::config() (after calling the constructor
-PruIo::PruIo() and before the call to PruIo::config()). Then check its
-state by calling function GpioUdt::Value() (after the call to
-PruIo::config() ).
+In order to configure a GPIO to input mode first call function
+GpioUdt::config() (after calling the constructor PruIo::PruIo() and
+before the call to PruIo::config()). Later (when main loop is running =
+after the call to PruIo::config() ) check its state by calling function
+GpioUdt::Value().
+
+\Proj can switch multiple output lines in a single step without any
+latency between the line transitions. Therefor all related pins have to
+be controlled by the same GPIO subsystems. See function Gpio::flush()
+for details. The following table shows the pin groups for the subsystems
+
+| Subsystem | Pins |
+| --------: | :--- |
+|    GPIO-0 | P8_13, P8_14, P8_17, P8_19, P8_31, P8_32, P8_33, P8_35, P9_11, P9_13, P9_17, P9_18, P9_19, P9_20, P9_21, P9_22, P9_24, P9_26, P9_41, P9_42, SD_10 |
+|           | P1_06, P1_08, P1_10, P1_12, P1_20, P1_26, P1_28, P1_34, P2_03, P2_05, P2_07, P2_09, P2_11, P2_19, P2_29, P2_31, SD_10 |
+|           | E2_3, E2_4, UT1_3, UT1_4, DSM2_3, GPS_3, GPS_4, SPI1_6, SPI2_6, SD_10 |
+|    GPIO-1 | P8_03, P8_04, P8_05, P8_06, P8_11, P8_12, P8_15, P8_16, P8_20, P8_21, P8_22, P8_23, P8_24, P8_25, P8_26, P9_12, P9_14, P9_15, P9_16, P9_23, JT_04, JT_05 |
+|           | P1_30, P1_32, P2_01, P2_02, P2_04, P2_06, P2_08, P2_10, P2_18, P2_22, P2_24, P2_25, P2_27, P2_33 |
+|           | E3_3, E3_4, E4_3, E4_4, UT0_3, UT0_4, GP0_3, GP0_4 |
+|    GPIO-2 | P8_07, P8_08, P8_09, P8_10, P8_18, P8_27, P8_28, P8_29, P8_30, P8_34, P8_36, P8_37, P8_38, P8_39, P8_40, P8_41, P8_42, P8_43, P8_44, P8_45, P8_46, SD_01, SD_02, SD_03, SD_05, SD_07, SD_08 |
+|           | P1_02, P1_04, P1_35, P2_17, P2_20, P2_35, SD_01, SD_02, SD_03, SD_05, SD_07, SD_08 |
+|           | UT5_3, UT5_4, GP1_5, GP1_6, SD_01, SD_02, SD_03, SD_05, SD_07, SD_08 |
+|    GPIO-3 | P9_25, P9_27, P9_28, P9_29, P9_30, P9_31, P9_41, P9_42 |
+|           | P1_29, P1_31, P1_33, P1_36, P2_28, P2_30, P2_32, P2_34 |
+|           | E1_3, E1_4, GP0_5, GP0_6, GP1_3, GP1_4, SPI1_3, SPI1_4, SPI1_5 |
 
 Find example code in button.bas (input) or sos.bas and stepper.bas
 (output).
@@ -296,7 +315,7 @@ The TIMER and PWMSS-CAP subsystems use a 32 bit counter and generate a
 single pulse train. The signal goes high at the beginning of the period
 and low when the compare value is reached. In the TIMER subsystems the
 counter clock can get pre-scaled, so very long periods (low
-frequencies) are possible. The maximum is ??? days.
+frequencies) are possible. The maximum is 1.06 days.
 
 In contrast the PWMSS-PWM subsystems use a 16 bit counter with 17 bit
 duty resolution in up-down mode. The frequency range can get extended
@@ -323,14 +342,16 @@ the configurations for the Action Qualifiers.
 |   2   |  0-2  | Subsystem                                                                      |
 |   3   |  0-2  | Usecase (0 = up count, 1 = up count up-down mode, 2 = down count up-down mode) |
 
-Additionally the PWMSS-PWM modules can get synchronized. ???
+Additionally the PWMSS-PWM modules can get synchronized by sending
+trigger signals from one module to another. Find details in \ArmRef{15}.
 
 The output gets specified by calling function PwmMod::setValue(). Since
 the output frequency may vary from the specified parameters due to
 resolution issues, the real values can get computed by calling function
 PwmMod::Value().
 
-Find example code in pwm_adc.bas or pwm_cap.bas.
+Find example code in pwm_adc.bas or pwm_cap.bas, and the signal
+geneartor in qep.
 
 
 ## TIMER ## {#sSecTimer}

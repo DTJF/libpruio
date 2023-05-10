@@ -25,15 +25,13 @@ ADD_CUSTOM_TARGET(rem_bbb_dir
   COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/src/examples/BBB
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/examples)
 
-## Generate an essential configuration
-#SET(doxy_base "${CMAKE_CURRENT_BINARY_DIR}/Doxy.base")
-#ADD_CUSTOM_COMMAND(OUTPUT ${doxy_base}
-  #COMMAND ln -s Doxyfile ${doxy_base}
-  ##COMMAND doxygen -x Doxyfile > ${doxy_base} || rm ${doxy_base} ; ln -s Doxyfile ${doxy_base}
-  #DEPENDS Doxyfile
-  #COMMENT "!!!! ln -s Doxyfile ${doxy_base}"
-  #WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  #)
+# Generate an essential configuration
+SET(doxy_base "${CMAKE_CURRENT_BINARY_DIR}/Doxy.base")
+ADD_CUSTOM_COMMAND(OUTPUT ${doxy_base}
+  COMMAND doxygen -x Doxyfile > ${doxy_base} || ln -s Doxyfile ${doxy_base}
+  DEPENDS Doxyfile
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
 
 FB_DOCUMENTATION(
 BAS_SRC
@@ -56,7 +54,7 @@ DEPENDS
   ${C_HEADERS}
   rem_bbb_dir
 DOXYFILE
-  "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+  ${doxy_base}
   )
 
 #INSTALL(
