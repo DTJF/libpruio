@@ -23,15 +23,6 @@ different components together and provides all declarations.
 ' Header for interrupt controller.
 #INCLUDE ONCE "pruio_intc.bi"
 
-'* The channel for PRU messages (must match PRUIO_IRPT).
-#DEFINE PRUIO_CHAN CHANNEL5
-'* The mask to enable PRU interrupts (must match PRUIO_IRPT).
-#DEFINE PRUIO_MASK PRU_EVTOUT5_HOSTEN_MASK
-'* The event for PRU messages (mapping, must match PRUIO_IRPT).
-#DEFINE PRUIO_EMAP PRU_EVTOUT5
-'* The event for PRU messages (must match PRUIO_IRPT).
-#DEFINE PRUIO_EVNT PRU_EVTOUT_5
-
 '* Macro to check a CPU ball number (0 to 109 is valid range).
 #DEFINE BallCheck(_T_,_R_) IF Ball > PRUIO_AZ_BALL THEN .Errr = @"unknown" _T_ " pin number" : RETURN _R_
 

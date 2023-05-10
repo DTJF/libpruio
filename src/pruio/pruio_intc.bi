@@ -7,7 +7,16 @@ interrupt controller setting.
 \since 0.6
 '/
 
+'* The channel for PRU messages (must match PRUIO_IRPT).
+#DEFINE PRUIO_CHAN CHANNEL5
+'* The mask to enable PRU interrupts (must match PRUIO_IRPT).
+#DEFINE PRUIO_MASK PRU_EVTOUT5_HOSTEN_MASK
+'* The event for PRU messages (mapping, must match PRUIO_IRPT).
+#DEFINE PRUIO_EMAP PRU_EVTOUT5
+'* The event for PRU messages (must match PRUIO_IRPT).
+#DEFINE PRUIO_EVNT PRU_EVTOUT_5
 
+'' Global defs
 '* System event PRU-0 -> PRU-1
 #DEFINE PRU0_PRU1_INTERRUPT 17
 '* System event PRU-1 -> PRU-0
@@ -81,29 +90,6 @@ interrupt controller setting.
 #DEFINE PRU_EVTOUT6_HOSTEN_MASK &h0100
 '* Event 7 host enable mask
 #DEFINE PRU_EVTOUT7_HOSTEN_MASK &h0200
-
-'#DEFINE PRUSS_INTC_INITDATA TYPE<tpruss_intc_initdata>( _
-  '{ PRU0_PRU1_INTERRUPT _
-  ', PRU1_PRU0_INTERRUPT _
-  ', PRU0_ARM_INTERRUPT _
-  ', PRU1_ARM_INTERRUPT _
-  ', ARM_PRU0_INTERRUPT _
-  ', ARM_PRU1_INTERRUPT _
-  ', CAST(BYTE, -1) }, _
-  '{ TYPE<tsysevt_to_channel_map>(PRU0_PRU1_INTERRUPT, CHANNEL1) _
-  ', TYPE<tsysevt_to_channel_map>(PRU1_PRU0_INTERRUPT, CHANNEL0) _
-  ', TYPE<tsysevt_to_channel_map>(PRU0_ARM_INTERRUPT, CHANNEL2) _
-  ', TYPE<tsysevt_to_channel_map>(PRU1_ARM_INTERRUPT, CHANNEL3) _
-  ', TYPE<tsysevt_to_channel_map>(ARM_PRU0_INTERRUPT, CHANNEL0) _
-  ', TYPE<tsysevt_to_channel_map>(ARM_PRU1_INTERRUPT, CHANNEL1) _
-  ', TYPE<tsysevt_to_channel_map>(-1, -1)}, _
-  '{ TYPE<tchannel_to_host_map>(CHANNEL0, PRU0) _
-  ', TYPE<tchannel_to_host_map>(CHANNEL1, PRU1) _
-  ', TYPE<tchannel_to_host_map>(CHANNEL2, PRU_EVTOUT0) _
-  ', TYPE<tchannel_to_host_map>(CHANNEL3, PRU_EVTOUT1) _
-  ', TYPE<tchannel_to_host_map>(-1, -1) }, _
-  '(PRU0_HOSTEN_MASK OR PRU1_HOSTEN_MASK OR PRU_EVTOUT0_HOSTEN_MASK OR PRU_EVTOUT1_HOSTEN_MASK) _
-  ')
 
 '* Number of PRU host interrupts
 #DEFINE NUM_PRU_HOSTIRQS 8
@@ -202,7 +188,7 @@ END TYPE
 '* Forward declaration for interrupt controler data type
 TYPE tpruss_intc_initdata AS __Pruss_intc_Initdata
 '* Default interrupt controller init (we also set default interrupts, so that the other PRUSS can be used in parallel)
-CONST AS tpruss_intc_initdata DEF_INTC_INIT = _
+DIM SHARED AS tpruss_intc_initdata DEF_INTC_INIT = _
   TYPE<tpruss_intc_initdata>( _
     { PRU0_PRU1_INTERRUPT _
     , PRU1_PRU0_INTERRUPT _

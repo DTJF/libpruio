@@ -854,9 +854,16 @@ Pins            Key        Direction        Sleep
 1-0-0-1                     0               128
 ~~~
 
+  While in example stepper the pins are set one after the other by
+  function Gpio->setValue(), in the second example called stepper2 all
+  pins get set simultaneously (all are set at the same time). Note the
+  different pin set (P8_03, P8_04, P8_05, P8_06) used, since all pins
+  have to be connected to the same GPIO-SS.
+
 \Item{Source Code}
 
   src/examples/stepper.bas
+  src/examples/stepper2.bas
 
   [<b>src/c_examples/stepper.c</b>](stepper_8c.html)
 
