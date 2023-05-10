@@ -17,7 +17,7 @@ Compile by: `fbc -w all 1.bas`
 #INCLUDE ONCE "BBB/pruio.bi" '   include header
 VAR io = NEW PruIo()              '*< create new driver UDT
 
-IF io->config() THEN '          upload (default) settings, start IO mode
+IF io->Errr ORELSE io->config() THEN '    upload settings, start IO mode
                                 PRINT"config failed (" & *io->Errr & ")"
 ELSE
   ' here current ADC samples are available in array Adc->Value[]

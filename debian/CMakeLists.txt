@@ -23,7 +23,7 @@ SET(bbbdir ${CMAKE_SOURCE_DIR}/src/examples/BBB)
 
 # in-source: create target deb for in-source debuild
 IF(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-  ADD_CUSTOM_TARGET(deb
+  ADD_CUSTOM_TARGET(deb DEPENDS doc_htm lkm
     COMMAND ${CMAKE_COMMAND} -E remove ${bbbdir}
     COMMAND cp    compat.${osvers} compat
     COMMAND cp   control.${osvers} control
@@ -50,7 +50,8 @@ SET(src # files & dirs to copy from root dir
 # create target deb for out-of-source debuild
 SET(bdir ${CMAKE_CURRENT_BINARY_DIR}/${PROJ_NAME})
 SET(debdir ${bdir}/debian)
-ADD_CUSTOM_TARGET(deb rm -rf ${bdir}
+ADD_CUSTOM_TARGET(deb DEPENDS doc_htm lkm
+  COMMAND rm -rf ${bdir}
   COMMAND ${CMAKE_COMMAND} -E remove ${bbbdir}
   COMMAND mkdir -p ${bdir}
   COMMAND cd ${CMAKE_SOURCE_DIR} && cp -r ${src} ${bdir}

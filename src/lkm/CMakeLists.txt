@@ -33,17 +33,15 @@ ADD_CUSTOM_COMMAND(OUTPUT ${lkm}
   COMMAND make clean && make
   WORKING_DIRECTORY ${wdir}
   DEPENDS ${src}
-  #VERBATIM
+  VERBATIM
   )
-ADD_CUSTOM_TARGET(lkm DEPENDS
-  ${lkm}
-  Makefile.in
-  )
+ADD_CUSTOM_TARGET(lkm DEPENDS ${lkm} Makefile.in )
 
 
 SET(lkm_vers /lib/modules/${CMAKE_SYSTEM_VERSION}/extra/${PROJ_NAME}.ko)
 SET(serv_tar /etc/systemd/system/${serv_nam})
 ADD_CUSTOM_COMMAND(OUTPUT ${lkm_vers}
+  COMMAND echo "copy ${lkm} ${lkm_vers}"
   COMMAND "${CMAKE_COMMAND}" -E copy ${lkm} ${lkm_vers}
   COMMAND depmod -a
   COMMAND addgroup --system pruio > /dev/null
@@ -52,7 +50,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${lkm_vers}
   COMMAND systemctl enable ${serv_nam}
   COMMAND systemctl start ${serv_nam}
   DEPENDS ${lkm} ${serv_deb}
-  #VERBATIM
+  VERBATIM
   )
 ADD_CUSTOM_TARGET(lkm-install DEPENDS ${lkm_vers} )
 ADD_CUSTOM_TARGET(lkm-uninstall
@@ -65,10 +63,10 @@ ADD_CUSTOM_TARGET(lkm-uninstall
   #VERBATIM
   )
 
-INSTALL(FILES ${lkm}
-  DESTINATION /lib/modules
-  CONFIGURATIONS Release
-  )
+#INSTALL(FILES ${lkm}
+  #DESTINATION /lib/modules
+  #CONFIGURATIONS Release
+  #)
 
 MSG_LOG("found linux-headers @ ${hpath}")
 MSG_LOG(">> targets <lkm...> OK!")

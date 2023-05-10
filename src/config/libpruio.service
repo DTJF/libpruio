@@ -5,7 +5,7 @@ Documentation=http://users.freebasic-portal.de/tjf/Projekte/libpruio/doc/html/in
 [Service]
 Type=oneshot
 ExecStart=/sbin/modprobe libpruio
-ExecStartPost=/bin/dash -c 'until [ -e /dev/uio5 ] ; do sleep 1 ; done ; /bin/chown root:pruio /sys/devices/platform/libpruio/state /dev/uio5'
+ExecStartPost=/bin/dash -c 'until [ -e /dev/uio5 ] ; do sleep 1 ; done ; /bin/chown pruio:pruio /sys/devices/platform/libpruio/state /dev/uio5'
 ExecStop=/sbin/modprobe -r libpruio
 StandardOutput=tty
 RemainAfterExit=yes

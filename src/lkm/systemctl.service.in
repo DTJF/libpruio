@@ -1,10 +1,13 @@
 [Unit]
 Description=Load @PROJ_NAME@ loadable kernel module
+Documentation=http://users.freebasic-portal.de/tjf/Projekte/@PROJ_NAME@/doc/html/index.html
 
 [Service]
 Type=oneshot
+ExecStartPre=!/bin/dash -c 'until [ -e /dev/uio5 ] ; do sleep 1 ; done ; chown root:pruio /dev/uio5 ; chmod g+rw /dev/uio5'
 ExecStart=/sbin/modprobe @PROJ_NAME@
-ExecStartPost=/bin/chown root:pruio /sys/devices/platform/@PROJ_NAME@/state /dev/uio5
+ExecStartPost=/bin/dash -c 'ls -l /dev/uio* > /home/debian/uio.txt'
+ExecStartPost=/bin/dash -c 'chmod g+rw /dev/uio5 ; /bin/chown root:pruio /sys/devices/platform/@PROJ_NAME@/state'
 ExecStop=/sbin/modprobe -r @PROJ_NAME@
 StandardOutput=tty
 RemainAfterExit=yes

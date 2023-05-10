@@ -40,9 +40,9 @@ ELSE()
   ELSE()
     ADD_LIBRARY(pruio SHARED $<TARGET_OBJECTS:pruiofbcode>)
     ADD_DEPENDENCIES(pruio pruiofbcode)
-    #SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -z,relro") # must be global
+    SET(CMAKE_SHARED_LINKER_FLAGS "") # must be global ??
     SET_TARGET_PROPERTIES(pruio PROPERTIES
-      LINK_FLAGS "-Wl -z,relro"
+      LINK_FLAGS "-v -Wl -z,relro"
       SOVERSION "o" # adapt <Package: ...> in debian/control
       #NO_SONAME "YES"
       )
