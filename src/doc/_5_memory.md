@@ -213,7 +213,7 @@ the subsystem registers. Then it prepares the DRam area as follows
 |    Value   | Description                        |
 |   -------: | : -------------------------------- |
 |    DRam[0] | PRUIO_MSG_xxx                      |
-| DRam[1-15] | var. parameters                    |
+| DRam[1-15] | free for var. parameters           |
 |   DRam[16] | 4 x GpioArr (4*16 bytes)           |
 |   DRam[64] | 3 x PwmssArr (3*32 bytes)          |
 |   DRam[72] | AdcSet::DeAd (4 bytes)             |
@@ -224,10 +224,10 @@ The type of PRUIO_MSG_xxx depends on the required run mode. It's either
 \ref PRUIO_MSG_IO_OK in case of IO mode (parameter *Samp* = 1) or \ref
 PRUIO_MSG_MM_WAIT in case of RB or MM mode (parameter *Samp* > 1).
 
-The arrays GpioArr and PwmssArr are used to transfer data from the
-digital subsystems to the host. In IO and RB mode the PRU software
-reads some registers and writes the context in to these arrays, where
-the host (ARM) software can read them.
+The arrays GpioArr, PwmssArr and TimerArr are used to transfer data
+from the digital subsystems to the host. In IO and RB mode the PRU
+software reads some registers and writes the context in to these
+arrays, where the host (ARM) software can read them.
 
 The field `Adc data` contains the subsystem adress of the ADC subsystem
 (if enabled) and 17 UInt16 values for samples (the first is unused).
@@ -244,8 +244,9 @@ Each array entry starts with the subsystem adress. In case of a
 disabled subsystem the adress entry is 0 (zero) and the PRU software
 skips this subsystem.
 
-Furthermore the beginning of the DRam area is used to pass parameters
-to the running PRU software
+In IO mode the PRU main loop starts immediately, while in RB or MM mode
+the PRU is halted after configuration, waiting for a start command. The
+main loop starts when the ARM writes a non-zero value to DRam[1]:
 
 - Function PruIo::rb_start()
   |  Value  | Description                       |
@@ -254,7 +255,9 @@ to the running PRU software
   | DRam[2] | Adress of ERam PruIo::ERam        |
   | DRam[3] | Pre-trigger samples (= 0)         |
   | DRam[4] | Trigger specification (= RB mode) |
-  When running in RB mode the PRU software reports its last write index
+  When running in RB mode the PRU software does not stop, reporting its
+  last write index endlessly (in order to stop the main loop, call
+  PruIo::config() again)
   |  Value  | Description                                                |
   | ------: | : -------------------------------------------------------- |
   | DRam[0] | Last write index `0 <= i < AdcUdt::Samples * AdcUdt::ChAz` |
@@ -274,67 +277,8 @@ to the running PRU software
   | ------: | ----------------- |
   | DRam[0] | PRUIO_MSG_MM_WAIT |
 
-- PRU command \ref PRUIO_COM_GPIO_CONF (set GPIO direction and value)
-  |  Value  | Description                              |
-  | ------: | : -------------------------------------- |
-  | DRam[1] | PRUIO_COM_GPIO_CONF `SHL 24`             |
-  | DRam[2] | GPIO subsystem adress (+ &h100)          |
-  | DRam[3] | Value for GpioSet::CLEARDATAOUT register |
-  | DRam[4] | Value for GpioSet::SETDATAOUT register   |
-  | DRam[5] | Value for GpioSet::OE register           |
-
-- PRU command \ref PRUIO_COM_PWM (set PWM frequency and duty cycle)
-  |  Value  | Description                                             |
-  | ------: | : ----------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_PWM `SHL 24`                                  |
-  | DRam[2] | PWMSS subsystem adress (+ &h200)                        |
-  | DRam[3] | Value for PwmssSet::CMPA & PwmssSet::CMPB registers     |
-  | DRam[4] | Value for PwmssSet::AQCTLA & PwmssSet::AQCTLB registers |
-  | DRam[5] | Value for PwmssSet::TBCNT & PwmssSet::TBPRD registers   |
-
-- PRU command \ref PRUIO_COM_CAP_PWM (switch PWMSS-CAP module in PWM mode
-  and set frequency and duty cycle)
-  |  Value  | Description                                                  |
-  | ------: | : ---------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_CAP_PWM `SHL 24` + PwmssSet::ECCTL2 register value |
-  | DRam[2] | PWMSS subsystem adress (+ &h100)                             |
-  | DRam[3] | Value for PwmssSet::CAP3 register (counter shadow)           |
-  | DRam[4] | Value for PwmssSet::CAP4 register (period shadow)            |
-
-- PRU command \ref PRUIO_COM_CAP (switch PWMSS-CAP module in CAP mode)
-  |  Value  | Description                                              |
-  | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_CAP `SHL 24` + PwmssSet::ECCTL2 register value |
-  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
-
-- PRU command \ref PRUIO_COM_QEP (switch PWMSS-QEP module in QEP mode)
-  |  Value  | Description                                              |
-  | ------: | : ------------------------------------------------------ |
-  | DRam[1] | PRUIO_COM_QEP `SHL 24`                                   |
-  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
-  | DRam[3] | Value for PwmssSet::QPOSMAX register                     |
-  | DRam[4] | Value for PwmssSet::QUPRD register                       |
-  | DRam[5] | Value for PwmssSet::.QDECCTL OR .QEPCTL SHL 16 registers |
-  | DRam[6] | Value for PwmssSet::QCAPCTL register                     |
-
-- PRU command \ref PRUIO_COM_TIM_PWM (switch TIMERSS in PWM mode)
-  |  Value  | Description                                                |
-  | ------: | : -------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_TIM_PWM `SHL 24` + TimerSet::TCLR register value |
-  | DRam[2] | TIMER subsystem adress                                     |
-  | DRam[3] | timer load register value                                  |
-  | DRam[4] | timer match register value                                 |
-  | DRam[5] | timer counter register value                               |
-
-- PRU command \ref PRUIO_COM_ADC (set a new step mask in IO mode)
-  |  Value  | Description                                                |
-  | ------: | : -------------------------------------------------------- |
-  | DRam[1] | PRUIO_COM_ADC `SHL 24` + AdcSet::STEPENABLE register value |
-
-\note PRU commands are valid in IO and RB mode. After a PRU command
-      execution the DRam[1] value gets set to 0 (zero). You must wait
-      for that zero value before you set a new command or write new
-      parameters.
+Further PRU commands get executed while the main loop is running. Find
+details in section \ref SecCommands.
 
 
 ## Destructor ## {#sSecMemDTOR}
@@ -380,3 +324,94 @@ maximum size of 8 MB (= 0x800000).
       before the device tree overlay loads. (Or unload the kernel
       driver by `modprobe -r uio_pruss` and reload again using the
       above command.)
+
+
+# Pru Commands # {#SecCommands}
+
+In order to send data from ARM to PRU, ie to change a GPIO output state
+or the parameters of a PWM pulse train, there's a programming interface
+in the DRam[1-15] area. When the PRU is running in the main loop, in
+each cycle it first grabs the data from one of the (active) subsystems
+(GPIO, PWM, TIMER) and then performs a command, if any.
+
+Therefor it checks the upper most (`SHL 24`) byte in DRam[1]. When it's
+greater than zero, the PRU reads the related parameters from DRam[2-15]
+and performs the desired action. Finally the PRU clears the DRam[1]
+data, in order to signalize the finished command execution.
+
+From the ARM side of view this means
+
+-# first check if (wait until) no command is pending
+-# set the parameters
+-# set the command to execute
+
+The PRU executes this command at the end of the next main loop cycle in
+parallel. Meanwhile the ARM can perform the next steps.
+
+The PRU commands are (non-zero) byte values defined in file
+src/pruio/pruio.hp and named like PRUIO_COM_xxx. Here's a list of the
+commands and their parameters:
+
+- GPIO \ref PRUIO_COM_GPIO_CONF (set GPIO direction and value)
+  |  Value  | Description                              |
+  | ------: | : -------------------------------------- |
+  | DRam[1] | PRUIO_COM_GPIO_CONF `SHL 24`             |
+  | DRam[2] | GPIO subsystem adress (+ &h100)          |
+  | DRam[3] | Value for GpioSet::CLEARDATAOUT register |
+  | DRam[4] | Value for GpioSet::SETDATAOUT register   |
+  | DRam[5] | Value for GpioSet::OE register           |
+
+- PWMSS-PWM \ref PRUIO_COM_PWM (set PWM frequency and duty cycle)
+  |  Value  | Description                                             |
+  | ------: | : ----------------------------------------------------- |
+  | DRam[1] | PRUIO_COM_PWM `SHL 24`                                  |
+  | DRam[2] | PWMSS subsystem adress (+ &h200)                        |
+  | DRam[3] | Value for PwmssSet::CMPA & PwmssSet::CMPB registers     |
+  | DRam[4] | Value for PwmssSet::AQCTLA & PwmssSet::AQCTLB registers |
+  | DRam[5] | Value for PwmssSet::TBCNT & PwmssSet::TBPRD registers   |
+
+- PWMSS-CAP-CAP \ref PRUIO_COM_CAP_PWM (set PWMSS-CAP module in PWM mode
+  and set frequency and duty cycle)
+  |  Value  | Description                                                  |
+  | ------: | : ---------------------------------------------------------- |
+  | DRam[1] | PRUIO_COM_CAP_PWM `SHL 24` + PwmssSet::ECCTL2 register value |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                             |
+  | DRam[3] | Value for PwmssSet::CAP3 register (counter shadow)           |
+  | DRam[4] | Value for PwmssSet::CAP4 register (period shadow)            |
+
+- PWMSS-CAP-PWM \ref PRUIO_COM_CAP (set PWMSS-CAP module in CAP mode)
+  |  Value  | Description                                              |
+  | ------: | : ------------------------------------------------------ |
+  | DRam[1] | PRUIO_COM_CAP `SHL 24` + PwmssSet::ECCTL2 register value |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+
+- PWMSS-QEP \ref PRUIO_COM_QEP (set PWMSS-QEP module in QEP mode)
+  |  Value  | Description                                              |
+  | ------: | : ------------------------------------------------------ |
+  | DRam[1] | PRUIO_COM_QEP `SHL 24`                                   |
+  | DRam[2] | PWMSS subsystem adress (+ &h100)                         |
+  | DRam[3] | Value for PwmssSet::QPOSMAX register                     |
+  | DRam[4] | Value for PwmssSet::QUPRD register                       |
+  | DRam[5] | Value for PwmssSet::.QDECCTL OR .QEPCTL SHL 16 registers |
+  | DRam[6] | Value for PwmssSet::QCAPCTL register                     |
+
+- TIMER PWM; \ref PRUIO_COM_TIM_PWM (set TIMERSS in PWM mode)
+  |  Value  | Description                                                |
+  | ------: | : -------------------------------------------------------- |
+  | DRam[1] | PRUIO_COM_TIM_PWM `SHL 24` + TimerSet::TCLR register value |
+  | DRam[2] | TIMER subsystem adress                                     |
+  | DRam[3] | timer load register value                                  |
+  | DRam[4] | timer match register value                                 |
+  | DRam[5] | timer counter register value                               |
+
+- ADC steps \ref PRUIO_COM_ADC (set a new step mask in IO mode)
+  |  Value  | Description                                                |
+  | ------: | : -------------------------------------------------------- |
+  | DRam[1] | PRUIO_COM_ADC `SHL 24` + AdcSet::STEPENABLE register value |
+
+\note PRU commands are valid in IO and RB mode. After a PRU command
+      execution the DRam[1] value gets set to 0 (zero). You must wait
+      for that zero value before you set a new command or write new
+      parameters.
+
+

@@ -249,12 +249,19 @@ trigger file by executing
     sudo rm /boot/dtbs/`uname -r`/am335x-boneblack-uboot-univ.dtb
 
 \Item{"pinmux missing"} The program requires pinmuxing, but there is no
-pinmux configuration on your system. -> Load the kernel module and
-execute with administrator privileges.
+pinmux configuration on your system. -> Provide the required pinmuxing,
+either before starting your application by a static boot overlay, or by
+a (deprecated) universal overlay, or by the LKM. The last option is the
+recommended solution.
 
-\note The above errors may occur in any XXX.setValue() or xxx.config()
+\note The above errors may also occur in any XXX.setValue() or xxx.config()
       function, since \Proj tries to adapt a pin when its muxmode
       doesn't match.
+
+\Item{"failed opening PRUIO_EVNT"} The CTOR failed to connect to the
+uio_pruss driver. This driver allows to control the PRUSS (load/start
+firmware, access memory). -> Make sure that the driver is working
+properly. Find further information in section \ref sSecPruDriver.
 
 
 # ADC # {#SecErrAdc}
@@ -373,9 +380,9 @@ sure to specify a valid GPIO mode (ie. from enumerators ::PinMuxing).
 
 \Item{"GPIO subsystem not enabled"} Setting a header pin in GPIO mode
 is required, but the related GPIO subsystem isn't enabled. -> Set
-`PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIO subsystem
-connected to that ball number) and call function PruIo::config(),
-first.
+parameter `Act` in the CTOR call to PruIo::PruIo() so that
+`PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIOSS
+controlling to that ball number).
 
 
 ## Value ## {#sSecErrGpioValue}
@@ -402,15 +409,29 @@ first.
 too big. -> Make sure that parameter `Ball` is less or equal \ref
 PRUIO_AZ_BALL.
 
-\Item{"GPIO subsystem not enabled"} Setting a GPIO output is required,
-but the related GPIO subsystem isn't enabled. -> Set
-`PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the PWMSS
-connected to that ball number) and call function PruIo::config(),
-first.
+\Item{"GPIO subsystem not enabled"} Setting a GPIO configuration is
+required, but the related GPIO subsystem isn't enabled. -> Set
+parameter `Act` in the CTOR call to PruIo::PruIo() so that
+`PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIOSS
+controlling to that ball number).
 
 \Item{"no GPIO mode"} Setting a new mode for the GPIO output is
 required, but the specified mode isn't a GPIO mode. -> Check the
 parameter `Mo`, use enumerators ::PinMuxing.
+
+
+## flush ## {#sSecErrGpioFlush}
+
+\Item{"GPIO subsystem not enabled"} Setting a GPIO configuration is
+required, but the related GPIO subsystem isn't enabled. -> Set
+parameter `Act` in the CTOR call to PruIo::PruIo() so that
+`PruIo->Gpio->Conf(n)->ClVa = 2` (n is the number of the GPIOSS
+controlling to that ball number).
+
+\Item{"main loop not running"} You try to set a new subsystem
+configuration before the main loop was started. -> Make sure that the
+function gets called after PruIo::config() and (in case of RB mode)
+PruIo::rb_start().
 
 
 # PWM # {#SecErrPwm}
@@ -491,9 +512,9 @@ TIMER pins listed in section \ref sSecTimer.
 
 \Item{"TIMER subsystem not enabled"} Setting a TIMER output is
 required, but the related TIMERSS subsystem isn't enabled. -> Set
+parameter `Act` in the CTOR call to PruIo::PruIo() so that
 `PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
-connected to that ball number) and call function PruIo::config(),
-first.
+controlling to that ball number).
 
 \Item{"duration too short"} The module (TIMER or CAP) isn't capable to
 generate output at the required time periods. -> Check the parameters
@@ -523,11 +544,11 @@ ChaPreparation for details.
 TIMER capability. -> Make sure that parameter `Ball` is on of the TIMER
 pins listed in section \ref sSecTimer.
 
-\Item{"TIMER subsystem not enabled"} Getting the values of a TIMER
-output is required, but the related TIMER subsystem isn't enabled. ->
-Set `PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
-connected to that ball number) and call function PruIo::config(),
-first.
+\Item{"TIMER subsystem not enabled"} Setting a TIMER output is
+required, but the related TIMERSS subsystem isn't enabled. -> Set
+parameter `Act` in the CTOR call to PruIo::PruIo() so that
+`PruIo->TimSS->Conf(n)->ClVa = 2` (n is the number of the TIMERSS
+controlling to that ball number).
 
 \Item{"pin not in TIMER mode"} Getting the values of a TIMER output is
 required, but the pin is not in TIMER mode, and therefor cannot
@@ -655,6 +676,7 @@ just a warning, no action is required. Find details in the
 Make errors occur after you installed and prepared the source tree, and
 when you start building targets.
 
-\Item{file INSTALL cannot copy file} You executed a ` make install`
+\Item{file INSTALL cannot copy file} You executed a `make install`
 instruction for a restricted location. The script has no permission to
-perform the required task. -> Prepend `sudo` to your command.
+perform the required write operations. -> Prepend `sudo` to your
+command.

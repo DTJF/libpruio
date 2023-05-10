@@ -9,17 +9,117 @@ system:
 -# \ref SecSourceTree compilation and installing
 
 The first one is for easy consuming the software service "as is". The
-last offers the chance to partizipate in development and optimize the
-software to your custom needs, but is less convenient.
+last one provides the benfits of the latest version, the chance to
+partizipate in development and/or optimize the software to your custom
+needs, by the costs of less convenience.
+
+And, before compiling or running any executable against \Proj, you've to
+prepare your system:
+
+* switch to the `bone` kernel flavor in order to
+* enable `uio_pruss` driver (and dissable `rproc` driver),
+* free the header pin claims (dissable `cape_universal.dtbo`).
+
+
+# System Preparation # {#SecSysPrep}
+
+By default the Beaglebone images are equiped with software componemts
+that do not make sense in combination with \Proj, consuming lots of
+memory and slowing down the boot process. But the main problem is that
+they block important features. You've to get them out of the way.
+
+Unfortunatelly that sounds more easy than it may be, since a lot of
+changes have been made to that components between the kernel versions,
+so that there isn't one description how to proceed. The following
+instructions may not work for your particular kernel; test it out.
+Otherwise sorry, it's out of the scope of this documentation to cover
+all kernel version. Perhaps you'll find a solution [at the
+forum](https://forum.beagleboard.org).
+
+The first step is switching to the right kernel flavor. There's the
+`ti` flavor developed by Texas Instruments (the CPU producer). But the
+better choise is the `bone` flavor, that provides the mandatory
+`uio_pruss` driver and is booting faster. So execute
+
+    uname -r
+
+in order to test your current flavor. When the output contains the
+characters `-bone-` you're fine. Otherwise (output contains `-ti-`)
+you'll have to switch to the bone flavor by
+
+    sudo /opt/scripts/tools/update_kernel.sh --bone-kernel --lts-4_19
+
+\note Replace in `--lts-4_19` your prefered kernel version. Replace
+      `--bone-kernel` by `--bone-rt-kernel` for the real-time version.
+      Find details at the
+      [eLinux Debian Page](https://elinux.org/Beagleboard:BeagleBoneBlack_Debian#Debian_Releases).
+
+Next activate the `uio_pruss` driver. Therefor it's sufficient in most
+images to edit the boot configuration file like
+
+    sudo nano /boot/uEnv.txt
+
+where to enable the driver `uio_pruss` and also dissable `rproc` (only
+one of them can be active at a time). The related lines should finally
+look like
+
+    ???
+
+Afterwards comment out the line loading the device tree blob
+`cape_universal.dtbo`, in order to free the headers pins for \Proj
+
+    ???
+
+\note This also makes the tool `config-pin` not working any more. You
+      don't need it, \Proj can replace all its features.
+
+Finally save the file and reboot the system.
+
+
+## uio_pruss Driver ## {#sSecPruDriver}
+
+In order to test if the `uio_pruss` driver is working properly, execute
+the commands
+
+    lsmod | grep uio
+    ls -l /dev/uio*
+
+which should generate text output similar to
+
+    $ lsmod | grep uio
+    uio_pruss              16384  0
+    uio_pdrv_genirq        16384  0
+    uio                    20480  2 uio_pruss,uio_pdrv_genirq
+    $ ls -l /dev/uio*
+    crw-rw---- 1 root users 243, 0 Mai 17 07:25 /dev/uio0
+    crw-rw---- 1 root users 243, 1 Mai 17 07:25 /dev/uio1
+    crw-rw---- 1 root users 243, 2 Mai 17 07:25 /dev/uio2
+    crw-rw---- 1 root users 243, 3 Mai 17 07:25 /dev/uio3
+    crw-rw---- 1 root users 243, 4 Mai 17 07:25 /dev/uio4
+    crw-rw---- 1 root users 243, 5 Mai 17 07:25 /dev/uio5
+    crw-rw---- 1 root users 243, 6 Mai 17 07:25 /dev/uio6
+    crw-rw---- 1 root users 243, 7 Mai 17 07:25 /dev/uio7
+
+
+## Pin Claims ## {#sSecPinClaims}
+
+In order to test if the `cape_universal.dtbo` doesn't load any more,
+execute
+
+    ???
+
+The output shoul not have more the two lines like
+
+    ???
 
 
 # Debian Packages # {#SecDebPac}
 
 The easy way to benefit from \Proj is to install the Debian packages.
-They're not in mainline, yet. So you have to add a PPA (Personal
-Package Archive) to your package management sources. On the default
-Debian operating system, edit the file `sudo nano
-/etc/apt/sources.list` and add the lines:
+They're not in mainline, yet, but provided in a PPA (Personal Package
+Archive). In order to use it, you have to adopt your package management
+sources. On the default Debian operating system, edit the file `sudo
+nano /etc/apt/sources.list` and add the lines:
 
     deb http://beagle.tuks.nl/debian jessie/
     deb-src http://beagle.tuks.nl/debian jessie/
@@ -59,7 +159,7 @@ bindings for C, FreeBASIC and Python programming language, as well as
 example source code. The -bas package contains additional examples with
 grafical output. In order to use the library for your projects, you'll
 need at least one of these bindings for your prefered programming
-language, which depends on the mandatory shared library package.
+language, which depend all on the mandatory shared library package.
 
 The remaining packages are optional. All examples in the -bas package
 are also available as pre-compiled executable binaries in package -bin.
@@ -275,41 +375,6 @@ package, like
     |-- ...
 
 
-### PRU driver ### {#sSecPruDriver}
-
-Unfortunatelly this step may get complicated. \Proj needs the
-`uio_pruss` driver. In kernel 3.8 this is the default setting, no
-further action is required. But in kernel 4.x the new `rproc` driver
-gets default, and it took years until easy reconfiguration was
-supported. Since kernel 4.14 you can simply switch between the drivers
-in file `/boot/uEnv.txt`. But in former kernel versions, different
-actions have to be done to get the `rproc` driver out of the way. It's
-beyond the scope of this documentation to describe all the diffent
-quirks and pitfalls. Search the internet for further documentation.
-
-The only help I can provide is a command to test success. Executing the
-commands
-
-    lsmod | grep uio
-    ls -l /dev/uio*
-
-should generate text similar to
-
-    $ lsmod | grep uio
-    uio_pruss              16384  0
-    uio_pdrv_genirq        16384  0
-    uio                    20480  2 uio_pruss,uio_pdrv_genirq
-    $ ls -l /dev/uio*
-    crw-rw---- 1 root users 243, 0 Mai 17 07:25 /dev/uio0
-    crw-rw---- 1 root users 243, 1 Mai 17 07:25 /dev/uio1
-    crw-rw---- 1 root users 243, 2 Mai 17 07:25 /dev/uio2
-    crw-rw---- 1 root users 243, 3 Mai 17 07:25 /dev/uio3
-    crw-rw---- 1 root users 243, 4 Mai 17 07:25 /dev/uio4
-    crw-rw---- 1 root users 243, 5 Mai 17 07:25 /dev/uio5
-    crw-rw---- 1 root users 243, 6 Mai 17 07:25 /dev/uio6
-    crw-rw---- 1 root users 243, 7 Mai 17 07:25 /dev/uio7
-
-
 ### Get Package ### {#sSecGet}
 
 Depending on whether you installed the optional GIT package, there're
@@ -449,19 +514,21 @@ module exactly matches the kernel specifications and the tool
 `modprobe` can handle loading intelligently. But the downside is that
 you have to re-build and re-install the module each time when the
 kernel changes (ie. when `apt upgrade` installs a kernel update).
-Anyway, that' the Debian policy. Execute
+Anyway, that's the Debian policy, we've to follow. So execute
 
     sudo make lkm-install
 
-to install the module and a systemd service to load it. Additionally a
-new seystem group named `pruio` gets created. See section \ref sSecLKM
-for further information.
+to install the module binary and additionally a systemd service
+(`/etc/systemd/???`) auto-loading that module at boot time.
+Additionally a new system group named `pruio` gets created. See section
+\ref sSecLKM for further information.
 
 Afterwards the LKM will be tainted to the kernel and the pinmuxing
-features are ready to use. The systemd service will auto-load the
-module in further bootings.
+features are ready to use. The module also ba available in further
+bootings. Find in section \ref sSecLKM details on dissable/re-enable
+auto-loading and/or activating the LKM during the current session.
 
-To uninstall that the LKM execute
+To uninstall the LKM and the systemd service execute
 
     sudo make lkm-uninstall
 

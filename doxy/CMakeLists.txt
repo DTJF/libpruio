@@ -28,7 +28,7 @@ ADD_CUSTOM_TARGET(rem_bbb_dir
 # Generate an essential configuration
 SET(doxy_base "${CMAKE_CURRENT_BINARY_DIR}/Doxy.base")
 ADD_CUSTOM_COMMAND(OUTPUT ${doxy_base}
-  COMMAND doxygen -x Doxyfile > ${doxy_base} | ln -s Doxyfile ${doxy_base}
+  COMMAND doxygen -x Doxyfile > ${doxy_base} || ln -s Doxyfile ${doxy_base}
   DEPENDS Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
@@ -54,7 +54,7 @@ DEPENDS
   ${C_HEADERS}
   rem_bbb_dir
 DOXYFILE
-  "${CMAKE_CURRENT_BINARY_DIR}/DoxyExtension"
+  ${doxy_base}
   )
 
 #INSTALL(

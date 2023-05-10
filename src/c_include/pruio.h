@@ -591,7 +591,8 @@ typedef struct pruIo{
 //! List of GPIO numbers, corresponding to ball index.
   uint8 BallGpio[PRUIO_AZ_BALL + 1];
 //! Interrupt settings (we also set default interrupts, so that the other PRUSS can be used in parallel).
-  struct __pruss_intc_initdata IntcInit;
+  struct __pruss_intc_initdata* IntcInit;
+  uint32 WaitCycles;
 } pruIo;
 
 /** \brief Wrapper function for the constructor PruIo::PruIo().
@@ -678,10 +679,19 @@ char* pruio_gpio_config(pruIo* Io, uint8 Ball, uint8 Modus);
 */
 char* pruio_gpio_setValue(pruIo* Io, uint8 Ball, uint8 Modus);
 
-/** \brief Wrapper function for GpioUdt::Value().
+/** \brief Wrapper function for GpioUdt::flush().
 \param Io The pointer of the  PruIo instance.
+\param Indx The GPIO subsystem number to flush.
+\returns Zero on success (otherwise a pointer to an error message).
+
+\since 0.6.8
+*/
+char* pruio_gpio_flush(pruIo* Io, uint8 Indx);
+
+/** \brief Wrapper function for GpioUdt::Value().
+\param Io The pointer of the PruIo instance.
 \param Ball The CPU ball number to test.
-\returns The GPIO state (otherwise -1, check  PruIo::Errr for an error message).
+\returns The GPIO state (otherwise -1, check PruIo::Errr for an error message).
 
 \since 0.2
 */

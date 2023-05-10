@@ -68,6 +68,8 @@ DIM SHARED AS tprussdrv PRUSSDRV
 #DEFINE PRUSS_UIO_PARAM_VAL_LEN 20
 '* The file with pinmux information.
 #DEFINE KERNEL_PINMUX_PINS "/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins"
+'* Alternative file with pinmux information.
+#DEFINE KERNEL_PINMUX_PINX "/sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pinmux-pins"
 
 '#include once "crt/fcntl.bi" ' from: bits/fnctl-linux.h
 '* The size type
@@ -373,7 +375,7 @@ END FUNCTION
 The function initializes and enables the PRU interrupt controller. The
 input is a structure of arrays that determine which system events are
 enabled and how each is mapped to a host event. This structure is
-pre-defined as a member variable PruIo::IntcInit in header file
+pre-defined as a member variable PTR PruIo::IntcInit in header file
 `src/pruio/pruio.bi`. Experts can adapted the default arrays to meet
 custom needs before the CTOR PruIo::PruIo() call, but note that wrong
 settings can cause serious malfunctions.
@@ -565,7 +567,7 @@ END FUNCTION ' -> property
 
 /'* \brief End the driver session
 
-The procedure unmaps all memory and closes the interrupt file.
+The procedure unmaps all memory and closes all interrupt files.
 
 \note It doesn't disable the PRUSS.
 
@@ -575,7 +577,7 @@ SUB prussdrv_exIt CDECL ALIAS "prussdrv_exit"() EXPORT
   WITH PRUSSDRV
     munmap(.pru0_dataram_base, .pruss_map_size)
     munmap(.extram_base, .extram_map_size)
-    FOR i AS INTEGER = 0 TO NUM_PRU_HOSTIRQS - 1
+    FOR i AS LONG = 0 TO NUM_PRU_HOSTIRQS - 1
       IF .fd(i) THEN close_(.fd(i)) : .fd(i) = 0
     NEXT
     .mmap_fd = 0
@@ -598,9 +600,9 @@ FUNCTION find_claims CDECL(BYVAL Typ AS UInt32) AS ZSTRING PTR
 #DEFINE TBUFF_SIZE 32768
   STATIC AS STRING mux
   DIM AS STRING*TBUFF_SIZE t
-  'VAR fd = open_(KERNEL_PINMUX_PINS, O_RDONLY) : IF fd < 0   THEN RETURN 0
-  VAR fd = open_("/sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins", O_RDONLY)
-  IF fd < 0 THEN fd = open_("/sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pinmux-pins", O_RDONLY) : IF fd < 0   THEN RETURN 0
+  VAR fd = open_(KERNEL_PINMUX_PINS, O_RDONLY)
+  IF fd < 0 THEN _
+      fd = open_(KERNEL_PINMUX_PINX, O_RDONLY) : IF fd < 0   THEN RETURN 0
   VAR r = read_(fd, @t, TBUFF_SIZE)
   close_(fd)
   VAR toffs = (PRUIO_AZ_BALL + 1) SHL 1

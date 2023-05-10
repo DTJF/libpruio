@@ -53,7 +53,7 @@ Licence:
 libpruio (LGPLv2.1):
 --------------------------
 
-Copyright &copy; 2014-2022 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
+Copyright &copy; 2014-2023 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the Lesser GNU General Public License version 2 as
@@ -74,7 +74,7 @@ http://www.gnu.org/licenses/lgpl-2.0.html
 Examples and utility programs (GPLv3):
 --------------------------------------
 
-Copyright &copy; 2014-2022 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
+Copyright &copy; 2014-2023 by Thomas{ doT ]Freiherr[ At ]gmx[ DoT }net
 
 The examples of this bundle are free software as well; you can
 redistribute them and/or modify them under the terms of the GNU
