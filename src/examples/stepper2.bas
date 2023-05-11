@@ -40,7 +40,7 @@ Compile by: `fbc -w all stepper2.bas`
 ' declare pin masks (all pins at one GPIO-SS#SUSYS)
 DIM SHARED AS UInt32 _
   SUSYS _     '*< GPIO-SS number
-, MASKS(7, 1) '*< Masks for each stepper state (SET, CLEAR)
+, MASKS(8, 1) '*< Masks for each stepper state (SET, CLEAR)
 
 
 /'* \brief Declare masks for the stepper states
@@ -68,6 +68,7 @@ SUB MaskInit(BYVAL Io AS PruIo PTR)
     MASKS(5, 0) = m2 + m3 : MASKS(5, 1) = m0 + m1
     MASKS(6, 0) = m3      : MASKS(6, 1) = m0 + m1 + m2
     MASKS(7, 0) = m3 + m0 : MASKS(7, 1) = m1 + m2
+    MASKS(8, 0) = 0       : MASKS(8, 1) = m0 + m1 + m2 + m3
   END WITH
 END SUB
 
@@ -92,7 +93,7 @@ SUB move(BYVAL Io AS PruIo PTR, BYVAL Rot AS BYTE = 1)
     p += Rot
     p AND= IIF(Rot AND &b1, &b111, &b110)
 
-    WITH *.Gpio->Conf(SuSys)
+    WITH *.Gpio->Conf(SUSYS)
       .SETDATAOUT = MASKS(p, 0)
       .CLEARDATAOUT = MASKS(p, 1)
     END WITH
@@ -149,10 +150,11 @@ WITH *io
         CASE ASC("1") : IF 0 = d THEN move(io, -1) '      single step CW
         CASE ASC("3") : IF 0 = d THEN move(io,  1) '     single step CCW
         CASE ASC("0") : d =  0 '                          unpowered stop
-          .Gpio->setValue(P1, 0)
-          .Gpio->setValue(P2, 0)
-          .Gpio->setValue(P3, 0)
-          .Gpio->setValue(P4, 0)
+          WITH *.Gpio->Conf(SUSYS) ' set OFF state
+            .SETDATAOUT = MASKS(8, 0)
+            .CLEARDATAOUT = MASKS(8, 1)
+          END WITH
+          .Gpio->flush(SUSYS) ' write data to hardware registers
         CASE ELSE : EXIT DO '                                     finish
         END SELECT
 
@@ -169,10 +171,11 @@ WITH *io
     LOOP UNTIL .Errr : ?
     IF .Errr THEN ?"abborted: " & *.Errr
 
-    .Gpio->setValue(P1, 0) '                            switch off pins
-    .Gpio->setValue(P2, 0)
-    .Gpio->setValue(P3, 0)
-    .Gpio->setValue(P4, 0)
+    WITH *.Gpio->Conf(SUSYS) ' set OFF state
+      .SETDATAOUT = MASKS(8, 0)
+      .CLEARDATAOUT = MASKS(8, 1)
+    END WITH
+    .Gpio->flush(SUSYS) ' write data to hardware registers
     IF .Errr THEN ?"zeroing pins failed: : " & *.Errr
 
     IF .Errr THEN ?"re-setting pins failed: : " & *.Errr
