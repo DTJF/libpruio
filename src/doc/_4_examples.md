@@ -25,10 +25,10 @@ If you don't like to compile source code on your box, you can also
 install the `libpruio-bin` package (see section \ref SecDebPac) and run
 pre-compiled binaries instead.
 
-\note In the descript the programm start is described using `sudo` in
-      case of pinmuxing requirements. You can omit `sudo` when you use
-      the LKM pinmuxing as a member of group `pruio`, see section \ref
-      SecPinmuxing for details.
+\note In the text the programm start is described without using `sudo`
+      (even in case of pinmuxing requirements). You may need to prepend
+      `sudo` when you don't use the LKM pinmuxing as a member of group
+      `pruio`, see section \ref SecPinmuxing for details.
 
 \note The examples source code is designed for and tested on BeagleBone
       hardware. It also should run on Pocket-Beagle or BeagleBone Blue
@@ -345,7 +345,7 @@ C000C004 3E810300       3D        0  E6B0 D730 C9B0 B470   F0  9A0 1EB0 EDD0
 
 \Item{Operation}
 
-  Start the program by `sudo ./performance` and you'll see a bunch of
+  Start the program by `./performance` and you'll see a bunch of
   lines like
 ~~~{.txt}
  305810.4      179856.1      72150.07      69589.42      69637.88      93109.87      81366.97
@@ -429,7 +429,7 @@ Closed loop, Adc->Value to function Gpio->Value:
 
 \Item{Operation}
 
-  Start the program by `sudo ./pwm_cap` and you'll see a single
+  Start the program by `./pwm_cap` and you'll see a single
   continuously updated new line
 ~~~{.txt}
     Frequency: 31250    , Duty: 0.5003125
@@ -568,7 +568,7 @@ Test OK 492 = 23 + (7 * 67)
 
 \Item{Operation}
 
-  Start the program by `sudo ./pruss_toggle` and you should see console output like
+  Start the program by `./pruss_toggle` and you should see console output like
 ~~~{.txt}
 instructions loaded, starting PRU-0
 --> Frequency: 20 MHz, Duty:40 %
@@ -646,7 +646,7 @@ instructions loaded, starting PRU-0
 
 \Item{Operation}
 
-  Start the program by `sudo ./qep` and when a real sensor is connected, you
+  Start the program by `./qep` and when a real sensor is connected, you
   should see console output like
 ~~~{.txt}
 
@@ -825,7 +825,7 @@ press any key to quit
 
 \Item{Operation}
 
-  Start the program by `sudo ./stepper` and you'll see some information
+  Start the program by `./stepper` and you'll see some information
   on how to control the motor
 ~~~{.txt}
 
@@ -848,21 +848,22 @@ Pins          Direction     Sleep
   rotation. The pins switch for half step movements, so you may see
   either one single or two pins at high state at a time.
 
-  The C version shows (couldn't get ride of that green block under Key)
-~~~{.txt}
-Pins            Key        Direction        Sleep
-1-0-0-1                     0               128
-~~~
-
   While in example stepper the pins are set one after the other by
   function Gpio->setValue(), in the second example called stepper2 all
   pins get set simultaneously (all are set at the same time). Note the
   different pin set (P8_03, P8_04, P8_05, P8_06) used, since all pins
   have to be connected to the same GPIO-SS.
 
+  The C version shows (couldn't get ride of that green block under Key)
+~~~{.txt}
+Pins            Key        Direction        Sleep
+1-0-0-1                     0               128
+~~~
+
 \Item{Source Code}
 
   src/examples/stepper.bas
+
   src/examples/stepper2.bas
 
   [<b>src/c_examples/stepper.c</b>](stepper_8c.html)
@@ -918,14 +919,13 @@ is available only in FreeBASIC syntax (folder `src/examples`).
 
   The digital lines (P9_14, P9_16 and P9_42) need pinmuxing to operate
   in PWM mode. So you have to prepare your system for pinmuxing (see
-  Section \ref SecPinmuxing) and execute the binary with administrator
-  privileges.
+  Section \ref SecPinmuxing).
 
 \Item{Operation}
 
   Execute the binary with a customized window size by
 ~~~{.txt}
-sudo ./pwm_adc 640x150
+./pwm_adc 640x150
 ~~~
   and you'll see a grafic window with three rectangle lines like
 

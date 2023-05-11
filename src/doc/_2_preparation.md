@@ -60,15 +60,21 @@ images to edit the boot configuration file like
     sudo nano /boot/uEnv.txt
 
 where to enable the driver `uio_pruss` and also dissable `rproc` (only
-one of them can be active at a time). The related lines should finally
-look like
+one of those drivers can be active at a time). The minimal file should
+finally look like
 
-    ???
+    uname_r=< your kernel version here (ie like 4.19.142-bone56) >
 
-Afterwards comment out the line loading the device tree blob
-`cape_universal.dtbo`, in order to free the headers pins for \Proj
+    enable_uboot_overlays=1
 
-    ???
+    disable_uboot_overlay_emmc=1
+    disable_uboot_overlay_audio=1
+    disable_uboot_overlay_wireless=1
+    disable_uboot_overlay_adc=1
+
+    uboot_overlay_pru=AM335X-PRU-UIO-00A0.dtbo
+
+    cmdline=coherent_pool=1M net.ifnames=0 lpj=1990656 rng_core.default_quality=100 quiet video=HDMI-A-1:800x480@60e
 
 \note This also makes the tool `config-pin` not working any more. You
       don't need it, \Proj can replace all its features.
@@ -101,25 +107,14 @@ which should generate text output similar to
     crw-rw---- 1 root users 243, 7 Mai 17 07:25 /dev/uio7
 
 
-## Pin Claims ## {#sSecPinClaims}
-
-In order to test if the `cape_universal.dtbo` doesn't load any more,
-execute
-
-    ???
-
-The output shoul not have more the two lines like
-
-    ???
-
-
 # Debian Packages # {#SecDebPac}
 
-The easy way to benefit from \Proj is to install the Debian packages.
-They're not in mainline, yet, but provided in a PPA (Personal Package
-Archive). In order to use it, you have to adopt your package management
-sources. On the default Debian operating system, edit the file `sudo
-nano /etc/apt/sources.list` and add the lines:
+The easy way to benefit from \Proj is to install the Debian packages
+(available for Wheezy and Jessie). They're not in mainline, yet, but
+provided in a PPA (Personal Package Archive). In order to use it, you
+have to adopt your package management sources. On the default Debian
+operating system, edit the file `sudo nano /etc/apt/sources.list` and
+add the lines:
 
     deb http://beagle.tuks.nl/debian jessie/
     deb-src http://beagle.tuks.nl/debian jessie/
@@ -343,7 +338,7 @@ need the compilers nor assemblers. Use the package manager to install
 the desired dependencies (omit the packages you don't need)
 
     sudo apt-get install fbc cmake fbdoc am335x-pru-package device-tree-compiler python
-    sudo apt-get install doxygen graphviz linux-headers-`uname -r ` debhelper dkms dh-systemd autotools-dev dh-python
+    sudo apt-get install doxygen graphviz linux-headers-`uname -r` debhelper dkms dh-systemd autotools-dev dh-python
 
 \note In order to fetch the P type packages you have to add the PPA to
       your `/etc/apt/sources.list` file as described in section \ref
@@ -519,9 +514,9 @@ Anyway, that's the Debian policy, we've to follow. So execute
     sudo make lkm-install
 
 to install the module binary and additionally a systemd service
-(`/etc/systemd/???`) auto-loading that module at boot time.
-Additionally a new system group named `pruio` gets created. See section
-\ref sSecLKM for further information.
+(`/etc/systemd/system/libpruio-lkm.service`) auto-loading that module
+at boot time. Additionally a new system group named `pruio` gets
+created. See section \ref sSecLKM for further information.
 
 Afterwards the LKM will be tainted to the kernel and the pinmuxing
 features are ready to use. The module also ba available in further

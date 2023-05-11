@@ -674,9 +674,11 @@ just a warning, no action is required. Find details in the
 # make # {#SecMake}
 
 Make errors occur after you installed and prepared the source tree, and
-when you start building targets.
+when you start building targets. A common one is
 
 \Item{file INSTALL cannot copy file} You executed a `make install`
 instruction for a restricted location. The script has no permission to
 perform the required write operations. -> Prepend `sudo` to your
-command.
+command (like `sudo make lkm-install`).
+
+Other messages need individual treatment.

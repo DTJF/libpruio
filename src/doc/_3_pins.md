@@ -219,18 +219,19 @@ constructor PruIo::PruIo() )
 GPIO means General Purpose Input or Output. In output mode the program
 can switch any connected hardware on or off (high=3V3, low=0V). In
 input mode the program can detect the state of any connected hardware
-(high>1V8, low<0V8). \Proj can configure and use any digital header pin
-in one of the following five GPIO modes. (Therefor a pinmixing feature
-has to get activated, find details in section \ref SecPinmuxing.) Find
-details on GPIO hardware in \ArmRef{25}.
+(high>1V8, low<0V8, undefined inbetween). \Proj can configure and use
+any digital header pin in one of the following five GPIO modes.
+(Therefor a pinmixing feature has to get activated, find details in
+section \ref SecPinmuxing.) Find details on GPIO hardware in
+\ArmRef{25}.
 
 | PinMuxing Enumerator | Function                         | GpioUdt::Value() |
 | -------------------: | :------------------------------: | :--------------- |
-| \ref PRUIO_GPIO_OUT0 | output pin low (no resistor)     | 0                |
-| \ref PRUIO_GPIO_OUT1 | output pin high (no resistor)    | 1                |
+| \ref PRUIO_GPIO_OUT0 | output pin low (no resistor)     | low=0            |
+| \ref PRUIO_GPIO_OUT1 | output pin high (no resistor)    | high=1           |
 | \ref PRUIO_GPIO_IN   | input pin with no resistor       | undefined        |
-| \ref PRUIO_GPIO_IN_0 | input pin with pulldown resistor | 0                |
-| \ref PRUIO_GPIO_IN_1 | input pin with pullup resistor   | 1                |
+| \ref PRUIO_GPIO_IN_0 | input pin with pulldown resistor | low=0            |
+| \ref PRUIO_GPIO_IN_1 | input pin with pullup resistor   | high=1           |
 
 An input pin can get configured with pullup or pulldown resistor, or
 none of them. Those resistors (about 10 k) are incorporated in the CPU.
@@ -239,9 +240,10 @@ connection by \Proj (to minimize power consumption). So the first two
 modes (PRUIO_GPIO_OUT0 and PRUIO_GPIO_OUT1) use the same pinmuxing.
 
 In order to set a GPIO output just set its state by calling function
-Gpio::setValue() (after calling the constructor PruIo::PruIo() ). When
-you do this after the call to PruIo::config(), the state will change
-immediately. Otherwise it changes after the PruIo::config() call.
+GpioUdt::setValue() (after calling the constructor PruIo::PruIo() ).
+When you do this after the call to PruIo::config(), the state will
+change immediately. Otherwise it changes after the PruIo::config()
+call.
 
 In order to configure a GPIO to input mode first call function
 GpioUdt::config() (after calling the constructor PruIo::PruIo() and
@@ -251,7 +253,7 @@ GpioUdt::Value().
 
 \Proj can switch multiple output lines in a single step without any
 latency between the line transitions. Therefor all related pins have to
-be controlled by the same GPIO subsystems. See function Gpio::flush()
+be controlled by the same GPIO subsystems. See function GpioUdt::flush()
 for details. The following table shows the pin groups for the subsystems
 
 | Subsystem | Pins |
